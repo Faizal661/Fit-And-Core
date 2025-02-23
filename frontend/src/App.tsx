@@ -1,12 +1,32 @@
 import './App.css'
 
-function App() {
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+// import UserLogin from './pages/auth/UserLogin';
+// import TrainerLogin from './pages/auth/TrainerLogin';
+// import AdminLogin from './pages/auth/AdminLogin';
+// import Signup from './pages/auth/Signup';
+// import Home from './pages/Home';
+// import Footer from './components/layout/Footer';
+// import LoginBody from './components/auth/LoginBody';
+// import { useSelector } from 'react-redux';
+// import { RootState } from './redux/store';
 
+function App() {
+  // const user = useSelector((state: RootState) => state.auth.user);
   return (
-    <>
-      <h1 className="text-3xl font-bold text-center pt-20 text-violet-800 ">Starting project</h1>
-    </>
-  )
+    <Router>
+      <div className="min-h-screen flex flex-col">
+        <Routes>
+          {/* <Route path="/" element={user ? <Home /> : <Navigate to="/login" />} />
+          <Route path="/login" element={<UserLogin />} />
+          <Route path="/trainer/login" element={<TrainerLogin />} />
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/signup" element={<Signup />} /> */}
+        </Routes>
+        {/* <Footer /> */}
+      </div>
+    </Router>
+  );
 }
 
-export default App
+export default App;
