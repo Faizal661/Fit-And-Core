@@ -1,5 +1,3 @@
-import './App.css'
-
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import UserLogin from './pages/auth/UserLogin';
 import TrainerLogin from './pages/auth/TrainerLogin';
@@ -13,7 +11,6 @@ import { RootState } from './redux/store';
 function App() {
   const user = useSelector((state: RootState) => state.auth.user);
   return (
-    <Router>
       <div className="min-h-screen flex flex-col">
         <Routes>
           <Route path="/" element={user ? <Home /> : <Navigate to="/login" />} />
@@ -24,7 +21,6 @@ function App() {
         </Routes>
         <Footer />
       </div>
-    </Router>
   );
 }
 
