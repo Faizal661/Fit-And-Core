@@ -1,11 +1,11 @@
 import React from 'react';
 import LoginBody from '../../components/auth/LoginBody';
-import trainerLoginImage from '../../../public/images/img4.jpg';
+import trainerLoginImage from '../../assets/images/img4.jpg';
 
 
 const TrainerLogin: React.FC = () => {
   return (
-    <LoginBody imageSrc={trainerLoginImage}>
+    <LoginBody imageSrc={trainerLoginImage} welcomeMessage={''}>
       <form className="w-full max-w-md">
         <h1>Trainer</h1>
         <input type="email" placeholder="Email" className="input-field" />

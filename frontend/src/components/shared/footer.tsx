@@ -1,5 +1,5 @@
 import React from "react";
-// import { FaInstagram, FaSpotify, FaFacebook } from "react-icons/fa";
+import { Facebook, Instagram, Twitter, Youtube } from "lucide-react";
 
 const Footer: React.FC = () => {
   return (
@@ -44,10 +44,11 @@ const Footer: React.FC = () => {
           <button className="mt-4 bg-[#2916BA] text-white px-6 py-2 rounded-4xl">
             REGISTER NOW
           </button>
-          <div className="flex space-x-4 mt-6 text-xl">
-            {/* <FaInstagram />
-            <FaSpotify />
-            <FaFacebook /> */}
+          <div className="flex space-x-3 mt-6">
+            <Instagram />
+            <Twitter />
+            <Youtube/>
+            <Facebook />
           </div>
         </div>
       </div>
