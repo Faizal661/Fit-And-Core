@@ -53,7 +53,7 @@ const LandingPage: React.FC = () => {
           />
           <Link
             to="/communities"
-            className="absolute bottom-4 left-4 px-4 py-2 bg-blue-600 text-white rounded-4xl"
+            className="absolute bottom-4 left-4 px-6 py-2 bg-[#2916BA] hover:bg-blue-900 text-white rounded-4xl"
           >
             Explore
           </Link>
@@ -69,7 +69,7 @@ const LandingPage: React.FC = () => {
           />
           <Link
             to="/trainer/apply"
-            className="absolute bottom-4 left-4 px-4 py-2 bg-blue-600 text-white rounded-4xl"
+            className="absolute bottom-4 left-4 px-6 py-2 bg-[#2916BA] hover:bg-blue-900 text-white rounded-4xl"
           >
             Apply Now
           </Link>
@@ -78,7 +78,7 @@ const LandingPage: React.FC = () => {
 
       {/* Welcome Section */}
       <div className="text-center p-12 mt-14">
-        <h2 className="text-3xl font-semibold">WELCOME TO FIT&CORE</h2>
+        <h2 className="text-3xl font-bold">WELCOME TO FIT&CORE</h2>
         <p className="text-gray-600 mt-8 w-1/2 mx-auto">
           Whether you're a beginner or a fitness pro, we’re here to help you
           crush your goals and feel your best. Discover the next level fitness
@@ -95,8 +95,8 @@ const LandingPage: React.FC = () => {
 
       {/* Our Concepts */}
       <div className="text-center p-12">
-        <h2 className="text-3xl font-semibold">OUR CONCEPTS</h2>
-        <p className="text-gray-600 mt-14 w-1/2 mx-auto">
+        <h2 className="text-3xl font-bold">OUR CONCEPTS</h2>
+        <p className="text-gray-600 mt-10 w-1/2 mx-auto">
           Our app offers five dynamic workout categories to keep your routine
           fresh, fun, and effective. Dive into Yoga for mindfulness and
           flexibility, groove with Zumba for high-energy dance workouts, build
@@ -110,16 +110,19 @@ const LandingPage: React.FC = () => {
 
       {/* Horizontal Scrolling - Different Programs */}
       <div className="p-12 overflow-hidden">
-        <div className="flex overflow-x-auto" style={{ scrollbarWidth: 'none', msOverflowStyle:'none'}}>
+        <div
+          className="flex overflow-x-auto"
+          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+        >
           {[yoga, calisthenics, hiit, pilates, zumba].map((img, index) => (
             <div key={index} className="relative min-w-[300px]">
               <img
                 src={img}
                 alt={`${img}`}
-                className="w-full h-80 object-cover"
+                className="w-full h-100 object-cover"
               />
-              <p className="absolute bottom-4 left-4 text-white font-semibold">
-                {img.slice(19,-5)}
+              <p className="absolute bottom-4 left-4 text-white font-semibold uppercase ">
+                {img.slice(19, -5)}
               </p>
             </div>
           ))}
