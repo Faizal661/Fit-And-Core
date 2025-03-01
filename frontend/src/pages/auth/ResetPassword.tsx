@@ -2,7 +2,7 @@ import React from "react";
 import LoginBody from "../../components/auth/LoginBody";
 import userLoginImage from "../../assets/images/image1.jpg";
 import { Link } from "react-router-dom";
-import {AUTH_MESSAGES} from '../../constants/welcome.messages'
+import {AUTH_MESSAGES} from '../../constants/auth.messages'
 
 
 const ResetPassword: React.FC  = () => {
@@ -18,7 +18,7 @@ const ResetPassword: React.FC  = () => {
           Click here!
         </Link>
       </p>
-      <button className="btn-primary mt-14 border-1 rounded-4xl py-2">
+      <button className="mt-14 border-1 rounded-4xl py-2 hover:bg-[#2a13da]">
         <Link to={"/otp-verify"}>
           Send OTP
         </Link>

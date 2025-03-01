@@ -2,7 +2,9 @@ import React from 'react';
 import LoginBody from '../../components/auth/LoginBody';
 import userSignUpImage from '../../assets/images/img4.jpg';
 import { Link } from 'react-router-dom';
-import {AUTH_MESSAGES} from '../../constants/welcome.messages'
+import {AUTH_MESSAGES} from '../../constants/auth.messages'
+import Google from '../../assets/icons/Google';
+import { Facebook } from 'lucide-react';
 
 
 const Signup: React.FC = () => {
@@ -25,9 +27,22 @@ const Signup: React.FC = () => {
           Log in
           </Link>
         </p>
-        <button className="btn-primary mt-14 border-1 rounded-4xl py-2">
+        <button className="btn-primary mt-10 border-1 rounded-4xl py-2">
+          <Link to={'/otp-verify'}>
           Sign Up
+          </Link>
         </button>
+        <div className="flex mt-6 border-b-1 border-slate-400 "></div>
+        <div className="flex mt-6 gap-3">
+          <button className="flex w-full border-1 rounded-4xl border-slate-400 p-2 px-5 justify-center items-center gap-4">
+            <Google />
+            Google
+          </button>
+          <button className="flex w-full border-1 rounded-4xl py-2 px-5 border-slate-400 justify-center items-center gap-4">
+            <Facebook strokeWidth={.1} fill="white" color="white"/>
+            Facebook
+          </button>
+        </div>
       </form>
     </LoginBody>
   );
