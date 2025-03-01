@@ -3,7 +3,6 @@ import UserLogin from "./pages/auth/UserLogin";
 import TrainerLogin from "./pages/auth/TrainerLogin";
 import AdminLogin from "./pages/auth/AdminLogin";
 import UserSignUp from "./pages/auth/UserSignUp";
-import Home from "./pages/user/Home";
 import Footer from "./components/shared/Footer";
 import { useSelector } from "react-redux";
 import { RootState } from "./redux/store";
@@ -12,6 +11,7 @@ import SetPassword from "./pages/auth/SetPassword";
 import OtpVerification from "./pages/auth/OtpVerification";
 import FloatButton from "../src/components/shared/FloatButton";
 import MenuButton from "../src/components/shared/MenuButton";
+import LandingPage from "./pages/user/LandingPage";
 
 function App() {
   const user = useSelector((state: RootState) => state.auth.user);
@@ -20,8 +20,8 @@ function App() {
       <MenuButton />
       <FloatButton />
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={user ? <Home /> : <UserLogin />} />
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/login" element={user ? <LandingPage /> : <UserLogin />} />
         <Route path="/signup" element={<UserSignUp />} />
         <Route path="/forget-password" element={<ForgetPassword />} />
         <Route path="/otp-verify" element={<OtpVerification />} />
