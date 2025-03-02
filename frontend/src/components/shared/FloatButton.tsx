@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 // import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { CircleUserRound, X } from "lucide-react";
 
 const FloatButton = () => {
   // const user = useSelector((state) => state.auth.user);
-  const [user, setUser] = useState("faizal"); // Demo user data
+  const [user, setUser] = useState(""); 
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
