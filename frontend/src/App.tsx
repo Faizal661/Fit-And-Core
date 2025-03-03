@@ -24,7 +24,7 @@ function App() {
         <Route path="/login" element={user ? <LandingPage /> : <UserLogin />} />
         <Route path="/signup" element={<UserSignUp />} />
         <Route path="/forget-password" element={<ForgetPassword />} />
-        <Route path="/otp-verify" element={<OtpVerification />} />
+        {/* <Route path="/otp-verify" element={<OtpVerification />} /> */}
         <Route path="/set-password" element={<SetPassword />} />
         <Route path="/trainer/login" element={<TrainerLogin />} />
         {/* <Route path="/trainer/login" element={<TrainerLogin />} /> */}
