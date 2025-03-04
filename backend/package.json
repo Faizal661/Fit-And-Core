@@ -16,7 +16,9 @@
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.10.1"
+    "mern.common": "^1.0.16",
+    "mongoose": "^8.10.1",
+    "tsyringe": "^4.8.0"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
