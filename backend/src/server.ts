@@ -2,24 +2,28 @@
 import express, { request } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-
 dotenv.config();
 
-console.log()
 //configurations
 import connectDB from "./config/db.config";
 
 //routers & middlewares 
+import authRoutes from "./routes/auth.routes.ts"
 // import UserRoutes from "./routes/user.routes.ts";
-import AuthRoutes from "./routes/auth.routes.ts"
+
+
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:5173',
+  credentials: true
+}));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use("/api/auth", AuthRoutes);
+app.use("/api/auth", authRoutes);
 // app.use("/api/users", UserRoutes);
  
 connectDB().then(() => {
