@@ -15,7 +15,7 @@ export default class AuthenticationController implements IAuthenticationControll
     private authenticationService: IAuthenticationService;
     
     constructor(
-        @inject('AuthenticationService') authenticationService: IAuthenticationService,
+        @inject("AuthenticationService") authenticationService: IAuthenticationService,
     ) {
         this.authenticationService = authenticationService;
     }

@@ -1,5 +1,5 @@
 import UserModel,{ IUserModel } from "../../models/user.models"; 
-import { BaseRepository } from "./base.repository";
+import { BaseRepository } from "../base.repository";
 import { injectable } from "tsyringe";
 
 @injectable()

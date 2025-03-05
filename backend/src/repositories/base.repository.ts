@@ -31,13 +31,6 @@ export abstract class BaseRepository<T extends Document> {
         return this.model.find(filter);
     }
     
-    async findByUsernameOrEmail (value: string) : Promise<T | null> {
-        const filter : FilterQuery<T> = {
-            $or: [{email : value} , {username:value}]
-        }
-    
-        return this.model.findOne(filter);
-    }
 
     // create
     async create(data: Partial<T>): Promise<T> {
