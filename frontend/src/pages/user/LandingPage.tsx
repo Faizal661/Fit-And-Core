@@ -3,11 +3,8 @@ import { Link } from "react-router-dom";
 import hero_image from "../../assets/images/img3.jpg";
 import explore_image from "../../assets/images/pilates1.jpg";
 import trainer_image from "../../assets/images/HIIT2.jpg";
-import yoga from "../../assets/images/yoga3.jpg";
-import calisthenics from "../../assets/images/calisthenics1.jpg";
-import hiit from "../../assets/images/HIIT3.jpg";
-import pilates from "../../assets/images/pilates4.jpg";
-import zumba from "../../assets/images/Zumba1.jpg";
+import { InfiniteCarousel } from "../../components/shared/InfiniteCarousel";
+
 
 const LandingPage: React.FC = () => {
   return (
@@ -78,8 +75,8 @@ const LandingPage: React.FC = () => {
 
       {/* Welcome Section */}
       <div className="text-center p-12 mt-14">
-        <h2 className="text-3xl font-bold">WELCOME TO FIT&CORE</h2>
-        <p className="text-gray-600 mt-8 w-1/2 mx-auto">
+        <h2 className="text-4xl font-bold">WELCOME TO FIT&CORE</h2>
+        <p className="text-gray-600 mt-8 w-1/2 mx-auto text-lg">
           Whether you're a beginner or a fitness pro, we’re here to help you
           crush your goals and feel your best. Discover the next level fitness
           experience that refuses to cut corners when it comes to quality, Let’s
@@ -87,7 +84,7 @@ const LandingPage: React.FC = () => {
         </p>
         <Link
           to="/signup"
-          className="mt-20 inline-block px-6 py-3  bg-blue-600 text-white rounded-4xl"
+          className="mt-20 inline-block px-6 py-3  bg-[#2916BA] text-white rounded-4xl"
         >
           Try It Now
         </Link>
@@ -95,8 +92,8 @@ const LandingPage: React.FC = () => {
 
       {/* Our Concepts */}
       <div className="text-center p-12">
-        <h2 className="text-3xl font-bold">OUR CONCEPTS</h2>
-        <p className="text-gray-600 mt-10 w-1/2 mx-auto">
+        <h2 className="text-4xl font-bold">OUR CONCEPTS</h2>
+        <p className="text-gray-600 mt-10 w-1/2 mx-auto text-lg">
           Our app offers five dynamic workout categories to keep your routine
           fresh, fun, and effective. Dive into Yoga for mindfulness and
           flexibility, groove with Zumba for high-energy dance workouts, build
@@ -110,23 +107,7 @@ const LandingPage: React.FC = () => {
 
       {/* Horizontal Scrolling - Different Programs */}
       <div className="p-12 overflow-hidden">
-        <div
-          className="flex overflow-x-auto"
-          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-        >
-          {[yoga, calisthenics, hiit, pilates, zumba].map((img, index) => (
-            <div key={index} className="relative min-w-[300px]">
-              <img
-                src={img}
-                alt={`${img}`}
-                className="w-full h-100 object-cover"
-              />
-              <p className="absolute bottom-4 left-4 text-white font-semibold uppercase ">
-                {img.slice(19, -5)}
-              </p>
-            </div>
-          ))}
-        </div>
+          <InfiniteCarousel/>
       </div>
 
       {/* Buy Workouts */}
