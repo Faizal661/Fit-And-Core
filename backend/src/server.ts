@@ -1,33 +1,33 @@
-//packages
-import "reflect-metadata"
-import express, { request } from "express";
+// Packages
+import "reflect-metadata";
+import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import morgan from "morgan";
 
-dotenv.config();
-
-//configurations
-import connectDB from "./config/db.config";
-
-//routers & middlewares 
-import authRoutes from "./routes/authentication.routes"
+// Import routers
+import authRoutes from "./routes/authentication.routes";
 // import UserRoutes from "./routes/user.routes.ts";
 
+// Configurations
+import connectDB from "./config/db.config";
+dotenv.config();
+const PORT = process.env.PORT || 5000;
 
 
 const app = express();
-const PORT = process.env.PORT || 5000;
-app.use(cors({
-  origin: 'http://localhost:5173',
-  credentials: true
-}));
 
+// Middlewares
+app.use(cors({ origin: process.env.CLIENT_ORIGIN, credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
- 
+app.use(morgan("dev")); // Logs { method, url, status, response time }
+
+// Routers
 app.use("/api/auth", authRoutes);
 // app.use("/api/users", UserRoutes);
- 
+
+
 connectDB().then(() => {
-  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+  app.listen(PORT, () => console.log(`Server connection   ✅`));
 });
