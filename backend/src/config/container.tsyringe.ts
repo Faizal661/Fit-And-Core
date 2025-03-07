@@ -19,16 +19,3 @@ container.register<IAuthenticationService>('AuthenticationService', { useClass: 
 
 // Repositories
 container.register<IAuthenticationRepository>('AuthenticationRepository',{useClass: AuthenticationRepository})
-
-
-
-// // Repositories
-// container.registerSingleton<IAuthenticationRepository>('AuthenticationRepository',AuthenticationRepository)
-
-
-// // Services 
-// container.registerSingleton<IAuthenticationService>('AuthenticationService',  AuthenticationService); 
-
-
-// // Controllers
-// container.registerSingleton<IAuthenticationController>("AuthenticationController",AuthenticationController);

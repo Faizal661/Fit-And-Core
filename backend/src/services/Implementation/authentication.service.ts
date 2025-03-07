@@ -16,25 +16,19 @@ export default class AuthenticationService implements IAuthenticationService {
         this.authenticationRepository = authenticationRepository
     }
 
-    // async nameEmailCheck(email: string, name: string): Promise<any> {
-    //     const isTaken = await this.authenticationRepository.isUsernameOrEmailTaken(email, name);
-    //     if (isTaken) {
-    //         throw new ConflictError("Username or Email already taken");
-    //     }
-    //     return { available: true };
-    // }
 
-    async nameEmailCheck(email: string, username: string): Promise<{ available: boolean }> {
+    async nameEmailCheck(email: string, username: string): Promise<{ available: boolean,username:string,email:string }> {
         const isUsernameTaken = await this.authenticationRepository.isUsernameTaken(username);
         const isEmailTaken = await this.authenticationRepository.isEmailTaken(email);
 
-        if (isUsernameTaken || isEmailTaken) {
-            throw new ConflictError("Username or Email already taken");
+        if (isUsernameTaken) {
+            throw new ConflictError("Username already taken");
+        }else if ( isEmailTaken){
+            throw new ConflictError("Email already taken");
         }
 
-        return { available: true };
+        return { available: true , username :username , email:email };
     }
-
 }
 
 

@@ -1,9 +1,11 @@
-import UserModel,{ IUserModel } from "../../models/user.models"; 
-import { BaseRepository } from "../base.repository";
 import { injectable } from "tsyringe";
+import UserModel,{ IUserModel } from "../../models/user.models"; 
+import { BaseRepository } from "./base.repository";
+import { IAuthenticationRepository } from "../Interface/IAuthenticationRepository";
 
 @injectable()
-export class AuthenticationRepository extends BaseRepository<IUserModel> {
+export class AuthenticationRepository extends BaseRepository<IUserModel> implements IAuthenticationRepository {
+
     constructor() {
         super(UserModel); 
     }

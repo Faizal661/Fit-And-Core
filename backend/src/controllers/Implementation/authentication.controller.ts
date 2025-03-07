@@ -35,5 +35,3 @@ export default class AuthenticationController implements IAuthenticationControll
     }
 }
 
-
- 

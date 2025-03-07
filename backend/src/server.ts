@@ -1,6 +1,6 @@
 // Packages
 import "reflect-metadata";
-import express from "express";
+import express, { NextFunction, response } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import morgan from "morgan";
@@ -21,7 +21,7 @@ const app = express();
 app.use(cors({ origin: process.env.CLIENT_ORIGIN, credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(morgan("dev")); // Logs { method, url, status, response time }
+app.use(morgan("dev"));
 
 // Routers
 app.use("/api/auth", authRoutes);

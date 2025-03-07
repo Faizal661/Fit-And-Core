@@ -6,7 +6,6 @@ interface IBaseRepository<T extends Document> {
   findOne(filter: FilterQuery<T>): Promise<T | null>;
   findAll(): Promise<T[]>;
   find(filter: FilterQuery<T>): Promise<T[]>;
-  findByUsernameOrEmail(value: string): Promise<T | null>;
   
   // create method
   create(data: Partial<T>): Promise<T>;

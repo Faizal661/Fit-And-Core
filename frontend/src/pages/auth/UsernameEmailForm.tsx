@@ -9,9 +9,9 @@ import LoginBody from "../../components/auth/LoginBody";
 import Google from "../../assets/icons/Google";
 import userSignUpImage from "../../assets/images/img4.jpg";
 import { checkEmailUsername } from "../../services/authService";
-import { useSignupContext } from "../../context/SignupContext";
 import { AUTH_MESSAGES } from "../../constants/auth.messages";
 import { userNameEmailSchema } from "../../schemas/authSchema";
+import { useSignupContext } from "../../context/SignupContext";
 
 
 
@@ -64,6 +64,7 @@ const UsernameEmailForm: React.FC<UsernameEmailFormProps> = ({ onSuccess }) => {
           {...register("username")}
           type="text"
           id="name"
+          value="faizal"
           className=" border-b-1 border-white mt-2 outline-0 text"
         />
         {errors.username && (
@@ -76,6 +77,7 @@ const UsernameEmailForm: React.FC<UsernameEmailFormProps> = ({ onSuccess }) => {
           {...register("email")}
           type="email"
           id="email"
+          value="faisalt661@gmail.com"
           className=" border-b-1 border-white mt-2 outline-0 text"
         />
       {errors.email && <p className="text-red-500">{errors.email.message}</p>}

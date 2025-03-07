@@ -10,4 +10,4 @@ export interface IUser {
     dateOfBirth: Date;
     createdAt: Date;
     updatedAt: Date;
-}
+} 
