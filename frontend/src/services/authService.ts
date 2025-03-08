@@ -1,9 +1,9 @@
 import axios from  "../utils/axios"
 
 export const checkEmailUsername = async (data: { username: string; email: string }) => {
-  console.log(data)
+  // console.log(data)
   const response = await axios.post(`/auth/check-email-username`, data);
-  console.log('userEmail check is done',response.data)
+  // console.log('userEmail check is done',response)
   return response.data; // Expected response: { available: boolean, username: string, email: string }
 };
 

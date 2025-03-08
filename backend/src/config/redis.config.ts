@@ -16,7 +16,7 @@ redisClient.on("error", (err) => {
 });
 
 redisClient.connect().then(() => {
-    console.log("✅ Connected to Redis");
+    console.log("Redis Connection    ✅");
 });
 
 export default redisClient;

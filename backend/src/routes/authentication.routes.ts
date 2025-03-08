@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import '../config/container.tsyringe'
+import '../config/di.config.'
 import { container } from 'tsyringe';
 
 import { IAuthenticationController } from '../controllers/Interface/IAuthenticationController';
