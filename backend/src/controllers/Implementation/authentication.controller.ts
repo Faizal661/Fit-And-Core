@@ -28,7 +28,7 @@ export default class AuthenticationController implements IAuthenticationControll
         try {
             const { email, username }: { email: string, username: string } = req.body
             const result = await this.authenticationService.nameEmailCheck(email, username);
-            await this.authenticationService.sendOtp(email); // Send OTP if email is available
+            await this.authenticationService.sendOtp(email); 
             SendResponse(res, HTTPStatusCodes.OK, ResponseMessage.SUCCESS,result)
         } catch (error: any) {
             next(error);

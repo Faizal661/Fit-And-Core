@@ -34,8 +34,7 @@ export default class AuthenticationService implements IAuthenticationService {
         const otp = randomInt(100000, 999999).toString();
         console.log('otp->',otp)
         await this.authenticationRepository.storeOtp(email, otp); 
-
-        await sendEmail(email, otp); // Send OTP using Amazon SES
+        await sendEmail(email, otp);
     }
 
     async verifyOtp(email: string, otp: string): Promise<boolean> {
@@ -43,7 +42,7 @@ export default class AuthenticationService implements IAuthenticationService {
         if (!storedOtp || storedOtp !== otp) {
             return false;
         }
-        await this.authenticationRepository.deleteOtp(email); // Remove OTP after successful verification
+        await this.authenticationRepository.deleteOtp(email);
         return true;
     }
 }
