@@ -1,4 +1,6 @@
 import axios from "axios";
+import { store } from "../redux/store"; 
+import { startLoading,stopLoading } from "../redux/slices/loadingSlice";
 
 const api = axios.create({
   baseURL: "http://localhost:5000/api",
@@ -7,16 +9,15 @@ const api = axios.create({
 
 api.interceptors.request.use(
   (config) => {
-    // Add an authorization token to every request
-
-    
     // const token = localStorage.getItem('token');
     // if (token) {
     //   config.headers.Authorization = `Bearer ${token}`;
     // }
+    store.dispatch(startLoading())
     return config;
   },
   (error) => {
+    store.dispatch(stopLoading());
     return Promise.reject(error);
   }
 );
@@ -24,15 +25,13 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => {
     // Handle successful responses
-    console.log(' axios success response',response)
+    store.dispatch(stopLoading());
     return response;
   },
   (error) => {
-    // Handle errors globally
+    store.dispatch(stopLoading());
     if (error.response?.status === 401) {
-      // Redirect to login if unauthorized
-      console.log('401 response',error)
-      console.error('Token expired or invalid, redirecting to login');
+      console.error('Unauthrorized Access, Redirecting to Login');
       window.location.href = "/login";
     }
     return Promise.reject(error);

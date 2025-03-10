@@ -1,11 +1,13 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit'
 import authReducer from './slices/authSlice'
+import loadingReducer from './slices/loadingSlice'
 import { persistReducer, persistStore } from 'redux-persist'
 import storage from 'redux-persist/lib/storage'
 
 
 const rootReducer = combineReducers({
     auth: authReducer,
+    loading:loadingReducer
 })
 
 const persistConfig = {

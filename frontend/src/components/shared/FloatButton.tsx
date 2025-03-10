@@ -1,11 +1,11 @@
 import { useState } from "react";
-// import { useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { CircleUserRound, X } from "lucide-react";
+import { RootState } from "../../redux/store";
 
 const FloatButton = () => {
-  // const user = useSelector((state) => state.auth.user);
-  const [user, setUser] = useState(""); 
+  const user = useSelector((state:RootState) => state.auth.username);
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();

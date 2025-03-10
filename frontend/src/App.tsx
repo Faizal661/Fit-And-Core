@@ -12,11 +12,15 @@ import OtpVerification from "./pages/auth/OtpVerification";
 import FloatButton from "../src/components/shared/FloatButton";
 import MenuButton from "../src/components/shared/MenuButton";
 import LandingPage from "./pages/user/LandingPage";
+import  Loader  from "./components/shared/Loader";
 
 function App() {
-  const user = useSelector((state: RootState) => state.auth.user);
+  const user = useSelector((state: RootState) => state.auth.username);
+  const isLoading = useSelector((state: RootState) => state.loading.isLoading);
+
   return (
     <div className="min-h-screen flex flex-col">
+       {isLoading && <Loader />}
       <MenuButton />
       <FloatButton />
       <Routes>
