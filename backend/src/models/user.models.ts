@@ -18,10 +18,9 @@ const userSchema = new Schema<IUserModel>(
     password: {
       type: String,
     },
-    status: {
-      type: String,
-      enum: ["active", "blocked"],
-      default: "active",
+    isBlocked: {
+      type: Boolean,
+      default: false,
     },
     role: {
       type: String,

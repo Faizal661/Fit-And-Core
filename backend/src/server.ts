@@ -26,7 +26,7 @@ const loggers = requestLogging();
 loggers.forEach(middleware => app.use(middleware));
 
 // Routers
-app.use("/api/auth", authRoutes);
+app.use("/api/auth", authRoutes); 
 // app.use("/api/users", UserRoutes);
 
 

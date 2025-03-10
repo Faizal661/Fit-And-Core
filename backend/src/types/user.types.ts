@@ -3,10 +3,9 @@ export interface IUser {
     username: string;
     email: string;
     password: string;
-    status: "active" | "blocked";
+    isBlocked: Boolean;
     role: "user" | "trainer";
     profilePicture?: string;
-    resume?: string;
     dateOfBirth: Date;
     createdAt: Date;
     updatedAt: Date;

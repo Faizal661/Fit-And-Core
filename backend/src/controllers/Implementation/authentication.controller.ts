@@ -48,5 +48,27 @@ export default class AuthenticationController implements IAuthenticationControll
             next(error);
         }
     }
+
+    async register(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const { username, email, password } = req.body;
+
+            if (!username || !email || !password) {
+                // return res.status(400).json({ message: "All fields are required" });
+              }
+
+            //   const result = await authenticationService.registerUser(username, email, password);
+
+            //   res.cookie("authToken", result.user.token, {
+            //     httpOnly: true,
+            //     secure: process.env.NODE_ENV === "production",
+            //     sameSite: "strict",
+            //   });
+
+
+        } catch (error) {
+            next(error);
+        }
+    }
 }
 
