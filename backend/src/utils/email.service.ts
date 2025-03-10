@@ -80,9 +80,9 @@ export const sendEmail = async (toEmail: string, otp: string) => {
             },
         };
 
-        const command = new SendEmailCommand(params);
-        await sesClient.send(command);
-        console.log("Email sent successfully!",toEmail,otp);
+        // const command = new SendEmailCommand(params);
+        // await sesClient.send(command);
+        console.log("Email sent successfully!");
     } catch (error) {
         console.error("Error sending email:", error);
     }

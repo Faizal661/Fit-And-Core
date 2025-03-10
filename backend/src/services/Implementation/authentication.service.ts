@@ -37,12 +37,14 @@ export default class AuthenticationService implements IAuthenticationService {
         await sendEmail(email, otp);
     }
 
-    async verifyOtp(email: string, otp: string): Promise<boolean> {
+    async verifyOtp(email: string, otp: string): Promise<{success:boolean,message:string}> {
         const storedOtp = await this.authenticationRepository.getOtp(email);
+        // console.log('redisOtp=>',storedOtp)
         if (!storedOtp || storedOtp !== otp) {
-            return false;
+            return {success:false,message: "Invalid or expired OTP"}
         }
         await this.authenticationRepository.deleteOtp(email);
-        return true;
+        // console.log('otp deleted from redis')
+        return { success: true, message: "OTP verified successfully" };
     }
 }

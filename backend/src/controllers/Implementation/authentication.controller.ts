@@ -34,16 +34,16 @@ export default class AuthenticationController implements IAuthenticationControll
             next(error);
         }
     }
-
+    
     async verifyOtp(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const { email, otp } = req.body;
             const isValid = await this.authenticationService.verifyOtp(email, otp);
-            if (!isValid) {
-                res.status(400).json({ message: "Invalid or expired OTP" });
-                return;
+            if (!isValid.success) {
+                SendResponse(res, HTTPStatusCodes.OK, ResponseMessage.SUCCESS,isValid)
+                return 
             }
-            res.status(200).json({ message: "OTP verified successfully" });
+            SendResponse(res, HTTPStatusCodes.OK, ResponseMessage.SUCCESS,isValid)
         } catch (error) {
             next(error);
         }

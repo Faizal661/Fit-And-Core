@@ -10,13 +10,13 @@ import Google from "../../assets/icons/Google";
 import userSignUpImage from "../../assets/images/img4.jpg";
 import { checkEmailUsername } from "../../services/authService";
 import { AUTH_MESSAGES } from "../../constants/auth.messages";
-import { userNameEmailSchema } from "../../schemas/authSchema";
+import { type UsernameEmailFormData, userNameEmailSchema } from "../../schemas/authSchema";
 import { useSignupContext } from "../../context/SignupContext";
 
 
 
 interface UsernameEmailFormProps {
-  onSuccess: (data: { email: string; username: string }) => void;
+  onSuccess: (data: UsernameEmailFormData) => void;
 }
 
 const UsernameEmailForm: React.FC<UsernameEmailFormProps> = ({ onSuccess }) => {
@@ -46,7 +46,7 @@ const UsernameEmailForm: React.FC<UsernameEmailFormProps> = ({ onSuccess }) => {
     },
   });
 
-  const onSubmit = (values: any) => mutation.mutate(values);
+  const onSubmit = (values:UsernameEmailFormData) => mutation.mutate(values);
 
   return (
     <LoginBody
@@ -77,7 +77,7 @@ const UsernameEmailForm: React.FC<UsernameEmailFormProps> = ({ onSuccess }) => {
           {...register("email")}
           type="email"
           id="email"
-          value="faisalt661@gmail.com"
+          value="mohammedfaizal.t.bca.2@gmail.com"
           className=" border-b-1 border-white mt-2 outline-0 text"
         />
       {errors.email && <p className="text-red-500">{errors.email.message}</p>}
