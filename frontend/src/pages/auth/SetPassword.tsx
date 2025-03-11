@@ -44,7 +44,7 @@ const SetPassword = () => {
           token: data.user.token,
         })
       );
-      console.log("User signed up successfully:", data);
+      // console.log("User signed up successfully:", data);
       resetSignup();
     },
     onError: (error) => {

@@ -3,8 +3,11 @@ import { inject, injectable } from 'tsyringe';
 import { HTTPStatusCodes,ConflictError } from "mern.common";
 import { IAuthenticationService } from '../Interface/IAuthenticationService';
 import { IAuthenticationRepository } from '../../repositories/Interface/IAuthenticationRepository';
-import { sendEmail } from '../../utils/email.service';
+import { sendEmail } from '../../utils/email.util';
 import { randomInt } from 'crypto';
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import { IUserModel } from '../../models/user.models';
 
 @injectable()
 export default class AuthenticationService implements IAuthenticationService {
@@ -17,17 +20,15 @@ export default class AuthenticationService implements IAuthenticationService {
         this.authenticationRepository = authenticationRepository
     }
 
-    async nameEmailCheck(email: string, username: string): Promise<{ available: boolean,username:string,email:string }> {
+    async nameEmailCheck(email: string, username: string): Promise<{ available: boolean,username?:string,email?:string,message:string }> {
         const isUsernameTaken = await this.authenticationRepository.isUsernameTaken(username);
         const isEmailTaken = await this.authenticationRepository.isEmailTaken(email);
-
         if (isUsernameTaken) {
-            throw new ConflictError("Username already taken");
+            return { available: false , message:"Username already taken" };
         }else if ( isEmailTaken){
-            throw new ConflictError("Email already taken");
+            return { available: false , message:"Email already taken" };
         }
-
-        return { available: true , username :username , email:email };
+        return { available: true , username :username , email:email ,message:'Success'};
     }
 
     async sendOtp(email: string): Promise<void> {
@@ -47,4 +48,9 @@ export default class AuthenticationService implements IAuthenticationService {
         // console.log('otp deleted from redis')
         return { success: true, message: "OTP verified successfully" };
     }
+
+    async registerUser(username: string, email: string, password: string): Promise<IUserModel> {
+        const hashedPassword = await bcrypt.hash(password, 10);
+        return await this.authenticationRepository.createUser({ username, email, password: hashedPassword });
+      }
 }

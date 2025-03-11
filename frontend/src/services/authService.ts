@@ -16,5 +16,6 @@ export const sendOtp = async (email: string) => {
 
 export const createUser = async (data: { username: string; email: string; password: string }) => {
   const response = await axios.post(`/auth/register`, data);
-  return response.data; // Expected response: { user: { id, username, email, token } }
+  // console.log('new user data => ',response.data)
+  return response.data; // Expected response: { user: { id, username, email } }
 };

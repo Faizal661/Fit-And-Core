@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { Facebook } from "lucide-react";
+import axios, { AxiosError } from 'axios';
 
 import LoginBody from "../../components/auth/LoginBody";
 import Google from "../../assets/icons/Google";
@@ -38,12 +39,17 @@ const UsernameEmailForm: React.FC<UsernameEmailFormProps> = ({ onSuccess }) => {
         setUserData({ username: data.username, email: data.email });
         onSuccess(data);
       } else {
-        setError("Username or email already exists");
+        setError(data.message);
       }
     },
-    onError: () => {
-      setError("Server error, please try again");
-    },
+    onError: (error: unknown) => {
+      if (axios.isAxiosError(error)) {
+        console.log('error =>', error.response?.data.message);
+        setError(error.response?.data.message || "Server error, please try again");
+      } else {
+        setError("Server error, please try again");
+      }
+    }
   });
 
   const onSubmit = (values:UsernameEmailFormData) => mutation.mutate(values);
@@ -64,7 +70,7 @@ const UsernameEmailForm: React.FC<UsernameEmailFormProps> = ({ onSuccess }) => {
           {...register("username")}
           type="text"
           id="name"
-          value="faizal"
+          value="faizall"
           className=" border-b-1 border-white mt-2 outline-0 text"
         />
         {errors.username && (
@@ -77,8 +83,8 @@ const UsernameEmailForm: React.FC<UsernameEmailFormProps> = ({ onSuccess }) => {
           {...register("email")}
           type="email"
           id="email"
-          value="mohammedfaizal.t.bca.2@gmail.com"
-          className=" border-b-1 border-white mt-2 outline-0 text"
+          value="mohammedfaizal.t.bca.2@gmail.comm"
+          className=" border-b-1 border-white my-2 outline-0 text"
         />
       {errors.email && <p className="text-red-500">{errors.email.message}</p>}
       {error && <p className="text-red-500">{error}</p>}
@@ -90,7 +96,6 @@ const UsernameEmailForm: React.FC<UsernameEmailFormProps> = ({ onSuccess }) => {
           </Link>
         </p>
         <button className="btn-primary mt-10 border-1 rounded-4xl py-2 cursor-pointer">
-          {/* <Link to={"/otp-verify"}>Sign Up</Link> */}
           Sign Up
         </button>
         <div className="flex mt-6 border-b-1 border-slate-400 "></div>

@@ -28,13 +28,18 @@ export default class AuthenticationController implements IAuthenticationControll
         try {
             const { email, username }: { email: string, username: string } = req.body
             const result = await this.authenticationService.nameEmailCheck(email, username);
+            console.log('result',result)
+            if(!result.available){
+                SendResponse(res, HTTPStatusCodes.CONFLICT, result.message)
+                return 
+            }
             await this.authenticationService.sendOtp(email); 
             SendResponse(res, HTTPStatusCodes.OK, ResponseMessage.SUCCESS,result)
         } catch (error: any) {
             next(error);
         }
     }
-    
+     
     async verifyOtp(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const { email, otp } = req.body;
@@ -52,23 +57,17 @@ export default class AuthenticationController implements IAuthenticationControll
     async register(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const { username, email, password } = req.body;
-
+           
             if (!username || !email || !password) {
-                // return res.status(400).json({ message: "All fields are required" });
-              }
-
-            //   const result = await authenticationService.registerUser(username, email, password);
-
-            //   res.cookie("authToken", result.user.token, {
-            //     httpOnly: true,
-            //     secure: process.env.NODE_ENV === "production",
-            //     sameSite: "strict",
-            //   });
-
+                SendResponse(res, HTTPStatusCodes.BAD_REQUEST, ResponseMessage.BAD_REQUEST)
+                return 
+            }
+            const newUser = await this.authenticationService.registerUser(username, email, password);
+            console.log('user created => ',newUser)
+            SendResponse(res, HTTPStatusCodes.CREATED, ResponseMessage.CREATED,{ user: { id: newUser._id, username: newUser.username, email: newUser.email } })
 
         } catch (error) {
             next(error);
         }
     }
 }
-
