@@ -10,6 +10,7 @@ import { type OtpFormData, otpSchema } from "../../schemas/authSchema";
 
 import { verifyOtp, sendOtp } from "../../services/authService";
 import { useSignupContext } from "../../context/SignupContext";
+import { useToast } from "../../context/ToastContext";
 
 interface OtpFormProps {
   onSuccess: () => void;
@@ -22,6 +23,7 @@ const OtpVerification: React.FC<OtpFormProps> = ({ onSuccess }) => {
 
   const { userData } = useSignupContext();
   const [serverError, setServerError] = useState("");
+  const {showToast}=useToast()
 
   const {
     register,
@@ -50,6 +52,8 @@ const OtpVerification: React.FC<OtpFormProps> = ({ onSuccess }) => {
     },
     onError: () => {
       setServerError("Server error, please try again");
+      showToast('error',"Server error, please try again")
+
     },
   });
 

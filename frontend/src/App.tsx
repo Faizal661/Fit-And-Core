@@ -8,11 +8,12 @@ import { useSelector } from "react-redux";
 import { RootState } from "./redux/store";
 import ForgetPassword from "./pages/auth/ResetPassword";
 import SetPassword from "./pages/auth/SetPassword";
-import OtpVerification from "./pages/auth/OtpVerification";
+// import OtpVerification from "./pages/auth/OtpVerification";
 import FloatButton from "../src/components/shared/FloatButton";
 import MenuButton from "../src/components/shared/MenuButton";
 import LandingPage from "./pages/user/LandingPage";
 import Loader from "./components/shared/Loader";
+import ToastContainer from "./components/shared/ToastContainer.tsx";
 
 function App() {
   const user = useSelector((state: RootState) => state.auth.username);
@@ -21,6 +22,7 @@ function App() {
   return (
     <div className="min-h-screen flex flex-col">
       {isLoading && <Loader />}
+      <ToastContainer/>
       <MenuButton />
       <FloatButton />
       <Routes>

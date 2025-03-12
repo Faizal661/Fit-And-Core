@@ -13,6 +13,7 @@ import { checkEmailUsername } from "../../services/authService";
 import { AUTH_MESSAGES } from "../../constants/auth.messages";
 import { type UsernameEmailFormData, userNameEmailSchema } from "../../schemas/authSchema";
 import { useSignupContext } from "../../context/SignupContext";
+import { useToast } from "../../context/ToastContext";
 
 
 
@@ -23,6 +24,7 @@ interface UsernameEmailFormProps {
 const UsernameEmailForm: React.FC<UsernameEmailFormProps> = ({ onSuccess }) => {
   const { setUserData } = useSignupContext();
   const [error, setError] = useState("");
+  const {showToast}=useToast()
 
   const {
     register,
@@ -37,14 +39,14 @@ const UsernameEmailForm: React.FC<UsernameEmailFormProps> = ({ onSuccess }) => {
     onSuccess: (data) => {
       if (data.available) {
         setUserData({ username: data.username, email: data.email });
-        onSuccess(data);
+        showToast('success',AUTH_MESSAGES.OTP_SENT)
+        onSuccess(data); 
       } else {
         setError(data.message);
       }
     },
     onError: (error: unknown) => {
       if (axios.isAxiosError(error)) {
-        console.log('error =>', error.response?.data.message);
         setError(error.response?.data.message || "Server error, please try again");
       } else {
         setError("Server error, please try again");
