@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
@@ -17,8 +18,9 @@ import LoginBody from "../../components/auth/LoginBody";
 import setPasswordImage from "../../assets/images/calisthenics1.jpg";
 
 const SetPassword = () => {
-  const { userData, resetSignup } = useSignupContext();
   const dispatch = useDispatch<AppDispatch>();
+  const navigate=useNavigate()
+  const { userData, resetSignup } = useSignupContext();
   const [serverError, setServerError] = useState("");
 
   const {
@@ -36,15 +38,17 @@ const SetPassword = () => {
   const mutation = useMutation({
     mutationFn: createUser,
     onSuccess: (data) => {
-      dispatch(
-        loginUser({
-          id: data.user.id,
-          email: data.user.email,
-          username: data.user.username,
-          token: data.user.token,
-        })
-      );
-      // console.log("User signed up successfully:", data);
+      // dispatch(
+      //   loginUser({
+      //     id: data.user.id,
+      //     email: data.user.email,
+      //     username: data.user.username,
+      //     token: data.user.token,
+      //   })
+      // );
+      navigate('/login')
+      console.log("User signed up successfully:", data);
+      
       resetSignup();
     },
     onError: (error) => {

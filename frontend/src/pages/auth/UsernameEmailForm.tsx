@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { Facebook } from "lucide-react";
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 
 import LoginBody from "../../components/auth/LoginBody";
 import Google from "../../assets/icons/Google";
@@ -70,7 +70,7 @@ const UsernameEmailForm: React.FC<UsernameEmailFormProps> = ({ onSuccess }) => {
           {...register("username")}
           type="text"
           id="name"
-          value="faizall"
+          value="faizal"
           className=" border-b-1 border-white mt-2 outline-0 text"
         />
         {errors.username && (
@@ -83,7 +83,7 @@ const UsernameEmailForm: React.FC<UsernameEmailFormProps> = ({ onSuccess }) => {
           {...register("email")}
           type="email"
           id="email"
-          value="mohammedfaizal.t.bca.2@gmail.comm"
+          value="mohammedfaizal.t.bca.2@gmail.com"
           className=" border-b-1 border-white my-2 outline-0 text"
         />
       {errors.email && <p className="text-red-500">{errors.email.message}</p>}
