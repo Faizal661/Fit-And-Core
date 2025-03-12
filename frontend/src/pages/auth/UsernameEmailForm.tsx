@@ -72,7 +72,7 @@ const UsernameEmailForm: React.FC<UsernameEmailFormProps> = ({ onSuccess }) => {
           {...register("username")}
           type="text"
           id="name"
-          value="faizal"
+          // value="faizal"
           className=" border-b-1 border-white mt-2 outline-0 text"
         />
         {errors.username && (
@@ -85,7 +85,7 @@ const UsernameEmailForm: React.FC<UsernameEmailFormProps> = ({ onSuccess }) => {
           {...register("email")}
           type="email"
           id="email"
-          value="mohammedfaizal.t.bca.2@gmail.com"
+          // value="mohammedfaizal.t.bca.2@gmail.com"
           className=" border-b-1 border-white my-2 outline-0 text"
         />
       {errors.email && <p className="text-red-500">{errors.email.message}</p>}

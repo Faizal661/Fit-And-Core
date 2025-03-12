@@ -13,5 +13,6 @@ const authenticationController = container.resolve<IAuthenticationController>("A
 router.post('/check-email-username',(req,res,next)=>authenticationController.checkUsernameEmail(req,res,next))
 router.post('/verify-otp',(req,res,next)=>authenticationController.verifyOtp(req,res,next))
 router.post('/register',(req,res,next)=>authenticationController.register(req,res,next))
+router.post('/login',(req,res,next)=>authenticationController.login(req,res,next))
 
 export default router 

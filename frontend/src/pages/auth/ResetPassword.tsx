@@ -13,7 +13,7 @@ const ResetPassword: React.FC  = () => {
       <input type="email" id="email" className=" border-b-1 border-white mt-2 outline-0 text" />
      
       <p className="text-light mt-8">
-        Back to Login{" "}
+        Back to Login
         <Link to={"/login"} className="underline">
           Click here!
         </Link>

@@ -5,9 +5,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { createUser } from "../../services/authService";
 import { useSignupContext } from "../../context/SignupContext";
-// import { useDispatch } from "react-redux";
-// import { loginUser } from "../../redux/slices/authSlice";
-// import { AppDispatch } from "../../redux/store";
 import {
   passwordSchema,
   type PasswordFormData,
@@ -19,7 +16,6 @@ import LoginBody from "../../components/auth/LoginBody";
 import setPasswordImage from "../../assets/images/calisthenics1.jpg";
 
 const SetPassword = () => {
-  // const dispatch = useDispatch<AppDispatch>();
   const navigate=useNavigate()
   const {showToast}=useToast()
   const { userData, resetSignup } = useSignupContext();
@@ -40,14 +36,6 @@ const SetPassword = () => {
   const mutation = useMutation({
     mutationFn: createUser,
     onSuccess: (data) => {
-      // dispatch(
-      //   loginUser({
-      //     id: data.user.id,
-      //     email: data.user.email,
-      //     username: data.user.username,
-      //     token: data.user.token,
-      //   })
-      // );
       navigate('/login')
       showToast('success',AUTH_MESSAGES.ACCOUNT_CREATED)
       // console.log("User signed up successfully:", data);
