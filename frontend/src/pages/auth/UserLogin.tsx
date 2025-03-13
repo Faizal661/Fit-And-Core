@@ -12,12 +12,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { loginUser } from "../../services/authService";
 import { useDispatch } from "react-redux";
-// import { setAuth } from "../../redux/slices/authSlice";
+import { setAuth } from "../../redux/slices/authSlice";
+import { useToast } from "../../context/ToastContext";
 
 const UserLogin: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [serverError, setServerError] = useState("");
+  const {showToast}=useToast()
 
   const {
     register,
@@ -34,19 +36,20 @@ const UserLogin: React.FC = () => {
   const loginMutation = useMutation({
     mutationFn: loginUser,
     onSuccess: (data) => {
-      // dispatch(
-      //   setAuth({
-      //     user: data.user,
-      //     token: data.token,
-      //   })
-      // );
+      dispatch(
+        setAuth({
+          user: data.user,
+          accessToken: data.accessToken,
+        })
+      );
+      showToast("success",AUTH_MESSAGES.LOGIN_SUCCESS)
       navigate("/");
     },
     onError: (error: any) => {
-      if (error?.response?.data?.message) {
-        setServerError(error.response.data.message);
+      if (error?.response?.data?.error) {
+        setServerError(error?.response?.data?.error);        
       } else {
-        setServerError("Login failed. Please check your credentials.");
+        setServerError(AUTH_MESSAGES.LOGIN_FAILED);
       }
     },
   });
@@ -73,13 +76,14 @@ const UserLogin: React.FC = () => {
           {...register("email")}
           type="email"
           id="email"
+          value="faisalt661@gmail.com"
           className={`border-b-1 border-white mt-2 outline-0 text pb-1 ${
-            errors.email ? "border-red-500" : ""
+            errors.email ? "border-b-red-500" : ""
           }`}
-        />
+          />
         {errors.email && (
-          <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
-        )}
+          <p className="text-red-500 text-md mt-1">{errors.email.message}</p>
+          )}
 
         <label htmlFor="password" className="mt-4 text-slate-400">
           PASSWORD
@@ -88,16 +92,17 @@ const UserLogin: React.FC = () => {
           {...register("password")}
           type="password"
           id="password"
+          value="Qwert@12"
           className={`border-b-1 border-white mt-2 outline-0 pb-1 ${
-            errors.password ? "border-red-500" : ""
+            errors.password ? "border-b-red-500" : ""
           }`}
         />
         {errors.password && (
-          <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
+          <p className="text-red-500 text-md mt-1">{errors.password.message}</p>
         )}
 
         {serverError && (
-          <p className="text-red-500 text-sm mt-4">{serverError}</p>
+          <p className="text-red-500 text-md mt-4">{serverError}</p>
         )}
 
         <p className="text-light mt-6">

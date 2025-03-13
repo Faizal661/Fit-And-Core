@@ -7,13 +7,13 @@ interface User {
 }
 interface AuthState {
   user: User | null;
-  token: string | null;
+  accessToken: string | null;
   isAuthenticated: boolean;
 }
 
 const initialState: AuthState = {
   user: null,
-  token: null,
+  accessToken: null,
   isAuthenticated: false,
 };
 
@@ -24,19 +24,19 @@ const authSlice = createSlice({
     setAuth: (
       state,
       action: PayloadAction<{
-        user: User; token: string
+        user: User; accessToken: string
       }>
     ) => {
       state.user = action.payload.user;
-      state.token = action.payload.token;
+      state.accessToken = action.payload.accessToken;
       state.isAuthenticated = true;
     },
     updateToken: (state, action: PayloadAction<string>) => {
-      state.token = action.payload;
+      state.accessToken = action.payload;
     },
     clearAuth: (state) => {
       state.user = null;
-      state.token = null;
+      state.accessToken = null;
       state.isAuthenticated = false;
     },
   },

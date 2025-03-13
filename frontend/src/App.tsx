@@ -16,7 +16,7 @@ import Loader from "./components/shared/Loader";
 import ToastContainer from "./components/shared/ToastContainer.tsx";
 
 function App() {
-  const user = useSelector((state: RootState) => state.auth.username);
+  const user = useSelector((state: RootState) => state.auth.user?.username);
   const isLoading = useSelector((state: RootState) => state.loading.isLoading);
 
   return (
@@ -28,12 +28,10 @@ function App() {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={user ? <LandingPage /> : <UserLogin />} />
-        <Route path="/signup" element={<UserSignUp />} />
+        <Route path="/signup" element={user ? <LandingPage /> : <UserSignUp />} />
         <Route path="/forget-password" element={<ForgetPassword />} />
-        {/* <Route path="/otp-verify" element={<OtpVerification />} /> */}
         <Route path="/set-password" element={<SetPassword />} />
         <Route path="/trainer/login" element={<TrainerLogin />} />
-        {/* <Route path="/trainer/login" element={<TrainerLogin />} /> */}
         <Route path="/admin/login" element={<AdminLogin />} />
       </Routes>
       <Footer />

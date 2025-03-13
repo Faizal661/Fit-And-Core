@@ -1,13 +1,14 @@
+import { LoginCredentials, LoginResponse } from "../types/auth/login";
 import axios from  "../utils/axios"
 
 export const checkEmailUsername = async (data: { username: string; email: string }) => {
   const response = await axios.post(`/auth/check-email-username`, data);
-  return response.data; // Expected response: { available: boolean, username: string, email: string }
+  return response.data; // { available: boolean, username: string, email: string }
 };
 
 export const verifyOtp = async (data: { email: string; otp: string }) => {
   const response = await axios.post(`/auth/verify-otp`, data);
-  return response.data; // Expected response: { success: boolean }
+  return response.data; // { success: boolean }
 };
 
 export const sendOtp = async (email: string) => {
@@ -17,39 +18,22 @@ export const sendOtp = async (email: string) => {
 export const createUser = async (data: { username: string; email: string; password: string }) => {
   const response = await axios.post(`/auth/register`, data);
   // console.log('new user data => ',response.data)
-  return response.data; // Expected response: { user: { id, username, email } }
+  return response.data; // { user: { id, username, email } }
 };
 
-// Types
-interface LoginCredentials {
-  email: string;
-  password: string;
-}
 
-interface LoginResponse {
-  user: {
-    id: string;
-    email: string;
-    username: string;
-  };
-  token: string;
-  refreshToken: string;
-}
-
-// Login user
 export const loginUser = async (credentials: LoginCredentials): Promise<LoginResponse> => {
   try {
     const response = await axios.post(`/auth/login`, credentials, {
-      withCredentials: true, // Important for cookies if using refresh tokens
+      withCredentials: true,
     });
-    console.log('credentials =>',credentials)
     return response.data;
   } catch (error) {
     throw error;
   }
 };
 
-// Refresh token
+// // Refresh token
 export const refreshAccessToken = async (): Promise<{ token: string }> => {
   try {
     const response = await axios.post(
@@ -57,17 +41,19 @@ export const refreshAccessToken = async (): Promise<{ token: string }> => {
       {},
       { withCredentials: true }
     );
+    // accessToken = response.data.accessToken; // Store new access token
+    // return accessToken;
     return response.data;
   } catch (error) {
     throw error;
   }
 };
 
-// Logout user
-export const logoutUser = async (): Promise<void> => {
-  try {
-    await axios.post(`/auth/logout`, {}, { withCredentials: true });
-  } catch (error) {
-    throw error;
-  }
-};
+// // Logout user
+// export const logoutUser = async (): Promise<void> => {
+//   try {
+//     await axios.post(`/auth/logout`, {}, { withCredentials: true });
+//   } catch (error) {
+//     throw error;
+//   }
+// };

@@ -47,12 +47,12 @@ const OtpVerification: React.FC<OtpFormProps> = ({ onSuccess }) => {
       if (data.success) {
         onSuccess();
       } else {
-        setServerError("Invalid OTP code");
+        setServerError(AUTH_MESSAGES.INVALID_OTP);
       }
     },
     onError: () => {
-      setServerError("Server error, please try again");
-      showToast('error',"Server error, please try again")
+      setServerError(AUTH_MESSAGES.SERVER_ERROR);
+      showToast('error',AUTH_MESSAGES.SERVER_ERROR)
 
     },
   });

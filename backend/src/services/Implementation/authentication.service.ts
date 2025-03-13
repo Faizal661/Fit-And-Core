@@ -8,6 +8,8 @@ import { randomInt } from 'crypto';
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { IUserModel } from '../../models/user.models';
+import { generateAccessToken, generateRefreshToken } from "../../utils/token.util";
+import { UnauthorizedError } from "mern.common";
 
 @injectable()
 export default class AuthenticationService implements IAuthenticationService {
@@ -52,5 +54,32 @@ export default class AuthenticationService implements IAuthenticationService {
     async registerUser(username: string, email: string, password: string): Promise<IUserModel> {
         const hashedPassword = await bcrypt.hash(password, 10);
         return await this.authenticationRepository.createUser({ username, email, password: hashedPassword });
+    }
+
+    async login(email: string, password: string): Promise<{user:{id:string, username:string,email:string},accessToken:string, refreshToken:string }> {
+        const user = await this.authenticationRepository.findByEmail(email);
+        if (!user) {
+          throw new UnauthorizedError("Invalid email or password");
+        }
+        
+        const isPasswordValid = await bcrypt.compare(password, user.password!);
+        if (!isPasswordValid) {
+          throw new UnauthorizedError("Invalid email or password");
+        }
+    
+        const accessToken = generateAccessToken(user);
+        const refreshToken = generateRefreshToken(user);
+    
+        return {
+          user: {
+            id: user._id as string,
+            username: user.username,
+            email: user.email,
+          },
+          accessToken,
+          refreshToken,
+        };
       }
+
+      
 }

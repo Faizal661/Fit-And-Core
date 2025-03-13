@@ -73,7 +73,9 @@ const UsernameEmailForm: React.FC<UsernameEmailFormProps> = ({ onSuccess }) => {
           type="text"
           id="name"
           // value="faizal"
-          className=" border-b-1 border-white mt-2 outline-0 text"
+          className={`border-b-1 border-white mt-2 outline-0 text ${
+            errors.username ? "border-b-red-500" : ""
+          }`}
         />
         {errors.username && (
           <p className="text-red-500">{errors.username.message}</p>
@@ -86,7 +88,9 @@ const UsernameEmailForm: React.FC<UsernameEmailFormProps> = ({ onSuccess }) => {
           type="email"
           id="email"
           // value="mohammedfaizal.t.bca.2@gmail.com"
-          className=" border-b-1 border-white my-2 outline-0 text"
+          className={`border-b-1 border-white my-2 outline-0 text ${
+            errors.email ? "border-b-red-500" : ""
+          }`}
         />
       {errors.email && <p className="text-red-500">{errors.email.message}</p>}
       {error && <p className="text-red-500">{error}</p>}

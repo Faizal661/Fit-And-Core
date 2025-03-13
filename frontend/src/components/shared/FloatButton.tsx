@@ -5,7 +5,7 @@ import { CircleUserRound, X } from "lucide-react";
 import { RootState } from "../../redux/store";
 
 const FloatButton = () => {
-  const user = useSelector((state:RootState) => state.auth.username);
+  const user = useSelector((state:RootState) => state.auth.user?.username);
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();

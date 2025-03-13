@@ -3,6 +3,7 @@ import UserModel, { IUserModel } from "../../models/user.models";
 import { BaseRepository } from "./base.repository";
 import { IAuthenticationRepository } from "../Interface/IAuthenticationRepository";
 import { RedisClientType } from "redis";
+import { IUser } from "../../types/user.types";
 
 @injectable()
 export class AuthenticationRepository
@@ -40,5 +41,9 @@ export class AuthenticationRepository
 
   async createUser(data: Partial<IUserModel>): Promise<IUserModel> {
     return await UserModel.create(data);
+  }
+
+   async findByEmail(email: string): Promise<IUserModel | null> {
+    return UserModel.findOne({ email });
   }
 }

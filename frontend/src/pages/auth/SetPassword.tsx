@@ -35,14 +35,14 @@ const SetPassword = () => {
 
   const mutation = useMutation({
     mutationFn: createUser,
-    onSuccess: (data) => {
+    onSuccess: () => {
       navigate('/login')
       showToast('success',AUTH_MESSAGES.ACCOUNT_CREATED)
       // console.log("User signed up successfully:", data);
       resetSignup();
     },
-    onError: (error) => {
-      console.error("Signup failed:", error);
+    onError: () => {
+      showToast('error',"Server error, please try again")
     },
   });
 
