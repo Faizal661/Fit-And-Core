@@ -1,20 +1,41 @@
 import { useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { CircleUserRound, X } from "lucide-react";
 import { RootState } from "../../redux/store";
+import { logoutUser } from "../../services/authService";
+import { useToast } from "../../context/ToastContext";
+import { AUTH_MESSAGES } from "../../constants/auth.messages";
+import { clearAuth } from "../../redux/slices/authSlice";
 
 const FloatButton = () => {
-  const user = useSelector((state:RootState) => state.auth.user?.username);
+  const user = useSelector((state: RootState) => state.auth.user?.username);
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { showToast } = useToast();
 
   const handleButtonClick = () => {
     if (user) {
       setSidebarOpen(!sidebarOpen);
     } else {
       navigate("/login");
+    }
+  };
+
+  const handleLogout = async () => {
+    const logout = await logoutUser();
+    try {
+      if (logout === true) {
+        dispatch(clearAuth());
+        showToast("success", AUTH_MESSAGES.LOGOUT_SUCCESS);
+        navigate("/login");
+      } else {
+        showToast("error", AUTH_MESSAGES.SERVER_ERROR);
+      }
+    } catch (error) {
+      showToast("error", AUTH_MESSAGES.SERVER_ERROR);
     }
   };
 
@@ -72,22 +93,58 @@ const FloatButton = () => {
 
             {/* Navigation links */}
             <nav className="pt-3 space-y-3 text-md flex flex-col font-semibold">
-              <Link to="/profile" className=" text-blue-950 hover:text-blue-700">MY PROFILE</Link>
-              <Link to="/trainers" className=" text-gray-950 hover:text-blue-700">MY TRAINERS</Link>
-              <Link to="/communities" className=" text-gray-950 hover:text-blue-700">MY COMMUNITIES</Link>
-              <Link to="/progress" className=" text-gray-950 hover:text-blue-700">MY PROGRESS</Link>
-              <Link to="/nutrition" className=" text-gray-950 hover:text-blue-700">NUTRITION TRACKING</Link>
-              <Link to="/notifications" className=" text-gray-950 hover:text-blue-700">NOTIFICATIONS</Link>
-              <Link to="/history" className=" text-gray-950 hover:text-blue-700">HISTORY</Link>
+              <Link
+                to="/profile"
+                className=" text-blue-950 hover:text-blue-700"
+              >
+                MY PROFILE
+              </Link>
+              <Link
+                to="/trainers"
+                className=" text-gray-950 hover:text-blue-700"
+              >
+                MY TRAINERS
+              </Link>
+              <Link
+                to="/communities"
+                className=" text-gray-950 hover:text-blue-700"
+              >
+                MY COMMUNITIES
+              </Link>
+              <Link
+                to="/progress"
+                className=" text-gray-950 hover:text-blue-700"
+              >
+                MY PROGRESS
+              </Link>
+              <Link
+                to="/nutrition"
+                className=" text-gray-950 hover:text-blue-700"
+              >
+                NUTRITION TRACKING
+              </Link>
+              <Link
+                to="/notifications"
+                className=" text-gray-950 hover:text-blue-700"
+              >
+                NOTIFICATIONS
+              </Link>
+              <Link
+                to="/history"
+                className=" text-gray-950 hover:text-blue-700"
+              >
+                HISTORY
+              </Link>
             </nav>
 
             <div className="mt-6 pt-4 border-t border-gray-200">
-              <Link
-                to="/logout"
+              <button
+                type="button"
                 className="text-sm text-gray-950 hover:text-blue-700"
+                onClick={() => handleLogout()}
               >
                 SIGN OUT
-              </Link>
+              </button>
             </div>
           </div>
         </div>

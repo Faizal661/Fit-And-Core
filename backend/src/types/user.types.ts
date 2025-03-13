@@ -4,7 +4,7 @@ export interface IUser {
     email: string;
     password: string;
     isBlocked: Boolean;
-    role: "user" | "trainer";
+    role: "user" | "trainer"|"admin";
     profilePicture?: string;
     dateOfBirth: Date;
     createdAt: Date;

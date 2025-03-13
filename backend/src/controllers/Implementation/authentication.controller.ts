@@ -107,8 +107,17 @@ export default class AuthenticationController
       });
       SendResponse(res, HTTPStatusCodes.OK, ResponseMessage.SUCCESS, {
         user,
-        accessToken
+        accessToken,
       });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async logout(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      console.log(req);
+      return 
     } catch (error) {
       next(error);
     }

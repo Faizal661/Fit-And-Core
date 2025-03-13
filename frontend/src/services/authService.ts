@@ -33,7 +33,7 @@ export const loginUser = async (credentials: LoginCredentials): Promise<LoginRes
   }
 };
 
-// // Refresh token
+// Refresh token
 export const refreshAccessToken = async (): Promise<{ token: string }> => {
   try {
     const response = await axios.post(
@@ -49,11 +49,12 @@ export const refreshAccessToken = async (): Promise<{ token: string }> => {
   }
 };
 
-// // Logout user
-// export const logoutUser = async (): Promise<void> => {
-//   try {
-//     await axios.post(`/auth/logout`, {}, { withCredentials: true });
-//   } catch (error) {
-//     throw error;
-//   }
-// };
+// Logout user
+export const logoutUser = async (): Promise<boolean> => {
+  try {
+    const data =await axios.post(`/auth/logout`, {}, { withCredentials: true });
+    return true
+  } catch (error) {
+    throw error;
+  }
+};

@@ -13,4 +13,8 @@ export const AUTH_MESSAGES = {
     LOGIN_FAILED:"Login failed. Please check your credentials.",
     LOGIN_SUCCESS:"Login success",
     SERVER_ERROR:"Server error, please try again",
+    
+    LOGOUT_SUCCESS:"Log out success",
+
+
 };
