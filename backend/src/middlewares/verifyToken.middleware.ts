@@ -1,21 +1,30 @@
-import  jwt  from "jsonwebtoken"
-import { Request, Response, NextFunction } from 'express';
-import { CustomError } from "mern.common";
-import dotenv from 'dotenv'
-dotenv.config()
+import jwt from "jsonwebtoken";
+import { Request, Response, NextFunction } from "express";
+import {
+  UnauthorizedError,
+} from "mern.common";
+import dotenv from "dotenv";
+dotenv.config();
 
-const ACCESS_TOKEN=process.env.ACCESS_TOKEN_SECRET||''
+const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET!;
 
-// export const verifyToken =(req: Request, res: Response, next: NextFunction)=>{
-//     const token =req.cookies.access_token;
+export const verifyToken = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const accessToken = req.headers.authorization?.split(" ")[1];
+    // const 
 
-//     if(!token) return next(new CustomError("You need to Login first...",401))
+    if (!accessToken) {
+      throw new UnauthorizedError("Access denied. No token provided.");
+    }
+    const decoded = jwt.verify(accessToken!, ACCESS_TOKEN_SECRET);
+    // req.user = decoded;
+    next();
 
-//     jwt.verify(token,ACCESS_TOKEN ,(err,user)=>{
-//         if(err) return next( new CustomError('Token is invalid !!!',401))
-
-//         // req.user=user
-//         next();
-//     })
-
-// }
+  } catch (error) {
+    res.status(401).json({ error: "Invalid token" });
+  }
+};
