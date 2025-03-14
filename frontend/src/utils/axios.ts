@@ -2,6 +2,7 @@ import axios from "axios";
 import { store } from "../redux/store";
 import { startLoading, stopLoading } from "../redux/slices/loadingSlice";
 import { refreshAccessToken } from "../services/authService";
+import {  updateToken } from "../redux/slices/authSlice";
 
 const api = axios.create({
   baseURL: "http://localhost:5000/api",
@@ -10,12 +11,14 @@ const api = axios.create({
 
 api.interceptors.request.use(
   (config) => {
-    const accessToken = localStorage.getItem("accessToken");
-    console.log("inside axios interceptor req", accessToken);
+    store.dispatch(startLoading());
+
+
+    const accessToken = store.getState().auth.accessToken;
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
-    store.dispatch(startLoading());
+
     return config;
   },
   (error) => {
@@ -26,28 +29,30 @@ api.interceptors.request.use(
 
 api.interceptors.response.use(
   (response) => {
-     console.log('inside axios interceptor response...',response.config)
+    console.log("RESPONSE axios interceptor response...", response);
     store.dispatch(stopLoading());
     return response;
   },
   async (error) => {
+    
     store.dispatch(stopLoading());
-
+    
     const originalRequest = error.config;
 
+    
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
         const newToken = await refreshAccessToken();
-        //setAccessToken(newToken);
+        store.dispatch(updateToken(newToken))
         originalRequest.headers.Authorization = `Bearer ${newToken}`;
-        return axios(originalRequest); 
+        return axios(originalRequest);
       } catch (err) {
         console.error("Session expired, please login again");
         return Promise.reject(err);
       }
     }
-
+    
     if (
       error.response?.status === 401 &&
       !window.location.pathname.includes("/login")

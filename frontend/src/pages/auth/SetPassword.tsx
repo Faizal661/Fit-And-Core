@@ -18,7 +18,7 @@ import setPasswordImage from "../../assets/images/calisthenics1.jpg";
 const SetPassword = () => {
   const navigate=useNavigate()
   const {showToast}=useToast()
-  const { userData, resetSignup } = useSignupContext();
+  const {userData, resetSignup } = useSignupContext();
   const [serverError, setServerError] = useState("");
 
   const {

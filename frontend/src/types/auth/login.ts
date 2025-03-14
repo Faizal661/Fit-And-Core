@@ -11,6 +11,5 @@ export interface LoginCredentials {
       username: string;
     };
     accessToken: string;
-    refreshToken: string;
   }
   

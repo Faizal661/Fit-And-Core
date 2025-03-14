@@ -3,7 +3,12 @@ import { inject, injectable } from "tsyringe";
 
 import { IAuthenticationController } from "../Interface/IAuthenticationController";
 import { IAuthenticationService } from "../../services/Interface/IAuthenticationService";
-import { HTTPStatusCodes, ResponseMessage, SendResponse } from "mern.common";
+import {
+  HTTPStatusCodes,
+  ResponseMessage,
+  SendResponse,
+  UnauthorizedError,
+} from "mern.common";
 
 @injectable()
 export default class AuthenticationController
@@ -99,7 +104,6 @@ export default class AuthenticationController
       const { user, accessToken, refreshToken } =
         await this.authenticationService.login(email, password);
 
-      //   Set refresh token in HTTP-only cookie
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
@@ -116,8 +120,38 @@ export default class AuthenticationController
 
   async logout(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      console.log(req);
-      return 
+      res.clearCookie("refreshToken");
+      SendResponse(res, HTTPStatusCodes.OK, ResponseMessage.SUCCESS);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async refreshToken(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const refreshToken = req.cookies.refreshToken;
+      console.log("refresh Token...=>", refreshToken);
+      if (!refreshToken) {
+        throw new UnauthorizedError("Refresh token not found");
+      }
+
+      const { newAccessToken, newRefreshToken } =
+        await this.authenticationService.refreshTokens(refreshToken);
+
+        console.log('final new acc token and refresh token  ,,,,',newAccessToken,'       ',newRefreshToken)
+
+      res.cookie("refreshToken", newRefreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+      });
+      SendResponse(res, HTTPStatusCodes.OK, ResponseMessage.SUCCESS, {
+        newAccessToken,
+      });
     } catch (error) {
       next(error);
     }

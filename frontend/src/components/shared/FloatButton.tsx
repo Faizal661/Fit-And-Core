@@ -7,6 +7,7 @@ import { logoutUser } from "../../services/authService";
 import { useToast } from "../../context/ToastContext";
 import { AUTH_MESSAGES } from "../../constants/auth.messages";
 import { clearAuth } from "../../redux/slices/authSlice";
+import { persistor } from "../../redux/store";
 
 const FloatButton = () => {
   const user = useSelector((state: RootState) => state.auth.user?.username);
@@ -25,10 +26,11 @@ const FloatButton = () => {
   };
 
   const handleLogout = async () => {
-    const logout = await logoutUser();
     try {
+      const logout = await logoutUser();
       if (logout === true) {
         dispatch(clearAuth());
+        await persistor.purge();
         showToast("success", AUTH_MESSAGES.LOGOUT_SUCCESS);
         navigate("/login");
       } else {

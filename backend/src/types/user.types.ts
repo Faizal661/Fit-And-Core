@@ -10,3 +10,13 @@ export interface IUser {
     createdAt: Date;
     updatedAt: Date;
 } 
+
+
+export interface jwtDecoded{
+    id:string,
+    email:string,
+    role:"user" | "trainer"|"admin",
+    iat:number,
+    exp:number
+
+}

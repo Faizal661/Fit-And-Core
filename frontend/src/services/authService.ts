@@ -23,27 +23,21 @@ export const createUser = async (data: { username: string; email: string; passwo
 
 
 export const loginUser = async (credentials: LoginCredentials): Promise<LoginResponse> => {
-  try {
     const response = await axios.post(`/auth/login`, credentials, {
       withCredentials: true,
     });
     return response.data;
-  } catch (error) {
-    throw error;
-  }
 };
 
 // Refresh token
-export const refreshAccessToken = async (): Promise<{ token: string }> => {
+export const refreshAccessToken = async (): Promise<string> => {
   try {
     const response = await axios.post(
       `/auth/refresh-token`,
       {},
       { withCredentials: true }
     );
-    // accessToken = response.data.accessToken; // Store new access token
-    // return accessToken;
-    return response.data;
+    return response.data.newAccessToken;
   } catch (error) {
     throw error;
   }
@@ -53,6 +47,7 @@ export const refreshAccessToken = async (): Promise<{ token: string }> => {
 export const logoutUser = async (): Promise<boolean> => {
   try {
     const data =await axios.post(`/auth/logout`, {}, { withCredentials: true });
+    console.log('logout successsfulllyy...............',data)
     return true
   } catch (error) {
     throw error;
