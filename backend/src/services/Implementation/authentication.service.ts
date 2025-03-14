@@ -121,20 +121,10 @@ export default class AuthenticationService implements IAuthenticationService {
   }
 
   async refreshTokens(
-    refreshToken: string
+    email: string
   ): Promise<{ newAccessToken: string; newRefreshToken: string }> {
-    const decoded = jwt.verify(
-      refreshToken,
-      process.env.REFRESH_TOKEN_SECRET!
-    ) as JwtPayload;
 
-    console.log("decoded refresh token....", decoded);
-
-    if (!decoded.id || !decoded.email || !decoded.role) {
-      throw new UnauthorizedError("Invalid refresh token");
-    }
-
-    const user = await this.authenticationRepository.findByEmail(decoded.email);
+    const user = await this.authenticationRepository.findByEmail(email);
     if (!user) {
       throw new UnauthorizedError("User not found");
     }

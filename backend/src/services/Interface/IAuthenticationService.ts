@@ -6,5 +6,5 @@ export interface IAuthenticationService {
     verifyOtp(email: string, otp: string): Promise<{success:boolean,message:string}>;
     registerUser(username: string, email: string, password: string): Promise<IUserModel>
     login(email: string, password: string): Promise<{user:{id:string, username:string,email:string},accessToken:string, refreshToken:string }> 
-    refreshTokens(refreshToken:string): Promise<{newAccessToken:string, newRefreshToken:string }> 
+    refreshTokens(email:string): Promise<{newAccessToken:string, newRefreshToken:string }> 
 }

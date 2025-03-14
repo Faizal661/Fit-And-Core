@@ -32,6 +32,7 @@ export const loginUser = async (credentials: LoginCredentials): Promise<LoginRes
 // Refresh token
 export const refreshAccessToken = async (): Promise<string> => {
   try {
+    console.log('refresh token USED TO GET NEW ACCESS TOEKN')
     const response = await axios.post(
       `/auth/refresh-token`,
       {},

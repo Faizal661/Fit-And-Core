@@ -28,7 +28,7 @@ const FloatButton = () => {
   const handleLogout = async () => {
     try {
       const logout = await logoutUser();
-      if (logout === true) {
+      if (logout) {
         dispatch(clearAuth());
         await persistor.purge();
         showToast("success", AUTH_MESSAGES.LOGOUT_SUCCESS);

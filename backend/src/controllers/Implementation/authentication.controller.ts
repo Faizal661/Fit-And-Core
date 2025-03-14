@@ -120,6 +120,7 @@ export default class AuthenticationController
 
   async logout(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
+      console.log('Log Out controller reach')
       res.clearCookie("refreshToken");
       SendResponse(res, HTTPStatusCodes.OK, ResponseMessage.SUCCESS);
     } catch (error) {
@@ -133,16 +134,12 @@ export default class AuthenticationController
     next: NextFunction
   ): Promise<void> {
     try {
-      const refreshToken = req.cookies.refreshToken;
-      console.log("refresh Token...=>", refreshToken);
-      if (!refreshToken) {
-        throw new UnauthorizedError("Refresh token not found");
+      if (!req.user) {
+        throw new UnauthorizedError("User not authenticated");
       }
 
       const { newAccessToken, newRefreshToken } =
-        await this.authenticationService.refreshTokens(refreshToken);
-
-        console.log('final new acc token and refresh token  ,,,,',newAccessToken,'       ',newRefreshToken)
+        await this.authenticationService.refreshTokens(req.user.email);
 
       res.cookie("refreshToken", newRefreshToken, {
         httpOnly: true,
