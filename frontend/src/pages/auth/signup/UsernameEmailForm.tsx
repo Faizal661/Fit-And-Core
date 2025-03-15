@@ -6,14 +6,14 @@ import { Link } from "react-router-dom";
 import { Facebook } from "lucide-react";
 import axios from 'axios';
 
-import LoginBody from "../../components/auth/LoginBody";
-import Google from "../../assets/icons/Google";
-import userSignUpImage from "../../assets/images/img4.jpg";
-import { checkEmailUsername } from "../../services/authService";
-import { AUTH_MESSAGES } from "../../constants/auth.messages";
-import { type UsernameEmailFormData, userNameEmailSchema } from "../../schemas/authSchema";
-import { useSignupContext } from "../../context/SignupContext";
-import { useToast } from "../../context/ToastContext";
+import LoginBody from "../../../components/auth/LoginBody";
+import Google from "../../../assets/icons/Google";
+import userSignUpImage from "../../../assets/images/img4.jpg";
+import { checkEmailUsername } from "../../../services/authService";
+import { AUTH_MESSAGES } from "../../../constants/auth.messages";
+import { type UsernameEmailFormData, userNameEmailSchema } from "../../../schemas/authSchema";
+import { useSignupContext } from "../../../context/SignupContext";
+import { useToast } from "../../../context/ToastContext";
 
 
 

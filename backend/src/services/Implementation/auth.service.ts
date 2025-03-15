@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import { inject, injectable } from "tsyringe";
 import { HTTPStatusCodes, ConflictError } from "mern.common";
-import { IAuthenticationService } from "../Interface/IAuthenticationService";
-import { IAuthenticationRepository } from "../../repositories/Interface/IAuthenticationRepository";
+import { IAuthService } from "../Interface/IAuthService";
+import { IAuthRepository } from "../../repositories/Interface/IAuthRepository";
 import { sendEmail } from "../../utils/email.util";
 import { randomInt } from "crypto";
 import bcrypt from "bcryptjs";
@@ -16,14 +16,14 @@ import { UnauthorizedError } from "mern.common";
 import { jwtDecoded } from "../../types/user.types";
 
 @injectable()
-export default class AuthenticationService implements IAuthenticationService {
-  private authenticationRepository: IAuthenticationRepository;
+export default class authService implements IAuthService {
+  private authRepository: IAuthRepository;
 
   constructor(
-    @inject("AuthenticationRepository")
-    authenticationRepository: IAuthenticationRepository
+    @inject("AuthRepository")
+    authRepository: IAuthRepository
   ) {
-    this.authenticationRepository = authenticationRepository;
+    this.authRepository = authRepository;
   }
 
   async nameEmailCheck(
@@ -35,12 +35,8 @@ export default class AuthenticationService implements IAuthenticationService {
     email?: string;
     message: string;
   }> {
-    const isUsernameTaken = await this.authenticationRepository.isUsernameTaken(
-      username
-    );
-    const isEmailTaken = await this.authenticationRepository.isEmailTaken(
-      email
-    );
+    const isUsernameTaken = await this.authRepository.isUsernameTaken(username);
+    const isEmailTaken = await this.authRepository.isEmailTaken(email);
     if (isUsernameTaken) {
       return { available: false, message: "Username already taken" };
     } else if (isEmailTaken) {
@@ -57,7 +53,7 @@ export default class AuthenticationService implements IAuthenticationService {
   async sendOtp(email: string): Promise<void> {
     const otp = randomInt(100000, 999999).toString();
     console.log("otp->", otp);
-    await this.authenticationRepository.storeOtp(email, otp);
+    await this.authRepository.storeOtp(email, otp);
     await sendEmail(email, otp);
   }
 
@@ -65,12 +61,12 @@ export default class AuthenticationService implements IAuthenticationService {
     email: string,
     otp: string
   ): Promise<{ success: boolean; message: string }> {
-    const storedOtp = await this.authenticationRepository.getOtp(email);
+    const storedOtp = await this.authRepository.getOtp(email);
     // console.log('redisOtp=>',storedOtp)
     if (!storedOtp || storedOtp !== otp) {
       return { success: false, message: "Invalid or expired OTP" };
     }
-    await this.authenticationRepository.deleteOtp(email);
+    await this.authRepository.deleteOtp(email);
     // console.log('otp deleted from redis')
     return { success: true, message: "OTP verified successfully" };
   }
@@ -81,7 +77,7 @@ export default class AuthenticationService implements IAuthenticationService {
     password: string
   ): Promise<IUserModel> {
     const hashedPassword = await bcrypt.hash(password, 10);
-    return await this.authenticationRepository.createUser({
+    return await this.authRepository.createUser({
       username,
       email,
       password: hashedPassword,
@@ -92,11 +88,11 @@ export default class AuthenticationService implements IAuthenticationService {
     email: string,
     password: string
   ): Promise<{
-    user: { id: string; username: string; email: string,role:string };
+    user: { id: string; username: string; email: string; role: string };
     accessToken: string;
     refreshToken: string;
   }> {
-    const user = await this.authenticationRepository.findByEmail(email);
+    const user = await this.authRepository.findByEmail(email);
     if (!user) {
       throw new UnauthorizedError("Invalid email or password");
     }
@@ -114,7 +110,7 @@ export default class AuthenticationService implements IAuthenticationService {
         id: user._id as string,
         username: user.username,
         email: user.email,
-        role:user.role
+        role: user.role,
       },
       accessToken,
       refreshToken,
@@ -124,8 +120,7 @@ export default class AuthenticationService implements IAuthenticationService {
   async refreshTokens(
     email: string
   ): Promise<{ newAccessToken: string; newRefreshToken: string }> {
-
-    const user = await this.authenticationRepository.findByEmail(email);
+    const user = await this.authRepository.findByEmail(email);
     if (!user) {
       throw new UnauthorizedError("User not found");
     }

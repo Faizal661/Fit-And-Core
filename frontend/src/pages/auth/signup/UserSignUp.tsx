@@ -2,7 +2,7 @@ import { useState } from "react";
 import UsernameEmailForm from "./UsernameEmailForm";
 import OtpVerification from "./OtpVerification";
 import SetPassword from "./SetPassword";
-import { SignupProvider } from "../../context/SignupContext";
+import { SignupProvider } from "../../../context/SignupContext";
 
 const Signup = () => {
   const [step, setStep] = useState(1);
@@ -19,3 +19,4 @@ const Signup = () => {
 };
 
 export default Signup;
+ 

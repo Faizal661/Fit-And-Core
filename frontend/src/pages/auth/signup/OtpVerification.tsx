@@ -1,16 +1,16 @@
 import { useState, useEffect, useRef } from "react";
-import { AUTH_MESSAGES } from "../../constants/auth.messages";
-import userLoginImage from "../../assets/images/image1.jpg";
-import LoginBody from "../../components/auth/LoginBody";
+import { AUTH_MESSAGES } from "../../../constants/auth.messages";
+import userLoginImage from "../../../assets/images/image1.jpg";
+import LoginBody from "../../../components/auth/LoginBody";
 
 import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { type OtpFormData, otpSchema } from "../../schemas/authSchema";
+import { type OtpFormData, otpSchema } from "../../../schemas/authSchema";
 
-import { verifyOtp, ResendOtp } from "../../services/authService";
-import { useSignupContext } from "../../context/SignupContext";
-import { useToast } from "../../context/ToastContext";
+import { verifyOtp, ResendOtp } from "../../../services/authService";
+import { useSignupContext } from "../../../context/SignupContext";
+import { useToast } from "../../../context/ToastContext";
 
 interface OtpFormProps {
   onSuccess: () => void;
@@ -119,11 +119,15 @@ const OtpVerification: React.FC<OtpFormProps> = ({ onSuccess }) => {
                 key={index}
                 onClick={() => handleBoxClick(index)}
                 className={`w-12 h-12 flex items-center justify-center border rounded-md text-lg cursor-pointer ${
-                  errors.otp
+                  errors.otp 
                     ? "border-red-500"
                     : activeIndex === index
                     ? "border-slate-500 bg-cyan-400"
                     : "border-gray-300 hover:border-gray-500"
+                }
+                ${
+                  serverError 
+                    && "border-red-500"
                 }`}
               >
                 {currentOtp?.[index] || ""}

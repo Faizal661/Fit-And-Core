@@ -1,13 +1,11 @@
 import { Routes, Route } from "react-router-dom";
 import UserLogin from "./pages/auth/UserLogin";
-import TrainerLogin from "./pages/auth/TrainerLogin";
-import AdminLogin from "./pages/auth/AdminLogin";
-import UserSignUp from "./pages/auth/UserSignUp";
+import UserSignUp from "./pages/auth/signup/UserSignUp.tsx";
 import Footer from "./components/shared/Footer";
 import { useSelector } from "react-redux";
 import { RootState } from "./redux/store";
 import ForgetPassword from "./pages/auth/ResetPassword";
-import SetPassword from "./pages/auth/SetPassword";
+import SetPassword from "./pages/auth/signup/SetPassword.tsx";
 // import OtpVerification from "./pages/auth/OtpVerification";
 import FloatButton from "../src/components/shared/FloatButton";
 import MenuButton from "../src/components/shared/MenuButton";
@@ -31,8 +29,6 @@ function App() {
         <Route path="/signup" element={user ? <LandingPage /> : <UserSignUp />} />
         <Route path="/forget-password" element={<ForgetPassword />} />
         <Route path="/set-password" element={<SetPassword />} />
-        <Route path="/trainer/login" element={<TrainerLogin />} />
-        <Route path="/admin/login" element={<AdminLogin />} />
       </Routes>
       <Footer />
     </div>

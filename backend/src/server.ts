@@ -6,7 +6,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 
 // Import routers
-import authRoutes from "./routes/authentication.routes";
+import authRoutes from "./routes/auth.routes";
 // import UserRoutes from "./routes/user.routes.ts";
 
 // Configurations

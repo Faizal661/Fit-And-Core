@@ -1,6 +1,6 @@
 import { IUserModel } from "../../models/user.models";
 
-export interface IAuthenticationService {
+export interface IAuthService {
     nameEmailCheck(email: string, username: string): Promise<{ available: boolean,username?:string,email?:string,message:string }>
     sendOtp(email: string): Promise<void>;
     verifyOtp(email: string, otp: string): Promise<{success:boolean,message:string}>;

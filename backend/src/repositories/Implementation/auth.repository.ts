@@ -1,14 +1,14 @@
 import { inject, injectable } from "tsyringe";
 import UserModel, { IUserModel } from "../../models/user.models";
 import { BaseRepository } from "./base.repository";
-import { IAuthenticationRepository } from "../Interface/IAuthenticationRepository";
+import { IAuthRepository } from "../Interface/IAuthRepository";
 import { RedisClientType } from "redis";
 import { IUser } from "../../types/user.types";
 
 @injectable()
-export class AuthenticationRepository
+export class AuthRepository
   extends BaseRepository<IUserModel>
-  implements IAuthenticationRepository
+  implements IAuthRepository
 {
   private redisClient: RedisClientType;
 

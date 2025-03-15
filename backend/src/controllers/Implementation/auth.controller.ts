@@ -5,21 +5,19 @@ import {
   HttpResponseMessage,
 } from "../../constants/Response.constants";
 
-import { IAuthenticationController } from "../Interface/IAuthenticationController";
-import { IAuthenticationService } from "../../services/Interface/IAuthenticationService";
+import { IAuthController } from "../Interface/IAuthController";
+import { IAuthService } from "../../services/Interface/IAuthService";
 import { SendResponse, UnauthorizedError } from "mern.common";
 
 @injectable()
-export default class AuthenticationController
-  implements IAuthenticationController
-{
-  private authenticationService: IAuthenticationService;
+export default class AuthController implements IAuthController {
+  private authService: IAuthService;
 
   constructor(
-    @inject("AuthenticationService")
-    authenticationService: IAuthenticationService
+    @inject("AuthService")
+    authService: IAuthService
   ) {
-    this.authenticationService = authenticationService;
+    this.authService = authService;
   }
 
   async checkUsernameEmail(
@@ -29,16 +27,13 @@ export default class AuthenticationController
   ): Promise<void> {
     try {
       const { email, username }: { email: string; username: string } = req.body;
-      const result = await this.authenticationService.nameEmailCheck(
-        email,
-        username
-      );
+      const result = await this.authService.nameEmailCheck(email, username);
       console.log("result", result);
       if (!result.available) {
         SendResponse(res, HttpResponseCode.CONFLICT, result.message);
         return;
       }
-      await this.authenticationService.sendOtp(email);
+      await this.authService.sendOtp(email);
       SendResponse(
         res,
         HttpResponseCode.OK,
@@ -57,7 +52,7 @@ export default class AuthenticationController
   ): Promise<void> {
     try {
       const { email, otp } = req.body;
-      const isValid = await this.authenticationService.verifyOtp(email, otp);
+      const isValid = await this.authService.verifyOtp(email, otp);
       if (!isValid.success) {
         SendResponse(
           res,
@@ -85,7 +80,7 @@ export default class AuthenticationController
   ): Promise<void> {
     try {
       const { email } = req.body;
-      await this.authenticationService.sendOtp(email);
+      await this.authService.sendOtp(email);
       SendResponse(res, HttpResponseCode.OK, HttpResponseMessage.SUCCESS);
     } catch (error) {
       next(error);
@@ -108,7 +103,7 @@ export default class AuthenticationController
         );
         return;
       }
-      const newUser = await this.authenticationService.registerUser(
+      const newUser = await this.authService.registerUser(
         username,
         email,
         password
@@ -129,15 +124,17 @@ export default class AuthenticationController
   async login(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { email, password } = req.body;
-      const { user, accessToken, refreshToken } =
-        await this.authenticationService.login(email, password);
+      const { user, accessToken, refreshToken } = await this.authService.login(
+        email,
+        password
+      );
 
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "strict",
       });
-      
+
       SendResponse(res, HttpResponseCode.OK, HttpResponseMessage.SUCCESS, {
         user,
         accessToken,
@@ -167,7 +164,7 @@ export default class AuthenticationController
       }
 
       const { newAccessToken, newRefreshToken } =
-        await this.authenticationService.refreshTokens(req.user.email);
+        await this.authService.refreshTokens(req.user.email);
 
       res.cookie("refreshToken", newRefreshToken, {
         httpOnly: true,

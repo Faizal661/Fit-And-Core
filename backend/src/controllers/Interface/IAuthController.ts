@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 
-export interface IAuthenticationController {
+export interface IAuthController {
   checkUsernameEmail(req: Request, res: Response, next: NextFunction): Promise<void>;
   verifyOtp(req: Request, res: Response, next: NextFunction): Promise<void>
   resendOtp(req: Request, res: Response, next: NextFunction): Promise<void>

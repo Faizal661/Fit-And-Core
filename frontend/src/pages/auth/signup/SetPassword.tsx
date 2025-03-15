@@ -3,17 +3,17 @@ import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { createUser } from "../../services/authService";
-import { useSignupContext } from "../../context/SignupContext";
+import { createUser } from "../../../services/authService";
+import { useSignupContext } from "../../../context/SignupContext";
 import {
   passwordSchema,
   type PasswordFormData,
-} from "../../schemas/authSchema";
-import { useToast } from "../../context/ToastContext";
+} from "../../../schemas/authSchema";
+import { useToast } from "../../../context/ToastContext";
 
-import { AUTH_MESSAGES } from "../../constants/auth.messages";
-import LoginBody from "../../components/auth/LoginBody";
-import setPasswordImage from "../../assets/images/calisthenics1.jpg";
+import { AUTH_MESSAGES } from "../../../constants/auth.messages";
+import LoginBody from "../../../components/auth/LoginBody";
+import setPasswordImage from "../../../assets/images/calisthenics1.jpg";
 
 const SetPassword = () => {
   const navigate=useNavigate()
