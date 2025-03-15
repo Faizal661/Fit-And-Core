@@ -92,7 +92,7 @@ export default class AuthenticationService implements IAuthenticationService {
     email: string,
     password: string
   ): Promise<{
-    user: { id: string; username: string; email: string };
+    user: { id: string; username: string; email: string,role:string };
     accessToken: string;
     refreshToken: string;
   }> {
@@ -114,6 +114,7 @@ export default class AuthenticationService implements IAuthenticationService {
         id: user._id as string,
         username: user.username,
         email: user.email,
+        role:user.role
       },
       accessToken,
       refreshToken,

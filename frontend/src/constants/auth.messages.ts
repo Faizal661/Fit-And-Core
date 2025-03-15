@@ -7,13 +7,15 @@ export enum AUTH_MESSAGES {
 
     ENTER_OTP="Enter the 6-digit OTP sent to your email",
     OTP_SENT="OTP shared to your Email",
+    OTP_RESENT="OTP Resended to your Email",
     INVALID_OTP="Invalid OTP code",
+    OTP_SUCCESS="OTP Verified",
     
     ACCOUNT_CREATED="Account registered successfully!. Now SignIn into your account",
-    LOGIN_FAILED="Invalid email or password",
     LOGIN_SUCCESS="Login success",
+    LOGIN_FAILED="Invalid email or password",
+    LOGOUT_SUCCESS="Log out success",
+    
     SERVER_ERROR="Server error, please try again",
     SESSION_EXPIRED="Session expired, please login again",
-    
-    LOGOUT_SUCCESS="Log out success",
 };

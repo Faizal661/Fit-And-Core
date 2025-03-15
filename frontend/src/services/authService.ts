@@ -11,8 +11,8 @@ export const verifyOtp = async (data: { email: string; otp: string }) => {
   return response.data; // { success: boolean }
 };
 
-export const sendOtp = async (email: string) => {
-  await axios.post(`/send-otp`, { email });
+export const ResendOtp = async (email: string) => {
+  await axios.post(`/auth/resend-otp`, { email });
 };
 
 export const createUser = async (data: { username: string; email: string; password: string }) => {

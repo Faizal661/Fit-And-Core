@@ -8,7 +8,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type OtpFormData, otpSchema } from "../../schemas/authSchema";
 
-import { verifyOtp, sendOtp } from "../../services/authService";
+import { verifyOtp, ResendOtp } from "../../services/authService";
 import { useSignupContext } from "../../context/SignupContext";
 import { useToast } from "../../context/ToastContext";
 
@@ -20,10 +20,11 @@ const OtpVerification: React.FC<OtpFormProps> = ({ onSuccess }) => {
   const [timeLeft, setTimeLeft] = useState<number>(60);
   const [isResendDisabled, setIsResendDisabled] = useState<boolean>(true);
   const otpInputRef = useRef<HTMLInputElement>(null);
+  const [activeIndex, setActiveIndex] = useState(0); // Track the active OTP box
 
   const { userData } = useSignupContext();
   const [serverError, setServerError] = useState("");
-  const {showToast}=useToast()
+  const { showToast } = useToast();
 
   const {
     register,
@@ -40,24 +41,22 @@ const OtpVerification: React.FC<OtpFormProps> = ({ onSuccess }) => {
 
   const currentOtp = watch("otp");
 
-
   const mutation = useMutation({
     mutationFn: verifyOtp,
     onSuccess: (data) => {
       if (data.success) {
         onSuccess();
+        showToast("success", AUTH_MESSAGES.OTP_SUCCESS);
       } else {
         setServerError(AUTH_MESSAGES.INVALID_OTP);
       }
     },
     onError: () => {
       setServerError(AUTH_MESSAGES.SERVER_ERROR);
-      showToast('error',AUTH_MESSAGES.SERVER_ERROR)
-
+      showToast("error", AUTH_MESSAGES.SERVER_ERROR);
     },
   });
 
-  // manage resend otp btn enable, and timer countdown
   useEffect(() => {
     if (timeLeft > 0) {
       const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
@@ -67,23 +66,26 @@ const OtpVerification: React.FC<OtpFormProps> = ({ onSuccess }) => {
     }
   }, [timeLeft]);
 
-  // otp input value
   const handleOtpChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value.replace(/\D/g, "").slice(0, 6);
     setValue("otp", value);
+    setActiveIndex(value.length);
   };
 
-  // handle otp resend function
   const handleResendOtp = () => {
     setTimeLeft(60);
     setIsResendDisabled(true);
+    setServerError("");
     setValue("otp", "");
-    sendOtp(userData?.email ?? "");
-    alert("OTP Resent!");
+    ResendOtp(userData?.email ?? "");
+    showToast("info", AUTH_MESSAGES.OTP_RESENT);
   };
 
-  const handleBoxClick = () => {
-    otpInputRef.current?.focus();
+  const handleBoxClick = (index: number) => {
+    if (otpInputRef.current) {
+      otpInputRef.current.focus();
+      setActiveIndex(index);
+    }
   };
 
   const onSubmit = (data: OtpFormData) => {
@@ -96,8 +98,7 @@ const OtpVerification: React.FC<OtpFormProps> = ({ onSuccess }) => {
       welcomeMessage={AUTH_MESSAGES.ENTER_OTP}
     >
       <div className=" p-6  w-96">
-
-      <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <input
             {...register("otp")}
             ref={(e) => {
@@ -112,15 +113,17 @@ const OtpVerification: React.FC<OtpFormProps> = ({ onSuccess }) => {
             autoFocus
           />
 
-          <div
-            className="flex justify-center mt-4 gap-4"
-            onClick={handleBoxClick}
-          >
+          <div className="flex justify-center mt-4 gap-4">
             {[...Array(6)].map((_, index) => (
               <div
                 key={index}
+                onClick={() => handleBoxClick(index)}
                 className={`w-12 h-12 flex items-center justify-center border rounded-md text-lg cursor-pointer ${
-                  errors.otp ? "border-red-500" : ""
+                  errors.otp
+                    ? "border-red-500"
+                    : activeIndex === index
+                    ? "border-slate-500 bg-cyan-400"
+                    : "border-gray-300 hover:border-gray-500"
                 }`}
               >
                 {currentOtp?.[index] || ""}

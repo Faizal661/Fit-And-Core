@@ -1,13 +1,13 @@
 import { NextFunction, Request, Response } from "express";
 import { inject, injectable } from "tsyringe";
-import { HttpResponseCode, HttpResponseMessage } from "../../constants/Response.constants";
+import {
+  HttpResponseCode,
+  HttpResponseMessage,
+} from "../../constants/Response.constants";
 
 import { IAuthenticationController } from "../Interface/IAuthenticationController";
 import { IAuthenticationService } from "../../services/Interface/IAuthenticationService";
-import {
-  SendResponse,
-  UnauthorizedError,
-} from "mern.common";
+import { SendResponse, UnauthorizedError } from "mern.common";
 
 @injectable()
 export default class AuthenticationController
@@ -39,7 +39,12 @@ export default class AuthenticationController
         return;
       }
       await this.authenticationService.sendOtp(email);
-      SendResponse(res, HttpResponseCode.OK, HttpResponseMessage.SUCCESS, result);
+      SendResponse(
+        res,
+        HttpResponseCode.OK,
+        HttpResponseMessage.SUCCESS,
+        result
+      );
     } catch (error: any) {
       next(error);
     }
@@ -54,10 +59,34 @@ export default class AuthenticationController
       const { email, otp } = req.body;
       const isValid = await this.authenticationService.verifyOtp(email, otp);
       if (!isValid.success) {
-        SendResponse(res, HttpResponseCode.OK, HttpResponseMessage.SUCCESS, isValid);
+        SendResponse(
+          res,
+          HttpResponseCode.OK,
+          HttpResponseMessage.SUCCESS,
+          isValid
+        );
         return;
       }
-      SendResponse(res, HttpResponseCode.OK, HttpResponseMessage.SUCCESS, isValid);
+      SendResponse(
+        res,
+        HttpResponseCode.OK,
+        HttpResponseMessage.SUCCESS,
+        isValid
+      );
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async resendOtp(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const { email } = req.body;
+      await this.authenticationService.sendOtp(email);
+      SendResponse(res, HttpResponseCode.OK, HttpResponseMessage.SUCCESS);
     } catch (error) {
       next(error);
     }
@@ -108,6 +137,7 @@ export default class AuthenticationController
         secure: process.env.NODE_ENV === "production",
         sameSite: "strict",
       });
+      
       SendResponse(res, HttpResponseCode.OK, HttpResponseMessage.SUCCESS, {
         user,
         accessToken,
