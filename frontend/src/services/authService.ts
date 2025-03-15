@@ -48,7 +48,7 @@ export const refreshAccessToken = async (): Promise<string> => {
 export const logoutUser = async (): Promise<boolean> => {
   try {
     const data =await axios.post(`/auth/logout`, {}, { withCredentials: true });
-    console.log('logout successsfulllyy...............',data)
+    console.log('LOGOUT RES------',data)
     return true
   } catch (error) {
     throw error;

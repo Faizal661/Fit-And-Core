@@ -22,18 +22,15 @@ export const verifyAccessToken = (
 ) => {
   try {
     const accessToken = req.headers.authorization?.split(" ")[1];
-
     if (!accessToken) {
       throw new UnauthorizedError("Access denied. No token provided.");
     }
-
     try {
       const decoded = jwt.verify(accessToken!, ACCESS_TOKEN_SECRET);
-      console.log('accessToken',decoded);
       req.user = decoded;
       next();
     } catch (tokenError) {
-      throw new UnauthorizedError("Invalid or expired token.");
+      throw new UnauthorizedError("Invalid or expired access token.");
     }
   } catch (error) {
     next(error);
@@ -53,7 +50,6 @@ export const verifyRefreshToken = (
     try {
       const decoded = jwt.verify(refreshToken, REFRESH_TOKEN_SECRET);
       req.user = decoded;
-      console.log('refreshToken',decoded)
       next();
     } catch (tokenError) {
       throw new UnauthorizedError("Invalid or expired refresh token.");

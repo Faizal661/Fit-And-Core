@@ -27,17 +27,16 @@ const FloatButton = () => {
 
   const handleLogout = async () => {
     try {
-      const logout = await logoutUser();
-      if (logout) {
-        dispatch(clearAuth());
-        await persistor.purge();
-        showToast("success", AUTH_MESSAGES.LOGOUT_SUCCESS);
-        navigate("/login");
-      } else {
-        showToast("error", AUTH_MESSAGES.SERVER_ERROR);
-      }
+      await logoutUser();
+      dispatch(clearAuth());
+      await persistor.purge();
+      navigate("/login");
+      showToast("success", AUTH_MESSAGES.LOGOUT_SUCCESS);
     } catch (error) {
-      showToast("error", AUTH_MESSAGES.SERVER_ERROR);
+      dispatch(clearAuth());
+      await persistor.purge();
+      navigate("/login");
+      showToast("warning", AUTH_MESSAGES.SESSION_EXPIRED);
     }
   };
 

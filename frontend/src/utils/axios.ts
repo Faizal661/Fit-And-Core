@@ -28,12 +28,13 @@ api.interceptors.request.use(
 
 api.interceptors.response.use(
   (response) => {
-    console.log('INTERCEPTOR RESPONSE SUCCESS')
+    console.log('INTERCEPTOR RESPONSE SUCCESS',response)
     store.dispatch(stopLoading());
     return response;
   },
   async (error) => {
-    console.log('INTERCEPTOR RESPONSE ERROR')
+
+    console.log('ERROR MESSAGE',error.response.data.error)
 
     store.dispatch(stopLoading());
     const originalRequest = error.config;
@@ -53,24 +54,8 @@ api.interceptors.response.use(
         console.error("Session expired, please login again");
         store.dispatch(clearAuth());
 
-        if (!window.location.pathname.includes("/login")) {
-          console.log('1111')
-          window.location.href = "/login";
-        }
-
         return Promise.reject(err);
       }
-    }
-
-    if (
-      error.response?.status === 401 &&
-      !window.location.pathname.includes("/login")
-    ) {
-      store.dispatch(clearAuth());
-      console.error("Unauthorized Access, Redirecting to Login");
-      console.log('22222')
-
-      window.location.href = "/login";
     }
     
     return Promise.reject(error);

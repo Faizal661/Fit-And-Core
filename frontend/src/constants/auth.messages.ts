@@ -13,6 +13,7 @@ export enum AUTH_MESSAGES {
     LOGIN_FAILED="Login failed. Please check your credentials.",
     LOGIN_SUCCESS="Login success",
     SERVER_ERROR="Server error, please try again",
+    SESSION_EXPIRED="Session expired, please login again",
     
     LOGOUT_SUCCESS="Log out success",
 };
