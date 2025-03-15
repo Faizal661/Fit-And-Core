@@ -33,9 +33,7 @@ api.interceptors.response.use(
     return response;
   },
   async (error) => {
-
     console.log('ERROR MESSAGE',error.response.data.error)
-
     store.dispatch(stopLoading());
     const originalRequest = error.config;
 

@@ -45,12 +45,8 @@ const UserLogin: React.FC = () => {
       showToast("success",AUTH_MESSAGES.LOGIN_SUCCESS)
       navigate("/");
     },
-    onError: (error: any) => {
-      if (error?.response?.data?.error) {
-        setServerError(error?.response?.data?.error);        
-      } else {
+    onError: () => {
         setServerError(AUTH_MESSAGES.LOGIN_FAILED);
-      }
     },
   });
 
@@ -76,7 +72,7 @@ const UserLogin: React.FC = () => {
           {...register("email")}
           type="email"
           id="email"
-          value="faisalt661@gmail.com"
+          // value="faisalt661@gmail.com"
           className={`border-b-1 border-white mt-2 outline-0 text pb-1 ${
             errors.email ? "border-b-red-500" : ""
           }`}

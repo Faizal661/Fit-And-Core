@@ -1,11 +1,10 @@
 import { NextFunction, Request, Response } from "express";
 import { inject, injectable } from "tsyringe";
+import { HttpResponseCode, HttpResponseMessage } from "../../constants/Response.constants";
 
 import { IAuthenticationController } from "../Interface/IAuthenticationController";
 import { IAuthenticationService } from "../../services/Interface/IAuthenticationService";
 import {
-  HTTPStatusCodes,
-  ResponseMessage,
   SendResponse,
   UnauthorizedError,
 } from "mern.common";
@@ -36,11 +35,11 @@ export default class AuthenticationController
       );
       console.log("result", result);
       if (!result.available) {
-        SendResponse(res, HTTPStatusCodes.CONFLICT, result.message);
+        SendResponse(res, HttpResponseCode.CONFLICT, result.message);
         return;
       }
       await this.authenticationService.sendOtp(email);
-      SendResponse(res, HTTPStatusCodes.OK, ResponseMessage.SUCCESS, result);
+      SendResponse(res, HttpResponseCode.OK, HttpResponseMessage.SUCCESS, result);
     } catch (error: any) {
       next(error);
     }
@@ -55,10 +54,10 @@ export default class AuthenticationController
       const { email, otp } = req.body;
       const isValid = await this.authenticationService.verifyOtp(email, otp);
       if (!isValid.success) {
-        SendResponse(res, HTTPStatusCodes.OK, ResponseMessage.SUCCESS, isValid);
+        SendResponse(res, HttpResponseCode.OK, HttpResponseMessage.SUCCESS, isValid);
         return;
       }
-      SendResponse(res, HTTPStatusCodes.OK, ResponseMessage.SUCCESS, isValid);
+      SendResponse(res, HttpResponseCode.OK, HttpResponseMessage.SUCCESS, isValid);
     } catch (error) {
       next(error);
     }
@@ -75,8 +74,8 @@ export default class AuthenticationController
       if (!username || !email || !password) {
         SendResponse(
           res,
-          HTTPStatusCodes.BAD_REQUEST,
-          ResponseMessage.BAD_REQUEST
+          HttpResponseCode.BAD_REQUEST,
+          HttpResponseMessage.BAD_REQUEST
         );
         return;
       }
@@ -86,7 +85,7 @@ export default class AuthenticationController
         password
       );
       console.log("user created => ", newUser);
-      SendResponse(res, HTTPStatusCodes.CREATED, ResponseMessage.CREATED, {
+      SendResponse(res, HttpResponseCode.CREATED, HttpResponseMessage.CREATED, {
         user: {
           id: newUser._id,
           username: newUser.username,
@@ -109,7 +108,7 @@ export default class AuthenticationController
         secure: process.env.NODE_ENV === "production",
         sameSite: "strict",
       });
-      SendResponse(res, HTTPStatusCodes.OK, ResponseMessage.SUCCESS, {
+      SendResponse(res, HttpResponseCode.OK, HttpResponseMessage.SUCCESS, {
         user,
         accessToken,
       });
@@ -120,9 +119,8 @@ export default class AuthenticationController
 
   async logout(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      console.log('Log Out controller reach')
       res.clearCookie("refreshToken");
-      SendResponse(res, HTTPStatusCodes.OK, ResponseMessage.SUCCESS);
+      SendResponse(res, HttpResponseCode.OK, HttpResponseMessage.SUCCESS);
     } catch (error) {
       next(error);
     }
@@ -146,7 +144,7 @@ export default class AuthenticationController
         secure: process.env.NODE_ENV === "production",
         sameSite: "strict",
       });
-      SendResponse(res, HTTPStatusCodes.OK, ResponseMessage.SUCCESS, {
+      SendResponse(res, HttpResponseCode.OK, HttpResponseMessage.SUCCESS, {
         newAccessToken,
       });
     } catch (error) {

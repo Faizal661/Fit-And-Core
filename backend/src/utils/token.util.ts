@@ -10,7 +10,7 @@ export const generateAccessToken = (user: IUserModel) => {
   return jwt.sign(
     { id: user._id, email: user.email, role: user.role },
     ACCESS_TOKEN_SECRET,
-    { expiresIn: "3s" }
+    { expiresIn: "15m" }
   );
 };
 
@@ -18,6 +18,6 @@ export const generateRefreshToken = (user: IUserModel) => {
   return jwt.sign(
     { id: user._id, email: user.email, role: user.role },
     REFRESH_TOKEN_SECRET,
-    { expiresIn: "25s" }
+    { expiresIn: "7d" }
   );
 };

@@ -10,7 +10,7 @@ export enum AUTH_MESSAGES {
     INVALID_OTP="Invalid OTP code",
     
     ACCOUNT_CREATED="Account registered successfully!. Now SignIn into your account",
-    LOGIN_FAILED="Login failed. Please check your credentials.",
+    LOGIN_FAILED="Invalid email or password",
     LOGIN_SUCCESS="Login success",
     SERVER_ERROR="Server error, please try again",
     SESSION_EXPIRED="Session expired, please login again",
