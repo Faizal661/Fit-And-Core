@@ -1,4 +1,4 @@
-import { LoginCredentials, LoginResponse } from "../types/auth/login";
+import { GoogleAuthResponse, LoginCredentials, LoginResponse } from "../types/auth";
 import axios from  "./axios"
 
 export const checkEmailUsername = async (data: { username: string; email: string }) => {
@@ -28,6 +28,19 @@ export const loginUser = async (credentials: LoginCredentials): Promise<LoginRes
     });
     return response.data;
 };
+
+
+// New Google authentication methods
+export const initiateGoogleLogin = () => {
+  window.location.href = `http://localhost:5000/api/auth/google`;
+};
+
+export const verifyGoogleToken  = async (token: string): Promise<GoogleAuthResponse> => {
+  const response = await axios.post(`/auth/google/verify`, { token });
+  return response.data;
+};
+
+
 
 // Refresh token
 export const refreshAccessToken = async (): Promise<string> => {

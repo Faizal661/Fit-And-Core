@@ -1,6 +1,7 @@
 import IBaseRepository from './IBaseRepository.ts'
 import { IUser } from '../../types/user.types.ts'; 
 import { IUserModel } from '../../models/user.models.ts';
+import { IGoogleUser } from '../../types/auth.types.ts';
 
 export interface IAuthRepository {
     isUsernameTaken(username: string): Promise<boolean | null>;
@@ -10,4 +11,5 @@ export interface IAuthRepository {
     deleteOtp(email: string): Promise<void>
     createUser(data: Partial<IUserModel>): Promise<IUserModel>
     findByEmail(email: string): Promise<IUserModel | null> 
+    findOrCreateGoogleUser(googleUser: IGoogleUser): Promise<any>;
 }

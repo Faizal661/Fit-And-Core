@@ -6,6 +6,7 @@ export interface IUser {
     isBlocked: Boolean;
     role: "user" | "trainer"|"admin";
     profilePicture?: string;
+    googleId?:string;
     dateOfBirth: Date;
     createdAt: Date;
     updatedAt: Date;

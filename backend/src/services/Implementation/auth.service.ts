@@ -14,6 +14,11 @@ import {
 } from "../../utils/token.util";
 import { UnauthorizedError } from "mern.common";
 import { jwtDecoded } from "../../types/user.types";
+import {
+  IGoogleUser,
+  IJwtDecoded,
+  ILoginResponse,
+} from "../../types/auth.types";
 
 @injectable()
 export default class authService implements IAuthService {
@@ -84,14 +89,7 @@ export default class authService implements IAuthService {
     });
   }
 
-  async login(
-    email: string,
-    password: string
-  ): Promise<{
-    user: { id: string; username: string; email: string; role: string };
-    accessToken: string;
-    refreshToken: string;
-  }> {
+  async login(email: string, password: string): Promise<ILoginResponse> {
     const user = await this.authRepository.findByEmail(email);
     if (!user) {
       throw new UnauthorizedError("Invalid email or password");
@@ -108,6 +106,52 @@ export default class authService implements IAuthService {
     return {
       user: {
         id: user._id as string,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+      },
+      accessToken,
+      refreshToken,
+    };
+  }
+
+  async verifyGoogleToken(token: string): Promise<ILoginResponse> {
+    try {
+      const accessToken = token;
+      if (!accessToken) {
+        throw new UnauthorizedError("Access denied. No token provided.");
+      }
+      const decoded = jwt.verify( accessToken,process.env.ACCESS_TOKEN_SECRET! ) as IJwtDecoded;
+
+      const user = await this.authRepository.findByEmail(decoded.email);
+      if (!user) {
+        throw new UnauthorizedError("No user Found on this email");
+      }
+      const refreshToken = generateRefreshToken(user);
+      return {
+        user: {
+          id: user._id as string,
+          username: user.username,
+          email: user.email,
+          role: user.role,
+        },
+        accessToken,
+        refreshToken,
+      };
+    } catch (tokenError) {
+      throw new UnauthorizedError("Invalid or expired access token.");
+    }
+  }
+
+  async googleLogin(googleUser: IGoogleUser): Promise<ILoginResponse> {
+    const user = await this.authRepository.findOrCreateGoogleUser(googleUser);
+
+    const accessToken = generateAccessToken(user);
+    const refreshToken = generateRefreshToken(user);
+
+    return {
+      user: {
+        id: user._id,
         username: user.username,
         email: user.email,
         role: user.role,

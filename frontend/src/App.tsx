@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import UserLogin from "./pages/auth/UserLogin";
 import UserSignUp from "./pages/auth/signup/UserSignUp.tsx";
 import Footer from "./components/shared/Footer";
@@ -12,6 +12,7 @@ import MenuButton from "../src/components/shared/MenuButton";
 import LandingPage from "./pages/user/LandingPage";
 import Loader from "./components/shared/Loader";
 import ToastContainer from "./components/shared/ToastContainer.tsx";
+import AuthCallback from "./components/auth/AuthCallback.tsx";
 
 function App() {
   const user = useSelector((state: RootState) => state.auth.user?.username);
@@ -26,9 +27,13 @@ function App() {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={user ? <LandingPage /> : <UserLogin />} />
+        <Route path="/auth/success" element={<AuthCallback />} />
         <Route path="/signup" element={user ? <LandingPage /> : <UserSignUp />} />
         <Route path="/forget-password" element={<ForgetPassword />} />
         <Route path="/set-password" element={<SetPassword />} />
+
+
+        {/* <Route path="*" element={<Navigate to="/" />} /> */}
       </Routes>
       <Footer />
     </div>

@@ -4,12 +4,14 @@ import express, { NextFunction, response } from "express";
 import cookieParser from 'cookie-parser'
 import cors from "cors";
 import dotenv from "dotenv";
+import passport from "passport";
 
 // Import routers
 import authRoutes from "./routes/auth.routes";
 // import UserRoutes from "./routes/user.routes.ts";
 
 // Configurations
+import configurePassport from "./config/passport";
 import connectDB from "./config/db.config";
 dotenv.config();
 
@@ -30,6 +32,11 @@ app.use(cookieParser());
 //log req & res details
 const loggers = requestLogging();
 loggers.forEach(middleware => app.use(middleware));
+
+
+// Initialize Passport
+app.use(passport.initialize());
+configurePassport();
  
 // Routers
 app.use("/api/auth", authRoutes); 

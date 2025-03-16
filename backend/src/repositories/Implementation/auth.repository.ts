@@ -4,6 +4,7 @@ import { BaseRepository } from "./base.repository";
 import { IAuthRepository } from "../Interface/IAuthRepository";
 import { RedisClientType } from "redis";
 import { IUser } from "../../types/user.types";
+import { IGoogleUser } from "../../types/auth.types";
 
 @injectable()
 export class AuthRepository
@@ -45,5 +46,27 @@ export class AuthRepository
 
    async findByEmail(email: string): Promise<IUserModel | null> {
     return UserModel.findOne({ email });
+  }
+
+  async findOrCreateGoogleUser(googleUser: IGoogleUser): Promise<any> {
+    const existingUser = await UserModel.findOne({ email: googleUser.email });
+    
+    if (existingUser) {
+      if (!existingUser.googleId && googleUser.id) {
+        existingUser.googleId = googleUser.id;
+        existingUser.profilePicture = googleUser.profilePicture || existingUser.profilePicture;
+        await existingUser.save();
+      }
+      return existingUser;
+    }
+    
+    const newUser = new UserModel({
+      email: googleUser.email,
+      username: googleUser.displayName,
+      googleId: googleUser.id,
+      profilePicture: googleUser.profilePicture,
+    });
+    
+    return await newUser.save();
   }
 }

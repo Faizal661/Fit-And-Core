@@ -21,4 +21,11 @@ router.post('/logout',verifyAccessToken,(req,res,next)=>authController.logout(re
 
 router.post('/refresh-token',verifyRefreshToken,(req,res,next)=>authController.refreshToken(req,res,next))
 
+
+// Google OAuth routes
+router.get('/google', authController.googleAuth.bind(authController));
+router.get('/google/callback', authController.googleCallback.bind(authController));
+router.post('/google/verify', authController.verifyGoogleToken.bind(authController));
+
+
 export default router 

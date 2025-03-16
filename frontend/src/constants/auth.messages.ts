@@ -15,6 +15,7 @@ export enum AUTH_MESSAGES {
     LOGIN_SUCCESS="Login success",
     LOGIN_FAILED="Invalid email or password",
     LOGOUT_SUCCESS="Log out success",
+    GOOGLE_AUTH_FAIL="Google Authentication failed",
     
     SERVER_ERROR="Server error, please try again",
     SESSION_EXPIRED="Session expired, please login again",

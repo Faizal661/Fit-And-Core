@@ -29,6 +29,10 @@ const userSchema = new Schema<IUserModel>(
     },
     profilePicture: {
       type: String,
+      default: "https://static.vecteezy.com/system/resources/previews/027/448/973/non_2x/avatar-account-icon-default-social-media-profile-photo-vector.jpg",
+    },
+    googleId:{
+      type:String
     },
     dateOfBirth: {
       type: Date,

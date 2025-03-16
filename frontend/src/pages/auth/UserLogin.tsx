@@ -14,11 +14,13 @@ import { loginUser } from "../../services/authService";
 import { useDispatch } from "react-redux";
 import { setAuth } from "../../redux/slices/authSlice";
 import { useToast } from "../../context/ToastContext";
+import { useGoogleAuth } from "../../hooks/useGoogleAuth";
 
 const UserLogin: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [serverError, setServerError] = useState("");
+  const { handleGoogleLogin } = useGoogleAuth();
   const {showToast}=useToast()
 
   const {
@@ -56,8 +58,11 @@ const UserLogin: React.FC = () => {
   };
 
   const handleSocialLogin = (provider: string) => {
-    console.log(`Login with ${provider}`);
+    if (provider === "Google") {
+      handleGoogleLogin();
+    }
   };
+
 
   return (
     <LoginBody
@@ -115,7 +120,7 @@ const UserLogin: React.FC = () => {
         </p>
         <button
           type="submit"
-          className="mt-14 border-1 rounded-4xl py-2 hover:bg-blue-800 disabled:opacity-70"
+          className="mt-14 border-1 rounded-4xl py-2 hover:bg-blue-800 disabled:opacity-70 cursor-pointer"
           disabled={isSubmitting || loginMutation.isPending}
         >
           {isSubmitting || loginMutation.isPending ? "Logging in..." : "Log In"}
@@ -126,7 +131,7 @@ const UserLogin: React.FC = () => {
         <div className="flex mt-6 gap-3">
           <button
             type="button"
-            className="flex w-full border-1 rounded-4xl border-slate-400 p-2 px-5 justify-center items-center gap-4"
+            className="flex w-full border-1 rounded-4xl border-slate-400 p-2 px-5 justify-center items-center gap-4 cursor-pointer"
             onClick={() => handleSocialLogin("Google")}
           >
             <Google />
@@ -134,7 +139,7 @@ const UserLogin: React.FC = () => {
           </button>
           <button
             type="button"
-            className="flex w-full border-1 rounded-4xl py-2 px-5 border-slate-400 justify-center items-center gap-4"
+            className="flex w-full border-1 rounded-4xl py-2 px-5 border-slate-400 justify-center items-center gap-4 cursor-pointer"
             onClick={() => handleSocialLogin("Facebook")}
           >
             <Facebook strokeWidth={0.1} fill="white" color="white" />

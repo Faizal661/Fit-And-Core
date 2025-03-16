@@ -8,6 +8,9 @@ import {
 import { IAuthController } from "../Interface/IAuthController";
 import { IAuthService } from "../../services/Interface/IAuthService";
 import { SendResponse, UnauthorizedError } from "mern.common";
+import passport from "passport";
+import dotenv from "dotenv";
+dotenv.config();
 
 @injectable()
 export default class AuthController implements IAuthController {
@@ -144,6 +147,73 @@ export default class AuthController implements IAuthController {
     }
   }
 
+  googleAuth(req: Request, res: Response, next: NextFunction): void {
+    passport.authenticate("google", {
+      scope: ["profile", "email"],
+      session: false,
+    })(req, res, next);
+  }
+
+  googleCallback(req: Request, res: Response, next: NextFunction): void {
+    passport.authenticate(
+      "google",
+      { session: false },
+      async (err, googleUser) => {
+        try {
+          if (err || !googleUser) {
+            return res.redirect(
+              `${process.env.CLIENT_ORIGIN}/login?error=google_auth_failed`
+            );
+          } 
+
+          const { user, accessToken, refreshToken } =
+            await this.authService.googleLogin(googleUser);
+
+          res.cookie("refreshToken", refreshToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+          });
+
+          res.redirect(
+            `${process.env.CLIENT_ORIGIN}/auth/success?token=${accessToken}`
+          );
+        } catch (error) {
+          next(error);
+        }
+      }
+    )(req, res, next);
+  }
+  async verifyGoogleToken(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const { token } = req.body;
+      if (!token) {
+        throw new UnauthorizedError("Access denied. No token provided.");
+      }
+
+      const { user, accessToken,refreshToken } = await this.authService.verifyGoogleToken(
+        token
+      );
+
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+      });
+
+      SendResponse(res, HttpResponseCode.OK, HttpResponseMessage.SUCCESS, {
+        user,
+        accessToken,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async logout(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       res.clearCookie("refreshToken");
@@ -159,12 +229,12 @@ export default class AuthController implements IAuthController {
     next: NextFunction
   ): Promise<void> {
     try {
-      if (!req.user) {
+      if (!req.decoded) {
         throw new UnauthorizedError("User not authenticated");
       }
 
       const { newAccessToken, newRefreshToken } =
-        await this.authService.refreshTokens(req.user.email);
+        await this.authService.refreshTokens(req.decoded?.email);
 
       res.cookie("refreshToken", newRefreshToken, {
         httpOnly: true,
