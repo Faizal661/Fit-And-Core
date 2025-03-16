@@ -10,8 +10,13 @@ import { clearAuth } from "../../redux/slices/authSlice";
 import { persistor } from "../../redux/store";
 import axios from "axios";
 
+import UserSidebar from "../user/UserSideBar";
+import AdminSidebar from "../admin/AdminSideBar";
+import TrainerSidebar from "../trainer/TrainerSideBar";
+
 const FloatButton = () => {
-  const user = useSelector((state: RootState) => state.auth.user?.username);
+  const username = useSelector((state: RootState) => state.auth.user?.username);
+  const role = useSelector((state: RootState) => state.auth.user?.role);
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
@@ -19,7 +24,7 @@ const FloatButton = () => {
   const { showToast } = useToast();
 
   const handleButtonClick = () => {
-    if (user) {
+    if (username) {
       setSidebarOpen(!sidebarOpen);
     } else {
       navigate("/login");
@@ -37,11 +42,54 @@ const FloatButton = () => {
       dispatch(clearAuth());
       await persistor.purge();
       navigate("/login");
-      if(axios.isAxiosError(error)){
-        showToast("error", error.message )
-      }else{
-        showToast("warning",AUTH_MESSAGES.SESSION_EXPIRED);
+      if (axios.isAxiosError(error)) {
+        showToast("error", error.message);
+      } else {
+        showToast("warning", AUTH_MESSAGES.SESSION_EXPIRED);
       }
+    }
+  };
+
+  const handleCloseSidebar = () => {
+    setSidebarOpen(false);
+  };
+
+  const getButtonText = () => {
+    if (!username) return "Login  | fit and core ";
+
+    if (role === "admin") return `${username || "Admin"} | Admin Panel`;
+    if (role === "trainer") return `${username || "Coach"} | Trainer Portal`;
+    return `${username || "Profile"} | fit and core`;
+  };
+
+  const renderSidebar = () => {
+    if (!username) return null;
+
+    switch (role) {
+      case "admin":
+        return (
+          <AdminSidebar
+            username={username}
+            onClose={handleCloseSidebar}
+            onLogout={handleLogout}
+          />
+        );
+      case "trainer":
+        return (
+          <TrainerSidebar
+            username={username}
+            onClose={handleCloseSidebar}
+            onLogout={handleLogout}
+          />
+        );
+      default:
+        return (
+          <UserSidebar
+            username={username}
+            onClose={handleCloseSidebar}
+            onLogout={handleLogout}
+          />
+        );
     }
   };
 
@@ -49,110 +97,22 @@ const FloatButton = () => {
     <>
       <button
         onClick={handleButtonClick}
-        className="fixed top-3 right-3 bg-white opacity-90 text-[#2916BA] py-2 px-3 rounded-full flex flex-row border-b-2 border-b-amber-500 border-t-2 border-t-fuchsia-500 border-l-2 border-l-red-500 border-r-2 border-r-green-400  hover:bg-slate-300 hover:cursor-pointer z-50"
+        className="fixed top-3 right-3 bg-white opacity-90 text-[#2916BA] py-2 px-3 rounded-full flex flex-row border-b-2 border-b-amber-500 border-t-2 border-t-fuchsia-500 border-l-2 border-l-red-500 border-r-2 border-r-green-400 hover:bg-slate-300 hover:cursor-pointer z-50 shadow-md transition-all"
       >
         <CircleUserRound />
-        <p className="ml-3 font-bold">
-          {user ? user || "Profile" : "Login"}
-          {" | fit and core"}
-        </p>
+        <p className="ml-3 font-bold">{getButtonText()}</p>
       </button>
 
       {/* Conditionally show sidebar */}
-      {user && sidebarOpen && (
+      {username && sidebarOpen && (
         <div className="fixed inset-0 z-40">
           <div
-            className="absolute inset-0  bg-black/10 backdrop-blur-xs"
-            onClick={() => setSidebarOpen(false)}
+            className="absolute inset-0 bg-black/10 backdrop-blur-xs"
+            onClick={handleCloseSidebar}
           ></div>
 
-          {/* Sidebar */}
-          <div className="absolute top-0 right-0 h-full bg-white w-96 p-3 pl-8">
-            <div className="flex justify-between items-center mb-6 pt-2">
-              <button onClick={() => setSidebarOpen(false)}>
-                <X size={25} color="blue" />
-              </button>
-            </div>
-
-            {/* User greeting */}
-            <div className="mb-6 pt-5 font-semibold text-md">
-              <p className="text-gray-700 font-semibold text-lg">
-                Hi {user || "User"}, welcome back!
-              </p>
-              <div className="flex space-x-4 mt-4">
-                <div className="flex items-center border-1 p-2 rounded-md border-[#2916BA]">
-                  {/* <div className="w-4 h-4 bg-blue-500 rounded-full"></div> */}
-                  <span className="ml-2 text-sm text-gray-600">Credits</span>
-                </div>
-                <div className="flex items-center border-1 p-2 rounded-md border-[#2916BA]">
-                  {/* <div className="w-4 h-4 bg-blue-500 rounded-full"></div> */}
-                  <span className="ml-2 text-sm text-gray-600">Bookings</span>
-                </div>
-              </div>
-              <div className="flex mt-4">
-                <div className="flex items-center border-1 p-2 rounded-md border-[#2916BA]">
-                  {/* <div className="w-4 h-4 bg-blue-500 rounded-full"></div> */}
-                  <span className="ml-2 text-sm text-gray-600">Streak: 5</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Navigation links */}
-            <nav className="pt-3 space-y-3 text-md flex flex-col font-semibold">
-              <Link
-                to="/profile"
-                className=" text-blue-950 hover:text-blue-700"
-              >
-                MY PROFILE
-              </Link>
-              <Link
-                to="/trainers"
-                className=" text-gray-950 hover:text-blue-700"
-              >
-                MY TRAINERS
-              </Link>
-              <Link
-                to="/communities"
-                className=" text-gray-950 hover:text-blue-700"
-              >
-                MY COMMUNITIES
-              </Link>
-              <Link
-                to="/progress"
-                className=" text-gray-950 hover:text-blue-700"
-              >
-                MY PROGRESS
-              </Link>
-              <Link
-                to="/nutrition"
-                className=" text-gray-950 hover:text-blue-700"
-              >
-                NUTRITION TRACKING
-              </Link>
-              <Link
-                to="/notifications"
-                className=" text-gray-950 hover:text-blue-700"
-              >
-                NOTIFICATIONS
-              </Link>
-              <Link
-                to="/history"
-                className=" text-gray-950 hover:text-blue-700"
-              >
-                HISTORY
-              </Link>
-            </nav>
-
-            <div className="mt-6 pt-4 border-t border-gray-200">
-              <button
-                type="button"
-                className="text-sm text-gray-950 hover:text-blue-700"
-                onClick={() => handleLogout()}
-              >
-                SIGN OUT
-              </button>
-            </div>
-          </div>
+          {/* Dynamically render the appropriate sidebar */}
+          {renderSidebar()}
         </div>
       )}
     </>
