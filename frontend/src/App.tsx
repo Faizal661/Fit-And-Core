@@ -33,7 +33,7 @@ function App() {
         <Route path="/set-password" element={<SetPassword />} />
 
 
-        {/* <Route path="*" element={<Navigate to="/" />} /> */}
+        <Route path="*" element={<Navigate to="/" />} />
       </Routes>
       <Footer />
     </div>

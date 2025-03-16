@@ -7,6 +7,7 @@ import { updateToken, clearAuth } from "../redux/slices/authSlice";
 const api = axios.create({
   baseURL: "http://localhost:5000/api",
   withCredentials: true,
+  timeout: 10000, 
 });
 
 api.interceptors.request.use(
@@ -21,6 +22,7 @@ api.interceptors.request.use(
     return config;
   },
   (error) => {
+    console.log('Request interceptor error:', error);
     store.dispatch(stopLoading());
     return Promise.reject(error);
   }
@@ -33,8 +35,14 @@ api.interceptors.response.use(
     return response;
   },
   async (error) => {
-    console.log('ERROR MESSAGE',error.response.data.error)
+    console.log('ERROR OCCURRED:', error);
     store.dispatch(stopLoading());
+
+    if (!error.response) {
+      console.log('Network error - server may be down');
+      return Promise.reject(error);
+    }
+    
     const originalRequest = error.config;
 
     if (
@@ -51,7 +59,6 @@ api.interceptors.response.use(
       } catch (err) {
         console.error("Session expired, please login again");
         store.dispatch(clearAuth());
-
         return Promise.reject(err);
       }
     }

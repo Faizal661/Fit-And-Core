@@ -4,17 +4,20 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { Facebook } from "lucide-react";
-import axios from 'axios';
+import axios from "axios";
 
 import LoginBody from "../../../components/auth/LoginBody";
 import Google from "../../../assets/icons/Google";
 import userSignUpImage from "../../../assets/images/img4.jpg";
 import { checkEmailUsername } from "../../../services/authService";
 import { AUTH_MESSAGES } from "../../../constants/auth.messages";
-import { type UsernameEmailFormData, userNameEmailSchema } from "../../../schemas/authSchema";
+import {
+  type UsernameEmailFormData,
+  userNameEmailSchema,
+} from "../../../schemas/authSchema";
 import { useSignupContext } from "../../../context/SignupContext";
 import { useToast } from "../../../context/ToastContext";
-
+import { useGoogleAuth } from "../../../hooks/useGoogleAuth";
 
 
 interface UsernameEmailFormProps {
@@ -24,7 +27,9 @@ interface UsernameEmailFormProps {
 const UsernameEmailForm: React.FC<UsernameEmailFormProps> = ({ onSuccess }) => {
   const { setUserData } = useSignupContext();
   const [error, setError] = useState("");
-  const {showToast}=useToast()
+  const { showToast } = useToast();
+  const { handleGoogleLogin } = useGoogleAuth();
+
 
   const {
     register,
@@ -39,22 +44,30 @@ const UsernameEmailForm: React.FC<UsernameEmailFormProps> = ({ onSuccess }) => {
     onSuccess: (data) => {
       if (data.available) {
         setUserData({ username: data.username, email: data.email });
-        showToast('success',AUTH_MESSAGES.OTP_SENT)
-        onSuccess(data); 
+        showToast("success", AUTH_MESSAGES.OTP_SENT);
+        onSuccess(data);
       } else {
         setError(data.message);
       }
     },
     onError: (error: unknown) => {
       if (axios.isAxiosError(error)) {
-        setError(error.response?.data.message || "Server error, please try again");
+        setError(
+          error.response?.data.message || "Server error, please try again"
+        );
       } else {
         setError("Server error, please try again");
       }
-    }
+    },
   });
 
-  const onSubmit = (values:UsernameEmailFormData) => mutation.mutate(values);
+  const onSubmit = (values: UsernameEmailFormData) => mutation.mutate(values);
+
+  const handleSocialLogin = (provider: string) => {
+    if (provider === "Google") {
+      handleGoogleLogin();
+    }
+  };
 
   return (
     <LoginBody
@@ -92,8 +105,8 @@ const UsernameEmailForm: React.FC<UsernameEmailFormProps> = ({ onSuccess }) => {
             errors.email ? "border-b-red-500" : ""
           }`}
         />
-      {errors.email && <p className="text-red-500">{errors.email.message}</p>}
-      {error && <p className="text-red-500">{error}</p>}
+        {errors.email && <p className="text-red-500">{errors.email.message}</p>}
+        {error && <p className="text-red-500">{error}</p>}
 
         <p className="text-light mt-10">
           Already have an account?{" "}
@@ -106,7 +119,11 @@ const UsernameEmailForm: React.FC<UsernameEmailFormProps> = ({ onSuccess }) => {
         </button>
         <div className="flex mt-6 border-b-1 border-slate-400 "></div>
         <div className="flex mt-6 gap-3">
-          <button className="cursor-pointer flex w-full border-1 rounded-4xl border-slate-400 p-2 px-5 justify-center items-center gap-4">
+          <button
+            type="button"
+            className="flex w-full border-1 rounded-4xl border-slate-400 p-2 px-5 justify-center items-center gap-4 cursor-pointer"
+            onClick={() => handleSocialLogin("Google")}
+          >
             <Google />
             Google
           </button>

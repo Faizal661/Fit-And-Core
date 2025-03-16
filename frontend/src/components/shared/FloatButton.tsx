@@ -8,6 +8,7 @@ import { useToast } from "../../context/ToastContext";
 import { AUTH_MESSAGES } from "../../constants/auth.messages";
 import { clearAuth } from "../../redux/slices/authSlice";
 import { persistor } from "../../redux/store";
+import axios from "axios";
 
 const FloatButton = () => {
   const user = useSelector((state: RootState) => state.auth.user?.username);
@@ -36,7 +37,11 @@ const FloatButton = () => {
       dispatch(clearAuth());
       await persistor.purge();
       navigate("/login");
-      showToast("warning", AUTH_MESSAGES.SESSION_EXPIRED);
+      if(axios.isAxiosError(error)){
+        showToast("error", error.message )
+      }else{
+        showToast("warning",AUTH_MESSAGES.SESSION_EXPIRED);
+      }
     }
   };
 

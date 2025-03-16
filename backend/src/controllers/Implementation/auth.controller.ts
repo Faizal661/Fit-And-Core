@@ -158,8 +158,8 @@ export default class AuthController implements IAuthController {
     passport.authenticate(
       "google",
       { session: false },
-      async (err, googleUser) => {
-        try {
+      async (err, googleUser) => { 
+        try {  
           if (err || !googleUser) {
             return res.redirect(
               `${process.env.CLIENT_ORIGIN}/login?error=google_auth_failed`
