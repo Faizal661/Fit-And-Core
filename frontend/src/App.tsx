@@ -6,34 +6,52 @@ import { useSelector } from "react-redux";
 import { RootState } from "./redux/store";
 import ForgetPassword from "./pages/auth/ResetPassword";
 import SetPassword from "./pages/auth/signup/SetPassword.tsx";
-// import OtpVerification from "./pages/auth/OtpVerification";
 import FloatButton from "../src/components/shared/FloatButton";
 import MenuButton from "../src/components/shared/MenuButton";
 import LandingPage from "./pages/user/LandingPage";
 import Loader from "./components/shared/Loader";
 import ToastContainer from "./components/shared/ToastContainer.tsx";
 import AuthCallback from "./components/auth/AuthCallback.tsx";
+import PrivateRoute from "./components/auth/PrivateRoute .tsx";
+import HomeTrainer from "./pages/trainer/HomeTrainer.tsx";
+import HomeAdmin from "./pages/admin/HomeAdmin.tsx";
+import UserManage from "./pages/admin/UserManage.tsx";
+import UserProfile from "./pages/user/UserProfile.tsx";
+import PageNotFound from "./components/shared/PageNotFound.tsx";
 
 function App() {
-  const user = useSelector((state: RootState) => state.auth.user?.username);
+  const user = useSelector((state: RootState) => state.auth.user);
   const isLoading = useSelector((state: RootState) => state.loading.isLoading);
 
   return (
     <div className="min-h-screen flex flex-col">
       {isLoading && <Loader />}
-      <ToastContainer/>
+      <ToastContainer />
       <MenuButton />
       <FloatButton />
+
       <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/login" element={user ? <LandingPage /> : <UserLogin />} />
+        <Route element={<PrivateRoute allowedRoles={["user"]} />}>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/user" element={<Navigate to="/" />} />
+          <Route path="/profile" element={<UserProfile />} />
+        </Route>
+
+        <Route element={<PrivateRoute allowedRoles={["trainer"]} />}>
+          <Route path="/trainer" element={<HomeTrainer />} />
+        </Route>
+
+        <Route element={<PrivateRoute allowedRoles={["admin"]} />}>
+          <Route path="/admin" element={<HomeAdmin />} />
+          <Route path="/admin/users" element={<UserManage />} />
+        </Route>
+
+        <Route path="/login" element={user ? <Navigate to={`/${user.role}`} /> : <UserLogin />} />
+        <Route path="/signup" element={user ? <Navigate to={`/${user.role}`} />: <UserSignUp />} />
         <Route path="/auth/success" element={<AuthCallback />} />
-        <Route path="/signup" element={user ? <LandingPage /> : <UserSignUp />} />
-        <Route path="/forget-password" element={<ForgetPassword />} />
         <Route path="/set-password" element={<SetPassword />} />
-
-
-        <Route path="*" element={<Navigate to="/" />} />
+        <Route path="/forget-password" element={<ForgetPassword />} />
+        <Route path="*" element={<PageNotFound />} />
       </Routes>
       <Footer />
     </div>

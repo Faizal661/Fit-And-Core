@@ -49,7 +49,7 @@ const FloatButton = () => {
     <>
       <button
         onClick={handleButtonClick}
-        className="fixed top-3 right-3 bg-white opacity-90 text-[#2916BA] py-2 px-3 rounded-full flex flex-row hover:bg-slate-300 hover:cursor-pointer z-50"
+        className="fixed top-3 right-3 bg-white opacity-90 text-[#2916BA] py-2 px-3 rounded-full flex flex-row border-b-2 border-b-amber-500 border-t-2 border-t-fuchsia-500 border-l-2 border-l-red-500 border-r-2 border-r-green-400  hover:bg-slate-300 hover:cursor-pointer z-50"
       >
         <CircleUserRound />
         <p className="ml-3 font-bold">

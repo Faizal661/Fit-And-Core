@@ -10,15 +10,6 @@ const LandingPage: React.FC = () => {
   return (
     <div className="landing-page">
       <div className="relative h-screen w-full">
-        {/* <video
-          autoPlay
-          loop
-          muted
-          className="absolute inset-0 w-full h-full object-cover z-10"
-        >
-          <source src={hero_video} type="video/mp4" />
-        </video> */}
-
         <img
           src={hero_image}
           alt=""

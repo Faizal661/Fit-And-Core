@@ -45,7 +45,7 @@ const UserLogin: React.FC = () => {
         })
       );
       showToast("success",AUTH_MESSAGES.LOGIN_SUCCESS)
-      navigate("/");
+      navigate(`/${data.user.role}`);
     },
     onError: () => {
         setServerError(AUTH_MESSAGES.LOGIN_FAILED);

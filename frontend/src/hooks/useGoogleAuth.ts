@@ -23,7 +23,7 @@ export const useGoogleAuth = () => {
         })
       );
       showToast("success", AUTH_MESSAGES.LOGIN_SUCCESS);
-      navigate("/");
+      navigate(`/${data.user.role}`);
     },
     onError: () => {
       showToast("error", AUTH_MESSAGES.GOOGLE_AUTH_FAIL);
