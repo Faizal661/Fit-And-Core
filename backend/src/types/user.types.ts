@@ -8,6 +8,7 @@ export interface IUser {
     profilePicture?: string;
     googleId?:string;
     dateOfBirth: Date;
+    gender?:string,
     createdAt: Date;
     updatedAt: Date;
 } 
@@ -21,3 +22,29 @@ export interface jwtDecoded{
     exp:number
 
 }
+
+export interface IUserProfile {
+    username: string;
+    profilePicture?: string;
+    gender?: string;
+    dateOfBirth?: Date;
+    phone?: string;
+    email: string;
+    address?: string;
+    city?: string;
+    pinCode?: string;
+    joinedDate: Date;
+  }
+  
+  export interface UserProfileUpdateData {
+    gender?: string;
+    dateOfBirth?: Date;
+    phone?: string;
+    email?: string;
+    address?: string;
+    city?: string;
+    pinCode?: string;
+    profilePicture?: string;
+    username?: string;
+    password?: string;
+  }

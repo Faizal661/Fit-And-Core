@@ -27,8 +27,8 @@ export const verifyAccessToken = (
       throw new UnauthorizedError("Access denied. No token provided.");
     }
     try {
-      const decoded = jwt.verify(accessToken!, ACCESS_TOKEN_SECRET);
-      req.user = decoded;
+      const decoded = jwt.verify(accessToken!, ACCESS_TOKEN_SECRET) as IJwtDecoded;
+      req.decoded = decoded;
       next();
     } catch (tokenError) {
       throw new UnauthorizedError("Invalid or expired access token.");

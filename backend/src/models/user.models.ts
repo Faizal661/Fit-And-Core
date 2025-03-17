@@ -1,7 +1,12 @@
 import { model, Schema, Document } from "mongoose";
 import { IUser } from "../types/user.types";
 
-export interface IUserModel extends Document, Omit<IUser, "_id"> {}
+export interface IUserModel extends Document, Omit<IUser, "_id"> {
+  phone: string | undefined;
+  address: string | undefined;
+  city: string | undefined;
+  pinCode: string | undefined;
+}
 
 const userSchema = new Schema<IUserModel>(
   {
@@ -29,14 +34,18 @@ const userSchema = new Schema<IUserModel>(
     },
     profilePicture: {
       type: String,
-      default: "https://static.vecteezy.com/system/resources/previews/027/448/973/non_2x/avatar-account-icon-default-social-media-profile-photo-vector.jpg",
+      default:
+        "https://static.vecteezy.com/system/resources/previews/027/448/973/non_2x/avatar-account-icon-default-social-media-profile-photo-vector.jpg",
     },
-    googleId:{
-      type:String
+    googleId: {
+      type: String,
     },
-    dateOfBirth: {
-      type: Date,
-    },
+    gender: { type: String },
+    dateOfBirth: { type: Date },
+    phone: { type: String },
+    address: { type: String },
+    city: { type: String },
+    pinCode: { type: String },
   },
   {
     timestamps: true,
