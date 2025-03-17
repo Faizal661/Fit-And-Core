@@ -37,7 +37,7 @@ const TrainerSidebar = ({ username, onClose, onLogout }: TrainerSidebarProps) =>
       </div>
 
       {/* Navigation links */}
-      <nav className="pt-3 space-y-3 text-md flex flex-col font-semibold">
+      <nav className="pt-3 space-y-3 text-md flex flex-col font-semibold"  onClick={onClose}>
         <Link
           to="/trainer/sessions"
           className="text-gray-950 hover:text-blue-700 hover:bg-blue-50 p-2 rounded transition-colors flex items-center gap-3"

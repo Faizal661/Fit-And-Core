@@ -29,9 +29,9 @@ const AdminSidebar = ({ username, onClose, onLogout }: AdminSidebarProps) => {
       </div>
 
       {/* Navigation links */}
-      <nav className="pt-3 space-y-3 text-md flex flex-col font-semibold">
+      <nav className="pt-3 space-y-3 text-md flex flex-col font-semibold"  onClick={onClose}>
         <Link
-          to="/admin/dashboard"
+          to="/admin"
           className="text-gray-950 hover:text-blue-700 hover:bg-blue-50 p-2 rounded transition-colors flex items-center gap-3"
         >
           <BarChart size={18} />

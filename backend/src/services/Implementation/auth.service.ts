@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from "express";
 import { inject, injectable } from "tsyringe";
-import { HTTPStatusCodes, ConflictError } from "mern.common";
 import { IAuthService } from "../Interface/IAuthService";
 import { IAuthRepository } from "../../repositories/Interface/IAuthRepository";
 import { sendEmail } from "../../utils/email.util";

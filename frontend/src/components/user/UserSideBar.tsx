@@ -40,7 +40,7 @@ const UserSidebar = ({ username, onClose, onLogout }: UserSidebarProps) => {
       </div>
 
       {/* Navigation links */}
-      <nav className="pt-3 space-y-2 text-md flex flex-col font-semibold">
+      <nav className="pt-3 space-y-2 text-md flex flex-col font-semibold" onClick={onClose}> 
         <Link
           to="/"
           className="text-gray-950 hover:text-blue-700 hover:bg-blue-50 p-2 rounded transition-colors flex items-center gap-3"
