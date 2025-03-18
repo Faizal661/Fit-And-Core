@@ -6,6 +6,12 @@ export const checkEmailUsername = async (data: { username: string; email: string
   return response.data; // { available: boolean, username: string, email: string }
 };
 
+export const isValidEmail= async (data: {email: string }) => {
+  const response = await axios.post(`/auth/check-email`, data);
+  console.log('klklklkl==>',response.data)
+  return response.data; // { available: boolean,email: string }
+};
+
 export const verifyOtp = async (data: { email: string; otp: string }) => {
   const response = await axios.post(`/auth/verify-otp`, data);
   return response.data; // { success: boolean }
@@ -13,6 +19,12 @@ export const verifyOtp = async (data: { email: string; otp: string }) => {
 
 export const ResendOtp = async (email: string) => {
   await axios.post(`/auth/resend-otp`, { email });
+};
+
+export const resetPassword = async (data: {email: string; password: string }) => {
+  const response = await axios.post(`/auth/reset-password`, data);
+  // console.log('new user data => ',response.data)
+  return response.data; 
 };
 
 export const createUser = async (data: { username: string; email: string; password: string }) => {

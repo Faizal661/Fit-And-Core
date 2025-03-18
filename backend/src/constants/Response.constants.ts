@@ -66,7 +66,7 @@ export enum HttpResponseCode {
     NETWORK_AUTHENTICATION_REQUIRED = 511
 }
 
-export enum HttpResponseMessage {
+export enum     HttpResponseMessage {
     //200
     SUCCESS = "Operation successful",
     CREATED = "Resource successfully created",

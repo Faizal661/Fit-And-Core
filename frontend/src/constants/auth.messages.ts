@@ -16,7 +16,10 @@ export enum AUTH_MESSAGES {
     LOGIN_FAILED="Invalid email or password",
     LOGOUT_SUCCESS="Log out success",
     GOOGLE_AUTH_FAIL="Google Authentication failed",
-    
+
+    INVALID_EMAIL="not a registred Email.",
+    PASSWORD_RESET_SUCCESS="Password Reset Successfully",
+
     SERVER_ERROR="Server error, please try again",
     SESSION_EXPIRED="Session expired, please login again",
 };

@@ -48,6 +48,28 @@ export default class AuthController implements IAuthController {
     }
   }
 
+  async checkEmail(req: Request, res: Response, next: NextFunction): Promise<void>{
+    try {
+      const { email }: { email: string } = req.body;
+      const result = await this.authService.isValidEmail(email);
+      console.log("result - - -  - --", result);
+      if (!result.isValid) {
+        SendResponse(res, HttpResponseCode.NOT_FOUND, HttpResponseMessage.NOT_FOUND);
+        return;
+      }
+      await this.authService.sendOtp(email);
+      SendResponse(
+        res,
+        HttpResponseCode.OK,
+        HttpResponseMessage.SUCCESS,
+        result
+      );
+    } catch (error) {
+      next(error);
+    }
+  }
+
+
   async verifyOtp(
     req: Request,
     res: Response,
@@ -89,6 +111,27 @@ export default class AuthController implements IAuthController {
       next(error);
     }
   }
+  async updatePassword(req: Request, res: Response, next: NextFunction): Promise<void>{
+    try {
+      const { email, password } = req.body;
+      console.log(req.body)
+
+      if (!email || !password) {
+        SendResponse(
+          res,
+          HttpResponseCode.BAD_REQUEST,
+          HttpResponseMessage.BAD_REQUEST
+        );
+        return;
+      }
+      const isUpdated=await this.authService.updatePassword(email,password);
+      console.log("user password updated => ", isUpdated);
+      SendResponse(res, HttpResponseCode.OK, HttpResponseMessage.SUCCESS);
+    } catch (error) {
+      next(error);
+    }
+  }
+
 
   async register(
     req: Request,

@@ -53,6 +53,18 @@ export default class authService implements IAuthService {
       message: "Success",
     };
   }
+  async isValidEmail(
+    email: string
+  ): Promise<{ isValid: boolean; email: string }> {
+    const isValid = await this.authRepository.isEmailTaken(email);
+    if (!isValid) {
+      return { isValid: false, email: email };
+    }
+    return {
+      isValid: true,
+      email: email,
+    };
+  }
 
   async sendOtp(email: string): Promise<void> {
     const otp = randomInt(100000, 999999).toString();
@@ -73,6 +85,17 @@ export default class authService implements IAuthService {
     await this.authRepository.deleteOtp(email);
     // console.log('otp deleted from redis')
     return { success: true, message: "OTP verified successfully" };
+  }
+
+  async updatePassword(
+    email: string,
+    password: string
+  ): Promise<{ isUpdated: boolean }> {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    console.log('1',password)
+    console.log('2',hashedPassword)
+    await this.authRepository.updatepassword(email, hashedPassword);
+    return { isUpdated: true };
   }
 
   async registerUser(
@@ -120,7 +143,10 @@ export default class authService implements IAuthService {
       if (!accessToken) {
         throw new UnauthorizedError("Access denied. No token provided.");
       }
-      const decoded = jwt.verify( accessToken,process.env.ACCESS_TOKEN_SECRET! ) as IJwtDecoded;
+      const decoded = jwt.verify(
+        accessToken,
+        process.env.ACCESS_TOKEN_SECRET!
+      ) as IJwtDecoded;
 
       const user = await this.authRepository.findByEmail(decoded.email);
       if (!user) {

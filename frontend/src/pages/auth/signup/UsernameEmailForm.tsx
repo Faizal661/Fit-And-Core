@@ -127,10 +127,6 @@ const UsernameEmailForm: React.FC<UsernameEmailFormProps> = ({ onSuccess }) => {
             <Google />
             Google
           </button>
-          <button className="cursor-pointer flex w-full border-1 rounded-4xl py-2 px-5 border-slate-400 justify-center items-center gap-4">
-            <Facebook strokeWidth={0.1} fill="white" color="white" />
-            Facebook
-          </button>
         </div>
       </form>
     </LoginBody>

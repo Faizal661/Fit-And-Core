@@ -12,4 +12,5 @@ export interface IAuthRepository {
     createUser(data: Partial<IUserModel>): Promise<IUserModel>
     findByEmail(email: string): Promise<IUserModel | null> 
     findOrCreateGoogleUser(googleUser: IGoogleUser): Promise<any>;
+    updatepassword(email: string,password:string): Promise<void>
 }

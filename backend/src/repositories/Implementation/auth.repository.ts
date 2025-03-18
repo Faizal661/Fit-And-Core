@@ -40,6 +40,10 @@ export class AuthRepository
     await this.redisClient.del(`otp:${email}`);
   }
 
+  async updatepassword(email: string,password:string): Promise<void>{
+     await UserModel.updateOne({email:email},{password:password})
+  }
+
   async createUser(data: Partial<IUserModel>): Promise<IUserModel> {
     return await UserModel.create(data);
   }

@@ -1,11 +1,17 @@
 import { z } from "zod";
 
+
+export const emailSchema = z.object({
+  email: z.string().email("Please enter a valid email address"),
+});
+export type EmailFormData = z.infer<typeof emailSchema>;
+
+
 export const userNameEmailSchema = z.object({
   username: z.string().min(3, "Username must be at least 3 characters"),
-  email: z.string().email("Invalid email"),
+  email: z.string().email("Please enter a valid email address"),
 });
 export type UsernameEmailFormData = z.infer<typeof userNameEmailSchema>;
-
 
 
 export const otpSchema = z.object({
@@ -15,7 +21,6 @@ export const otpSchema = z.object({
     .regex(/^\d+$/, "OTP must contain only digits"),
 });
 export type OtpFormData = z.infer<typeof otpSchema>;
-
 
 
 export const passwordSchema = z
