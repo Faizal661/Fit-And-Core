@@ -1,5 +1,4 @@
 export enum HttpResponseCode {
-    // Success 
     OK = 200,
     CREATED = 201,
     ACCEPTED = 202,
@@ -11,7 +10,6 @@ export enum HttpResponseCode {
     ALREADY_REPORTED = 208,
     IM_USED = 226,
 
-    // Redirectional 
     MULTIPLE_CHOICES = 300,
     MOVED_PERMANENTLY = 301,
     FOUND = 302,
@@ -21,7 +19,6 @@ export enum HttpResponseCode {
     TEMPORARY_REDIRECT = 307,
     PERMANENT_REDIRECT = 308,
 
-    // Client Error 
     BAD_REQUEST = 400,
     UNAUTHORIZED = 401,
     PAYMENT_REQUIRED = 402,
@@ -52,7 +49,6 @@ export enum HttpResponseCode {
     REQUEST_HEADER_FIELDS_TOO_LARGE = 431,
     UNAVAILABLE_FOR_LEGAL_REASONS = 451,
 
-    // Server Error
     INTERNAL_SERVER_ERROR = 500,
     NOT_IMPLEMENTED = 501,
     BAD_GATEWAY = 502,
@@ -67,7 +63,6 @@ export enum HttpResponseCode {
 }
 
 export enum     HttpResponseMessage {
-    //200
     SUCCESS = "Operation successful",
     CREATED = "Resource successfully created",
     ACCEPTED = "Request accepted",
@@ -79,7 +74,6 @@ export enum     HttpResponseMessage {
     ALREADY_REPORTED = "Already reported",
     IM_USED = "IM used",
 
-    //300
     MULTIPLE_CHOICES = "Multiple choices",
     MOVED_PERMANENTLY = "Resource moved permanently",
     FOUND = "Resource found",
@@ -89,7 +83,6 @@ export enum     HttpResponseMessage {
     TEMPORARY_REDIRECT = "Temporary redirect",
     PERMANENT_REDIRECT = "Permanent redirect",
 
-    //400
     BAD_REQUEST = "Bad request",
     UNAUTHORIZED = "Unauthorized access",
     PAYMENT_REQUIRED = "Payment required",
@@ -120,7 +113,6 @@ export enum     HttpResponseMessage {
     REQUEST_HEADER_FIELDS_TOO_LARGE = "Request header fields too large",
     UNAVAILABLE_FOR_LEGAL_REASONS = "Unavailable for legal reasons",
 
-    //500
     INTERNAL_SERVER_ERROR = "Internal server error",
     NOT_IMPLEMENTED = "Not implemented",
     BAD_GATEWAY = "Bad gateway",

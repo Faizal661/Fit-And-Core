@@ -21,6 +21,7 @@ import PageNotFound from "./components/shared/PageNotFound.tsx";
 import TrainerApply from "./pages/trainer/TrainerApply.tsx";
 import OtpVerification from "./pages/auth/resetPassword/OtpVerification.tsx";
 import NewPassword from "./pages/auth/resetPassword/NewPassword.tsx";
+import TrainerManage from "./pages/admin/TrainerManage.tsx";
 
 function App() {
   const user = useSelector((state: RootState) => state.auth.user);
@@ -47,7 +48,8 @@ function App() {
 
         <Route element={<PrivateRoute allowedRoles={["admin"]} />}>
           <Route path="/admin" element={<HomeAdmin />} />
-          <Route path="/admin/users" element={<UserManage />} />
+          <Route path="/admin/user-management" element={<UserManage />} />
+          <Route path="/admin/trainer-management" element={<TrainerManage />} />
         </Route>
 
         <Route path="/login" element={user ? <Navigate to={`/${user.role}`} /> : <UserLogin />} />

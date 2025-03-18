@@ -3,7 +3,6 @@ import LoginBody from "../../components/auth/LoginBody";
 import userLoginImage from "../../assets/images/image1.jpg";
 import { Link, useNavigate } from "react-router-dom";
 import { AUTH_MESSAGES } from "../../constants/auth.messages";
-import { Facebook } from "lucide-react";
 import Google from "../../assets/icons/Google";
 
 import { loginSchema, type LoginFormData } from "../../schemas/authSchema";

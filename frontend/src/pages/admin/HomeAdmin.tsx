@@ -8,7 +8,7 @@ const HomeAdmin = () => {
   return (
     <Fragment>
       <QueryClientProvider client={queryClient}>
-        <div className="bg-gray-100 min-h-screen">
+        <div className="bg-gray-400 min-h-screen">
           <AdminDashboard />
         </div>
       </QueryClientProvider>

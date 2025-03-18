@@ -3,7 +3,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { Facebook } from "lucide-react";
 import axios from "axios";
 
 import LoginBody from "../../../components/auth/LoginBody";
