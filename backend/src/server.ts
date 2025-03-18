@@ -10,6 +10,7 @@ import passport from "passport";
 import authRoutes from "./routes/auth.routes";
 import adminRoutes from "./routes/admin.routes"
 import userRoutes from "./routes/user.routes.ts";
+import trainerRoutes from "./routes/trainer.routes.ts";
 
 // Configurations
 import configurePassport from "./config/passport";
@@ -43,6 +44,7 @@ configurePassport();
 app.use("/api/auth", authRoutes); 
 app.use("/api/admin", adminRoutes); 
 app.use("/api/user", userRoutes);
+app.use("/api/trainer",trainerRoutes)
 
 app.use(errorHandler);
 

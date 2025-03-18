@@ -1,4 +1,4 @@
-import { Bell, BellRing, Menu, NotebookIcon } from 'lucide-react';
+import { BellRing } from 'lucide-react';
 
 const MenuButton = () => {
   return (

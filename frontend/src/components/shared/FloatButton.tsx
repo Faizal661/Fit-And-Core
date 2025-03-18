@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { CircleUserRound, X } from "lucide-react";
+import { CircleUserRound} from "lucide-react";
 import { RootState } from "../../redux/store";
 import { logoutUser } from "../../services/authService";
 import { useToast } from "../../context/ToastContext";

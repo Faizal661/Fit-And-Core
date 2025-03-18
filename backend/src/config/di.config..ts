@@ -24,6 +24,13 @@ import { IUserController } from "../controllers/Interface/IUserController";
 import { IUserService } from "../services/Interface/IUserService";
 import { IUserRepository } from "../repositories/Interface/IUserRepository";
 
+import TrainerService from "../services/Implementation/trainer.service";
+import TrainerController from "../controllers/Implementation/trainer.controller";
+import {TrainerRepository} from "../repositories/Implementation/trainer.repository";
+import { ITrainerRepository } from "../repositories/Interface/ITrainerRepository";
+import { ITrainerService } from "../services/Interface/ITrainerService";
+import { ITrainerController } from "../controllers/Interface/ITrainerController";
+
 //
 container.registerInstance('RedisClient', redisClient);
 
@@ -31,15 +38,16 @@ container.registerInstance('RedisClient', redisClient);
 container.register<IAuthController>('AuthController', { useClass: AuthController });
 container.register<IAdminController>('AdminController', { useClass: AdminController });
 container.register<IUserController>("UserController", { useClass: UserController });
-
+container.register<ITrainerController>("TrainerController", { useClass: TrainerController,});
 
 // Services
 container.register<IAuthService>('AuthService', { useClass: AuthService });
 container.register<IAdminService>('AdminService', { useClass: adminService });
 container.register<IUserService>("UserService", { useClass: UserService });
-
+container.register<ITrainerService>("TrainerService", { useClass: TrainerService,});
 
 // Repositories
 container.register<IAuthRepository>('AuthRepository',{useClass: AuthRepository})
 container.register<IAdminRepository>('AdminRepository',{useClass: AdminRepository})
 container.register<IUserRepository>("UserRepository", { useClass: UserRepository });
+container.register<ITrainerRepository>("TrainerRepository", { useClass: TrainerRepository,});

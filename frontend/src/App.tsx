@@ -18,6 +18,7 @@ import HomeAdmin from "./pages/admin/HomeAdmin.tsx";
 import UserManage from "./pages/admin/UserManage.tsx";
 import UserProfile from "./pages/user/UserProfile.tsx";
 import PageNotFound from "./components/shared/PageNotFound.tsx";
+import TrainerApply from "./pages/trainer/TrainerApply.tsx";
 
 function App() {
   const user = useSelector((state: RootState) => state.auth.user);
@@ -35,6 +36,7 @@ function App() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/user" element={<Navigate to="/" />} />
           <Route path="/profile" element={<UserProfile />} />
+          <Route path="/trainer/apply" element={<TrainerApply />} />
         </Route>
 
         <Route element={<PrivateRoute allowedRoles={["trainer"]} />}>

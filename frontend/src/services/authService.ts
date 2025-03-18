@@ -67,3 +67,16 @@ export const logoutUser = async (): Promise<boolean> => {
     throw error;
   }
 };
+
+
+
+//trainer application
+export const submitTrainerApplication = async (data: FormData) => {
+  console.log("request send ", data);
+  const response = await axios.post("/trainer/apply-trainer", data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return response.data;
+};
