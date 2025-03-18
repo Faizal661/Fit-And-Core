@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -9,15 +9,15 @@ import {
 import {
   fetchUserProfile,
   updateUserProfile,
+  updateProfilePicture,
 } from "../../services/user/userProfile";
 import { useToast } from "../../context/ToastContext";
 import { formatDateForInput } from "../../utils/dateFormat";
 
-
-
 const UserProfile = () => {
   const queryClient = useQueryClient();
-  const {showToast}=useToast()
+  const { showToast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const {
     data: userData,
@@ -49,13 +49,29 @@ const UserProfile = () => {
     mutationFn: updateUserProfile,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["userProfile"] });
-      showToast("success","Profile updated successfully!");
+      showToast("success", "Profile updated successfully!");
+    },
+  });
+
+  const profilePictureMutation = useMutation({
+    mutationFn: updateProfilePicture,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["userProfile"] });
+      showToast("success", "Profile picture updated successfully!");
+    },
+    onError: (error) => {
+      showToast(
+        "error",
+        `Failed to update profile picture: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`
+      );
     },
   });
 
   React.useEffect(() => {
     if (userData) {
-      console.log('userData--- - - ',userData)
+      console.log("userData--- - - ", userData);
       reset({
         gender: userData.gender,
         dateOfBirth: formatDateForInput(userData.dateOfBirth),
@@ -69,6 +85,32 @@ const UserProfile = () => {
 
   const onSubmit = (data: UserProfileFormData) => {
     mutation.mutate(data);
+  };
+
+  const handleProfilePictureChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      showToast("error", "Please upload an image file");
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      showToast("error", "Image size should be less than 5MB");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("profilePicture", file);
+
+    profilePictureMutation.mutate(formData);
+  };
+
+  const handleProfilePictureClick = () => {
+    fileInputRef.current?.click();
   };
 
   if (isLoading)
@@ -90,31 +132,51 @@ const UserProfile = () => {
 
   return (
     <div className="min-h-screen bg-blue-800 flex flex-col items-center p-4 pt-8">
-      <h1 className="text-white text-4xl font-mono mb-2 capitalize">
+      <h1 className="text-white text-4xl  mb-2 capitalize">
         {userData?.username || "User Profile"}
       </h1>
-      <p className="text-gray-300 font-mono mb-6 text-lg">
+      <p className="text-gray-300 mb-6 text-lg">
         PERSONAL INFORMATION
       </p>
 
       <div className="relative mb-6">
-        <div className="w-32 h-32 rounded-full overflow-hidden bg-gray-200 border-2 border-white">
-          {userData?.profilePicture ? (
-            <img
-              src={userData.profilePicture}
-              alt="Profile"
-              className="w-full h-full object-cover"
-            />
+        <div
+          className="w-32 h-32 rounded-full overflow-hidden bg-gray-200 border-2 border-white cursor-pointer group"
+          onClick={handleProfilePictureClick}
+        >
+           {userData?.profilePicture ? (
+            <div className="relative w-full h-full">
+              <img
+                src={userData?.profilePicture}
+                alt="profile photo"
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 group-hover:bg-black flex items-center justify-center transition-all duration-300">
+                <span className="text-white opacity-0 group-hover:opacity-100  transition-opacity duration-300">
+                  Change Photo
+                </span>
+              </div>
+            </div>
           ) : (
-            <div className="w-full h-full bg-gray-300 flex items-center justify-center text-gray-500">
-              <span>Photo</span>
+            <div className="w-full h-full bg-gray-300 flex items-center justify-center text-gray-500 group-hover:bg-gray-400 transition-all duration-300">
+              <span>Upload Photo</span>
             </div>
           )}
         </div>
+        <input
+          type="file"
+          ref={fileInputRef}
+          className="hidden"
+          accept="image/*"
+          onChange={handleProfilePictureChange}
+        />
+        
+        {profilePictureMutation.isPending && (
+          <div className="mt-2 text-white text-sm">Uploading...</div>
+        )}
       </div>
 
       <div className="w-full max-w-md bg-blue-800 text-white">
-        {/* Display only information */}
         <div className="mb-6 border-b border-blue-700 pb-4">
           <div className="mb-4">
             <p className="text-xs text-blue-300 mb-1">USERNAME</p>

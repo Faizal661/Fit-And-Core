@@ -24,9 +24,7 @@ interface S3UploadResult {
 }
 
 
-/**
- * Upload file to S3 bucket (AWS SDK v3)
- */
+//Upload file to S3 bucket 
 export const uploadToS3 = async (
   file: UploadedFile,
   folder: string = "uploads"
@@ -56,9 +54,7 @@ export const uploadToS3 = async (
   }
 };
 
-/**
- * Delete file from S3 bucket (AWS SDK v3)
- */
+ // Delete file from S3 bucket 
 export const deleteFromS3 = async (fileKey: string): Promise<void> => {
   const deleteParams = {
     Bucket: BUCKET_NAME,

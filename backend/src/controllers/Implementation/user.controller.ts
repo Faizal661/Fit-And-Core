@@ -77,4 +77,42 @@ export default class UserController implements IUserController {
       next(error);
     }
   }
+
+  async updateProfilePicture(req: Request, res: Response, next: NextFunction): Promise<void>{
+    try {
+        const userId = req.decoded?.id;
+        
+        if (!userId) {
+          return SendResponse(
+            res,
+            HttpResponseCode.UNAUTHORIZED,
+            HttpResponseMessage.UNAUTHORIZED
+          );
+        }
+  
+        if (!req.file) {
+          return SendResponse(
+            res,
+            HttpResponseCode.BAD_REQUEST,
+            "No file uploaded"
+          );
+        }
+        
+        const updatedProfile = await this.userService.updateProfilePicture(
+          userId,
+          req.file
+        );
+        
+        SendResponse(
+          res,
+          HttpResponseCode.OK,
+          HttpResponseMessage.SUCCESS,
+          updatedProfile
+        );
+      } catch (error) {
+        next(error);
+      }
+    }
+
+
 }

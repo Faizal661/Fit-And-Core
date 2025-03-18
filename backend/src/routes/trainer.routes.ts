@@ -3,18 +3,12 @@ import express from "express";
 import { container } from "tsyringe";
 import { ITrainerController } from "../controllers/Interface/ITrainerController";
 import { verifyAccessToken } from '../middlewares/verifyToken.middleware';
-import multer from "multer"
 import { CustomRequest } from "../types/trainer.types";
+import { upload } from "../utils/multer.util";
 
 const router = express.Router();
 const trainerController = container.resolve<ITrainerController>("TrainerController");
 
-const upload = multer({
-  storage: multer.memoryStorage(),
-  limits: {
-    fileSize: 5 * 1024 * 1024, 
-  },
-});
 
 router.post(
   "/apply-trainer", 

@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { X, Calendar, Users, MessageSquare, FileText, Bell, TrendingUp } from "lucide-react";
+import { X, Calendar, Users, MessageSquare, FileText, Bell, TrendingUp, Home } from "lucide-react";
 
 interface TrainerSidebarProps {
   username: string | undefined;
@@ -38,6 +38,13 @@ const TrainerSidebar = ({ username, onClose, onLogout }: TrainerSidebarProps) =>
 
       {/* Navigation links */}
       <nav className="pt-3 space-y-3 text-md flex flex-col font-semibold"  onClick={onClose}>
+      <Link
+          to="/trainer"
+          className="text-gray-950 hover:text-blue-700 hover:bg-blue-50 p-2 rounded transition-colors flex items-center gap-3"
+        >
+          <Home size={18} />
+          DASHBOARD
+        </Link>
         <Link
           to="/trainer/sessions"
           className="text-gray-950 hover:text-blue-700 hover:bg-blue-50 p-2 rounded transition-colors flex items-center gap-3"

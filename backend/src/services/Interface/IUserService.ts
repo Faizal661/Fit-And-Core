@@ -7,4 +7,5 @@ export interface IUserService {
     userId: string | Types.ObjectId,
     updateData: UserProfileUpdateData
   ): Promise<IUserProfile>;
+  updateProfilePicture(userId: string | Types.ObjectId, file: Express.Multer.File): Promise<IUserProfile>;
 }

@@ -140,10 +140,10 @@ const TrainerApply = () => {
     <div className="min-h-screen bg-blue-800 flex flex-col items-center pt-6 pb-12 px-4">
       <div className="w-full max-w-xl">
         <div className="text-center mb-8">
-          <h1 className="text-white font-mono text-2xl mb-1">
+          <h1 className="text-white font-medium text-2xl mb-1">
             Welcome to the Fit-Core{" "}
           </h1>
-          <p className="text-white font-mono text-xl">
+          <p className="text-white font-medium text-xl">
             Apply to become a Trainer
           </p>
         </div>
@@ -155,7 +155,7 @@ const TrainerApply = () => {
             <input
               type="tel"
               {...register("phone")}
-              className="w-full bg-transparent border-b border-blue-700 text-white pb-1 focus:outline-none"
+              className="w-full bg-transparent mt-2 border-b border-blue-700 text-white pb-1 focus:outline-none"
             />
             {errors.phone && (
               <p className="text-red-500 text-xs mt-1">
@@ -170,7 +170,7 @@ const TrainerApply = () => {
             <input
               type="text"
               {...register("specialization")}
-              className="w-full bg-transparent border-b border-blue-700 text-white pb-1 focus:outline-none"
+              className="w-full bg-transparent mt-2  border-b border-blue-700 text-white pb-1 focus:outline-none"
               placeholder="e.g. Weight Training, Yoga, Nutrition"
             />
             {errors.specialization && (
@@ -186,7 +186,7 @@ const TrainerApply = () => {
             <input
               type="text"
               {...register("yearsOfExperience")}
-              className="w-full bg-transparent border-b border-blue-700 text-white pb-1 focus:outline-none"
+              className="w-full bg-transparent mt-2 border-b border-blue-700 text-white pb-1 focus:outline-none"
               placeholder="e.g. 5 years"
             />
             {errors.yearsOfExperience && (
@@ -201,7 +201,7 @@ const TrainerApply = () => {
             <label className="text-sm text-blue-300">ABOUT</label>
             <textarea
               {...register("about")}
-              className="w-full bg-transparent border-b border-blue-700 text-white pb-1 focus:outline-none"
+              className="w-full bg-transparent mt-2 border-b border-blue-700 text-white pb-1 focus:outline-none"
               rows={4}
               placeholder="Tell us about your career in fitness..."
             />
@@ -372,14 +372,14 @@ const TrainerApply = () => {
           </div>
 
           {/* Terms and Conditions */}
-          <div className="text-center mt-6 text-xs text-blue-300">
+          {/* <div className="text-center mt-6 text-xs text-blue-300">
             I agree to the <span className="underline">Terms & Conditions</span>
             , <span className="underline">Disclaimer</span> and{" "}
             <span className="underline">Privacy Policy</span>
-          </div>
+          </div> */}
 
           {/* Submit Button */}
-          <div className="mt-6">
+          <div className="mt-10">
             <button
               type="submit"
               disabled={mutation.isPending}

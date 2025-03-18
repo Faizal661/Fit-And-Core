@@ -43,7 +43,7 @@ export default class AuthController implements IAuthController {
         HttpResponseMessage.SUCCESS,
         result
       );
-    } catch (error: any) {
+    } catch (error) {
       next(error);
     }
   }
