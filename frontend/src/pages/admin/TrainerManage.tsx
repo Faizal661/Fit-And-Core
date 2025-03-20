@@ -139,7 +139,7 @@ const TrainerManage: React.FC = () => {
       </div>
 
       {/* Main Content */}
-      <div className="bg-white rounded-lg shadow p-6 mb-6 m-6">
+      <div className="bg-white shadow p-6 mb-6 m-6">
         {activeTab === "pending" && (
           <>
             <h2 className="text-xl font-semibold text-gray-800 mb-4">

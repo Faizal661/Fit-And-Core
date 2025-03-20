@@ -3,7 +3,6 @@ import { inject, injectable } from "tsyringe";
 import { IAuthService } from "../Interface/IAuthService";
 import { IAuthRepository } from "../../repositories/Interface/IAuthRepository";
 import { sendEmail } from "../../utils/email.util";
-import { randomInt } from "crypto";
 import bcrypt from "bcryptjs";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { IUserModel } from "../../models/user.models";
@@ -12,12 +11,12 @@ import {
   generateRefreshToken,
 } from "../../utils/token.util";
 import { UnauthorizedError } from "mern.common";
-import { jwtDecoded } from "../../types/user.types";
 import {
   IGoogleUser,
   IJwtDecoded,
   ILoginResponse,
 } from "../../types/auth.types";
+import { generateOtp } from "../../utils/otp-generate.util";
 
 @injectable()
 export default class authService implements IAuthService {
@@ -50,9 +49,10 @@ export default class authService implements IAuthService {
       available: true,
       username: username,
       email: email,
-      message: "Success",
+      message: "Username and Email are available.",
     };
   }
+  
   async isValidEmail(
     email: string
   ): Promise<{ isValid: boolean; email: string }> {
@@ -67,10 +67,18 @@ export default class authService implements IAuthService {
   }
 
   async sendOtp(email: string): Promise<void> {
-    const otp = randomInt(100000, 999999).toString();
-    console.log("otp->", otp);
-    await this.authRepository.storeOtp(email, otp);
-    await sendEmail(email, otp);
+    const otp = generateOtp();
+    console.warn("otp - - >", otp);
+    try {
+      await this.authRepository.storeOtp(email, otp);
+      await sendEmail(email, otp);
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(error.message);
+      } else {
+        throw new Error(`OTP sending failed: Unknown error occurred`);
+      }
+    }
   }
 
   async verifyOtp(
@@ -78,12 +86,10 @@ export default class authService implements IAuthService {
     otp: string
   ): Promise<{ success: boolean; message: string }> {
     const storedOtp = await this.authRepository.getOtp(email);
-    // console.log('redisOtp=>',storedOtp)
     if (!storedOtp || storedOtp !== otp) {
       return { success: false, message: "Invalid or expired OTP" };
     }
     await this.authRepository.deleteOtp(email);
-    // console.log('otp deleted from redis')
     return { success: true, message: "OTP verified successfully" };
   }
 
@@ -92,8 +98,6 @@ export default class authService implements IAuthService {
     password: string
   ): Promise<{ isUpdated: boolean }> {
     const hashedPassword = await bcrypt.hash(password, 10);
-    console.log('1',password)
-    console.log('2',hashedPassword)
     await this.authRepository.updatepassword(email, hashedPassword);
     return { isUpdated: true };
   }

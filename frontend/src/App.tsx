@@ -10,7 +10,7 @@ import FloatButton from "../src/components/shared/FloatButton";
 import MenuButton from "../src/components/shared/MenuButton";
 import LandingPage from "./pages/user/LandingPage";
 import Loader from "./components/shared/Loader";
-import ToastContainer from "./components/shared/ToastContainer.tsx";
+import ToastContainer from "./components/shared/customToast/ToastContainer.tsx";
 import AuthCallback from "./components/auth/AuthCallback.tsx";
 import PrivateRoute from "./components/auth/PrivateRoute .tsx";
 import HomeTrainer from "./pages/trainer/HomeTrainer.tsx";
@@ -36,7 +36,6 @@ function App() {
 
       <Routes>
         <Route element={<PrivateRoute allowedRoles={["user"]} />}>
-          <Route path="/" element={<LandingPage />} />
           <Route path="/user" element={<Navigate to="/" />} />
           <Route path="/profile" element={<UserProfile />} />
           <Route path="/trainer/apply" element={<TrainerApply />} />
@@ -52,6 +51,7 @@ function App() {
           <Route path="/admin/trainer-management" element={<TrainerManage />} />
         </Route>
 
+        <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={user ? <Navigate to={`/${user.role}`} /> : <UserLogin />} />
         <Route path="/signup" element={user ? <Navigate to={`/${user.role}`} />: <UserSignUp />} />
         <Route path="/auth/success" element={<AuthCallback />} />

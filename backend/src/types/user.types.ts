@@ -2,34 +2,28 @@ export interface IUser {
     _id: string;
     username: string;
     email: string;
-    password: string;
+    password?: string;
     isBlocked: Boolean;
     role: "user" | "trainer"|"admin";
-    profilePicture?: string;
+    profilePicture: string;
     googleId?:string;
-    dateOfBirth: Date;
+    dateOfBirth?: Date;
     gender?:string,
+    phone?: string | undefined;
+    address?: string | undefined;
+    city?: string | undefined;
+    pinCode?: string | undefined;
     createdAt: Date;
     updatedAt: Date;
 } 
 
-
-export interface jwtDecoded{
-    id:string,
-    email:string,
-    role:"user" | "trainer"|"admin",
-    iat:number,
-    exp:number
-
-}
-
 export interface IUserProfile {
     username: string;
+    email: string;
     profilePicture?: string;
+    phone?: string;
     gender?: string;
     dateOfBirth?: Date;
-    phone?: string;
-    email: string;
     address?: string;
     city?: string;
     pinCode?: string;
@@ -37,14 +31,14 @@ export interface IUserProfile {
   }
   
   export interface UserProfileUpdateData {
+    username?: string;
+    email?: string;
+    password?: string;
+    profilePicture?: string;
+    phone?: string;
     gender?: string;
     dateOfBirth?: Date;
-    phone?: string;
-    email?: string;
     address?: string;
     city?: string;
     pinCode?: string;
-    profilePicture?: string;
-    username?: string;
-    password?: string;
   }

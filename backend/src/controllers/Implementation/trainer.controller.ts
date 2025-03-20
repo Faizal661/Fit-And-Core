@@ -1,16 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 import { inject, injectable } from "tsyringe";
-import {
-  HttpResponseCode,
-  HttpResponseMessage,
-} from "../../constants/Response.constants";
+import { HttpResCode, HttpResMsg } from "../../constants/Response.constants";
 import { ITrainerController } from "../Interface/ITrainerController";
 import { ITrainerService } from "../../services/Interface/ITrainerService";
 import { SendResponse } from "mern.common";
 import { uploadToS3 } from "../../utils/s3-upload";
 import { CustomRequest } from "../../types/trainer.types";
-
-
 
 @injectable()
 export default class TrainerController implements ITrainerController {
@@ -33,8 +28,8 @@ export default class TrainerController implements ITrainerController {
       if (!userId) {
         return SendResponse(
           res,
-          HttpResponseCode.UNAUTHORIZED,
-          HttpResponseMessage.UNAUTHORIZED
+          HttpResCode.UNAUTHORIZED,
+          HttpResMsg.UNAUTHORIZED
         );
       }
 
@@ -72,7 +67,7 @@ export default class TrainerController implements ITrainerController {
       if (documentProofs.length === 0) {
         return SendResponse(
           res,
-          HttpResponseCode.BAD_REQUEST,
+          HttpResCode.BAD_REQUEST,
           "At least one document proof is required"
         );
       }
@@ -80,7 +75,7 @@ export default class TrainerController implements ITrainerController {
       if (certifications.length === 0) {
         return SendResponse(
           res,
-          HttpResponseCode.BAD_REQUEST,
+          HttpResCode.BAD_REQUEST,
           "At least one certification is required"
         );
       }
@@ -88,7 +83,7 @@ export default class TrainerController implements ITrainerController {
       if (achievements.length === 0) {
         return SendResponse(
           res,
-          HttpResponseCode.BAD_REQUEST,
+          HttpResCode.BAD_REQUEST,
           "At least one achievement is required"
         );
       }
@@ -108,70 +103,70 @@ export default class TrainerController implements ITrainerController {
 
       SendResponse(
         res,
-        HttpResponseCode.CREATED,
+        HttpResCode.CREATED,
         "Trainer application submitted successfully",
         result
-      ); 
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  async approveTrainer(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
-    try {
-      const { trainerId } = req.params;
-
-      // if (req.decoded?.role !== 'admin') {
-      //   return SendResponse(
-      //     res,
-      //     HttpResponseCode.FORBIDDEN,
-      //     "Only admins can approve trainers"
-      //   );
-      // }
-
-      const result = await this.trainerService.approveTrainer(trainerId);
-
-      SendResponse(
-        res,
-        HttpResponseCode.OK,
-        "Trainer application approved successfully",
-        result
       );
     } catch (error) {
       next(error);
     }
   }
 
-  async getTrainerApplications(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
-    try {
-      // Filter by approval status if provided
-      const isApproved =
-        req.query.approved === "true"
-          ? true
-          : req.query.approved === "false"
-          ? false
-          : undefined;
+  //   async approveTrainer(
+  //     req: Request,
+  //     res: Response,
+  //     next: NextFunction
+  //   ): Promise<void> {
+  //     try {
+  //       const { trainerId } = req.params;
 
-      const applications = await this.trainerService.getTrainerApplications(
-        isApproved
-      );
+  //       // if (req.decoded?.role !== 'admin') {
+  //       //   return SendResponse(
+  //       //     res,
+  //       //     HttpResCode.FORBIDDEN,
+  //       //     "Only admins can approve trainers"
+  //       //   );
+  //       // }
 
-      SendResponse(
-        res,
-        HttpResponseCode.OK,
-        HttpResponseMessage.SUCCESS,
-        applications
-      );
-    } catch (error) {
-      next(error);
-    }
-  }
+  //       const result = await this.trainerService.approveTrainer(trainerId);
+
+  //       SendResponse(
+  //         res,
+  //         HttpResCode.OK,
+  //         "Trainer application approved successfully",
+  //         result
+  //       );
+  //     } catch (error) {
+  //       next(error);
+  //     }
+  //   }
+
+  //   async getTrainerApplications(
+  //     req: Request,
+  //     res: Response,
+  //     next: NextFunction
+  //   ): Promise<void> {
+  //     try {
+  //       // Filter by approval status if provided
+  //       const isApproved =
+  //         req.query.approved === "true"
+  //           ? true
+  //           : req.query.approved === "false"
+  //           ? false
+  //           : undefined;
+
+  //       const applications = await this.trainerService.getTrainerApplications(
+  //         isApproved
+  //       );
+
+  //       SendResponse(
+  //         res,
+  //         HttpResCode.OK,
+  //         HttpResMsg.SUCCESS,
+  //         applications
+  //       );
+  //     } catch (error) {
+  //       next(error);
+  //     }
+  //   }
 }

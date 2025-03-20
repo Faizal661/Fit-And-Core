@@ -1,9 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { inject, injectable } from "tsyringe";
-import {
-  HttpResponseCode,
-  HttpResponseMessage,
-} from "../../constants/Response.constants";
+import { HttpResCode, HttpResMsg } from "../../constants/Response.constants";
 
 import { IAuthController } from "../Interface/IAuthController";
 import { IAuthService } from "../../services/Interface/IAuthService";
@@ -31,44 +28,37 @@ export default class AuthController implements IAuthController {
     try {
       const { email, username }: { email: string; username: string } = req.body;
       const result = await this.authService.nameEmailCheck(email, username);
-      console.log("result", result);
+      console.warn("result", result);
       if (!result.available) {
-        SendResponse(res, HttpResponseCode.CONFLICT, result.message);
+        SendResponse(res, HttpResCode.CONFLICT, result.message);
         return;
       }
       await this.authService.sendOtp(email);
-      SendResponse(
-        res,
-        HttpResponseCode.OK,
-        HttpResponseMessage.SUCCESS,
-        result
-      );
+      SendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, result);
     } catch (error) {
       next(error);
     }
   }
 
-  async checkEmail(req: Request, res: Response, next: NextFunction): Promise<void>{
+  async checkEmail(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
     try {
       const { email }: { email: string } = req.body;
       const result = await this.authService.isValidEmail(email);
       console.log("result - - -  - --", result);
       if (!result.isValid) {
-        SendResponse(res, HttpResponseCode.NOT_FOUND, HttpResponseMessage.NOT_FOUND);
+        SendResponse(res, HttpResCode.NOT_FOUND, HttpResMsg.NOT_FOUND);
         return;
       }
       await this.authService.sendOtp(email);
-      SendResponse(
-        res,
-        HttpResponseCode.OK,
-        HttpResponseMessage.SUCCESS,
-        result
-      );
+      SendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, result);
     } catch (error) {
       next(error);
     }
   }
-
 
   async verifyOtp(
     req: Request,
@@ -79,20 +69,10 @@ export default class AuthController implements IAuthController {
       const { email, otp } = req.body;
       const isValid = await this.authService.verifyOtp(email, otp);
       if (!isValid.success) {
-        SendResponse(
-          res,
-          HttpResponseCode.OK,
-          HttpResponseMessage.SUCCESS,
-          isValid
-        );
+        SendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, isValid);
         return;
       }
-      SendResponse(
-        res,
-        HttpResponseCode.OK,
-        HttpResponseMessage.SUCCESS,
-        isValid
-      );
+      SendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, isValid);
     } catch (error) {
       next(error);
     }
@@ -106,32 +86,32 @@ export default class AuthController implements IAuthController {
     try {
       const { email } = req.body;
       await this.authService.sendOtp(email);
-      SendResponse(res, HttpResponseCode.OK, HttpResponseMessage.SUCCESS);
+      SendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS);
     } catch (error) {
       next(error);
     }
   }
-  async updatePassword(req: Request, res: Response, next: NextFunction): Promise<void>{
+
+  async updatePassword(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
     try {
       const { email, password } = req.body;
-      console.log(req.body)
+      console.log(req.body);
 
       if (!email || !password) {
-        SendResponse(
-          res,
-          HttpResponseCode.BAD_REQUEST,
-          HttpResponseMessage.BAD_REQUEST
-        );
+        SendResponse(res, HttpResCode.BAD_REQUEST, HttpResMsg.BAD_REQUEST);
         return;
       }
-      const isUpdated=await this.authService.updatePassword(email,password);
+      const isUpdated = await this.authService.updatePassword(email, password);
       console.log("user password updated => ", isUpdated);
-      SendResponse(res, HttpResponseCode.OK, HttpResponseMessage.SUCCESS);
+      SendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS);
     } catch (error) {
       next(error);
     }
   }
-
 
   async register(
     req: Request,
@@ -142,11 +122,7 @@ export default class AuthController implements IAuthController {
       const { username, email, password } = req.body;
 
       if (!username || !email || !password) {
-        SendResponse(
-          res,
-          HttpResponseCode.BAD_REQUEST,
-          HttpResponseMessage.BAD_REQUEST
-        );
+        SendResponse(res, HttpResCode.BAD_REQUEST, HttpResMsg.BAD_REQUEST);
         return;
       }
       const newUser = await this.authService.registerUser(
@@ -155,7 +131,7 @@ export default class AuthController implements IAuthController {
         password
       );
       console.log("user created => ", newUser);
-      SendResponse(res, HttpResponseCode.CREATED, HttpResponseMessage.CREATED, {
+      SendResponse(res, HttpResCode.CREATED, HttpResMsg.CREATED, {
         user: {
           id: newUser._id,
           username: newUser.username,
@@ -181,7 +157,7 @@ export default class AuthController implements IAuthController {
         sameSite: "strict",
       });
 
-      SendResponse(res, HttpResponseCode.OK, HttpResponseMessage.SUCCESS, {
+      SendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, {
         user,
         accessToken,
       });
@@ -201,13 +177,13 @@ export default class AuthController implements IAuthController {
     passport.authenticate(
       "google",
       { session: false },
-      async (err, googleUser) => { 
-        try {  
+      async (err, googleUser) => {
+        try {
           if (err || !googleUser) {
             return res.redirect(
               `${process.env.CLIENT_ORIGIN}/login?error=google_auth_failed`
             );
-          } 
+          }
 
           const { user, accessToken, refreshToken } =
             await this.authService.googleLogin(googleUser);
@@ -238,9 +214,8 @@ export default class AuthController implements IAuthController {
         throw new UnauthorizedError("Access denied. No token provided.");
       }
 
-      const { user, accessToken,refreshToken } = await this.authService.verifyGoogleToken(
-        token
-      );
+      const { user, accessToken, refreshToken } =
+        await this.authService.verifyGoogleToken(token);
 
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
@@ -248,7 +223,7 @@ export default class AuthController implements IAuthController {
         sameSite: "strict",
       });
 
-      SendResponse(res, HttpResponseCode.OK, HttpResponseMessage.SUCCESS, {
+      SendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, {
         user,
         accessToken,
       });
@@ -260,7 +235,7 @@ export default class AuthController implements IAuthController {
   async logout(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       res.clearCookie("refreshToken");
-      SendResponse(res, HttpResponseCode.OK, HttpResponseMessage.SUCCESS);
+      SendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS);
     } catch (error) {
       next(error);
     }
@@ -284,7 +259,7 @@ export default class AuthController implements IAuthController {
         secure: process.env.NODE_ENV === "production",
         sameSite: "strict",
       });
-      SendResponse(res, HttpResponseCode.OK, HttpResponseMessage.SUCCESS, {
+      SendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, {
         newAccessToken,
       });
     } catch (error) {

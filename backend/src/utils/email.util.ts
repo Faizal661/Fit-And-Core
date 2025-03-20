@@ -3,30 +3,25 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const sesClient = new SESClient({
-    region: process.env.AWS_REGION,
-    credentials: {
-        accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
-    },
+  region: process.env.AWS_REGION,
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+  },
 });
 
-// console.log('region',process.env.AWS_REGION)
-// console.log('access_key',process.env.AWS_ACCESS_KEY_ID)
-// console.log('secret',process.env.AWS_SECRET_ACCESS_KEY)
-// console.log('email',process.env.SES_EMAIL_FROM)
- 
 export const sendEmail = async (toEmail: string, otp: string) => {
-    try {
-        const params = {
-            Source: process.env.SES_EMAIL_FROM, 
-            Destination: {
-                ToAddresses: [toEmail],
-            },
-            Message: {
-                Subject: { Data: "FIT & CORE : SIGNUP OTP" },
-                Body: {
-                    Html: {
-                      Data: `<div style="
+  try {
+    const params = {
+      Source: process.env.SES_EMAIL_FROM,
+      Destination: {
+        ToAddresses: [toEmail],
+      },
+      Message: {
+        Subject: { Data: "FIT & CORE : SIGNUP OTP" },
+        Body: {
+          Html: {
+            Data: `<div style="
                       max-width: 400px;
                       margin: 20px auto;
                       padding: 20px;
@@ -71,19 +66,23 @@ export const sendEmail = async (toEmail: string, otp: string) => {
                         Fit & Core Team 💪 | Do not share this OTP with anyone.
                       </p>
                     </div>
-                    `
-                    },
-                    Text: {
-                      Data: `Your OTP code is: ${otp}. This code will expire in 5 minutes.`
-                    }
-                  }
-            },
-        };
+                    `,
+          },
+          Text: {
+            Data: `Your OTP code is: ${otp}. This code will expire in 5 minutes.`,
+          },
+        },
+      },
+    };
 
-        // const command = new SendEmailCommand(params);
-        // await sesClient.send(command);
-        console.log("Email sent successfully!",toEmail);
-    } catch (error) {
-        console.error("Error sending email:", error);
+    const command = new SendEmailCommand(params);
+    await sesClient.send(command);
+    console.log("Email sent successfully!", toEmail);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    } else {
+      throw new Error(`Failed to send email: Unknown error occurred`);
     }
+  }
 };

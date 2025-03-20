@@ -14,6 +14,7 @@ import { useDispatch } from "react-redux";
 import { setAuth } from "../../redux/slices/authSlice";
 import { useToast } from "../../context/ToastContext";
 import { useGoogleAuth } from "../../hooks/useGoogleAuth";
+import axios, { Axios } from "axios";
 
 const UserLogin: React.FC = () => {
   const navigate = useNavigate();
@@ -46,8 +47,12 @@ const UserLogin: React.FC = () => {
       showToast("success",AUTH_MESSAGES.LOGIN_SUCCESS)
       navigate(`/${data.user.role}`);
     },
-    onError: () => {
-        setServerError(AUTH_MESSAGES.LOGIN_FAILED);
+    onError: (error:Error) => {
+      if(axios.isAxiosError(error)){
+        setServerError(error.response?.data.error|| AUTH_MESSAGES.SERVER_ERROR);
+      }else{
+        setServerError(AUTH_MESSAGES.SERVER_ERROR);
+      }
     },
   });
 
@@ -92,7 +97,7 @@ const UserLogin: React.FC = () => {
           {...register("password")}
           type="password"
           id="password"
-          value="Qwert@12"
+          // value="Qwert@12"
           className={`border-b-1 border-white mt-2 outline-0 pb-1 ${
             errors.password ? "border-b-red-500" : ""
           }`}

@@ -46,6 +46,7 @@ export const verifyRefreshToken = (
   try {
     const refreshToken = req.cookies.refreshToken;
     if (!refreshToken) {
+      console.error("Refresh token required.")
       throw new UnauthorizedError("Refresh token required.");
     }
     try {

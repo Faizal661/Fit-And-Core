@@ -18,7 +18,6 @@ import { useSignupContext } from "../../../context/SignupContext";
 import { useToast } from "../../../context/ToastContext";
 import { useGoogleAuth } from "../../../hooks/useGoogleAuth";
 
-
 interface UsernameEmailFormProps {
   onSuccess: (data: UsernameEmailFormData) => void;
 }
@@ -28,7 +27,6 @@ const UsernameEmailForm: React.FC<UsernameEmailFormProps> = ({ onSuccess }) => {
   const [error, setError] = useState("");
   const { showToast } = useToast();
   const { handleGoogleLogin } = useGoogleAuth();
-
 
   const {
     register,
@@ -49,13 +47,15 @@ const UsernameEmailForm: React.FC<UsernameEmailFormProps> = ({ onSuccess }) => {
         setError(data.message);
       }
     },
-    onError: (error: unknown) => {
+    onError: (error) => {
       if (axios.isAxiosError(error)) {
-        setError(
-          error.response?.data.message || "Server error, please try again"
-        );
+        setError(error.response?.data.message || AUTH_MESSAGES.SERVER_ERROR);
+        showToast(
+          "error",
+          error.response?.data.message || AUTH_MESSAGES.SERVER_ERROR
+        )
       } else {
-        setError("Server error, please try again");
+        setError(AUTH_MESSAGES.SERVER_ERROR);
       }
     },
   });

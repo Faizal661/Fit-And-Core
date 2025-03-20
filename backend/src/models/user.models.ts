@@ -1,12 +1,7 @@
 import { model, Schema, Document } from "mongoose";
 import { IUser } from "../types/user.types";
 
-export interface IUserModel extends Document, Omit<IUser, "_id"> {
-  phone: string | undefined;
-  address: string | undefined;
-  city: string | undefined;
-  pinCode: string | undefined;
-}
+export interface IUserModel extends Document, Omit<IUser, "_id"> {}
 
 const userSchema = new Schema<IUserModel>(
   {
@@ -29,7 +24,7 @@ const userSchema = new Schema<IUserModel>(
     },
     role: {
       type: String,
-      enum: ["user", "trainer"],
+      enum: ["user", "trainer","admin"],
       default: "user",
     },
     profilePicture: {

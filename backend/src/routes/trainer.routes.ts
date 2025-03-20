@@ -1,4 +1,3 @@
-
 import express from "express";
 import { container } from "tsyringe";
 import { ITrainerController } from "../controllers/Interface/ITrainerController";
@@ -21,16 +20,16 @@ router.post(
   (req, res, next) => trainerController.applyTrainer(req as CustomRequest, res, next)
 );
 
-router.get(
-  "/trainer-applications",
-  verifyAccessToken,
-  (req, res, next) => trainerController.getTrainerApplications(req, res, next)
-);
+// router.get(
+//   "/trainer-applications",
+//   verifyAccessToken,
+//   (req, res, next) => trainerController.getTrainerApplications(req, res, next)
+// );
 
-router.put(
-  "/approve-trainer/:trainerId",
-  verifyAccessToken,
-  (req, res, next) => trainerController.approveTrainer(req, res, next)
-);
+// router.put(
+//   "/approve-trainer/:trainerId",
+//   verifyAccessToken,
+//   (req, res, next) => trainerController.approveTrainer(req, res, next)
+// );
 
 export default router;

@@ -1,9 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { inject, injectable } from "tsyringe";
-import {
-  HttpResponseCode,
-  HttpResponseMessage,
-} from "../../constants/Response.constants";
+import { HttpResCode, HttpResMsg } from "../../constants/Response.constants";
 import { IUserController } from "../Interface/IUserController";
 import { IUserService } from "../../services/Interface/IUserService";
 import { SendResponse } from "mern.common";
@@ -25,22 +22,17 @@ export default class UserController implements IUserController {
     next: NextFunction
   ): Promise<void> {
     try {
-      const userId = req.decoded?.id; 
+      const userId = req.decoded?.id;
       if (!userId) {
         return SendResponse(
           res,
-          HttpResponseCode.UNAUTHORIZED,
-          HttpResponseMessage.UNAUTHORIZED
+          HttpResCode.UNAUTHORIZED,
+          HttpResMsg.UNAUTHORIZED
         );
       }
-      
+
       const userProfile = await this.userService.getUserProfile(userId);
-      SendResponse(
-        res,
-        HttpResponseCode.OK,
-        HttpResponseMessage.SUCCESS,
-        userProfile
-      );
+      SendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, userProfile);
     } catch (error) {
       next(error);
     }
@@ -52,67 +44,60 @@ export default class UserController implements IUserController {
     next: NextFunction
   ): Promise<void> {
     try {
-        const userId = req.decoded?.id; 
-        if (!userId) {
+      const userId = req.decoded?.id;
+      if (!userId) {
         return SendResponse(
           res,
-          HttpResponseCode.UNAUTHORIZED,
-          HttpResponseMessage.UNAUTHORIZED
+          HttpResCode.UNAUTHORIZED,
+          HttpResMsg.UNAUTHORIZED
         );
       }
-      
+
       const updateData = req.body;
       const updatedProfile = await this.userService.updateUserProfile(
         userId,
         updateData
       );
-      
-      SendResponse(
-        res,
-        HttpResponseCode.OK,
-        HttpResponseMessage.SUCCESS,
-        updatedProfile
-      );
+
+      SendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, updatedProfile);
     } catch (error) {
       next(error);
     }
   }
 
-  async updateProfilePicture(req: Request, res: Response, next: NextFunction): Promise<void>{
+  async updateProfilePicture(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
     try {
-        const userId = req.decoded?.id;
-        
-        if (!userId) {
-          return SendResponse(
-            res,
-            HttpResponseCode.UNAUTHORIZED,
-            HttpResponseMessage.UNAUTHORIZED
-          );
-        }
-  
-        if (!req.file) {
-          return SendResponse(
-            res,
-            HttpResponseCode.BAD_REQUEST,
-            "No file uploaded"
-          );
-        }
-        
-        const updatedProfile = await this.userService.updateProfilePicture(
-          userId,
-          req.file
-        );
-        
-        SendResponse(
+      const userId = req.decoded?.id;
+
+      if (!userId) {
+        return SendResponse(
           res,
-          HttpResponseCode.OK,
-          HttpResponseMessage.SUCCESS,
-          updatedProfile
+          HttpResCode.UNAUTHORIZED,
+          HttpResMsg.UNAUTHORIZED
         );
-      } catch (error) {
-        next(error);
       }
+
+      if (!req.file) {
+        return SendResponse(
+          res,
+
+          HttpResCode.BAD_REQUEST,
+          "No file uploaded"
+        );
+      }
+
+      const updatedProfile = await this.userService.updateProfilePicture(
+        userId,
+        req.file
+      );
+
+      SendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, updatedProfile);
+    } catch (error) {
+      next(error);
     }
-
-
+  }
 }

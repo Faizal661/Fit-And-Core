@@ -5,7 +5,7 @@ import { ITrainerRepository } from "../../repositories/Interface/ITrainerReposit
 import { IUserRepository } from "../../repositories/Interface/IUserRepository";
 import { TrainerApplicationData } from "../../types/trainer.types";
 import { CustomError, UnauthorizedError } from "mern.common";
-import { HttpResponseCode } from "../../constants/Response.constants";
+import { HttpResCode } from "../../constants/Response.constants";
 
 @injectable()
 export default class TrainerService implements ITrainerService {
@@ -35,7 +35,7 @@ export default class TrainerService implements ITrainerService {
     });
 
     if (existingApplication) {
-      throw new CustomError('You already have a trainer application pending',HttpResponseCode.CONFLICT);
+      throw new CustomError('You already have a trainer application pending',HttpResCode.CONFLICT);
     }
 
     const trainerData = {
@@ -59,7 +59,7 @@ export default class TrainerService implements ITrainerService {
   async approveTrainer(trainerId: string): Promise<any> {
     const trainer = await this.trainerRepository.findById(new Types.ObjectId(trainerId));
     if (!trainer) {
-      throw new Error('Trainer application not found');
+      throw new CustomError('Trainer application not found',HttpResCode.NOT_FOUND);
     }
 
     trainer.isApproved = true;
@@ -67,7 +67,7 @@ export default class TrainerService implements ITrainerService {
 
     const user = await this.userRepository.findById(trainer.userId);
     if (!user) {
-      throw new Error('User not found');
+      throw new CustomError('User not found',HttpResCode.NOT_FOUND);
     }
 
     user.role = 'trainer';

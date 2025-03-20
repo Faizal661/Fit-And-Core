@@ -6,12 +6,6 @@ import cors from "cors";
 import dotenv from "dotenv";
 import passport from "passport";
 
-// Import routers
-import authRoutes from "./routes/auth.routes";
-import adminRoutes from "./routes/admin.routes"
-import userRoutes from "./routes/user.routes.ts";
-import trainerRoutes from "./routes/trainer.routes.ts";
-
 // Configurations
 import configurePassport from "./config/passport";
 import connectDB from "./config/db.config";
@@ -20,6 +14,14 @@ dotenv.config();
 // Middlewares
 import requestLogging from "./middlewares/request.middleware";
 import { errorHandler } from "mern.common";
+
+// Import routers
+import authRoutes from "./routes/auth.routes";
+import adminRoutes from "./routes/admin.routes"
+import userRoutes from "./routes/user.routes.ts";
+import trainerRoutes from "./routes/trainer.routes.ts";
+
+
 
 const PORT = process.env.PORT || 5000;
 
@@ -51,4 +53,4 @@ app.use(errorHandler);
 connectDB().then(() => {
   app.listen(PORT, () => console.log(`Server connection   ✅`));
 });
- 
+  
