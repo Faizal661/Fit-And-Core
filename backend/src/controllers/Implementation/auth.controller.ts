@@ -7,6 +7,7 @@ import { IAuthService } from "../../services/Interface/IAuthService";
 import { SendResponse, UnauthorizedError } from "mern.common";
 import passport from "passport";
 import dotenv from "dotenv";
+import logger from "../../utils/logger.utils";
 dotenv.config();
 
 @injectable()
@@ -157,11 +158,14 @@ export default class AuthController implements IAuthController {
         sameSite: "strict",
       });
 
+      logger.info(`User ${email} logged in successfully.`);
+
       SendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, {
         user,
         accessToken,
       });
     } catch (error) {
+      logger.error(`Login error: ${error}`);
       next(error);
     }
   }

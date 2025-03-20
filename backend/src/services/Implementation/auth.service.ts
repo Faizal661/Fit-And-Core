@@ -17,6 +17,7 @@ import {
   ILoginResponse,
 } from "../../types/auth.types";
 import { generateOtp } from "../../utils/otp-generate.util";
+import logger from "../../utils/logger.utils";
 
 @injectable()
 export default class authService implements IAuthService {
@@ -118,11 +119,13 @@ export default class authService implements IAuthService {
   async login(email: string, password: string): Promise<ILoginResponse> {
     const user = await this.authRepository.findByEmail(email);
     if (!user) {
+      logger.warn(`Failed login attempt for email: ${email}`);
       throw new UnauthorizedError("Invalid email or password");
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password!);
     if (!isPasswordValid) {
+      logger.warn(`Failed login attempt for email: ${email}`);
       throw new UnauthorizedError("Invalid email or password");
     }
 
