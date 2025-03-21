@@ -9,35 +9,35 @@ const logFormat = winston.format.printf(({ level, message, timestamp }) => {
 const logger = winston.createLogger({
   level: "info", 
   format: winston.format.combine(
-    winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
+    winston.format.timestamp({ format: "DD-MM-YYYY HH:mm:ss" }),
     logFormat
   ),
   transports: [
     // Log to a file and rotate daily
     new DailyRotateFile({
-      filename: "logs/application-%DATE%.log",
-      datePattern: "YYYY-MM-DD",
+      filename: "logs/All_Logs-%DATE%.log",
+      datePattern: "DD-MM-YYYY",
       maxSize: "20m",
-      maxFiles: "14d", // Keep logs for 14 days
+      maxFiles: "14d",
       level: "info",
     }),
 
     // Log errors to a separate file
     new DailyRotateFile({
-      filename: "logs/error-%DATE%.log",
-      datePattern: "YYYY-MM-DD",
+      filename: "logs/Errors-%DATE%.log",
+      datePattern: "DD-MM-YYYY",
       maxSize: "10m",
       maxFiles: "30d",
       level: "error",
     }),
 
     // Also log to console in development
-    new winston.transports.Console({
-      format: winston.format.combine(
-        winston.format.colorize(), // Color output in console
-        winston.format.simple()
-      ),
-    }),
+    // new winston.transports.Console({
+    //   format: winston.format.combine(
+    //     winston.format.colorize(),
+    //     winston.format.simple()
+    //   ),
+    // }),
   ],
 });
 

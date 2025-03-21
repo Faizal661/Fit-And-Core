@@ -12,10 +12,8 @@ import connectDB from "./config/db.config";
 dotenv.config();
 
 // Middlewares
-import logger from "./utils/logger.utils.ts";
 import { errorHandler } from "mern.common";
 import requestLogging from "./middlewares/request.middleware";
-import errorHandlerr from "./middlewares/errorHandler.middleware.ts";
 
 // Import routers
 import authRoutes from "./routes/auth.routes";
@@ -27,11 +25,7 @@ const app = express();
 
 const PORT = process.env.PORT || 5000;
 
-// Middleware to log all incoming requests
-app.use((req, res, next) => {
-  logger.info(`${req.method} ${req.url} - ${req.ip}`);
-  next();
-});
+
 
 app.use(cookieParser());
 app.use(express.json());
@@ -52,12 +46,10 @@ app.use("/api/user", userRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/trainer", trainerRoutes);
 
-app.use(errorHandler);
-app.use(errorHandlerr);
+app.use(errorHandler); 
 
 connectDB().then(() => {
   app.listen(PORT, () => {
-    console.log(`Server connection   ✅`),
-    logger.info("Server running on port 5000");
+    console.log(`Server connection   ✅`)
   });
 });
