@@ -1,11 +1,11 @@
 import 'reflect-metadata';
-import '../config/di.config.'
+import '../config/tsyringe.config.'
 import { container } from 'tsyringe';
 
 import { IAuthController } from '../controllers/Interface/IAuthController';
 
 import express from 'express';
-import { verifyRefreshToken, verifyAccessToken } from '../middlewares/verifyToken.middleware';
+import { verifyRefreshToken, verifyAccessToken } from '../middlewares/verify-token.middleware';
 const router = express.Router();
 
 const authController = container.resolve<IAuthController>("AuthController")

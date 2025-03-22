@@ -3,7 +3,7 @@ import { inject, injectable } from "tsyringe";
 import { HttpResCode, HttpResMsg } from "../../constants/Response.constants";
 import { IAdminController } from "../Interface/IAdminController";
 import { IAdminService } from "../../services/Interface/IAdminService";
-import { SendResponse } from "mern.common";
+import { sendResponse } from "../../utils/send-response";
 
 import dotenv from "dotenv";
 dotenv.config();
@@ -26,7 +26,7 @@ export default class AdminController implements IAdminController {
   ): Promise<void> {
     try {
       const count = await this.adminService.userCount();
-      SendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, {
+      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, {
         count: count,
         percentChange: 0,
       });
@@ -42,7 +42,7 @@ export default class AdminController implements IAdminController {
   ): Promise<void> {
     try {
       const count = await this.adminService.trainerCount();
-      SendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, {
+      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, {
         count: count,
         percentChange: 0,
       });

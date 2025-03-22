@@ -3,7 +3,7 @@ import { inject, injectable } from "tsyringe";
 import { HttpResCode, HttpResMsg } from "../../constants/Response.constants";
 import { IUserController } from "../Interface/IUserController";
 import { IUserService } from "../../services/Interface/IUserService";
-import { SendResponse } from "mern.common";
+import { sendResponse } from "../../utils/send-response";
 
 @injectable()
 export default class UserController implements IUserController {
@@ -24,15 +24,12 @@ export default class UserController implements IUserController {
     try {
       const userId = req.decoded?.id;
       if (!userId) {
-        return SendResponse(
-          res,
-          HttpResCode.UNAUTHORIZED,
-          HttpResMsg.UNAUTHORIZED
-        );
+        sendResponse(res, HttpResCode.UNAUTHORIZED, HttpResMsg.UNAUTHORIZED);
+        return;
       }
 
       const userProfile = await this.userService.getUserProfile(userId);
-      SendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, userProfile);
+      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, userProfile);
     } catch (error) {
       next(error);
     }
@@ -46,11 +43,8 @@ export default class UserController implements IUserController {
     try {
       const userId = req.decoded?.id;
       if (!userId) {
-        return SendResponse(
-          res,
-          HttpResCode.UNAUTHORIZED,
-          HttpResMsg.UNAUTHORIZED
-        );
+        sendResponse(res, HttpResCode.UNAUTHORIZED, HttpResMsg.UNAUTHORIZED);
+        return;
       }
 
       const updateData = req.body;
@@ -59,7 +53,7 @@ export default class UserController implements IUserController {
         updateData
       );
 
-      SendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, updatedProfile);
+      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, updatedProfile);
     } catch (error) {
       next(error);
     }
@@ -74,20 +68,13 @@ export default class UserController implements IUserController {
       const userId = req.decoded?.id;
 
       if (!userId) {
-        return SendResponse(
-          res,
-          HttpResCode.UNAUTHORIZED,
-          HttpResMsg.UNAUTHORIZED
-        );
+        sendResponse(res, HttpResCode.UNAUTHORIZED, HttpResMsg.UNAUTHORIZED);
+        return;
       }
 
       if (!req.file) {
-        return SendResponse(
-          res,
-
-          HttpResCode.BAD_REQUEST,
-          "No file uploaded"
-        );
+        sendResponse(res, HttpResCode.BAD_REQUEST, "No file uploaded");
+        return;
       }
 
       const updatedProfile = await this.userService.updateProfilePicture(
@@ -95,7 +82,7 @@ export default class UserController implements IUserController {
         req.file
       );
 
-      SendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, updatedProfile);
+      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, updatedProfile);
     } catch (error) {
       next(error);
     }

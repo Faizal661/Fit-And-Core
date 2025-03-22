@@ -1,9 +1,9 @@
 import 'reflect-metadata';
-import '../config/di.config.'
+import '../config/tsyringe.config.'
 import { container } from 'tsyringe';
 import express from 'express';
 
-import { verifyAccessToken } from '../middlewares/verifyToken.middleware';
+import { verifyAccessToken } from '../middlewares/verify-token.middleware';
 import { IAdminController } from '../controllers/Interface/IAdminController';
 
 const router = express.Router();

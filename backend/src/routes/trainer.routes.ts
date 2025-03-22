@@ -1,7 +1,7 @@
 import express from "express";
 import { container } from "tsyringe";
 import { ITrainerController } from "../controllers/Interface/ITrainerController";
-import { verifyAccessToken } from '../middlewares/verifyToken.middleware';
+import { verifyAccessToken } from '../middlewares/verify-token.middleware';
 import { CustomRequest } from "../types/trainer.types";
 import { upload } from "../utils/multer.util";
 

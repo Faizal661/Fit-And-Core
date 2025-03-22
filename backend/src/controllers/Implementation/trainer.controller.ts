@@ -3,7 +3,7 @@ import { inject, injectable } from "tsyringe";
 import { HttpResCode, HttpResMsg } from "../../constants/Response.constants";
 import { ITrainerController } from "../Interface/ITrainerController";
 import { ITrainerService } from "../../services/Interface/ITrainerService";
-import { SendResponse } from "mern.common";
+import { sendResponse } from "../../utils/send-response";
 import { uploadToS3 } from "../../utils/s3-upload";
 import { CustomRequest } from "../../types/trainer.types";
 
@@ -26,11 +26,8 @@ export default class TrainerController implements ITrainerController {
     try {
       const userId = req.decoded?.id;
       if (!userId) {
-        return SendResponse(
-          res,
-          HttpResCode.UNAUTHORIZED,
-          HttpResMsg.UNAUTHORIZED
-        );
+        sendResponse(res, HttpResCode.UNAUTHORIZED, HttpResMsg.UNAUTHORIZED);
+        return;
       }
 
       const { phone, specialization, yearsOfExperience, about } = req.body;
@@ -65,27 +62,30 @@ export default class TrainerController implements ITrainerController {
 
       // Validate required uploads
       if (documentProofs.length === 0) {
-        return SendResponse(
+        sendResponse(
           res,
           HttpResCode.BAD_REQUEST,
           "At least one document proof is required"
         );
+        return;
       }
 
       if (certifications.length === 0) {
-        return SendResponse(
+        sendResponse(
           res,
           HttpResCode.BAD_REQUEST,
           "At least one certification is required"
         );
+        return;
       }
 
       if (achievements.length === 0) {
-        return SendResponse(
+        sendResponse(
           res,
           HttpResCode.BAD_REQUEST,
           "At least one achievement is required"
         );
+        return;
       }
 
       const trainerData = {
@@ -101,7 +101,7 @@ export default class TrainerController implements ITrainerController {
 
       const result = await this.trainerService.applyTrainer(trainerData);
 
-      SendResponse(
+      sendResponse(
         res,
         HttpResCode.CREATED,
         "Trainer application submitted successfully",
@@ -121,7 +121,7 @@ export default class TrainerController implements ITrainerController {
   //       const { trainerId } = req.params;
 
   //       // if (req.decoded?.role !== 'admin') {
-  //       //   return SendResponse(
+  //       //   return sendResponse(
   //       //     res,
   //       //     HttpResCode.FORBIDDEN,
   //       //     "Only admins can approve trainers"
@@ -130,7 +130,7 @@ export default class TrainerController implements ITrainerController {
 
   //       const result = await this.trainerService.approveTrainer(trainerId);
 
-  //       SendResponse(
+  //       sendResponse(
   //         res,
   //         HttpResCode.OK,
   //         "Trainer application approved successfully",
@@ -159,7 +159,7 @@ export default class TrainerController implements ITrainerController {
   //         isApproved
   //       );
 
-  //       SendResponse(
+  //       sendResponse(
   //         res,
   //         HttpResCode.OK,
   //         HttpResMsg.SUCCESS,

@@ -53,6 +53,13 @@ const UserProfile = () => {
       queryClient.invalidateQueries({ queryKey: ["userProfile"] });
       showToast("success", "Profile updated successfully!");
     },
+    onError: (error) => {
+      if (axios.isAxiosError(error)) {
+        showToast("error",error.response?.data.message || AUTH_MESSAGES.SERVER_ERROR);
+      } else {
+        showToast("error",AUTH_MESSAGES.SERVER_ERROR);
+      }
+    }
   });
 
   const profilePictureMutation = useMutation({

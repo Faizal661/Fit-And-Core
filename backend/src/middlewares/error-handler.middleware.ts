@@ -17,13 +17,12 @@ export const errorHandler = (
     res.clearCookie("refreshToken");
   }
 
-  console.log("error handler message:::");
   // Log unexpected errors for debugging
-  console.error(`[ERROR] ${err.message}`, err.stack);
+  // console.log("error handler message:::");
+  // console.error(`[ERROR] ${err.message}`, err.stack);
 
   // Custom Error Handling
   if (err instanceof BaseError) {
-    console.log("custoem error handler worked inside the error handler");
     res.status(err.statusCode).json({ message: err.message });
   } else {
     // Handle server errors

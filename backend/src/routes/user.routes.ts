@@ -1,9 +1,9 @@
 import 'reflect-metadata';
-import '../config/di.config.'
+import '../config/tsyringe.config.'
 import { container } from "tsyringe";
 
 import { IUserController } from "../controllers/Interface/IUserController";
-import { verifyAccessToken } from '../middlewares/verifyToken.middleware';
+import { verifyAccessToken } from '../middlewares/verify-token.middleware';
 
 import express from "express";
 import { upload } from '../utils/multer.util';

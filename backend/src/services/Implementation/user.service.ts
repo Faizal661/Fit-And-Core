@@ -24,7 +24,8 @@ export default class UserService implements IUserService {
     );
 
     if (!user) {
-      throw new CustomError('User not found', HttpResCode.NOT_FOUND);    }
+      throw new CustomError("User not found", HttpResCode.NOT_FOUND);
+    }
 
     return {
       username: user.username,
@@ -48,13 +49,20 @@ export default class UserService implements IUserService {
       typeof userId === "string" ? new Types.ObjectId(userId) : userId;
 
     if (updateData.username || updateData.password) {
-      throw new CustomError('Username and password cannot be updated through this endpoint', HttpResCode.BAD_REQUEST);
+      throw new CustomError(
+        "Username and password cannot be updated through this endpoint",
+        HttpResCode.BAD_REQUEST
+      );
     }
 
     const updatedUser = await this.userRepository.update(objectId, updateData);
 
     if (!updatedUser) {
-      throw new CustomError('User not found or update failed', HttpResCode.NOT_FOUND);    }
+      throw new CustomError(
+        "User not found or update failed",
+        HttpResCode.NOT_FOUND
+      );
+    }
 
     return {
       username: updatedUser.username,
@@ -79,7 +87,8 @@ export default class UserService implements IUserService {
 
     const currentUser = await this.userRepository.findById(objectId);
     if (!currentUser) {
-      throw new CustomError('User not found', HttpResCode.NOT_FOUND);    }
+      throw new CustomError("User not found", HttpResCode.NOT_FOUND);
+    }
 
     let oldProfilePictureKey = null;
     if (currentUser.profilePicture) {
@@ -95,7 +104,11 @@ export default class UserService implements IUserService {
     const updatedUser = await this.userRepository.update(objectId, updateData);
 
     if (!updatedUser) {
-      throw new CustomError('User not found or update failed', HttpResCode.NOT_FOUND);    }
+      throw new CustomError(
+        "User not found or update failed",
+        HttpResCode.NOT_FOUND
+      );
+    }
 
     if (oldProfilePictureKey) {
       try {

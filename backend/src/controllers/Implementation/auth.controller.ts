@@ -3,7 +3,7 @@ import { inject, injectable } from "tsyringe";
 import { HttpResCode, HttpResMsg } from "../../constants/Response.constants";
 import { IAuthController } from "../Interface/IAuthController";
 import { IAuthService } from "../../services/Interface/IAuthService";
-import { SendResponse } from "mern.common";
+import { sendResponse } from "../../utils/send-response";
 import passport from "passport";
 import dotenv from "dotenv";
 import logger from "../../utils/logger.utils";
@@ -31,11 +31,11 @@ export default class AuthController implements IAuthController {
       const result = await this.authService.nameEmailCheck(email, username);
       console.warn("result", result);
       if (!result.available) {
-        SendResponse(res, HttpResCode.CONFLICT, result.message);
+        sendResponse(res, HttpResCode.CONFLICT, result.message);
         return;
       }
       await this.authService.sendOtp(email);
-      SendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, result);
+      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, result);
     } catch (error) {
       next(error);
     }
@@ -51,11 +51,11 @@ export default class AuthController implements IAuthController {
       const result = await this.authService.isValidEmail(email);
       console.log("result - - -  - --", result);
       if (!result.isValid) {
-        SendResponse(res, HttpResCode.NOT_FOUND, HttpResMsg.NOT_FOUND);
+        sendResponse(res, HttpResCode.NOT_FOUND, HttpResMsg.NOT_FOUND);
         return;
       }
       await this.authService.sendOtp(email);
-      SendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, result);
+      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, result);
     } catch (error) {
       next(error);
     }
@@ -70,10 +70,10 @@ export default class AuthController implements IAuthController {
       const { email, otp } = req.body;
       const isValid = await this.authService.verifyOtp(email, otp);
       if (!isValid.success) {
-        SendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, isValid);
+        sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, isValid);
         return;
       }
-      SendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, isValid);
+      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, isValid);
     } catch (error) {
       next(error);
     }
@@ -87,7 +87,7 @@ export default class AuthController implements IAuthController {
     try {
       const { email } = req.body;
       await this.authService.sendOtp(email);
-      SendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS);
+      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS);
     } catch (error) {
       next(error);
     }
@@ -103,12 +103,12 @@ export default class AuthController implements IAuthController {
       console.log(req.body);
 
       if (!email || !password) {
-        SendResponse(res, HttpResCode.BAD_REQUEST, HttpResMsg.BAD_REQUEST);
+        sendResponse(res, HttpResCode.BAD_REQUEST, HttpResMsg.BAD_REQUEST);
         return;
       }
       const isUpdated = await this.authService.updatePassword(email, password);
       console.log("user password updated => ", isUpdated);
-      SendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS);
+      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS);
     } catch (error) {
       next(error);
     }
@@ -123,7 +123,7 @@ export default class AuthController implements IAuthController {
       const { username, email, password } = req.body;
 
       if (!username || !email || !password) {
-        SendResponse(res, HttpResCode.BAD_REQUEST, HttpResMsg.BAD_REQUEST);
+        sendResponse(res, HttpResCode.BAD_REQUEST, HttpResMsg.BAD_REQUEST);
         return;
       }
       const newUser = await this.authService.registerUser(
@@ -132,7 +132,7 @@ export default class AuthController implements IAuthController {
         password
       );
       console.log("user created => ", newUser);
-      SendResponse(res, HttpResCode.CREATED, HttpResMsg.CREATED, {
+      sendResponse(res, HttpResCode.CREATED, HttpResMsg.CREATED, {
         user: {
           id: newUser._id,
           username: newUser.username,
@@ -160,7 +160,7 @@ export default class AuthController implements IAuthController {
 
       logger.info(`User ${email} logged in successfully.`);
 
-      SendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, {
+      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, {
         user,
         accessToken,
       });
@@ -227,7 +227,7 @@ export default class AuthController implements IAuthController {
         sameSite: "strict",
       });
 
-      SendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, {
+      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, {
         user,
         accessToken,
       });
@@ -239,7 +239,7 @@ export default class AuthController implements IAuthController {
   async logout(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       res.clearCookie("refreshToken");
-      SendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS);
+      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS);
     } catch (error) {
       next(error);
     }
@@ -263,7 +263,7 @@ export default class AuthController implements IAuthController {
         secure: process.env.NODE_ENV === "production",
         sameSite: "strict",
       });
-      SendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, {
+      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, {
         newAccessToken,
       });
     } catch (error) {
