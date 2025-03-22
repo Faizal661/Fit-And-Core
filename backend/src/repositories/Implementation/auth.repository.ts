@@ -3,7 +3,6 @@ import UserModel, { IUserModel } from "../../models/user.models";
 import { BaseRepository } from "./base.repository";
 import { IAuthRepository } from "../Interface/IAuthRepository";
 import { RedisClientType } from "redis";
-import { IUser } from "../../types/user.types";
 import { IGoogleUser } from "../../types/auth.types";
 
 @injectable()

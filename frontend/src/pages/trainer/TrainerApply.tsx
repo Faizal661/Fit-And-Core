@@ -94,7 +94,7 @@ const TrainerApply = () => {
       console.error("Error submitting application:", error);
       if (axios.isAxiosError(error)) {
         if(error?.response?.status===409){
-            showToast("warning", error.response.data.error);
+            showToast("warning", error.response.data.message);
         }else{
             showToast("error", "There was an error submitting your application. Please try again.");
         }

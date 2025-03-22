@@ -1,8 +1,9 @@
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
-import { UnauthorizedError } from "mern.common";
 import dotenv from "dotenv";
 import { IJwtDecoded } from "../types/auth.types";
+import { CustomError } from "../errors/CustomError";
+import { HttpResCode } from "../constants/Response.constants";
 dotenv.config();
 
 const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET!;
@@ -24,14 +25,14 @@ export const verifyAccessToken = (
   try {
     const accessToken = req.headers.authorization?.split(" ")[1];
     if (!accessToken) {
-      throw new UnauthorizedError("Access denied. No token provided.");
+      throw new CustomError("Access denied. No token provided.",HttpResCode.UNAUTHORIZED);
     }
     try {
       const decoded = jwt.verify(accessToken!, ACCESS_TOKEN_SECRET) as IJwtDecoded;
       req.decoded = decoded;
       next();
     } catch (tokenError) {
-      throw new UnauthorizedError("Invalid or expired access token.");
+      throw new CustomError("Invalid or expired access token.",HttpResCode.UNAUTHORIZED);
     }
   } catch (error) {
     next(error);
@@ -46,14 +47,14 @@ export const verifyRefreshToken = (
   try {
     const refreshToken = req.cookies.refreshToken;
     if (!refreshToken) {
-      throw new UnauthorizedError("Refresh token required.");
+      throw new CustomError("Refresh token required.",HttpResCode.UNAUTHORIZED);
     }
     try {
       const decoded = jwt.verify(refreshToken, REFRESH_TOKEN_SECRET) as IJwtDecoded;
       req.decoded = decoded;
       next();
     } catch (tokenError) {
-      throw new UnauthorizedError("Invalid or expired refresh token.");
+      throw new CustomError("Invalid or expired refresh token.",HttpResCode.UNAUTHORIZED);
     }
   } catch (error) {
     next(error);

@@ -5,6 +5,8 @@ import {
   ObjectCannedACL,
 } from "@aws-sdk/client-s3";
 import { v4 as uuidv4 } from "uuid";
+import { CustomError } from "../errors/CustomError";
+import { HttpResCode } from "../constants/Response.constants";
 
 const BUCKET_NAME = process.env.AWS_S3_BUCKET_NAME || "fit-core-app";
 
@@ -53,10 +55,13 @@ export const uploadToS3 = async (
     };
   } catch (error: unknown) {
     if (error instanceof Error) {
-        throw new Error(error.message);
-      } else {
-        throw new Error(`Failed to upload file to S3: ${error}`);
-      }
+      throw new CustomError(error.message, HttpResCode.INTERNAL_SERVER_ERROR);
+    } else {
+      throw new CustomError(
+        `Failed to upload file to S3: ${error}`,
+        HttpResCode.INTERNAL_SERVER_ERROR
+      );
+    }
   }
 };
 
@@ -71,9 +76,12 @@ export const deleteFromS3 = async (fileKey: string): Promise<void> => {
     console.log(`File deleted from S3: ${fileKey}`);
   } catch (error: unknown) {
     if (error instanceof Error) {
-      throw new Error(error.message);
+      throw new CustomError(error.message, HttpResCode.INTERNAL_SERVER_ERROR);
     } else {
-      throw new Error(`Failed to delete file from S3: ${error}`);
+      throw new CustomError(
+        `Failed to delete file from S3: ${error}`,
+        HttpResCode.INTERNAL_SERVER_ERROR
+      );
     }
   }
 };

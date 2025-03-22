@@ -1,5 +1,7 @@
 import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses";
 import dotenv from "dotenv";
+import { CustomError } from "../errors/CustomError";
+import { HttpResCode } from "../constants/Response.constants";
 dotenv.config();
 
 const sesClient = new SESClient({
@@ -80,9 +82,12 @@ export const sendEmail = async (toEmail: string, otp: string) => {
     console.log("Email sent successfully!", toEmail);
   } catch (error: unknown) {
     if (error instanceof Error) {
-      throw new Error(error.message);
+      throw new CustomError(error.message, HttpResCode.INTERNAL_SERVER_ERROR);
     } else {
-      throw new Error(`Failed to send email: Unknown error occurred`);
+      throw new CustomError(
+        "Failed to send email: Unknown error occurred",
+        HttpResCode.INTERNAL_SERVER_ERROR
+      );
     }
   }
 };

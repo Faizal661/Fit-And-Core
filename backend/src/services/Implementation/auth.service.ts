@@ -1,16 +1,14 @@
-import { NextFunction, Request, Response } from "express";
 import { inject, injectable } from "tsyringe";
 import { IAuthService } from "../Interface/IAuthService";
 import { IAuthRepository } from "../../repositories/Interface/IAuthRepository";
 import { sendEmail } from "../../utils/email.util";
 import bcrypt from "bcryptjs";
-import jwt, { JwtPayload } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import { IUserModel } from "../../models/user.models";
 import {
   generateAccessToken,
   generateRefreshToken,
 } from "../../utils/token.util";
-import { UnauthorizedError } from "mern.common";
 import {
   IGoogleUser,
   IJwtDecoded,
@@ -18,6 +16,8 @@ import {
 } from "../../types/auth.types";
 import { generateOtp } from "../../utils/otp-generate.util";
 import logger from "../../utils/logger.utils";
+import { CustomError } from "../../errors/CustomError";
+import { HttpResCode } from "../../constants/Response.constants";
 
 @injectable()
 export default class authService implements IAuthService {
@@ -53,7 +53,7 @@ export default class authService implements IAuthService {
       message: "Username and Email are available.",
     };
   }
-  
+
   async isValidEmail(
     email: string
   ): Promise<{ isValid: boolean; email: string }> {
@@ -75,9 +75,12 @@ export default class authService implements IAuthService {
       await sendEmail(email, otp);
     } catch (error) {
       if (error instanceof Error) {
-        throw new Error(error.message);
+        throw new CustomError(error.message, HttpResCode.INTERNAL_SERVER_ERROR);
       } else {
-        throw new Error(`OTP sending failed: Unknown error occurred`);
+        throw new CustomError(
+          "OTP sending failed: Unknown error occurred",
+          HttpResCode.INTERNAL_SERVER_ERROR
+        );
       }
     }
   }
@@ -120,13 +123,19 @@ export default class authService implements IAuthService {
     const user = await this.authRepository.findByEmail(email);
     if (!user) {
       logger.warn(`Failed login attempt for email: ${email}`);
-      throw new UnauthorizedError("Invalid email or password");
+      throw new CustomError(
+        "Invalid email or password",
+        HttpResCode.UNAUTHORIZED
+      );
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password!);
     if (!isPasswordValid) {
       logger.warn(`Failed login attempt for email: ${email}`);
-      throw new UnauthorizedError("Invalid email or password");
+      throw new CustomError(
+        "Invalid email or password",
+        HttpResCode.UNAUTHORIZED
+      );
     }
 
     const accessToken = generateAccessToken(user);
@@ -148,7 +157,10 @@ export default class authService implements IAuthService {
     try {
       const accessToken = token;
       if (!accessToken) {
-        throw new UnauthorizedError("Access denied. No token provided.");
+        throw new CustomError(
+          "Access denied. No token provided.",
+          HttpResCode.UNAUTHORIZED
+        );
       }
       const decoded = jwt.verify(
         accessToken,
@@ -157,7 +169,10 @@ export default class authService implements IAuthService {
 
       const user = await this.authRepository.findByEmail(decoded.email);
       if (!user) {
-        throw new UnauthorizedError("No user Found on this email");
+        throw new CustomError(
+          "No user Found on this email",
+          HttpResCode.UNAUTHORIZED
+        );
       }
       const refreshToken = generateRefreshToken(user);
       return {
@@ -171,7 +186,10 @@ export default class authService implements IAuthService {
         refreshToken,
       };
     } catch (tokenError) {
-      throw new UnauthorizedError("Invalid or expired access token.");
+      throw new CustomError(
+        "Invalid or expired access token.",
+        HttpResCode.UNAUTHORIZED
+      );
     }
   }
 
@@ -198,7 +216,7 @@ export default class authService implements IAuthService {
   ): Promise<{ newAccessToken: string; newRefreshToken: string }> {
     const user = await this.authRepository.findByEmail(email);
     if (!user) {
-      throw new UnauthorizedError("User not found");
+      throw new CustomError("User not found", HttpResCode.UNAUTHORIZED);
     }
 
     const newAccessToken = generateAccessToken(user);

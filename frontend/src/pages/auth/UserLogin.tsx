@@ -14,7 +14,7 @@ import { useDispatch } from "react-redux";
 import { setAuth } from "../../redux/slices/authSlice";
 import { useToast } from "../../context/ToastContext";
 import { useGoogleAuth } from "../../hooks/useGoogleAuth";
-import axios, { Axios } from "axios";
+import axios from "axios";
 
 const UserLogin: React.FC = () => {
   const navigate = useNavigate();
@@ -49,7 +49,7 @@ const UserLogin: React.FC = () => {
     },
     onError: (error:Error) => {
       if(axios.isAxiosError(error)){
-        setServerError(error.response?.data.error|| AUTH_MESSAGES.SERVER_ERROR);
+        setServerError(error.response?.data.message|| AUTH_MESSAGES.SERVER_ERROR);
       }else{
         setServerError(AUTH_MESSAGES.SERVER_ERROR);
       }

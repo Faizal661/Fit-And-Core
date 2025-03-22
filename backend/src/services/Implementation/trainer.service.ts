@@ -4,8 +4,8 @@ import { ITrainerService } from "../Interface/ITrainerService";
 import { ITrainerRepository } from "../../repositories/Interface/ITrainerRepository";
 import { IUserRepository } from "../../repositories/Interface/IUserRepository";
 import { TrainerApplicationData } from "../../types/trainer.types";
-import { CustomError, UnauthorizedError } from "mern.common";
 import { HttpResCode } from "../../constants/Response.constants";
+import { CustomError } from "../../errors/CustomError";
 
 @injectable()
 export default class TrainerService implements ITrainerService {
@@ -27,7 +27,7 @@ export default class TrainerService implements ITrainerService {
     const userId = new Types.ObjectId(data.userId);
     const user = await this.userRepository.findById(userId);
     if (!user) {
-      throw new Error('User not found');
+      throw new CustomError('User not found',HttpResCode.NOT_FOUND);
     }
 
     const existingApplication = await this.trainerRepository.findOne({

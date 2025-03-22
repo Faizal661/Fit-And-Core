@@ -12,14 +12,15 @@ import connectDB from "./config/db.config";
 dotenv.config();
 
 // Middlewares
-import { errorHandler } from "mern.common";
-import requestLogging from "./middlewares/request.middleware";
+import { errorHandler } from "./middlewares/errorHandler.middleware.ts"; 
+import requestLogging from "./middlewares/requestLogger.middleware.ts";
 
 // Import routers
 import authRoutes from "./routes/auth.routes";
 import adminRoutes from "./routes/admin.routes";
 import userRoutes from "./routes/user.routes.ts";
 import trainerRoutes from "./routes/trainer.routes.ts";
+import { CustomError } from "./errors/CustomError.ts";
 
 const app = express();
 
@@ -38,7 +39,7 @@ loggers.forEach((middleware) => app.use(middleware));
 
 // Initialize Passport
 configurePassport();
-app.use(passport.initialize());
+app.use(passport.initialize()); 
 
 // Routers
 app.use("/api/auth", authRoutes);
@@ -46,6 +47,10 @@ app.use("/api/user", userRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/trainer", trainerRoutes);
 
+
+app.use((req, res, next) => {
+  next(new CustomError(`Route ${req.originalUrl} not found`,404));
+});
 app.use(errorHandler); 
 
 connectDB().then(() => {

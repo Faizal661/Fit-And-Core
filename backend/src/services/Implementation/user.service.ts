@@ -4,6 +4,8 @@ import { IUserService } from "../Interface/IUserService";
 import { IUserRepository } from "../../repositories/Interface/IUserRepository";
 import { IUserProfile, UserProfileUpdateData } from "../../types/user.types";
 import { deleteFromS3, uploadToS3 } from "../../utils/s3-upload";
+import { HttpResCode } from "../../constants/Response.constants";
+import { CustomError } from "../../errors/CustomError";
 
 @injectable()
 export default class UserService implements IUserService {
@@ -22,8 +24,7 @@ export default class UserService implements IUserService {
     );
 
     if (!user) {
-      throw new Error("User not found");
-    }
+      throw new CustomError('User not found', HttpResCode.NOT_FOUND);    }
 
     return {
       username: user.username,
@@ -47,16 +48,13 @@ export default class UserService implements IUserService {
       typeof userId === "string" ? new Types.ObjectId(userId) : userId;
 
     if (updateData.username || updateData.password) {
-      throw new Error(
-        "Username and password cannot be updated through this endpoint"
-      );
+      throw new CustomError('Username and password cannot be updated through this endpoint', HttpResCode.BAD_REQUEST);
     }
 
     const updatedUser = await this.userRepository.update(objectId, updateData);
 
     if (!updatedUser) {
-      throw new Error("User not found or update failed");
-    }
+      throw new CustomError('User not found or update failed', HttpResCode.NOT_FOUND);    }
 
     return {
       username: updatedUser.username,
@@ -81,8 +79,7 @@ export default class UserService implements IUserService {
 
     const currentUser = await this.userRepository.findById(objectId);
     if (!currentUser) {
-      throw new Error("User not found");
-    }
+      throw new CustomError('User not found', HttpResCode.NOT_FOUND);    }
 
     let oldProfilePictureKey = null;
     if (currentUser.profilePicture) {
@@ -98,8 +95,7 @@ export default class UserService implements IUserService {
     const updatedUser = await this.userRepository.update(objectId, updateData);
 
     if (!updatedUser) {
-      throw new Error("User not found or update failed");
-    }
+      throw new CustomError('User not found or update failed', HttpResCode.NOT_FOUND);    }
 
     if (oldProfilePictureKey) {
       try {

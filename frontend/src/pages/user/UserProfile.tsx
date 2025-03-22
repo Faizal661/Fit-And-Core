@@ -13,6 +13,8 @@ import {
 } from "../../services/user/userProfile";
 import { useToast } from "../../context/ToastContext";
 import { formatDateForInput } from "../../utils/dateFormat";
+import axios from "axios";
+import { AUTH_MESSAGES } from "../../constants/auth.messages";
 
 const UserProfile = () => {
   const queryClient = useQueryClient();
@@ -60,12 +62,11 @@ const UserProfile = () => {
       showToast("success", "Profile picture updated successfully!");
     },
     onError: (error) => {
-      showToast(
-        "error",
-        `Failed to update profile picture: ${
-          error instanceof Error ? error.message : "Unknown error"
-        }`
-      );
+      if (axios.isAxiosError(error)) {
+        showToast("error",error.response?.data.message || AUTH_MESSAGES.SERVER_ERROR);
+      } else {
+        showToast("error",AUTH_MESSAGES.SERVER_ERROR);
+      }
     },
   });
 
@@ -135,16 +136,14 @@ const UserProfile = () => {
       <h1 className="text-white text-4xl  mb-2 capitalize">
         {userData?.username || "User Profile"}
       </h1>
-      <p className="text-gray-300 mb-6 text-lg">
-        PERSONAL INFORMATION
-      </p>
+      <p className="text-gray-300 mb-6 text-lg">PERSONAL INFORMATION</p>
 
       <div className="relative mb-6">
         <div
           className="w-32 h-32 rounded-full overflow-hidden bg-gray-200 border-2 border-white cursor-pointer group"
           onClick={handleProfilePictureClick}
         >
-           {userData?.profilePicture ? (
+          {userData?.profilePicture ? (
             <div className="relative w-full h-full">
               <img
                 src={userData?.profilePicture}
@@ -170,7 +169,7 @@ const UserProfile = () => {
           accept="image/*"
           onChange={handleProfilePictureChange}
         />
-        
+
         {profilePictureMutation.isPending && (
           <div className="mt-2 text-white text-sm">Uploading...</div>
         )}

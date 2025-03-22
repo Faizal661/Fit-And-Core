@@ -1,13 +1,13 @@
 import { NextFunction, Request, Response } from "express";
 import { inject, injectable } from "tsyringe";
 import { HttpResCode, HttpResMsg } from "../../constants/Response.constants";
-
 import { IAuthController } from "../Interface/IAuthController";
 import { IAuthService } from "../../services/Interface/IAuthService";
-import { SendResponse, UnauthorizedError } from "mern.common";
+import { SendResponse } from "mern.common";
 import passport from "passport";
 import dotenv from "dotenv";
 import logger from "../../utils/logger.utils";
+import { CustomError } from "../../errors/CustomError";
 dotenv.config();
 
 @injectable()
@@ -215,7 +215,7 @@ export default class AuthController implements IAuthController {
     try {
       const { token } = req.body;
       if (!token) {
-        throw new UnauthorizedError("Access denied. No token provided.");
+        throw new CustomError("Access denied. No token provided.",HttpResCode.UNAUTHORIZED);
       }
 
       const { user, accessToken, refreshToken } =
@@ -252,7 +252,7 @@ export default class AuthController implements IAuthController {
   ): Promise<void> {
     try {
       if (!req.decoded) {
-        throw new UnauthorizedError("User not authenticated");
+        throw new CustomError("User not authenticated",HttpResCode.UNAUTHORIZED);
       }
 
       const { newAccessToken, newRefreshToken } =
