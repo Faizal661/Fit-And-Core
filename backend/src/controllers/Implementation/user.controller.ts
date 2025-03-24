@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { inject, injectable } from "tsyringe";
-import { HttpResCode, HttpResMsg } from "../../constants/Response.constants";
+import { HttpResCode, HttpResMsg } from "../../constants/response.constants";
 import { IUserController } from "../Interface/IUserController";
 import { IUserService } from "../../services/Interface/IUserService";
 import { sendResponse } from "../../utils/send-response";

@@ -1,21 +1,20 @@
 import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses";
-import dotenv from "dotenv";
 import { CustomError } from "../errors/CustomError";
-import { HttpResCode } from "../constants/Response.constants";
-dotenv.config();
+import { HttpResCode } from "../constants/response.constants";
+import { env } from "../config/env.config";
 
 const sesClient = new SESClient({
-  region: process.env.AWS_REGION,
+  region: env.AWS_REGION,
   credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+    accessKeyId: env.AWS_ACCESS_KEY_ID!,
+    secretAccessKey: env.AWS_SECRET_ACCESS_KEY!,
   },
 });
 
 export const sendEmail = async (toEmail: string, otp: string) => {
   try {
     const params = {
-      Source: process.env.SES_EMAIL_FROM,
+      Source: env.SES_EMAIL_FROM,
       Destination: {
         ToAddresses: [toEmail],
       },

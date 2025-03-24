@@ -1,5 +1,5 @@
 import { GoogleAuthResponse, LoginCredentials, LoginResponse } from "../types/auth";
-import axios from  "../config/axios"
+import axios from  "../config/axios.config"
 
 export const checkEmailUsername = async (data: { username: string; email: string }) => {
   const response = await axios.post(`/auth/check-email-username`, data);
@@ -55,19 +55,19 @@ export const verifyGoogleToken  = async (token: string): Promise<GoogleAuthRespo
 
 
 // Refresh token
-export const refreshAccessToken = async (): Promise<string> => {
-  try {
-    console.log('refresh token USED TO GET NEW ACCESS TOEKN')
-    const response = await axios.post(
-      `/auth/refresh-token`,
-      {},
-      { withCredentials: true }
-    );
-    return response.data.newAccessToken;
-  } catch (error) {
-    throw error;
-  }
-};
+// export const refreshAccessToken = async (): Promise<string> => {
+//   try {
+//     console.log('refresh token USED TO GET NEW ACCESS TOEKN')
+//     const response = await axios.post(
+//       `/auth/refresh-token`,
+//       {},
+//       { withCredentials: true }
+//     );
+//     return response.data.newAccessToken;
+//   } catch (error) {
+//     throw error;
+//   }
+// };
 
 // Logout user
 export const logoutUser = async (): Promise<boolean> => {

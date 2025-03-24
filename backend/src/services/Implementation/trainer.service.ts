@@ -4,7 +4,7 @@ import { ITrainerService } from "../Interface/ITrainerService";
 import { ITrainerRepository } from "../../repositories/Interface/ITrainerRepository";
 import { IUserRepository } from "../../repositories/Interface/IUserRepository";
 import { TrainerApplicationData } from "../../types/trainer.types";
-import { HttpResCode } from "../../constants/Response.constants";
+import { HttpResCode } from "../../constants/response.constants";
 import { CustomError } from "../../errors/CustomError";
 
 @injectable()

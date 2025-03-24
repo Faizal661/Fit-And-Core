@@ -1,13 +1,14 @@
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import { IGoogleUser } from '../types/auth.types';
+import { env } from './env.config';
 
 export default function configurePassport() {
   passport.use(
     new GoogleStrategy(
       {
-        clientID: process.env.GOOGLE_CLIENT_ID as string,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+        clientID: env.GOOGLE_CLIENT_ID as string,
+        clientSecret: env.GOOGLE_CLIENT_SECRET as string,
         callbackURL: '/api/auth/google/callback',
         passReqToCallback: true
       },

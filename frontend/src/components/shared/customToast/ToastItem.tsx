@@ -7,7 +7,7 @@ export const ToastItem: React.FC<ToastItemProps> = ({ id, type, message, onClose
     useEffect(() => {
       const timer = setTimeout(() => {
         onClose();
-      }, 7000);
+      }, 5000);
   
       return () => {
         clearTimeout(timer);

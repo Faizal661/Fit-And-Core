@@ -1,5 +1,5 @@
 import { UserProfileFormData } from "../../schemas/userSchema";
-import axios from "../../config/axios";
+import axios from "../../config/axios.config";
 
 export const fetchUserProfile = async () => {
   const response = await axios.get("/user/profile");
