@@ -10,6 +10,5 @@ export interface IAuthService {
     registerUser(username: string, email: string, password: string): Promise<IUserModel>
     login(email: string, password: string): Promise<ILoginResponse> 
     googleLogin(googleUser: IGoogleUser): Promise<ILoginResponse>
-    refreshTokens(email:string): Promise<{newAccessToken:string, newRefreshToken:string }> 
     verifyGoogleToken(token:string): Promise<ILoginResponse>
 }

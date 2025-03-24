@@ -244,29 +244,5 @@ export default class AuthController implements IAuthController {
     }
   }
 
-  async refreshToken(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
-    try {
-      if (!req.decoded) {
-        throw new CustomError("User not authenticated",HttpResCode.UNAUTHORIZED);
-      }
-
-      const { newAccessToken, newRefreshToken } =
-        await this.authService.refreshTokens(req.decoded?.email);
-
-      res.cookie("refreshToken", newRefreshToken, {
-        httpOnly: true,
-        secure: env.NODE_ENV === "production",
-        sameSite: "strict",
-      });
-      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, {
-        newAccessToken,
-      });
-    } catch (error) {
-      next(error);
-    }
-  }
+  
 }

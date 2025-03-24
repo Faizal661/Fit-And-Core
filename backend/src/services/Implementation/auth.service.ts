@@ -212,17 +212,5 @@ export default class authService implements IAuthService {
     };
   }
 
-  async refreshTokens(
-    email: string
-  ): Promise<{ newAccessToken: string; newRefreshToken: string }> {
-    const user = await this.authRepository.findByEmail(email);
-    if (!user) {
-      throw new CustomError("User not found", HttpResCode.UNAUTHORIZED);
-    }
 
-    const newAccessToken = generateAccessToken(user);
-    const newRefreshToken = generateRefreshToken(user);
-
-    return { newAccessToken, newRefreshToken };
-  }
 }

@@ -13,7 +13,6 @@ export const errorHandler = (
     err.message === "Refresh token required." ||
     err.message === "Invalid or expired refresh token."
   ) {
-    console.log("Cookie cleared inside the error Handler");
     res.clearCookie("refreshToken");
   }
 
