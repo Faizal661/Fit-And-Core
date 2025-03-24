@@ -1,5 +1,5 @@
 import { Trainer } from "../../types/trainer";
-import axios from "../axios";
+import axios from "../../config/axios";
 
 
 // Fetch all trainers

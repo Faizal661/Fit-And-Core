@@ -1,7 +1,7 @@
 import axios from "axios";
 import { store } from "../redux/store";
 import { startLoading, stopLoading } from "../redux/slices/loadingSlice";
-import { refreshAccessToken } from "./authService";
+import { refreshAccessToken } from "../services/authService";
 import { updateToken, clearAuth } from "../redux/slices/authSlice";
 
 const api = axios.create({

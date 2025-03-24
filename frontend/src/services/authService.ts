@@ -1,5 +1,5 @@
 import { GoogleAuthResponse, LoginCredentials, LoginResponse } from "../types/auth";
-import axios from  "./axios"
+import axios from  "../config/axios"
 
 export const checkEmailUsername = async (data: { username: string; email: string }) => {
   const response = await axios.post(`/auth/check-email-username`, data);
