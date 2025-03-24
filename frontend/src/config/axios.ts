@@ -1,14 +1,14 @@
 import axios from "axios";
 import { store } from "../redux/store";
 import { startLoading, stopLoading } from "../redux/slices/loadingSlice";
-import { refreshAccessToken } from "../services/authService";
+// import { refreshAccessToken } from "../services/authService";
 import { updateToken, clearAuth } from "../redux/slices/authSlice";
 
 const api = axios.create({
-  baseURL: "http://localhost:5000/api",
+  baseURL: `${import.meta.env.VITE_API_URL}/api`,
   withCredentials: true,
   timeout: 10000, 
-});
+}); 
 
 api.interceptors.request.use(
   (config) => {
@@ -22,7 +22,7 @@ api.interceptors.request.use(
     return config;
   },
   (error) => {
-    console.log('Request interceptor error:', error);
+    console.error('INTERCEPTOR REQUEST ERROR:', error);
     store.dispatch(stopLoading());
     return Promise.reject(error);
   }
@@ -35,7 +35,7 @@ api.interceptors.response.use(
     return response;
   },
   async (error) => {
-    console.log('ERROR OCCURRED:', error);
+    console.log('INTERCEPTOR RESPONSE ERROR :', error);
     store.dispatch(stopLoading());
 
     if (!error.response) {
@@ -52,9 +52,9 @@ api.interceptors.response.use(
     ) {
       originalRequest._retry = true;
       try {
-        const newToken = await refreshAccessToken();
-        store.dispatch(updateToken(newToken));
-        originalRequest.headers.Authorization = `Bearer ${newToken}`;
+        // const newToken = await refreshAccessToken();
+        // store.dispatch(updateToken(newToken));
+        // originalRequest.headers.Authorization = `Bearer ${newToken}`;
         return axios(originalRequest);
       } catch (err) {
         console.error("Session expired, please login again");

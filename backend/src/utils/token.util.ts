@@ -1,10 +1,9 @@
 import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
 import { IUserModel } from "../models/user.models";
-dotenv.config();
+import { env } from "../config/env.config";
 
-const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET!;
-const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET!;
+const ACCESS_TOKEN_SECRET = env.ACCESS_TOKEN_SECRET!;
+const REFRESH_TOKEN_SECRET = env.REFRESH_TOKEN_SECRET!;
 
 export const generateAccessToken = (user: IUserModel) => {
   return jwt.sign(

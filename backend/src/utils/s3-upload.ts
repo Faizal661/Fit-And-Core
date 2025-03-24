@@ -6,15 +6,16 @@ import {
 } from "@aws-sdk/client-s3";
 import { v4 as uuidv4 } from "uuid";
 import { CustomError } from "../errors/CustomError";
-import { HttpResCode } from "../constants/Response.constants";
+import { HttpResCode } from "../constants/response.constants";
+import { env } from "../config/env.config";
 
-const BUCKET_NAME = process.env.AWS_S3_BUCKET_NAME || "fit-core-app";
+const BUCKET_NAME = env.AWS_S3_BUCKET_NAME || "fit-core-app";
 
 const s3 = new S3Client({
-  region: process.env.AWS_REGION || "ap-southeast-2",
+  region: env.AWS_REGION || "ap-southeast-2",
   credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+    accessKeyId: env.AWS_ACCESS_KEY_ID!,
+    secretAccessKey: env.AWS_SECRET_ACCESS_KEY!,
   },
 });
 

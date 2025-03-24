@@ -1,14 +1,13 @@
 import { NextFunction, Request, Response } from "express";
 import { inject, injectable } from "tsyringe";
-import { HttpResCode, HttpResMsg } from "../../constants/Response.constants";
+import { HttpResCode, HttpResMsg } from "../../constants/response.constants";
 import { IAuthController } from "../Interface/IAuthController";
 import { IAuthService } from "../../services/Interface/IAuthService";
 import { sendResponse } from "../../utils/send-response";
 import passport from "passport";
-import dotenv from "dotenv";
 import logger from "../../utils/logger.utils";
 import { CustomError } from "../../errors/CustomError";
-dotenv.config();
+import { env } from "../../config/env.config";
 
 @injectable()
 export default class AuthController implements IAuthController {
@@ -154,7 +153,7 @@ export default class AuthController implements IAuthController {
 
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
+        secure: env.NODE_ENV === "production",
         sameSite: "strict",
       });
 
@@ -185,7 +184,7 @@ export default class AuthController implements IAuthController {
         try {
           if (err || !googleUser) {
             return res.redirect(
-              `${process.env.CLIENT_ORIGIN}/login?error=google_auth_failed`
+              `${env.CLIENT_ORIGIN}/login?error=google_auth_failed`
             );
           }
 
@@ -194,12 +193,12 @@ export default class AuthController implements IAuthController {
 
           res.cookie("refreshToken", refreshToken, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
+            secure: env.NODE_ENV === "production",
             sameSite: "strict",
           });
 
           res.redirect(
-            `${process.env.CLIENT_ORIGIN}/auth/success?token=${accessToken}`
+            `${env.CLIENT_ORIGIN}/auth/success?token=${accessToken}`
           );
         } catch (error) {
           next(error);
@@ -223,7 +222,7 @@ export default class AuthController implements IAuthController {
 
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
+        secure: env.NODE_ENV === "production",
         sameSite: "strict",
       });
 
@@ -260,7 +259,7 @@ export default class AuthController implements IAuthController {
 
       res.cookie("refreshToken", newRefreshToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
+        secure: env.NODE_ENV === "production",
         sameSite: "strict",
       });
       sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, {

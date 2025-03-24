@@ -17,7 +17,8 @@ import {
 import { generateOtp } from "../../utils/otp-generate.util";
 import logger from "../../utils/logger.utils";
 import { CustomError } from "../../errors/CustomError";
-import { HttpResCode } from "../../constants/Response.constants";
+import { HttpResCode } from "../../constants/response.constants";
+import { env } from "../../config/env.config"; 
 
 @injectable()
 export default class authService implements IAuthService {
@@ -164,7 +165,7 @@ export default class authService implements IAuthService {
       }
       const decoded = jwt.verify(
         accessToken,
-        process.env.ACCESS_TOKEN_SECRET!
+        env.ACCESS_TOKEN_SECRET!
       ) as IJwtDecoded;
 
       const user = await this.authRepository.findByEmail(decoded.email);
