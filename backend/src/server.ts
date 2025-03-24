@@ -6,7 +6,7 @@ import dotenv from "dotenv";
 import passport from "passport";
 import cookieParser from "cookie-parser";
 import { CustomError } from "./errors/CustomError.ts";
-import { HttpResCode } from "./constants/Response.constants.ts";
+import { HttpResCode } from "./constants/response.constants.ts";
 
 // Configurations
 dotenv.config();
@@ -22,24 +22,25 @@ import authRoutes from "./routes/auth.routes";
 import adminRoutes from "./routes/admin.routes";
 import userRoutes from "./routes/user.routes.ts";
 import trainerRoutes from "./routes/trainer.routes.ts";
+import { env } from "./config/env.config.ts";
 
 
 const app = express();
 
-const PORT = process.env.PORT || 5000;
+const PORT = env.PORT || 5000;
 
 // 
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors({ origin: process.env.CLIENT_ORIGIN, credentials: true }));
+app.use(cors({ origin: env.CLIENT_ORIGIN, credentials: true })); 
 
 //log req & res details
 const loggers = requestLogging();
 loggers.forEach((middleware) => app.use(middleware));
 
 // Initialize Passport
-configurePassport();
+configurePassport(); 
 app.use(passport.initialize()); 
 
 // Routers

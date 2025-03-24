@@ -1,12 +1,10 @@
 import { NextFunction, Request, Response } from "express";
 import { inject, injectable } from "tsyringe";
-import { HttpResCode, HttpResMsg } from "../../constants/Response.constants";
+import { HttpResCode, HttpResMsg } from "../../constants/response.constants";
 import { IAdminController } from "../Interface/IAdminController";
 import { IAdminService } from "../../services/Interface/IAdminService";
 import { sendResponse } from "../../utils/send-response";
 
-import dotenv from "dotenv";
-dotenv.config();
 
 @injectable()
 export default class AdminController implements IAdminController {

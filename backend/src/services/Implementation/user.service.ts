@@ -4,7 +4,7 @@ import { IUserService } from "../Interface/IUserService";
 import { IUserRepository } from "../../repositories/Interface/IUserRepository";
 import { IUserProfile, UserProfileUpdateData } from "../../types/user.types";
 import { deleteFromS3, uploadToS3 } from "../../utils/s3-upload";
-import { HttpResCode } from "../../constants/Response.constants";
+import { HttpResCode } from "../../constants/response.constants";
 import { CustomError } from "../../errors/CustomError";
 
 @injectable()

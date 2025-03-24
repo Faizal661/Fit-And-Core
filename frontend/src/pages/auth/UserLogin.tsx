@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import LoginBody from "../../components/auth/LoginBody";
 import userLoginImage from "../../assets/images/image1.jpg";
 import { Link, useNavigate } from "react-router-dom";
@@ -22,6 +22,13 @@ const UserLogin: React.FC = () => {
   const [serverError, setServerError] = useState("");
   const { handleGoogleLogin } = useGoogleAuth();
   const {showToast}=useToast()
+
+  useEffect(() => {
+    if (localStorage.getItem("sessionExpired")) {
+      showToast("warning", AUTH_MESSAGES.SESSION_EXPIRED);
+      localStorage.removeItem("sessionExpired");
+    }
+  }, []);
 
   const {
     register,
@@ -97,7 +104,7 @@ const UserLogin: React.FC = () => {
           {...register("password")}
           type="password"
           id="password"
-          // value="Qwert@12"
+          value="Qwert@12"
           className={`border-b-1 border-white mt-2 outline-0 pb-1 ${
             errors.password ? "border-b-red-500" : ""
           }`}
