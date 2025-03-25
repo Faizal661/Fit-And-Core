@@ -26,15 +26,15 @@ export default class AuthController implements IAuthController {
     next: NextFunction
   ): Promise<void> {
     try {
-      const { email, username }: { email: string; username: string } = req.body;
+      const { email, username,password }: { email: string; username: string;password:string } = req.body;
       const result = await this.authService.nameEmailCheck(email, username);
-      console.warn("result", result);
+      // console.warn("result", result);
       if (!result.available) {
         sendResponse(res, HttpResCode.CONFLICT, result.message);
         return;
       }
       await this.authService.sendOtp(email);
-      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, result);
+      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, {...result,password});
     } catch (error) {
       next(error);
     }
@@ -48,7 +48,6 @@ export default class AuthController implements IAuthController {
     try {
       const { email }: { email: string } = req.body;
       const result = await this.authService.isValidEmail(email);
-      console.log("result - - -  - --", result);
       if (!result.isValid) {
         sendResponse(res, HttpResCode.NOT_FOUND, HttpResMsg.NOT_FOUND);
         return;

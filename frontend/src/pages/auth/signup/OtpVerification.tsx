@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { AUTH_MESSAGES } from "../../../constants/auth.messages";
 import userLoginImage from "../../../assets/images/image1.jpg";
 import LoginBody from "../../../components/auth/LoginBody";
@@ -8,23 +9,29 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type OtpFormData, otpSchema } from "../../../schemas/authSchema";
 
-import { verifyOtp, ResendOtp } from "../../../services/authService";
-import { useSignupContext } from "../../../context/SignupContext";
+import { verifyOtp, ResendOtp,createUser } from "../../../services/authService";
 import { useToast } from "../../../context/ToastContext";
 
-interface OtpFormProps {
-  onSuccess: () => void;
-}
 
-const OtpVerification: React.FC<OtpFormProps> = ({ onSuccess }) => {
+const SignUpOtpVerification = () => {
+  const navigate = useNavigate();
   const [timeLeft, setTimeLeft] = useState<number>(60);
   const [isResendDisabled, setIsResendDisabled] = useState<boolean>(true);
   const otpInputRef = useRef<HTMLInputElement>(null);
   const [activeIndex, setActiveIndex] = useState(0); // Track the active OTP box
 
-  const { userData } = useSignupContext();
   const [serverError, setServerError] = useState("");
   const { showToast } = useToast();
+
+  const registrationData = JSON.parse(
+    localStorage.getItem('registrationData') || '{}'
+  );
+
+  useEffect(() => {
+    if (!registrationData.email) {
+      navigate('/signup');
+    }
+  }, []);
 
   const {
     register,
@@ -41,12 +48,15 @@ const OtpVerification: React.FC<OtpFormProps> = ({ onSuccess }) => {
 
   const currentOtp = watch("otp");
 
-  const mutation = useMutation({
+  const verifyOtpMutation = useMutation({
     mutationFn: verifyOtp,
     onSuccess: (data) => {
       if (data.success) {
-        onSuccess();
-        showToast("success", AUTH_MESSAGES.OTP_SUCCESS);
+        createUserMutation.mutate({
+          username: registrationData.username,
+          email: registrationData.email,
+          password: registrationData.password,
+        });
       } else {
         setServerError(AUTH_MESSAGES.INVALID_OTP);
       }
@@ -56,6 +66,20 @@ const OtpVerification: React.FC<OtpFormProps> = ({ onSuccess }) => {
       showToast("error", AUTH_MESSAGES.SERVER_ERROR);
     },
   });
+
+  const createUserMutation = useMutation({
+    mutationFn: createUser,
+    onSuccess: () => {
+      localStorage.removeItem('registrationData');
+      navigate('/login');
+      showToast('success', AUTH_MESSAGES.ACCOUNT_CREATED);
+    },
+    onError: () => {
+      showToast('error', AUTH_MESSAGES.SERVER_ERROR);
+      setServerError(AUTH_MESSAGES.SERVER_ERROR);
+    },
+  });
+
 
   useEffect(() => {
     if (timeLeft > 0) {
@@ -77,7 +101,7 @@ const OtpVerification: React.FC<OtpFormProps> = ({ onSuccess }) => {
     setIsResendDisabled(true);
     setServerError("");
     setValue("otp", "");
-    ResendOtp(userData?.email ?? "");
+    ResendOtp(registrationData.email);
     showToast("info", AUTH_MESSAGES.OTP_RESENT);
   };
 
@@ -89,7 +113,7 @@ const OtpVerification: React.FC<OtpFormProps> = ({ onSuccess }) => {
   };
 
   const onSubmit = (data: OtpFormData) => {
-    mutation.mutate({ email: userData?.email ?? "", otp: data.otp });
+    verifyOtpMutation.mutate({ email: registrationData.email, otp: data.otp });
   };
 
   return (
@@ -169,4 +193,4 @@ const OtpVerification: React.FC<OtpFormProps> = ({ onSuccess }) => {
   );
 };
 
-export default OtpVerification;
+export default SignUpOtpVerification;

@@ -1,27 +1,34 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import UserLogin from "./pages/auth/UserLogin";
-import UserSignUp from "./pages/auth/signup/UserSignUp.tsx";
-import Footer from "./components/shared/Footer";
 import { useSelector } from "react-redux";
 import { RootState } from "./redux/store";
-import ForgetPassword from "./pages/auth/resetPassword/ResetPassword.tsx";
-import SetPassword from "./pages/auth/signup/SetPassword.tsx";
-import FloatButton from "../src/components/shared/FloatButton";
-import MenuButton from "../src/components/shared/MenuButton";
-import LandingPage from "./pages/user/LandingPage";
-import Loader from "./components/shared/Loader";
-import ToastContainer from "./components/shared/customToast/ToastContainer.tsx";
+
+// authentication
+import UserLogin from "./pages/auth/UserLogin";
+import UserSignUp from "./pages/auth/signup/RegisterForm.tsx";
+import SignUpOtpVerification from "./pages/auth/signup/OtpVerification.tsx";
 import AuthCallback from "./components/auth/AuthCallback.tsx";
+import OtpVerification from "./pages/auth/resetPassword/OtpVerification.tsx";
+import ForgetPassword from "./pages/auth/resetPassword/ResetPassword.tsx";
+import NewPassword from "./pages/auth/resetPassword/NewPassword.tsx";
 import PrivateRoute from "./components/auth/PrivateRoute .tsx";
+// shared component
+import Loader from "./components/shared/Loader";
+import Footer from "./components/shared/Footer";
+import MenuButton from "../src/components/shared/MenuButton";
+import FloatButton from "../src/components/shared/FloatButton";
+import PageNotFound from "./components/shared/PageNotFound.tsx";
+import ToastContainer from "./components/shared/customToast/ToastContainer.tsx";
+// user 
+import LandingPage from "./pages/user/LandingPage";
+import UserProfile from "./pages/user/UserProfile.tsx";
+// trainer
 import HomeTrainer from "./pages/trainer/HomeTrainer.tsx";
+import TrainerApply from "./pages/trainer/TrainerApply.tsx";
+// admin
 import HomeAdmin from "./pages/admin/HomeAdmin.tsx";
 import UserManage from "./pages/admin/UserManage.tsx";
-import UserProfile from "./pages/user/UserProfile.tsx";
-import PageNotFound from "./components/shared/PageNotFound.tsx";
-import TrainerApply from "./pages/trainer/TrainerApply.tsx";
-import OtpVerification from "./pages/auth/resetPassword/OtpVerification.tsx";
-import NewPassword from "./pages/auth/resetPassword/NewPassword.tsx";
 import TrainerManage from "./pages/admin/TrainerManage.tsx";
+
 
 function App() {
   const user = useSelector((state: RootState) => state.auth.user);
@@ -54,8 +61,8 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={user ? <Navigate to={`/${user.role}`} /> : <UserLogin />} />
         <Route path="/signup" element={user ? <Navigate to={`/${user.role}`} />: <UserSignUp />} />
+        <Route path="/signup/verify-otp" element={<SignUpOtpVerification />} />
         <Route path="/auth/success" element={<AuthCallback />} />
-        <Route path="/set-password" element={<SetPassword />} />
         <Route path="/forget-password" element={<ForgetPassword />}/>
         <Route path="/otp-verify" element={<OtpVerification />} />
         <Route path="/new-reset-password" element={<NewPassword />} />
