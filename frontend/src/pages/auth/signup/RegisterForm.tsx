@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 import LoginBody from "../../../components/auth/LoginBody";
@@ -10,20 +10,12 @@ import Google from "../../../assets/icons/Google";
 import userSignUpImage from "../../../assets/images/img4.jpg";
 import { checkEmailUsername } from "../../../services/authService";
 import { AUTH_MESSAGES } from "../../../constants/auth.messages";
-import {
-  type UsernameEmailFormData,
-  userNameEmailSchema,
-} from "../../../schemas/authSchema";
-import { useSignupContext } from "../../../context/SignupContext";
+import { type SignUpFormData, SignUpSchema } from "../../../schemas/authSchema";
 import { useToast } from "../../../context/ToastContext";
 import { useGoogleAuth } from "../../../hooks/useGoogleAuth";
 
-interface UsernameEmailFormProps {
-  onSuccess: (data: UsernameEmailFormData) => void;
-}
-
-const UsernameEmailForm: React.FC<UsernameEmailFormProps> = ({ onSuccess }) => {
-  const { setUserData } = useSignupContext();
+const RegisterForm = () => {
+  const navigate = useNavigate();
   const [error, setError] = useState("");
   const { showToast } = useToast();
   const { handleGoogleLogin } = useGoogleAuth();
@@ -33,34 +25,39 @@ const UsernameEmailForm: React.FC<UsernameEmailFormProps> = ({ onSuccess }) => {
     handleSubmit,
     formState: { errors },
   } = useForm({
-    resolver: zodResolver(userNameEmailSchema),
+    resolver: zodResolver(SignUpSchema),
   });
 
   const mutation = useMutation({
     mutationFn: checkEmailUsername,
     onSuccess: (data) => {
       if (data.available) {
-        setUserData({ username: data.username, email: data.email });
+        localStorage.setItem(
+          "registrationData",
+          JSON.stringify({
+            username: data.username,
+            email: data.email,
+            password: data.password,
+          })
+        );
         showToast("success", AUTH_MESSAGES.OTP_SENT);
-        onSuccess(data);
+        navigate("/signup/verify-otp");
       } else {
         setError(data.message);
       }
     },
     onError: (error) => {
       if (axios.isAxiosError(error)) {
-        setError(error.response?.data.message || AUTH_MESSAGES.SERVER_ERROR);
-        showToast(
-          "error",
-          error.response?.data.message || AUTH_MESSAGES.SERVER_ERROR
-        )
+        setError(error.response?.data.message);
+        showToast("error", error.response?.data.message);
       } else {
         setError(AUTH_MESSAGES.SERVER_ERROR);
+        showToast("error", AUTH_MESSAGES.SERVER_ERROR);
       }
     },
   });
 
-  const onSubmit = (values: UsernameEmailFormData) => mutation.mutate(values);
+  const onSubmit = (values: SignUpFormData) => mutation.mutate(values);
 
   const handleSocialLogin = (provider: string) => {
     if (provider === "Google") {
@@ -83,8 +80,8 @@ const UsernameEmailForm: React.FC<UsernameEmailFormProps> = ({ onSuccess }) => {
         <input
           {...register("username")}
           type="text"
+          // value="faizall"
           id="name"
-          // value="faizal"
           className={`border-b-1 border-white mt-2 outline-0 text ${
             errors.username ? "border-b-red-500" : ""
           }`}
@@ -97,14 +94,47 @@ const UsernameEmailForm: React.FC<UsernameEmailFormProps> = ({ onSuccess }) => {
         </label>
         <input
           {...register("email")}
+          // value="mohammedfaizal.t.bca.2@gmail.com"
           type="email"
           id="email"
-          // value="mohammedfaizal.t.bca.2@gmail.com"
           className={`border-b-1 border-white my-2 outline-0 text ${
             errors.email ? "border-b-red-500" : ""
           }`}
         />
         {errors.email && <p className="text-red-500">{errors.email.message}</p>}
+
+        <label htmlFor="password" className=" text-slate-400">
+          PASSWORD
+        </label>
+        <input
+          {...register("password")}
+          type="password"
+          // value="Qwert@12"
+          id="password"
+          className={`border-b-1 border-white my-2 outline-0  text ${
+            errors.password ? "border-red-500" : ""
+          }`}
+        />
+        {errors.password && (
+          <p className="text-red-500 ">{errors.password.message}</p>
+        )}
+
+        <label htmlFor="confirmPassword" className="text-slate-400">
+          CONFIRM PASSWORD
+        </label>
+        <input
+          {...register("confirmPassword")}
+          type="password"
+          // value="Qwert@12"
+          id="confirmPassword"
+          className={` border-b-1 border-white my-2 outline-0  text  ${
+            errors.confirmPassword ? "border-red-500" : ""
+          }`}
+        />
+        {errors.confirmPassword && (
+          <p className="text-red-500 ">{errors.confirmPassword.message}</p>
+        )}
+
         {error && <p className="text-red-500">{error}</p>}
 
         <p className="text-light mt-10">
@@ -132,4 +162,4 @@ const UsernameEmailForm: React.FC<UsernameEmailFormProps> = ({ onSuccess }) => {
   );
 };
 
-export default UsernameEmailForm;
+export default RegisterForm;
