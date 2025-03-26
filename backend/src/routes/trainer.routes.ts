@@ -4,6 +4,7 @@ import { ITrainerController } from "../controllers/Interface/ITrainerController"
 import { verifyAccessToken } from '../middlewares/verify-token.middleware';
 import { CustomRequest } from "../types/trainer.types";
 import { upload } from "../utils/multer.util";
+import { authorizeRoles } from "../middlewares/role-based-access-control.middleware";
 
 const router = express.Router();
 const trainerController = container.resolve<ITrainerController>("TrainerController");
@@ -12,6 +13,7 @@ const trainerController = container.resolve<ITrainerController>("TrainerControll
 router.post(
   "/apply-trainer", 
   verifyAccessToken,
+  authorizeRoles(["user"]),
   upload.fields([
     { name: 'documentProofs', maxCount: 3 },
     { name: 'certifications', maxCount: 5 },
