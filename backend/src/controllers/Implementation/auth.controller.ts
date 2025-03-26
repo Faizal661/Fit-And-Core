@@ -163,7 +163,6 @@ export default class AuthController implements IAuthController {
         accessToken,
       });
     } catch (error) {
-      logger.error(`Login error: ${error}`);
       next(error);
     }
   }
