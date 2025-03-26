@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { BaseError } from "../errors/BaseError";
+import logger from "../utils/logger.utils";
 
 export const errorHandler = (
   err: Error,
@@ -18,7 +19,7 @@ export const errorHandler = (
 
   // Log unexpected errors for debugging
   // console.log("error handler message:::");
-  // console.error(`[ERROR] ${err.message}`, err.stack);
+  logger.error(`${err.message}`, err.stack);
 
   // Custom Error Handling
   if (err instanceof BaseError) {

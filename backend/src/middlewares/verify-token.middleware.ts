@@ -75,7 +75,6 @@ export const verifyAccessToken = async (
           );
         }
       } else {
-        console.log("5 . Invalid access token.");
         throw new CustomError(
           "Invalid access token.",
           HttpResCode.UNAUTHORIZED
