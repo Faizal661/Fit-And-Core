@@ -17,8 +17,8 @@ export const errorHandler = (
   }
 
   // Log unexpected errors for debugging
-  // console.log("error handler message:::");
-  // console.error(`[ERROR] ${err.message}`, err.stack);
+  console.log("error handler message:::");
+  console.error(`[ERROR] ${err.message}`, err.stack);
 
   // Custom Error Handling
   if (err instanceof BaseError) {
