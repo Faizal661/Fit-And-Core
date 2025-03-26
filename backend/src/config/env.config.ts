@@ -179,4 +179,59 @@ export const env = {
     }
     return process.env.AWS_S3_BUCKET_NAME;
   },
+
+  // NODEMAILER
+  get SMTP_HOST() {
+    if (!process.env.SMTP_HOST) {
+      throw new CustomError(
+        EnvErrMsg.SMTP_HOST_UNDEFINED,
+        HttpResCode.INTERNAL_SERVER_ERROR
+      );
+    }
+    return process.env.SMTP_HOST;
+  },
+  get SMTP_PORT() {
+    const port = process.env.SMTP_PORT;
+    if (!port) {
+      throw new CustomError(
+        EnvErrMsg.SMTP_PORT_UNDEFINED,
+        HttpResCode.INTERNAL_SERVER_ERROR
+      );
+    }
+    const portNumber = parseInt(port, 10);
+    if (isNaN(portNumber)) {
+      throw new CustomError(
+        EnvErrMsg.SMTP_PORT_INVALID,
+        HttpResCode.BAD_REQUEST
+      );
+    }
+    return portNumber;
+  },
+  get SMTP_SECURE() {
+    if (!process.env.SMTP_SECURE) {
+      throw new CustomError(
+        EnvErrMsg.SMTP_SECURE_UNDEFINED,
+        HttpResCode.INTERNAL_SERVER_ERROR
+      );
+    }
+    return process.env.SMTP_SECURE;
+  },
+  get SMTP_USERNAME() {
+    if (!process.env.SMTP_USERNAME) {
+      throw new CustomError(
+        EnvErrMsg.SMTP_USERNAME_UNDEFINED,
+        HttpResCode.INTERNAL_SERVER_ERROR
+      );
+    }
+    return process.env.SMTP_USERNAME;
+  },
+  get SMTP_PASSWORD() {
+    if (!process.env.SMTP_PASSWORD) {
+      throw new CustomError(
+        EnvErrMsg.SMTP_PASSWORD_UNDEFINED,
+        HttpResCode.INTERNAL_SERVER_ERROR
+      );
+    }
+    return process.env.SMTP_PASSWORD;
+  },
 };
