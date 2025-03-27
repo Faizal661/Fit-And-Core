@@ -1,5 +1,6 @@
 import { UserProfileFormData } from "../../schemas/userSchema";
 import axios from "../../config/axios.config";
+import { ChangePasswordFormData } from "../../schemas/authSchema";
 
 export const fetchUserProfile = async () => {
   const response = await axios.get("/user/profile");
@@ -17,5 +18,10 @@ export const updateProfilePicture = async (formData: FormData) => {
       'Content-Type': 'multipart/form-data',
     },
   });
+  return response.data;
+};
+
+export const changePassword = async (passwordData: ChangePasswordFormData) => {
+  const response = await axios.put('/user/change-password', passwordData);
   return response.data;
 };

@@ -3,13 +3,13 @@ import { useSelector } from "react-redux";
 import { RootState } from "./redux/store";
 
 // authentication
-import UserLogin from "./pages/auth/UserLogin";
+import UserLogin from "./pages/auth/signin/UserLogin.tsx";
 import UserSignUp from "./pages/auth/signup/RegisterForm.tsx";
 import SignUpOtpVerification from "./pages/auth/signup/OtpVerification.tsx";
 import AuthCallback from "./components/auth/AuthCallback.tsx";
-import OtpVerification from "./pages/auth/resetPassword/OtpVerification.tsx";
-import ForgetPassword from "./pages/auth/resetPassword/ResetPassword.tsx";
-import NewPassword from "./pages/auth/resetPassword/NewPassword.tsx";
+import OtpVerification from "./pages/auth/forgetPassword/OtpVerification.tsx";
+import ForgetPassword from "./pages/auth/forgetPassword/EmailVerify.tsx";
+import NewPassword from "./pages/auth/forgetPassword/NewPassword.tsx";
 import PrivateRoute from "./components/auth/PrivateRoute .tsx";
 // shared component
 import Loader from "./components/shared/Loader";

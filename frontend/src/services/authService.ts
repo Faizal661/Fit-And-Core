@@ -31,8 +31,7 @@ export const resetPassword = async (data: {
   email: string;
   password: string;
 }) => {
-  const response = await axios.post(`/auth/reset-password`, data);
-  // console.log('new user data => ',response.data)
+  const response = await axios.put(`/auth/reset-password`, data);
   return response.data;
 };
 
