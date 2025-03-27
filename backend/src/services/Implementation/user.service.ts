@@ -6,16 +6,22 @@ import { IUserProfile, UserProfileUpdateData } from "../../types/user.types";
 import { deleteFromS3, uploadToS3 } from "../../utils/s3-upload";
 import { HttpResCode } from "../../constants/response.constants";
 import { CustomError } from "../../errors/CustomError";
+import { IAuthRepository } from "../../repositories/Interface/IAuthRepository";
+import bcrypt from "bcryptjs";
 
 @injectable()
 export default class UserService implements IUserService {
   private userRepository: IUserRepository;
+  private authRepository:IAuthRepository;
 
   constructor(
     @inject("UserRepository")
-    userRepository: IUserRepository
+    userRepository: IUserRepository,
+    @inject("AuthRepository")
+    authRepository: IAuthRepository
   ) {
     this.userRepository = userRepository;
+    this.authRepository=authRepository;
   }
 
   async getUserProfile(userId: string | Types.ObjectId): Promise<IUserProfile> {
@@ -130,5 +136,29 @@ export default class UserService implements IUserService {
       pinCode: updatedUser.pinCode,
       joinedDate: updatedUser.createdAt,
     };
+  }
+
+  async updatePassword(
+    email: string,
+    currentPassword: string,
+    newPassword: string
+  ): Promise<{ isUpdated: boolean }> {
+    const user = await this.authRepository.findByEmail(email);
+    if (!user) {
+      throw new CustomError(
+        "User not found or update failed",
+        HttpResCode.NOT_FOUND
+      );
+    }
+    const isPasswordValid = await bcrypt.compare(currentPassword, user.password!);
+    if (!isPasswordValid) {
+      throw new CustomError(
+        "Current Password is invalid",
+        HttpResCode.BAD_REQUEST
+      );
+    }
+    const newHashedPassword = await bcrypt.hash(newPassword, 10);
+    await this.authRepository.updatepassword(email, newHashedPassword);
+    return { isUpdated: true };
   }
 }

@@ -15,12 +15,15 @@ router.get("/profile", verifyAccessToken, authorizeRoles(["user", "trainer"]),(r
   userController.getUserProfile(req, res, next)
 );
 
-router.put("/profile", verifyAccessToken, authorizeRoles(["admin"]),(req, res, next) => 
+router.put("/profile", verifyAccessToken, authorizeRoles(["user","trainer"]),(req, res, next) => 
   userController.updateUserProfile(req, res, next)
 );
 
 router.put("/profile-picture", verifyAccessToken,authorizeRoles(["user", "trainer"]), upload.single('profilePicture'), (req, res, next) => 
   userController.updateProfilePicture(req, res, next)
 );
+
+router.put('/change-password',verifyAccessToken,authorizeRoles(["user", "trainer"]),(req,res,next)=>userController.changePassword(req,res,next))
+
 
 export default router;

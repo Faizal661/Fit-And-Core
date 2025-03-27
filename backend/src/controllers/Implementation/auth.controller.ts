@@ -91,7 +91,7 @@ export default class AuthController implements IAuthController {
     }
   }
 
-  async updatePassword(
+  async resetPassword(
     req: Request,
     res: Response,
     next: NextFunction
@@ -105,7 +105,7 @@ export default class AuthController implements IAuthController {
         return;
       }
       const isUpdated = await this.authService.updatePassword(email, password);
-      console.log("user password updated => ", isUpdated);
+      console.log("user password changed => ", isUpdated);
       sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS);
     } catch (error) {
       next(error);

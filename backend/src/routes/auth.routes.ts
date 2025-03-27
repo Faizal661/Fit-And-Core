@@ -17,8 +17,7 @@ router.post('/verify-otp',(req,res,next)=>authController.verifyOtp(req,res,next)
 router.post('/resend-otp',(req,res,next)=>authController.resendOtp(req,res,next))
 router.post('/register',(req,res,next)=>authController.register(req,res,next))
 router.post('/login',(req,res,next)=>authController.login(req,res,next))
-router.post('/reset-password',(req,res,next)=>authController.updatePassword(req,res,next))
-
+router.put('/reset-password',(req,res,next)=>authController.resetPassword(req,res,next))
 router.post('/logout',verifyAccessToken,(req,res,next)=>authController.logout(req,res,next))
 
 // Google OAuth routes

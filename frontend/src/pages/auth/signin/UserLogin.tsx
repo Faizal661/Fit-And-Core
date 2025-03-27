@@ -1,27 +1,27 @@
-import React, { useState,useEffect } from "react";
-import LoginBody from "../../components/auth/LoginBody";
-import userLoginImage from "../../assets/images/image1.jpg";
+import { useState, useEffect } from "react";
+import LoginBody from "../../../components/auth/LoginBody";
+import userLoginImage from "../../../assets/images/image1.jpg";
 import { Link, useNavigate } from "react-router-dom";
-import { AUTH_MESSAGES } from "../../constants/auth.messages";
-import Google from "../../assets/icons/Google";
+import { AUTH_MESSAGES } from "../../../constants/auth.messages";
+import Google from "../../../assets/icons/Google";
 
-import { loginSchema, type LoginFormData } from "../../schemas/authSchema";
+import { loginSchema, type LoginFormData } from "../../../schemas/authSchema";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { loginUser } from "../../services/authService";
+import { loginUser } from "../../../services/authService";
 import { useDispatch } from "react-redux";
-import { setAuth } from "../../redux/slices/authSlice";
-import { useToast } from "../../context/ToastContext";
-import { useGoogleAuth } from "../../hooks/useGoogleAuth";
+import { setAuth } from "../../../redux/slices/authSlice";
+import { useToast } from "../../../context/ToastContext";
+import { useGoogleAuth } from "../../../hooks/useGoogleAuth";
 import axios from "axios";
 
-const UserLogin: React.FC = () => {
+const UserLogin = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [serverError, setServerError] = useState("");
   const { handleGoogleLogin } = useGoogleAuth();
-  const {showToast}=useToast()
+  const { showToast } = useToast();
 
   useEffect(() => {
     if (localStorage.getItem("sessionExpired")) {
@@ -51,13 +51,15 @@ const UserLogin: React.FC = () => {
           accessToken: data.accessToken,
         })
       );
-      showToast("success",AUTH_MESSAGES.LOGIN_SUCCESS)
+      showToast("success", AUTH_MESSAGES.LOGIN_SUCCESS);
       navigate(`/${data.user.role}`);
     },
-    onError: (error:Error) => {
-      if(axios.isAxiosError(error)){
-        setServerError(error.response?.data.message|| AUTH_MESSAGES.SERVER_ERROR);
-      }else{
+    onError: (error: Error) => {
+      if (axios.isAxiosError(error)) {
+        setServerError(
+          error.response?.data.message || AUTH_MESSAGES.SERVER_ERROR
+        );
+      } else {
         setServerError(AUTH_MESSAGES.SERVER_ERROR);
       }
     },
@@ -74,13 +76,15 @@ const UserLogin: React.FC = () => {
     }
   };
 
-
   return (
     <LoginBody
       imageSrc={userLoginImage}
       welcomeMessage={AUTH_MESSAGES.LOGIN_MESSAGE}
     >
-      <form className="w-full max-w-md flex flex-col  " onSubmit={handleSubmit(onSubmit)}>
+      <form
+        className="w-full max-w-md flex flex-col  "
+        onSubmit={handleSubmit(onSubmit)}
+      >
         <label htmlFor="email" className="text-slate-400">
           EMAIL ADDRESS
         </label>
@@ -92,10 +96,10 @@ const UserLogin: React.FC = () => {
           className={`border-b-1 border-white mt-2 outline-0 text pb-1 ${
             errors.email ? "border-b-red-500" : ""
           }`}
-          />
+        />
         {errors.email && (
           <p className="text-red-500 text-md mt-1">{errors.email.message}</p>
-          )}
+        )}
 
         <label htmlFor="password" className="mt-4 text-slate-400">
           PASSWORD
@@ -149,7 +153,6 @@ const UserLogin: React.FC = () => {
             Google
           </button>
         </div>
-
       </form>
     </LoginBody>
   );

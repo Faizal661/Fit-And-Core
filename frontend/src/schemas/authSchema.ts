@@ -4,9 +4,9 @@ export type EmailFormData = z.infer<typeof emailSchema>;
 export type SignUpFormData = z.infer<typeof SignUpSchema>;
 export type OtpFormData = z.infer<typeof otpSchema>;
 export type PasswordFormData = z.infer<typeof passwordSchema>;
+export type ChangePasswordFormData = z.infer<typeof changePasswordSchema>;
 export type LoginFormData = z.infer<typeof loginSchema>;
 export type TrainerApplyFormData = z.infer<typeof trainerApplySchema>;
-
 
 export const emailSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -61,6 +61,35 @@ export const passwordSchema = z
     path: ["confirmPassword"],
   });
 
+export const changePasswordSchema = z
+  .object({
+    currentPassword: z
+      .string()
+      .min(8, "Current Password is definitely at least 8 characters long")
+      .regex(/[A-Z]/, "Password contains at least one uppercase letter")
+      .regex(/[a-z]/, "Password contains at least one lowercase letter")
+      .regex(/[0-9]/, "Password  contains at least one number")
+      .regex(
+        /[!@#$%^&*()]/,
+        "Password must contain at least one special character"
+      ),
+    newPassword: z
+      .string()
+      .min(8, "Password must be at least 8 characters")
+      .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+      .regex(/[a-z]/, "Password must contain at least one lowercase letter")
+      .regex(/[0-9]/, "Password must contain at least one number")
+      .regex(
+        /[!@#$%^&*()]/,
+        "Password must contain at least one special character"
+      ),
+    confirmNewPassword: z.string(),
+  })
+  .refine((data) => data.newPassword === data.confirmNewPassword, {
+    message: "Passwords don't match",
+    path: ["confirmNewPassword"],
+  });
+
 export const loginSchema = z.object({
   email: z.string().min(1, "Email is required").email("Invalid email format"),
   password: z
@@ -87,5 +116,3 @@ export const trainerApplySchema = z.object({
     .min(50, "Please provide at least 50 characters about your career")
     .max(500, "About section must be less than 500 characters"),
 });
-
-
