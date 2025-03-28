@@ -48,4 +48,17 @@ export default class AdminController implements IAdminController {
       next(error);
     }
   }
+
+  async getMonthlySubscriptionData(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const monthlyData = await this.adminService.getMonthlySubscriptionData();
+      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, {monthlyData});
+    } catch (error) {
+      next(error);
+    }
+  }
 }

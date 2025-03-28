@@ -22,6 +22,7 @@ import {
 import {
   fetchUserCount,
   fetchTrainerCount,
+  fetchMonthlyRegistrationData,
 } from "../../services/admin/adminDashboard";
 
 const subscriptionData = [
@@ -34,9 +35,9 @@ const subscriptionData = [
   { name: "Oct", users: 0, trainers: 0 },
   { name: "Nov", users: 0, trainers: 0 },
   { name: "Dec", users: 0, trainers: 0 },
-  { name: "Jan", users: 2, trainers: 1 },
-  { name: "Feb", users: 4, trainers: 1 },
-  { name: "Mar", users: 9, trainers: 4 },
+  { name: "Jan", users: 0, trainers: 0 },
+  { name: "Feb", users: 0, trainers: 0 },
+  { name: "Mar", users: 0, trainers: 0 },
 ];
 
 const MetricCard = ({
@@ -97,7 +98,17 @@ const AdminDashboard = () => {
     staleTime: 5 * 60 * 1000,
   });
 
-  if (isLoadingUsers || isLoadingTrainers) {
+  const {
+    data: graphData,
+    // isLoading: isLoadingMonthly,
+    // error: monthlyError,
+  } = useQuery({
+    queryKey: ["monthlyRegistrations"],
+    queryFn: fetchMonthlyRegistrationData,
+    staleTime: 5 * 60 * 1000,
+  });
+
+  if (isLoadingUsers || isLoadingTrainers  ) {
     return (
       <>
         <h1 className="text-2xl font-bold pl-20 mb-3 px-6 pt-4 ">DASHBOARD</h1>
@@ -111,7 +122,7 @@ const AdminDashboard = () => {
     );
   }
 
-  if (userError || trainerError) {
+  if (userError || trainerError ) {
     return (
       <>
         <h1 className="text-2xl font-bold pl-20 mb-3 px-6 pt-4 ">DASHBOARD</h1>
@@ -134,37 +145,22 @@ const AdminDashboard = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6 px-6 py-4">
         {/* Revenue Card */}
-        <MetricCard
-          title="Revenue"
-          value="₹5,490"
-          change={7.5}
-          icon={CreditCard}
-        />
+        <MetricCard title="Revenue" value="₹0" change={0} icon={CreditCard} />
 
         {/* Refund Card */}
-        <MetricCard
-          title="Refund"
-          value="₹640"
-          change={-2.3}
-          icon={RefreshCcw}
-        />
+        <MetricCard title="Refund" value="₹0" change={0} icon={RefreshCcw} />
 
         {/* Income Card */}
-        <MetricCard
-          title="Income"
-          value="₹4,850"
-          change={5.8}
-          icon={CreditCard}
-        />
+        <MetricCard title="Income" value="₹0" change={0} icon={CreditCard} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 px-6 py-4">
         {/* Chart */}
         <div className="lg:col-span-2 bg-white rounded-lg shadow-md p-4">
-          <h2 className="text-lg font-semibold mb-4">Subscriptions</h2>
+          <h2 className="text-lg font-semibold mb-4">New Registrations</h2>
           <div className="h-80">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={subscriptionData}>
+              <LineChart data={graphData?.monthlyData|| subscriptionData }>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} />
                 <XAxis dataKey="name" />
                 <YAxis />

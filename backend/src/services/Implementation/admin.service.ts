@@ -14,17 +14,20 @@ export default class adminService implements IAdminService {
   }
 
   async userCount(): Promise<number> {
-    console.log('service reach -  - -  --')
     const userCount = await this.adminRepository.docsCount('role','user')
-    console.log("service count ->", userCount);
     return userCount;
   }
 
   async trainerCount(): Promise<number>{
-    console.log('service reach -  - -  --')
     const userCount = await this.adminRepository.docsCount('role','trainer')
-    console.log("service count ->", userCount);
     return userCount;
   }
+
+  async getMonthlySubscriptionData(): Promise<
+  { name: string; users: number; trainers: number }[]
+> {
+  const monthlyData = await this.adminRepository.getMonthlySubscriptionData();
+  return monthlyData;
+}
 
 }
