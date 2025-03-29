@@ -1,8 +1,16 @@
 import { IUserModel } from "../../models/user.models";
 
 export interface IAdminService {
-  userCount(): Promise<number>;
-  trainerCount(): Promise<number>;
+  getTotalUserCount(): Promise<{
+    totalCount: number;
+    currentMonthCount: number;
+    percentChange: number;
+  }>;
+  getTotalTrainerCount(): Promise<{
+    totalCount: number;
+    currentMonthCount: number;
+    percentChange: number;
+  }>;
   getMonthlySubscriptionData(): Promise<
     { name: string; users: number; trainers: number }[]
   >;

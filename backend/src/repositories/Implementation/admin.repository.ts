@@ -16,6 +16,21 @@ export class AdminRepository
     const docsCount = await this.model.countDocuments({ [field]: value });
     return docsCount;
   }
+  async docsCountForMonth(
+    field: string,
+    value: string,
+    year: number,
+    month: number
+  ): Promise<number> {
+    const firstDayOfMonth = new Date(year, month - 1, 1); 
+    const lastDayOfMonth = new Date(year, month, 0);
+  
+    const count = await this.model.countDocuments({
+      [field]: value,
+      createdAt: { $gte: firstDayOfMonth, $lte: lastDayOfMonth }, 
+    });
+    return count;
+  }
 
   async getMonthlySubscriptionData(): Promise<
     { name: string; users: number; trainers: number }[]
@@ -26,8 +41,8 @@ export class AdminRepository
           $or: [{ role: "user" }, { role: "trainer" }],
           createdAt: {
             $gte: new Date(
-              new Date().getFullYear() - 1,
-              new Date().getMonth(),
+              new Date().getFullYear(),
+              new Date().getMonth()-12,
               1
             ),
           },
@@ -80,14 +95,20 @@ export class AdminRepository
     ];
 
     const currentDate = new Date();
+    let currentMonth = currentDate.getMonth();
+    let currentYear = currentDate.getFullYear();
+    
 
     for (let i = 0; i < 12; i++) {
-      const pastDate = new Date(currentDate);
-      pastDate.setMonth(currentDate.getMonth() - i);
-      const monthIndex = pastDate.getMonth();
-      const year = pastDate.getFullYear();
-      const key = `${months[monthIndex]}-${year}`;
+      const monthName = months[currentMonth];
+      const key = `${monthName}-${currentYear}`;
       formattedData[key] = { users: 0, trainers: 0 };
+    
+      currentMonth--;
+      if (currentMonth < 0) {
+        currentMonth = 11; // December
+        currentYear--;
+      }
     }
 
     monthlyCounts.forEach((item) => {
@@ -102,6 +123,8 @@ export class AdminRepository
         }
       }
     });
+
+
 
     const outputArray: {
       name: string;

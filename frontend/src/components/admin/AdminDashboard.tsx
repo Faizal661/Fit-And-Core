@@ -42,12 +42,14 @@ const subscriptionData = [
 
 const MetricCard = ({
   title,
-  value,
+  totalValue,
+  currentMonthValue,
   change,
   icon: Icon,
 }: {
   title: string;
-  value: string;
+  totalValue: string;
+  currentMonthValue: string;
   change: number;
   icon: LucideIcon;
 }) => {
@@ -59,7 +61,12 @@ const MetricCard = ({
         {Icon && <Icon size={16} className="mr-2" />}
         {title}
       </div>
-      <div className="text-2xl font-bold mb-2">{value}</div>
+      <div className="text-2xl font-bold mb-1">{totalValue}</div>
+      {currentMonthValue !== undefined && (
+        <div className="text-sm text-gray-600 mb-1">
+          This Month: {currentMonthValue}
+        </div>
+      )}
       <div
         className={`text-xs ${
           isPositive ? "text-green-500" : "text-red-500"
@@ -79,7 +86,7 @@ const MetricCard = ({
 
 const AdminDashboard = () => {
   const {
-    data: userData,
+    data: totalUserData,
     isLoading: isLoadingUsers,
     error: userError,
   } = useQuery({
@@ -89,7 +96,7 @@ const AdminDashboard = () => {
   });
 
   const {
-    data: trainerData,
+    data: totalTrainerData,
     isLoading: isLoadingTrainers,
     error: trainerError,
   } = useQuery({
@@ -108,7 +115,7 @@ const AdminDashboard = () => {
     staleTime: 5 * 60 * 1000,
   });
 
-  if (isLoadingUsers || isLoadingTrainers  ) {
+  if (isLoadingUsers || isLoadingTrainers) {
     return (
       <>
         <h1 className="text-2xl font-bold pl-20 mb-3 px-6 pt-4 ">DASHBOARD</h1>
@@ -122,7 +129,7 @@ const AdminDashboard = () => {
     );
   }
 
-  if (userError || trainerError ) {
+  if (userError || trainerError) {
     return (
       <>
         <h1 className="text-2xl font-bold pl-20 mb-3 px-6 pt-4 ">DASHBOARD</h1>
@@ -145,13 +152,31 @@ const AdminDashboard = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6 px-6 py-4">
         {/* Revenue Card */}
-        <MetricCard title="Revenue" value="₹0" change={0} icon={CreditCard} />
+        <MetricCard
+          title="Revenue"
+          totalValue={"₹0"}
+          currentMonthValue="₹0"
+          change={0}
+          icon={CreditCard}
+        />
 
         {/* Refund Card */}
-        <MetricCard title="Refund" value="₹0" change={0} icon={RefreshCcw} />
+        <MetricCard
+          title="Refund"
+          totalValue={"₹0"}
+          currentMonthValue="₹0"
+          change={0}
+          icon={RefreshCcw}
+        />
 
         {/* Income Card */}
-        <MetricCard title="Income" value="₹0" change={0} icon={CreditCard} />
+        <MetricCard
+          title="Income"
+          totalValue={"₹0"}
+          currentMonthValue="₹0"
+          change={0}
+          icon={CreditCard}
+        />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 px-6 py-4">
@@ -160,7 +185,7 @@ const AdminDashboard = () => {
           <h2 className="text-lg font-semibold mb-4">New Registrations</h2>
           <div className="h-80">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={graphData?.monthlyData|| subscriptionData }>
+              <LineChart data={graphData?.monthlyData || subscriptionData}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} />
                 <XAxis dataKey="name" />
                 <YAxis />
@@ -187,6 +212,27 @@ const AdminDashboard = () => {
         <div className="space-y-6">
           <MetricCard
             title="Total Users"
+            totalValue={totalUserData?.totalCount || "0"}
+            currentMonthValue={totalUserData?.currentMonthCount || "0"}
+            change={totalUserData?.percentChange || 0}
+            icon={Users}
+          />
+          <MetricCard
+            title="Total Trainers"
+            totalValue={totalTrainerData?.totalCount || "0"}
+            currentMonthValue={totalTrainerData?.currentMonthCount || "0"}
+            change={totalTrainerData?.percentChange || 0}
+            icon={Dumbbell}
+          />
+          {/* <MetricCard
+            title="Active Users"
+            totalValue={activeUserData?.totalCount || "0"} // Assuming you'll implement total active users
+            currentMonthValue={activeUserData?.currentMonthCount || "0"} // Assuming you'll implement monthly active users
+            change={activeUserData?.percentChange || 0}
+            icon={Activity}
+          />
+          <MetricCard
+            title="Total Users"
             value={userData?.count || "0"}
             change={userData?.percentChange || 0}
             icon={Users}
@@ -196,10 +242,11 @@ const AdminDashboard = () => {
             value={trainerData?.count || "0"}
             change={trainerData?.percentChange || 0}
             icon={Dumbbell}
-          />
+          /> */}
           <MetricCard
             title="Active Users"
-            value={"0"}
+            totalValue={"0"}
+            currentMonthValue={"0"}
             change={0}
             icon={Activity}
           />
