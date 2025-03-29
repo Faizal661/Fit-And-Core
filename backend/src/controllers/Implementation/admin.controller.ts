@@ -5,7 +5,6 @@ import { IAdminController } from "../Interface/IAdminController";
 import { IAdminService } from "../../services/Interface/IAdminService";
 import { sendResponse } from "../../utils/send-response";
 
-
 @injectable()
 export default class AdminController implements IAdminController {
   private adminService: IAdminService;
@@ -23,11 +22,8 @@ export default class AdminController implements IAdminController {
     next: NextFunction
   ): Promise<void> {
     try {
-      const count = await this.adminService.userCount();
-      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, {
-        count: count,
-        percentChange: 0,
-      });
+      const userData = await this.adminService.getTotalUserCount();
+      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, userData);
     } catch (error) {
       next(error);
     }
@@ -39,11 +35,21 @@ export default class AdminController implements IAdminController {
     next: NextFunction
   ): Promise<void> {
     try {
-      const count = await this.adminService.trainerCount();
-      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, {
-        count: count,
-        percentChange: 0,
-      });
+      const trainerData = await this.adminService.getTotalTrainerCount();
+      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, trainerData);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getMonthlySubscriptionData(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const monthlyData = await this.adminService.getMonthlySubscriptionData();
+      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, { monthlyData });
     } catch (error) {
       next(error);
     }
