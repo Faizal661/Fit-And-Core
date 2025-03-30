@@ -10,7 +10,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { EmailFormData, emailSchema } from "../../../schemas/authSchema";
 import axios from "axios";
 
-const ResetPassword = () => {
+const EmailVerify = () => {
   const navigate = useNavigate();
   const { showToast } = useToast();
 
@@ -88,4 +88,4 @@ const ResetPassword = () => {
   );
 };
 
-export default ResetPassword;
+export default EmailVerify;

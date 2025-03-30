@@ -12,9 +12,17 @@ export const fetchUserCount = async () => {
 export const fetchTrainerCount = async () => {
   try {
     const response = await axios.get("/admin/trainer-count");
-    console.log('fetchTrainerCount',response)
     return response.data;
   } catch (error) {
     throw new Error("Failed to fetch trainer count");
+  }
+};
+
+export const fetchMonthlyRegistrationData = async () => {
+  try {
+    const response = await axios.get("/admin/monthly-registrations-data");
+    return response.data;
+  } catch (error) {
+    throw new Error("Failed to fetch monthly registrations data");
   }
 };

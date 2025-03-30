@@ -87,4 +87,29 @@ export default class UserController implements IUserController {
       next(error);
     }
   }
+
+  async changePassword(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const email = req.decoded?.email;
+      if (!email) {
+        sendResponse(res, HttpResCode.UNAUTHORIZED, HttpResMsg.UNAUTHORIZED);
+        return;
+      }
+      let { currentPassword,newPassword } = req.body;
+
+      if (!currentPassword || !newPassword) {
+        sendResponse(res, HttpResCode.BAD_REQUEST, HttpResMsg.BAD_REQUEST);
+        return;
+      }
+
+      const isUpdated = await this.userService.updatePassword(email,currentPassword, newPassword);
+      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
