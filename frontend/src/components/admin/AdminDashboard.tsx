@@ -230,19 +230,7 @@ const AdminDashboard = () => {
             currentMonthValue={activeUserData?.currentMonthCount || "0"} // Assuming you'll implement monthly active users
             change={activeUserData?.percentChange || 0}
             icon={Activity}
-          />
-          <MetricCard
-            title="Total Users"
-            value={userData?.count || "0"}
-            change={userData?.percentChange || 0}
-            icon={Users}
-          />
-          <MetricCard
-            title="Total Trainers"
-            value={trainerData?.count || "0"}
-            change={trainerData?.percentChange || 0}
-            icon={Dumbbell}
-          /> */}
+          />*/}
           <MetricCard
             title="Active Users"
             totalValue={"0"}

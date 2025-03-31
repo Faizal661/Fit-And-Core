@@ -2,12 +2,25 @@ import { inject, injectable } from "tsyringe";
 import { Types } from "mongoose";
 import { IUserService } from "../Interface/IUserService";
 import { IUserRepository } from "../../repositories/Interface/IUserRepository";
-import { IUserProfile, UserProfileUpdateData } from "../../types/user.types";
+import { IUser, IUserProfile, UserProfileUpdateData } from "../../types/user.types";
 import { deleteFromS3, uploadToS3 } from "../../utils/s3-upload";
 import { HttpResCode } from "../../constants/response.constants";
 import { CustomError } from "../../errors/CustomError";
 import { IAuthRepository } from "../../repositories/Interface/IAuthRepository";
 import bcrypt from "bcryptjs";
+import { IUserModel } from "../../models/user.models";
+
+interface UsersResponse {
+  users: {
+    _id: string;
+    username: string;
+    profilePicture: string;
+    email: string;
+    isBlocked: boolean;
+    createdAt: Date;
+  }[];
+  total: number;
+}
 
 @injectable()
 export default class UserService implements IUserService {
@@ -22,6 +35,64 @@ export default class UserService implements IUserService {
   ) {
     this.userRepository = userRepository;
     this.authRepository=authRepository;
+  }
+
+  async getUsers(page: number, limit: number, search: string): Promise<UsersResponse> {
+    const skip = (page - 1) * limit;
+    let filter: any = { role: { $ne: "admin" } }; // Exclude admins from the list
+
+    if (search) {
+      filter.$or = [
+        { username: { $regex: search, $options: "i" } },
+        { email: { $regex: search, $options: "i" } },
+      ];
+    }
+
+    const [users, total] = await Promise.all([
+      this.userRepository.find(filter).skip(skip).limit(limit).exec(), // Chain skip/lzor here and execute
+      this.userRepository.countDocuments(filter),
+    ]);
+
+    const formattedUsers = users.map((user: IUserModel) => ({
+      _id: (user._id as Types.ObjectId).toString(), // Explicitly cast _id to Types.ObjectId
+      username: user.username,
+      profilePicture: user.profilePicture || "",
+      email: user.email,
+      isBlocked: user.isBlocked,
+      createdAt: user.createdAt,
+    }));
+
+    return { users: formattedUsers, total };
+  }
+
+  async toggleBlockStatus(userId: string, isBlocked: boolean): Promise<any> {
+    const user = await this.userRepository.findById(new Types.ObjectId(userId));
+
+    if (!user) {
+      throw new CustomError("User not found", HttpResCode.NOT_FOUND);
+    }
+
+    if (user.role === "admin") {
+      throw new CustomError("Cannot block an admin user", HttpResCode.FORBIDDEN);
+    }
+
+    const updatedUser = await this.userRepository.update(
+      new Types.ObjectId(userId),
+      { isBlocked: !isBlocked }
+    );
+
+    if (!updatedUser) {
+      throw new CustomError("Failed to update user status", HttpResCode.INTERNAL_SERVER_ERROR);
+    }
+
+    return {
+      _id: (updatedUser._id as Types.ObjectId).toString(), // Explicitly cast _id to Types.ObjectId
+      username: updatedUser.username,
+      profilePicture: updatedUser.profilePicture || "",
+      email: updatedUser.email,
+      isBlocked: updatedUser.isBlocked,
+      createdAt: updatedUser.createdAt,
+    };
   }
 
   async getUserProfile(userId: string | Types.ObjectId): Promise<IUserProfile> {

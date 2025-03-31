@@ -25,5 +25,18 @@ router.put("/profile-picture", verifyAccessToken,authorizeRoles(["user", "traine
 
 router.put('/change-password',verifyAccessToken,authorizeRoles(["user", "trainer"]),(req,res,next)=>userController.changePassword(req,res,next))
 
+router.get(
+  "/users",
+  verifyAccessToken,
+  authorizeRoles(["admin"]),
+  (req, res, next) => userController.getUsers(req, res, next)
+);
+
+router.patch(
+  "/:userId/block",
+  verifyAccessToken,
+  authorizeRoles(["admin"]),
+  (req, res, next) => userController.toggleBlockStatus(req, res, next)
+);
 
 export default router;

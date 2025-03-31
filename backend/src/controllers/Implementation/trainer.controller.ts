@@ -60,7 +60,6 @@ export default class TrainerController implements ITrainerController {
         }
       }
 
-      // Validate required uploads
       if (documentProofs.length === 0) {
         sendResponse(
           res,

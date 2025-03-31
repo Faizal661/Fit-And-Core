@@ -3,7 +3,7 @@ export interface IUser {
     username: string;
     email: string;
     password?: string;
-    isBlocked: Boolean;
+    isBlocked: boolean;
     role: "user" | "trainer"|"admin";
     profilePicture: string;
     googleId?:string;
