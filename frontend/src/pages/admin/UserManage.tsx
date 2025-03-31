@@ -2,7 +2,6 @@ import { useState, FormEvent } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "../../config/axios.config";
 
-// Define the User interface
 interface User {
   _id: string;
   username: string;
@@ -12,13 +11,11 @@ interface User {
   createdAt: string;
 }
 
-// Define the API response type
 interface UsersResponse {
   users: User[];
   total: number;
 }
 
-// Fetch users function with typed parameters
 const fetchUsers = async ({
   page,
   limit,
@@ -34,7 +31,6 @@ const fetchUsers = async ({
   return response.data;
 };
 
-// Toggle block status function with typed parameters
 const toggleBlockStatus = async ({
   userId,
   isBlocked,
@@ -43,7 +39,7 @@ const toggleBlockStatus = async ({
   isBlocked: boolean;
 }): Promise<User> => {
   const response = await axios.patch<User>(`/user/${userId}/block`, {
-    isBlocked: !isBlocked,
+    isBlocked: isBlocked,
   });
   return response.data;
 };
@@ -59,11 +55,19 @@ const UserManagement = () => {
   const { data, isLoading, error } = useQuery<UsersResponse, Error>({
     queryKey: ["users", activePage, recordsPerPage, searchTerm],
     queryFn: () =>
-      fetchUsers({ page: activePage, limit: recordsPerPage, search: searchTerm }),
-    staleTime: 5000, // Optional: keeps data fresh for 5 seconds
+      fetchUsers({
+        page: activePage,
+        limit: recordsPerPage,
+        search: searchTerm,
+      }),
+    staleTime: 5000,
   });
 
-  const mutation = useMutation<User, Error, { userId: string; isBlocked: boolean }>({
+  const mutation = useMutation<
+    User,
+    Error,
+    { userId: string; isBlocked: boolean }
+  >({
     mutationFn: toggleBlockStatus,
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -74,7 +78,7 @@ const UserManagement = () => {
 
   const handleSearch = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setActivePage(1); // Reset to first page on search
+    setActivePage(1);
   };
 
   const handleBlockToggle = (userId: string, isBlocked: boolean) => {
@@ -93,32 +97,36 @@ const UserManagement = () => {
       </h1>
       <div className="border-b-1 pt-2 mb-5"></div>
 
-      {/* Search and Records Per Page */}
       <div className="flex justify-between items-center mb-6 m-6">
-        <form onSubmit={handleSearch} className="flex items-center">
+        <form
+          onSubmit={handleSearch}
+          className="flex items-center border border-black rounded-md"
+        >
           <input
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search by username or email..."
-            className="px-4 py-2 border rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="px-4 py-2  rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <button
             type="submit"
-            className="px-4 py-2 bg-blue-600 text-white rounded-r-md hover:bg-blue-700"
+            className="px-4 py-2 bg-blue-600 text-white rounded-r-md hover:bg-blue-700 hover:cursor-pointer"
           >
             Search
           </button>
         </form>
-        <div className="flex items-center">
-          <label className="mr-2 text-gray-700">Records per page:</label>
+        <div className="flex items-center  border border-black rounded-md">
+          <label className="mr-2 px-3 py-2 text-gray-700">
+            Records per page :
+          </label>
           <select
             value={recordsPerPage}
             onChange={(e) => {
               setRecordsPerPage(Number(e.target.value));
               setActivePage(1);
             }}
-            className="px-2 py-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="px-2 py-2  bg-blue-600 text-white rounded-r-md focus:outline-none focus:ring-2 focus:ring-blue-500 hover:bg-blue-700 hover:cursor-pointer"
           >
             <option value={5}>5</option>
             <option value={10}>10</option>
@@ -128,16 +136,17 @@ const UserManagement = () => {
         </div>
       </div>
 
-      {/* Users Table */}
       <div className="bg-white shadow p-6 mb-6 m-6">
         {isLoading ? (
-          <div className="text-center text-lg text-gray-500 py-8">Loading...</div>
+          <div className="text-center text-lg text-gray-500 py-8">
+            Loading...
+          </div>
         ) : error ? (
           <div className="text-center text-lg text-red-500 py-8">
             Error: {error.message}
           </div>
         ) : !data || data.users.length === 0 ? (
-          <div className="text-center text-lg text-gray-500 py-8">
+          <div className="text-center text-xl text-gray-500 py-8">
             No users found
           </div>
         ) : (
@@ -145,7 +154,7 @@ const UserManagement = () => {
             <table className="min-w-full bg-white">
               <thead>
                 <tr className="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
-                  <th className="py-3 px-6 text-left">ID</th>
+                  <th className="py-3 px-6 text-left">#</th>
                   <th className="py-3 px-6 text-left">Username</th>
                   <th className="py-3 px-6 text-left">Profile Picture</th>
                   <th className="py-3 px-6 text-left">Email</th>
@@ -154,18 +163,20 @@ const UserManagement = () => {
                 </tr>
               </thead>
               <tbody className="text-gray-600 text-sm">
-                {data.users.map((user) => (
+                {data.users.map((user, index) => (
                   <tr
                     key={user._id}
                     className="border-b border-gray-200 hover:bg-gray-50"
                   >
-                    <td className="py-3 px-6 text-left">{user._id}</td>
+                    <td className="py-3 px-6 text-left">
+                      {(activePage - 1) * recordsPerPage + index + 1}
+                    </td>
                     <td className="py-3 px-6 text-left whitespace-nowrap font-medium">
                       {user.username}
                     </td>
                     <td className="py-3 px-6 text-left">
                       <img
-                        src={user.profilePicture || "/default-avatar.png"}
+                        src={user.profilePicture}
                         alt={user.username}
                         className="w-10 h-10 rounded-full object-cover"
                       />
@@ -185,7 +196,9 @@ const UserManagement = () => {
                     <td className="py-3 px-6 text-center">
                       <div className="flex item-center justify-center">
                         <button
-                          onClick={() => handleBlockToggle(user._id, user.isBlocked)}
+                          onClick={() =>
+                            handleBlockToggle(user._id, user.isBlocked)
+                          }
                           className={`mx-1 ${
                             user.isBlocked
                               ? "text-green-600 hover:text-green-900"
@@ -198,10 +211,10 @@ const UserManagement = () => {
                             : user.isBlocked
                             ? "Unblock"
                             : "Block"}
-                        </button>
+                        </button><span> &nbsp;&nbsp;</span>
                         <button
                           onClick={() => openDetailsModal(user)}
-                          className="text-blue-600 hover:text-blue-900 mx-1"
+                          className="px-2 py-1 rounded text-xs font-medium  text-blue-600 hover:text-blue-900 mx-1 bg-blue-100 "
                         >
                           Details
                         </button>
@@ -214,13 +227,12 @@ const UserManagement = () => {
           </div>
         )}
 
-        {/* Pagination */}
         {data && data.total > recordsPerPage && (
-          <div className="flex justify-between items-center mt-6">
+          <div className="flex justify-center gap-x-10 items-center mt-6">
             <button
               onClick={() => setActivePage((prev) => Math.max(prev - 1, 1))}
               disabled={activePage === 1}
-              className="px-4 py-2 bg-blue-600 text-white rounded disabled:bg-gray-400 hover:bg-blue-700"
+              className="px-4 py-2 bg-blue-600 text-white rounded-l-md disabled:bg-gray-400 hover:bg-blue-700"
             >
               Previous
             </button>
@@ -228,19 +240,20 @@ const UserManagement = () => {
               Page {activePage} of {totalPages}
             </span>
             <button
-              onClick={() => setActivePage((prev) => Math.min(prev + 1, totalPages))}
+              onClick={() =>
+                setActivePage((prev) => Math.min(prev + 1, totalPages))
+              }
               disabled={activePage === totalPages}
-              className="px-4 py-2 bg-blue-600 text-white rounded disabled:bg-gray-400 hover:bg-blue-700"
+              className="px-4 py-2 bg-blue-600 text-white rounded-r-md disabled:bg-gray-400 hover:bg-blue-700"
             >
               Next
             </button>
           </div>
         )}
       </div>
-
       {/* User Details Modal */}
       {selectedUser && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0  bg-black/10 backdrop-blur-xs flex items-center justify-center z-50">
           <div className="bg-white rounded-lg w-full max-w-3xl overflow-hidden">
             <div className="flex justify-between items-center px-6 py-4 bg-blue-600 text-white">
               <h2 className="text-xl font-semibold">User Details</h2>
@@ -254,6 +267,13 @@ const UserManagement = () => {
             <div className="p-6 max-h-[70vh] overflow-y-auto">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
+                  <div className="pl-10 pb-5">
+                    <img
+                      src={selectedUser.profilePicture}
+                      alt={selectedUser.username}
+                      className="w-20 h-20 rounded-full object-cover "
+                    />
+                  </div>
                   <h3 className="text-lg font-semibold text-gray-800 mb-4">
                     Personal Information
                   </h3>
@@ -287,7 +307,9 @@ const UserManagement = () => {
                     Additional Information
                   </h3>
                   <div className="mb-3">
-                    <span className="text-gray-600 font-medium">Created At:</span>
+                    <span className="text-gray-600 font-medium">
+                      Joined At:
+                    </span>
                     <span className="ml-2">
                       {new Date(selectedUser.createdAt).toLocaleDateString()}
                     </span>
@@ -297,7 +319,7 @@ const UserManagement = () => {
               <div className="mt-6 flex justify-end">
                 <button
                   onClick={closeModal}
-                  className="px-6 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
+                  className="px-4 py-1 bg-gray-600 text-white rounded-md hover:bg-gray-700"
                 >
                   Back
                 </button>
