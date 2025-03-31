@@ -100,7 +100,7 @@ const UserManagement = () => {
       <div className="flex justify-between items-center mb-6 m-6">
         <form
           onSubmit={handleSearch}
-          className="flex items-center border border-black rounded-md"
+          className="flex items-center border border-black rounded-lg bg-white"
         >
           <input
             type="text"
@@ -116,7 +116,7 @@ const UserManagement = () => {
             Search
           </button>
         </form>
-        <div className="flex items-center  border border-black rounded-md">
+        <div className="flex items-center  border border-black  rounded-lg bg-white">
           <label className="mr-2 px-3 py-2 text-gray-700">
             Records per page :
           </label>
@@ -126,7 +126,7 @@ const UserManagement = () => {
               setRecordsPerPage(Number(e.target.value));
               setActivePage(1);
             }}
-            className="px-2 py-2  bg-blue-600 text-white rounded-r-md focus:outline-none focus:ring-2 focus:ring-blue-500 hover:bg-blue-700 hover:cursor-pointer"
+            className="px-2 py-3 bg-blue-600 text-white rounded-r-md focus:outline-none focus:ring-2 focus:ring-blue-500 hover:bg-blue-700 hover:cursor-pointer"
           >
             <option value={5}>5</option>
             <option value={10}>10</option>

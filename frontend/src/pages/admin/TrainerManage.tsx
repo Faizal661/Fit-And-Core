@@ -6,30 +6,40 @@ import {
   rejectTrainer,
 } from "../../services/admin/trainerManagement";
 import { Trainer } from "../../types/trainer";
-
-
+import { z } from "zod";
+const rejectReasonSchema = z
+  .string()
+  .min(10, "Reason must be at least 10 characters")
+  .max(500, "Reason cannot exceed 500 characters");
 
 const TrainerManage: React.FC = () => {
   const queryClient = useQueryClient();
   const [selectedTrainer, setSelectedTrainer] = useState<Trainer | null>(null);
-  const [viewMode, setViewMode] = useState<"details" | "documents" | null>(null);
-  const [activeTab, setActiveTab] = useState<"pending" | "approved" | "rejected">("pending");
+  const [viewMode, setViewMode] = useState<"details" | null>(null);
+  const [activeTab, setActiveTab] = useState<
+    "pending" | "approved" | "rejected"
+  >("pending");
   const [currentImageUrl, setCurrentImageUrl] = useState<string | null>(null);
 
-  const { data: trainers, isLoading, error } = useQuery({
+  const [showRejectModal, setShowRejectModal] = useState(false);
+  const [rejectReason, setRejectReason] = useState("");
+  const [reasonError, setReasonError] = useState<string | null>(null);
+
+  const {
+    data: trainers,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ["trainers"],
     queryFn: fetchTrainers,
   });
 
-  const pendingTrainers = trainers?.filter(
-    (trainer) => trainer.status === "pending"
-  ) || [];
-  const approvedTrainers = trainers?.filter(
-    (trainer) => trainer.status === "approved"
-  ) || [];
-  const rejectedTrainers = trainers?.filter(
-    (trainer) => trainer.status === "rejected"
-  ) || [];
+  const pendingTrainers =
+    trainers?.filter((trainer) => trainer.status === "pending") || [];
+  const approvedTrainers =
+    trainers?.filter((trainer) => trainer.status === "approved") || [];
+  const rejectedTrainers =
+    trainers?.filter((trainer) => trainer.status === "rejected") || [];
 
   const approveMutation = useMutation({
     mutationFn: approveTrainer,
@@ -46,6 +56,9 @@ const TrainerManage: React.FC = () => {
       queryClient.invalidateQueries({ queryKey: ["trainers"] });
       setSelectedTrainer(null);
       setViewMode(null);
+      setShowRejectModal(false);
+      setRejectReason("");
+      setReasonError(null);
     },
   });
 
@@ -58,44 +71,59 @@ const TrainerManage: React.FC = () => {
     approveMutation.mutate(trainerId);
   };
 
-  const handleReject = (trainerId: string) => {
-    rejectMutation.mutate(trainerId);
+  const handleReject = () => {
+    setShowRejectModal(true);
   };
 
-  const handleViewDocuments = (trainer: Trainer) => {
-    setSelectedTrainer(trainer);
-    setViewMode("documents");
-  };
-
-  const handleViewImage = (url: string) => {
-    setCurrentImageUrl(url);
+  const handleRejectSubmit = () => {
+    try {
+      rejectReasonSchema.parse(rejectReason);
+      setReasonError(null);
+      if (selectedTrainer) {
+        rejectMutation.mutate({
+          trainerId: selectedTrainer._id,
+          reason: rejectReason,
+        });
+      }
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        setReasonError(error.errors[0].message);
+      }
+    }
   };
 
   const closeModal = () => {
     setSelectedTrainer(null);
     setViewMode(null);
     setCurrentImageUrl(null);
+    setShowRejectModal(false);
+    setRejectReason("");
+    setReasonError(null);
   };
 
-//   if (isLoading) {
-//     return (
-//       <div className="flex items-center justify-center min-h-screen bg-gray-100">
-//         <div className="text-2xl font-semibold text-gray-700">
-//           Loading trainer data...
-//         </div>
-//       </div>
-//     );
-//   }
+  const handleViewImage = (url: string) => {
+    setCurrentImageUrl(url);
+  };
 
-//   if (error) {
-//     return (
-//       <div className="flex items-center justify-center min-h-screen bg-gray-100">
-//         <div className="text-2xl font-semibold text-red-600">
-//           Error loading trainer data
-//         </div>
-//       </div>
-//     );
-//   }
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-100">
+        <div className="text-2xl font-semibold text-gray-700">
+          Loading trainer data...
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-100">
+        <div className="text-2xl font-semibold text-red-600">
+          Error loading trainer data
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-400 ">
@@ -104,7 +132,6 @@ const TrainerManage: React.FC = () => {
       </h1>
       <div className="border-b-1 pt-2 mb-5"></div>
 
-      {/* Tabs */}
       <div className="flex mb-6 bg-white  shadow overflow-hidden m-6">
         <button
           className={`px-6 py-3 font-medium text-sm flex-1 ${
@@ -147,7 +174,7 @@ const TrainerManage: React.FC = () => {
             </h2>
             {pendingTrainers.length === 0 ? (
               <div className="text-center text-lg text-gray-500 py-8">
-                No pending requests at the moment
+                No pending requests at this moment
               </div>
             ) : (
               <div className="overflow-x-auto">
@@ -177,33 +204,15 @@ const TrainerManage: React.FC = () => {
                           {trainer.specialization}
                         </td>
                         <td className="py-3 px-6 text-left">
-                          {trainer.yearsOfExperience} years
+                          {trainer.yearsOfExperience}
                         </td>
                         <td className="py-3 px-6 text-center">
                           <div className="flex item-center justify-center">
                             <button
                               onClick={() => handleSelectTrainer(trainer)}
-                              className="text-blue-600 hover:text-blue-900 mx-1"
+                              className="px-2 py-1 rounded text-blue-600 hover:text-blue-900 mx-1 bg-blue-100"
                             >
-                              Details
-                            </button>
-                            <button
-                              onClick={() => handleViewDocuments(trainer)}
-                              className="text-purple-600 hover:text-purple-900 mx-1"
-                            >
-                              Documents
-                            </button>
-                            <button
-                              onClick={() => handleApprove(trainer._id)}
-                              className="text-green-600 hover:text-green-900 mx-1"
-                            >
-                              Approve
-                            </button>
-                            <button
-                              onClick={() => handleReject(trainer._id)}
-                              className="text-red-600 hover:text-red-900 mx-1"
-                            >
-                              Reject
+                              View Details
                             </button>
                           </div>
                         </td>
@@ -253,21 +262,15 @@ const TrainerManage: React.FC = () => {
                           {trainer.specialization}
                         </td>
                         <td className="py-3 px-6 text-left">
-                          {trainer.yearsOfExperience} years
+                          {trainer.yearsOfExperience}
                         </td>
                         <td className="py-3 px-6 text-center">
                           <div className="flex item-center justify-center">
                             <button
                               onClick={() => handleSelectTrainer(trainer)}
-                              className="text-blue-600 hover:text-blue-900 mx-1"
+                              className="px-2 py-1 rounded text-blue-600 hover:text-blue-900 mx-1 bg-blue-100"
                             >
                               Details
-                            </button>
-                            <button
-                              onClick={() => handleViewDocuments(trainer)}
-                              className="text-purple-600 hover:text-purple-900 mx-1"
-                            >
-                              Documents
                             </button>
                           </div>
                         </td>
@@ -319,16 +322,16 @@ const TrainerManage: React.FC = () => {
                           <div className="flex item-center justify-center">
                             <button
                               onClick={() => handleSelectTrainer(trainer)}
-                              className="text-blue-600 hover:text-blue-900 mx-1"
+                              className="px-2 py-1 rounded text-blue-600 hover:text-blue-900 mx-1 bg-blue-100"
                             >
                               Details
                             </button>
-                            <button
+                            {/* <button
                               onClick={() => handleApprove(trainer._id)}
                               className="text-green-600 hover:text-green-900 mx-1"
                             >
                               Reconsider
-                            </button>
+                            </button> */}
                           </div>
                         </td>
                       </tr>
@@ -343,18 +346,27 @@ const TrainerManage: React.FC = () => {
 
       {/* Trainer Details Modal */}
       {selectedTrainer && viewMode === "details" && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black/10 backdrop-blur-xs flex items-center justify-center z-50">
           <div className="bg-white rounded-lg w-full max-w-3xl overflow-hidden">
             <div className="flex justify-between items-center px-6 py-4 bg-blue-600 text-white">
               <h2 className="text-xl font-semibold">Trainer Details</h2>
               <button
                 onClick={closeModal}
-                className="text-white hover:text-gray-200"
+                className="text-white text-2xl hover:text-gray-200 hover:cursor-pointer"
               >
                 ✕
               </button>
             </div>
             <div className="p-6 max-h-[70vh] overflow-y-auto">
+              {selectedTrainer.status === "rejected" &&
+                selectedTrainer.reason && (
+                  <div className="pb-10 max-h-[70vh] overflow-y-auto">
+                      <h3 className="text-lg font-semibold text-red-700 mb-2">
+                        Rejection Reason
+                      </h3>
+                      <p className="text-red-400">{selectedTrainer.reason}</p>
+                  </div>
+                )}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <h3 className="text-lg font-semibold text-gray-800 mb-4">
@@ -377,9 +389,7 @@ const TrainerManage: React.FC = () => {
                       Application Date:
                     </span>
                     <span className="ml-2">
-                      {new Date(
-                        selectedTrainer.createdAt
-                      ).toLocaleDateString()}
+                      {new Date(selectedTrainer.createdAt).toLocaleDateString()}
                     </span>
                   </div>
                 </div>
@@ -400,7 +410,7 @@ const TrainerManage: React.FC = () => {
                       Experience:
                     </span>
                     <span className="ml-2">
-                      {selectedTrainer.yearsOfExperience} years
+                      {selectedTrainer.yearsOfExperience}
                     </span>
                   </div>
                   <div className="mb-3">
@@ -429,42 +439,115 @@ const TrainerManage: React.FC = () => {
 
               <div className="mt-6">
                 <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                  Document Proofs
+                </h3>
+                <div className="px-4 py-1 max-h-[70vh] overflow-y-auto">
+                  <div className="mb-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                      {selectedTrainer.documentProofs.map((doc, index) => (
+                        <div
+                          key={index}
+                          className="border rounded-lg overflow-hidden group relative"
+                        >
+                          <img
+                            src={doc}
+                            alt={`Document ${index + 1}`}
+                            className="w-full h-48 object-cover cursor-pointer"
+                            onClick={() => handleViewImage(doc)}
+                          />
+                          <div className="absolute inset-0 bg-opacity-0 group-hover:bg-opacity-40 flex items-center justify-center transition-all">
+                            <button
+                              onClick={() => handleViewImage(doc)}
+                              className="px-4 py-2 bg-blue-600 text-white rounded opacity-0 group-hover:opacity-100 transition-opacity"
+                            >
+                              View Full
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-2">
+                <h3 className="text-lg font-semibold text-gray-800 mb-2">
                   Achievements
                 </h3>
-                <ul className="list-disc list-inside space-y-1">
-                  {selectedTrainer.achievements.map((achievement, index) => (
-                    <li key={index} className="text-gray-700">
-                      {achievement}
-                    </li>
-                  ))}
-                </ul>
+                <div className="px-4 py-1 max-h-[70vh] overflow-y-auto">
+                  <div className="mb-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                      {selectedTrainer.achievements.map((doc, index) => (
+                        <div
+                          key={index}
+                          className="border rounded-lg overflow-hidden group relative"
+                        >
+                          <img
+                            src={doc}
+                            alt={`Document ${index + 1}`}
+                            className="w-full h-48 object-cover cursor-pointer"
+                            onClick={() => handleViewImage(doc)}
+                          />
+                          <div className="absolute inset-0 bg-opacity-0 group-hover:bg-opacity-40 flex items-center justify-center transition-all">
+                            <button
+                              onClick={() => handleViewImage(doc)}
+                              className="px-4 py-2 bg-blue-600 text-white rounded opacity-0 group-hover:opacity-100 transition-opacity"
+                            >
+                              View Full
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
               </div>
 
               <div className="mt-6">
                 <h3 className="text-lg font-semibold text-gray-800 mb-2">
                   Certifications
                 </h3>
-                <ul className="list-disc list-inside space-y-1">
-                  {selectedTrainer.certifications.map((certification, index) => (
-                    <li key={index} className="text-gray-700">
-                      {certification}
-                    </li>
-                  ))}
-                </ul>
+                <div className="px-4 py-1 max-h-[70vh] overflow-y-auto">
+                  <div className="mb-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                      {selectedTrainer.certifications.map((doc, index) => (
+                        <div
+                          key={index}
+                          className="border rounded-lg overflow-hidden group relative"
+                        >
+                          <img
+                            src={doc}
+                            alt={`Document ${index + 1}`}
+                            className="w-full h-48 object-cover cursor-pointer"
+                            onClick={() => handleViewImage(doc)}
+                          />
+                          <div className="absolute inset-0 bg-opacity-0 group-hover:bg-opacity-40 flex items-center justify-center transition-all">
+                            <button
+                              onClick={() => handleViewImage(doc)}
+                              className="px-4 py-2 bg-blue-600 text-white rounded opacity-0 group-hover:opacity-100 transition-opacity"
+                            >
+                              View Full
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
               </div>
 
               {selectedTrainer.status === "pending" && (
                 <div className="mt-8 flex justify-end space-x-4">
                   <button
-                    onClick={() => handleReject(selectedTrainer._id)}
-                    className="px-6 py-2 bg-red-600 text-white rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+                    onClick={handleReject}
+                    className="px-6 py-2 bg-red-600 text-white rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 hover:cursor-pointer"
                     disabled={rejectMutation.isPending}
                   >
                     {rejectMutation.isPending ? "Rejecting..." : "Reject"}
                   </button>
                   <button
                     onClick={() => handleApprove(selectedTrainer._id)}
-                    className="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500"
+                    className="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 hover:cursor-pointer"
                     disabled={approveMutation.isPending}
                   >
                     {approveMutation.isPending ? "Approving..." : "Approve"}
@@ -476,77 +559,44 @@ const TrainerManage: React.FC = () => {
         </div>
       )}
 
-      {/* Documents Modal */}
-      {selectedTrainer && viewMode === "documents" && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg w-full max-w-4xl overflow-hidden">
-            <div className="flex justify-between items-center px-6 py-4 bg-purple-600 text-white">
-              <h2 className="text-xl font-semibold">
-                Documents - {selectedTrainer.username}
-              </h2>
+      {/* Rejection Reason Modal */}
+      {showRejectModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+            <h2 className="text-xl font-semibold mb-4">
+              Reject Trainer Application
+            </h2>
+            <p className="mb-4">Please provide a reason for rejection:</p>
+            <textarea
+              value={rejectReason}
+              onChange={(e) => setRejectReason(e.target.value)}
+              className="w-full p-2 border rounded-md min-h-[100px]"
+              placeholder="Enter rejection reason..."
+            />
+            {reasonError && (
+              <p className="text-red-600 text-sm mt-1">{reasonError}</p>
+            )}
+            <div className="mt-6 flex justify-end space-x-4">
               <button
                 onClick={closeModal}
-                className="text-white hover:text-gray-200"
+                className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300"
               >
-                ✕
+                Cancel
               </button>
-            </div>
-            <div className="p-6 max-h-[70vh] overflow-y-auto">
-              <div className="mb-6">
-                <h3 className="text-lg font-semibold text-gray-800 mb-4">
-                  Document Proofs
-                </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                  {selectedTrainer.documentProofs.map((doc, index) => (
-                    <div
-                      key={index}
-                      className="border rounded-lg overflow-hidden group relative"
-                    >
-                      <img
-                        src={doc}
-                        alt={`Document ${index + 1}`}
-                        className="w-full h-48 object-cover cursor-pointer"
-                        onClick={() => handleViewImage(doc)}
-                      />
-                      <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 flex items-center justify-center transition-all">
-                        <button
-                          onClick={() => handleViewImage(doc)}
-                          className="px-4 py-2 bg-blue-600 text-white rounded opacity-0 group-hover:opacity-100 transition-opacity"
-                        >
-                          View Full
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {selectedTrainer.status === "pending" && (
-                <div className="mt-8 flex justify-end space-x-4">
-                  <button
-                    onClick={() => handleReject(selectedTrainer._id)}
-                    className="px-6 py-2 bg-red-600 text-white rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
-                    disabled={rejectMutation.isPending}
-                  >
-                    {rejectMutation.isPending ? "Rejecting..." : "Reject"}
-                  </button>
-                  <button
-                    onClick={() => handleApprove(selectedTrainer._id)}
-                    className="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500"
-                    disabled={approveMutation.isPending}
-                  >
-                    {approveMutation.isPending ? "Approving..." : "Approve"}
-                  </button>
-                </div>
-              )}
+              <button
+                onClick={handleRejectSubmit}
+                className=" px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700"
+                disabled={rejectMutation.isPending}
+              >
+                {rejectMutation.isPending ? "Submitting..." : "Submit"}
+              </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Full Image Modal */}
       {currentImageUrl && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black/10 backdrop-blur-xs flex items-center justify-center z-50">
           <div className="relative max-w-4xl max-h-[90vh]">
             <button
               onClick={() => setCurrentImageUrl(null)}

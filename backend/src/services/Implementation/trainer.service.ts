@@ -6,6 +6,7 @@ import { IUserRepository } from "../../repositories/Interface/IUserRepository";
 import { TrainerApplicationData } from "../../types/trainer.types";
 import { HttpResCode } from "../../constants/response.constants";
 import { CustomError } from "../../errors/CustomError";
+import { ITrainerModel } from "../../models/trainer.models";
 
 @injectable()
 export default class TrainerService implements ITrainerService {
@@ -22,7 +23,7 @@ export default class TrainerService implements ITrainerService {
     this.userRepository = userRepository;
   }
 
-  async applyTrainer(data: TrainerApplicationData): Promise<any> {
+  async applyTrainer(data: TrainerApplicationData): Promise<ITrainerModel> {
 
     const userId = new Types.ObjectId(data.userId);
     const user = await this.userRepository.findById(userId);
@@ -34,7 +35,7 @@ export default class TrainerService implements ITrainerService {
       userId: user._id
     });
 
-    if (existingApplication) {
+    if (existingApplication && existingApplication.status!=='rejected') {
       throw new CustomError('You already have a trainer application pending',HttpResCode.CONFLICT);
     }
 
@@ -49,11 +50,24 @@ export default class TrainerService implements ITrainerService {
       documentProofs: data.documentProofs,
       certifications: data.certifications,
       achievements: data.achievements,
-      isApproved: false
+      // isApproved: false
     };
 
     const result = await this.trainerRepository.create(trainerData);
     return result;
+  }
+
+  async getApplicationStatus(userId: string): Promise<{ status: string; reason?: string }> {
+    const application = await this.trainerRepository.findOne({ userId });
+
+    if (!application) {
+      return { status: "none" }; 
+    }
+
+    return {
+      status: application.status,
+      reason: application.reason,
+    };
   }
 
   async approveTrainer(trainerId: string): Promise<any> {
@@ -62,7 +76,7 @@ export default class TrainerService implements ITrainerService {
       throw new CustomError('Trainer application not found',HttpResCode.NOT_FOUND);
     }
 
-    trainer.isApproved = true;
+    trainer.status = "approved";
     await trainer.save();
 
     const user = await this.userRepository.findById(trainer.userId);
@@ -81,6 +95,21 @@ export default class TrainerService implements ITrainerService {
         email: user.email,
         role: user.role
       }
+    };
+  }
+
+  async rejectTrainer(trainerId: string, reason: string): Promise<any> {
+    const trainer = await this.trainerRepository.findById(new Types.ObjectId(trainerId));
+    if (!trainer) {
+      throw new CustomError('Trainer application not found', HttpResCode.NOT_FOUND);
+    }
+
+    trainer.status = "rejected";
+    trainer.reason = reason;
+    await trainer.save();
+
+    return {
+      trainer
     };
   }
 
