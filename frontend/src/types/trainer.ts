@@ -12,6 +12,7 @@ export interface Trainer {
   achievements: string[];
   isApproved: boolean;
   status: "pending" | "approved" | "rejected";
+  reason?:string;
   createdAt: string;
   updatedAt: string;
 }

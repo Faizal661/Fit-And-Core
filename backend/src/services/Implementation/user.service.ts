@@ -49,12 +49,12 @@ export default class UserService implements IUserService {
     }
 
     const [users, total] = await Promise.all([
-      this.userRepository.find(filter).skip(skip).limit(limit).exec(), // Chain skip/lzor here and execute
+      this.userRepository.find(filter).skip(skip).limit(limit).exec(), 
       this.userRepository.countDocuments(filter),
     ]);
 
     const formattedUsers = users.map((user: IUserModel) => ({
-      _id: (user._id as Types.ObjectId).toString(), // Explicitly cast _id to Types.ObjectId
+      _id: (user._id as Types.ObjectId).toString(), 
       username: user.username,
       profilePicture: user.profilePicture || "",
       email: user.email,
@@ -86,7 +86,7 @@ export default class UserService implements IUserService {
     }
 
     return {
-      _id: (updatedUser._id as Types.ObjectId).toString(), // Explicitly cast _id to Types.ObjectId
+      _id: (updatedUser._id as Types.ObjectId).toString(), 
       username: updatedUser.username,
       profilePicture: updatedUser.profilePicture || "",
       email: updatedUser.email,
