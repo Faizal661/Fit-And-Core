@@ -1,5 +1,5 @@
 import "reflect-metadata";
-import "../config/tsyringe.config.";
+import "../config/tsyringe.config";
 import { container } from "tsyringe";
 import express from "express";
 

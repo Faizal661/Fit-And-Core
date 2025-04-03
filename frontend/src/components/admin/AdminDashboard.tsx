@@ -4,7 +4,7 @@ import {
   ArrowDown,
   Users,
   Dumbbell,
-  Activity,
+  // Activity,
   CreditCard,
   RefreshCcw,
   LucideIcon,
@@ -231,13 +231,13 @@ const AdminDashboard = () => {
             change={activeUserData?.percentChange || 0}
             icon={Activity}
           />*/}
-          <MetricCard
+          {/* <MetricCard
             title="Active Users"
             totalValue={"0"}
             currentMonthValue={"0"}
             change={0}
             icon={Activity}
-          />
+          /> */}
         </div>
       </div>
     </div>

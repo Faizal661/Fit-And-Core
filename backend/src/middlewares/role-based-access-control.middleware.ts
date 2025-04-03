@@ -6,8 +6,6 @@ export const authorizeRoles = (roles: Array<"user" | "trainer" | "admin">) => {
   return (req: Request, res: Response, next: NextFunction) => {
     const decoded = req.decoded;
 
-    // console.log('inside RBAC',decoded)
-
     if (!decoded) {
       throw new CustomError(HttpResMsg.UNAUTHORIZED, HttpResCode.UNAUTHORIZED);
     }
