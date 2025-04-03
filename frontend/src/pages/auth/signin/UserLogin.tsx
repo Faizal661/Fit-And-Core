@@ -27,6 +27,9 @@ const UserLogin = () => {
     if (localStorage.getItem("sessionExpired")) {
       showToast("warning", AUTH_MESSAGES.SESSION_EXPIRED);
       localStorage.removeItem("sessionExpired");
+    }else if(localStorage.getItem("blocked")) {
+      showToast("warning", "Your account is blocked. Please contact support.");
+      localStorage.removeItem("blocked");
     }
   }, []);
 

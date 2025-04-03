@@ -49,10 +49,22 @@ api.interceptors.response.use(
       return Promise.reject(error);
     }
 
+    if (
+      error.response?.status === 403 &&
+      error.response.data?.message ===
+        "Your account is blocked. Please contact support."
+    ) {
+      console.error("Your account is blocked. Please contact support.");
+      store.dispatch(clearAuth());
+      localStorage.setItem("blocked", "true");
+      return Promise.reject(error);
+    }
+
     if (error.response?.status === 401) {
-        console.error(AUTH_MESSAGES.SESSION_EXPIRED);
-        localStorage.setItem("sessionExpired", "true"); 
-        store.dispatch(clearAuth());
+      console.error(AUTH_MESSAGES.SESSION_EXPIRED);
+      localStorage.setItem("sessionExpired", "true");
+      store.dispatch(clearAuth());
+      return Promise.reject(error);
     }
 
     return Promise.reject(error);

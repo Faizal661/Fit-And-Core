@@ -25,9 +25,6 @@ export abstract class BaseRepository<T extends Document> {
     return this.model.find();
   }
 
-  // async find(filter: FilterQuery<T>): Promise<T[]> {
-  //     return this.model.find(filter);
-  // }
   find(filter: FilterQuery<T>): Query<T[], T> {
     return this.model.find(filter);
   }

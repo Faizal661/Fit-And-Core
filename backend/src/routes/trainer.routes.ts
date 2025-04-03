@@ -5,6 +5,7 @@ import { verifyAccessToken } from "../middlewares/verify-token.middleware";
 import { CustomRequest } from "../types/trainer.types";
 import { upload } from "../utils/multer.util";
 import { authorizeRoles } from "../middlewares/role-based-access-control.middleware";
+import { checkBlockedUser } from "../middlewares/check-blocked-user.middleware";
 
 const router = express.Router();
 const trainerController =
@@ -13,6 +14,7 @@ const trainerController =
 router.post(
   "/apply-trainer",
   verifyAccessToken,
+  checkBlockedUser,
   authorizeRoles(["user"]),
   upload.fields([
     { name: "documentProofs", maxCount: 3 },
@@ -26,6 +28,7 @@ router.post(
 router.get(
   "/application/status",
   verifyAccessToken,
+  checkBlockedUser,
   authorizeRoles(["user"]),
   (req, res, next) => trainerController.getApplicationStatus(req, res, next)
 );
