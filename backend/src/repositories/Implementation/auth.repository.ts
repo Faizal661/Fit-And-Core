@@ -39,37 +39,38 @@ export class AuthRepository
     await this.redisClient.del(`otp:${email}`);
   }
 
-  async updatepassword(email: string,password:string): Promise<void>{
-     await UserModel.updateOne({email:email},{password:password})
+  async updatepassword(email: string, password: string): Promise<void> {
+    await UserModel.updateOne({ email: email }, { password: password });
   }
 
   async createUser(data: Partial<IUserModel>): Promise<IUserModel> {
     return await UserModel.create(data);
   }
 
-   async findByEmail(email: string): Promise<IUserModel | null> {
+  async findByEmail(email: string): Promise<IUserModel | null> {
     return UserModel.findOne({ email });
   }
 
   async findOrCreateGoogleUser(googleUser: IGoogleUser): Promise<any> {
     const existingUser = await UserModel.findOne({ email: googleUser.email });
-    
+
     if (existingUser) {
       if (!existingUser.googleId && googleUser.id) {
         existingUser.googleId = googleUser.id;
-        existingUser.profilePicture = googleUser.profilePicture || existingUser.profilePicture;
+        existingUser.profilePicture =
+          googleUser.profilePicture || existingUser.profilePicture;
         await existingUser.save();
       }
       return existingUser;
     }
-    
+
     const newUser = new UserModel({
       email: googleUser.email,
       username: googleUser.displayName,
       googleId: googleUser.id,
       profilePicture: googleUser.profilePicture,
     });
-    
+
     return await newUser.save();
   }
 }

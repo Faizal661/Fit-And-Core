@@ -6,7 +6,7 @@ import { CustomError } from "../errors/CustomError";
 import { HttpResCode } from "../constants/response.constants";
 import { env } from "../config/env.config";
 import { generateAccessToken } from "../utils/token.util";
-import { AuthRepository } from "../repositories/Implementation/auth.repository";
+import { IAuthRepository } from "../repositories/Interface/IAuthRepository";
 
 declare global {
   namespace Express {
@@ -54,7 +54,7 @@ export const verifyAccessToken = async (
             env.REFRESH_TOKEN_SECRET
           ) as IJwtDecoded;
 
-          const authRepository = container.resolve(AuthRepository);
+          const authRepository = container.resolve<IAuthRepository>('AuthRepository');
 
           const user = await authRepository.findByEmail(decodedRefresh.email);
 

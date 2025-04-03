@@ -4,6 +4,7 @@ import { HttpResCode, HttpResMsg } from "../../constants/response.constants";
 import { IUserController } from "../Interface/IUserController";
 import { IUserService } from "../../services/Interface/IUserService";
 import { sendResponse } from "../../utils/send-response";
+import { CustomError } from "../../errors/CustomError";
 
 @injectable()
 export default class UserController implements IUserController {
@@ -14,6 +15,39 @@ export default class UserController implements IUserController {
     userService: IUserService
   ) {
     this.userService = userService;
+  }
+  
+  async getUsers(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { page = "1", limit = "10", search = "" } = req.query;
+      const pageNum = parseInt(page as string, 10);
+      const limitNum = parseInt(limit as string, 10);
+
+      if (isNaN(pageNum) || isNaN(limitNum) || pageNum < 1 || limitNum < 1) {
+        throw new CustomError("Invalid pagination parameters", HttpResCode.BAD_REQUEST);
+      }
+
+      const result = await this.userService.getUsers(pageNum, limitNum, search as string);
+      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, result);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async toggleBlockStatus(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { userId } = req.params;
+      const { isBlocked } = req.body;
+
+      if (typeof isBlocked !== "boolean") {
+        throw new CustomError("isBlocked must be a boolean", HttpResCode.BAD_REQUEST);
+      }
+
+      const updatedUser = await this.userService.toggleBlockStatus(userId, isBlocked);
+      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, updatedUser);
+    } catch (error) {
+      next(error);
+    }
   }
 
   async getUserProfile(

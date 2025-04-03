@@ -1,20 +1,7 @@
-import mongoose, { Document, Schema, Types } from "mongoose";
+import { model,Schema,Document } from "mongoose";
+import { ITrainer } from "../types/trainer.types";
 
-export interface ITrainerModel extends Document {
-  userId: Types.ObjectId;
-  username: string;
-  email: string;
-  phone: string;
-  specialization: string;
-  yearsOfExperience: string;
-  about: string;
-  documentProofs: string[];
-  certifications: string[];
-  achievements: string[];
-  isApproved: boolean;
-  createdAt?: Date;
-  updatedAt?: Date;
-}
+export interface ITrainerModel extends Document, Omit<ITrainer, "_id"> {}
 
 const trainerSchema = new Schema<ITrainerModel>(
   {
@@ -28,11 +15,19 @@ const trainerSchema = new Schema<ITrainerModel>(
     documentProofs: [{ type: String, required: true }],
     certifications: [{ type: String, required: true }],
     achievements: [{ type: String, required: true }],
-    isApproved: { type: Boolean, default: false },
+    // isApproved: { type: Boolean, default: false },
+    status: {
+      type: String,
+      enum: ["pending", "approved", "rejected"],
+      default: "pending",
+    },
+    reason: {
+      type: String,
+    },
   },
   { timestamps: true }
 );
 
-const TrainerModel = mongoose.model<ITrainerModel>("Trainer", trainerSchema);
+const TrainerModel = model<ITrainerModel>("Trainer", trainerSchema);
 
 export default TrainerModel;

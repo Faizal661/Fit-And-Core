@@ -18,7 +18,7 @@ import { generateOtp } from "../../utils/otp-generate.util";
 import logger from "../../utils/logger.utils";
 import { CustomError } from "../../errors/CustomError";
 import { HttpResCode } from "../../constants/response.constants";
-import { env } from "../../config/env.config"; 
+import { env } from "../../config/env.config";
 
 @injectable()
 export default class authService implements IAuthService {
@@ -122,6 +122,7 @@ export default class authService implements IAuthService {
 
   async login(email: string, password: string): Promise<ILoginResponse> {
     const user = await this.authRepository.findByEmail(email);
+
     if (!user) {
       logger.warn(`Failed login attempt for email: ${email}`);
       throw new CustomError(
@@ -136,6 +137,13 @@ export default class authService implements IAuthService {
       throw new CustomError(
         "Invalid email or password",
         HttpResCode.UNAUTHORIZED
+      );
+    }
+
+    if (user.isBlocked) {
+      throw new CustomError(
+        "Your account is blocked. Please contact support.",
+        HttpResCode.FORBIDDEN
       );
     }
 
@@ -211,6 +219,4 @@ export default class authService implements IAuthService {
       refreshToken,
     };
   }
-
-
 }

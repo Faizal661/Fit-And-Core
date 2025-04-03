@@ -145,6 +145,7 @@ export default class AuthController implements IAuthController {
   async login(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { email, password } = req.body;
+
       const { user, accessToken, refreshToken } = await this.authService.login(
         email,
         password

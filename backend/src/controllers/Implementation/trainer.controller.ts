@@ -6,6 +6,7 @@ import { ITrainerService } from "../../services/Interface/ITrainerService";
 import { sendResponse } from "../../utils/send-response";
 import { uploadToS3 } from "../../utils/s3-upload";
 import { CustomRequest } from "../../types/trainer.types";
+import { CustomError } from "../../errors/CustomError";
 
 @injectable()
 export default class TrainerController implements ITrainerController {
@@ -60,7 +61,6 @@ export default class TrainerController implements ITrainerController {
         }
       }
 
-      // Validate required uploads
       if (documentProofs.length === 0) {
         sendResponse(
           res,
@@ -112,61 +112,84 @@ export default class TrainerController implements ITrainerController {
     }
   }
 
-  //   async approveTrainer(
-  //     req: Request,
-  //     res: Response,
-  //     next: NextFunction
-  //   ): Promise<void> {
-  //     try {
-  //       const { trainerId } = req.params;
+  async getApplicationStatus(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const userId = req.decoded?.id;
+      if (!userId) {
+        sendResponse(res, HttpResCode.UNAUTHORIZED, HttpResMsg.UNAUTHORIZED);
+        return;
+      }
 
-  //       // if (req.decoded?.role !== 'admin') {
-  //       //   return sendResponse(
-  //       //     res,
-  //       //     HttpResCode.FORBIDDEN,
-  //       //     "Only admins can approve trainers"
-  //       //   );
-  //       // }
+      const status = await this.trainerService.getApplicationStatus(userId);
+      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, status);
+    } catch (error) {
+      next(error);
+    }
+  }
 
-  //       const result = await this.trainerService.approveTrainer(trainerId);
+    async approveTrainer(
+      req: Request,
+      res: Response,
+      next: NextFunction
+    ): Promise<void> {
+      try {
+        const { trainerId } = req.params;
 
-  //       sendResponse(
-  //         res,
-  //         HttpResCode.OK,
-  //         "Trainer application approved successfully",
-  //         result
-  //       );
-  //     } catch (error) {
-  //       next(error);
-  //     }
-  //   }
+        const result = await this.trainerService.approveTrainer(trainerId);
 
-  //   async getTrainerApplications(
-  //     req: Request,
-  //     res: Response,
-  //     next: NextFunction
-  //   ): Promise<void> {
-  //     try {
-  //       // Filter by approval status if provided
-  //       const isApproved =
-  //         req.query.approved === "true"
-  //           ? true
-  //           : req.query.approved === "false"
-  //           ? false
-  //           : undefined;
+        sendResponse(
+          res,
+          HttpResCode.OK,
+          "Trainer application approved successfully",
+          result
+        );
+      } catch (error) {
+        next(error);
+      }
+    }
 
-  //       const applications = await this.trainerService.getTrainerApplications(
-  //         isApproved
-  //       );
+    async rejectTrainer(req: Request, res: Response, next: NextFunction): Promise<void> {
+      try {
+        const { trainerId } = req.params;
+        const { reason } = req.body;
+  
+        if (!reason || typeof reason !== 'string') {
+          throw new CustomError('Rejection reason is required', HttpResCode.BAD_REQUEST);
+        }
+  
+        const result = await this.trainerService.rejectTrainer(trainerId, reason);
+  
+        sendResponse(res, HttpResCode.OK, "Trainer application rejected successfully", result);
+      } catch (error) {
+        next(error);
+      }
+    }
 
-  //       sendResponse(
-  //         res,
-  //         HttpResCode.OK,
-  //         HttpResMsg.SUCCESS,
-  //         applications
-  //       );
-  //     } catch (error) {
-  //       next(error);
-  //     }
-  //   }
+    async getTrainerApplications(
+      req: Request,
+      res: Response,
+      next: NextFunction
+    ): Promise<void> {
+      try {
+        const isApproved =
+          req.query.approved === "true"
+            ? true
+            : req.query.approved === "false"
+            ? false
+            : undefined;
+
+        const applications = await this.trainerService.getTrainerApplications(
+          isApproved
+        );
+
+        sendResponse(
+          res,
+          HttpResCode.OK,
+          HttpResMsg.SUCCESS,
+          {applications}
+        );
+      } catch (error) {
+        next(error);
+      }
+    }
 }
