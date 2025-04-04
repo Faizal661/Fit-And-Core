@@ -1,4 +1,4 @@
-import React, { useState, useEffect,useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -41,15 +41,15 @@ const TrainerApply = () => {
           "info",
           "Your trainer application is currently under review."
         );
-        navigate("/")
+        // navigate("/")
       } else if (applicationStatus.status === "approved") {
         showToast(
           "success",
           "Your trainer application has been approved! Please log out and log in to access trainer functionalities.",
           10000
         );
-        navigate("/")
-      }else if (applicationStatus.status === "rejected") {
+        navigate("/");
+      } else if (applicationStatus.status === "rejected") {
         showToast(
           "warning",
           "Previous Application Rejected , Please address the issue and apply again. "
@@ -202,13 +202,37 @@ const TrainerApply = () => {
         {/* Show rejection reason if status is rejected */}
         {applicationStatus?.status === "rejected" && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 mb-6">
-            <p className="font-semibold">Previous Application Rejected</p>
-            <p>Reason: {applicationStatus.reason}</p>
-            <p>Please address the issue and apply again below.</p>
+            <p className="font-bold">Previous Application Rejected</p>
+            <p>
+              <span className="font-bold">Reason : </span>{" "}
+              {applicationStatus.reason}
+            </p>
+            <p>
+              <span className="font-bold">Note : </span> Please address the
+              issue and apply again below.
+            </p>
+          </div>
+        )}
+        {/* Show pending status */}
+        {applicationStatus?.status === "pending" && (
+          <div className="bg-green-100 border-2 border-black px-6 py-5 mb-6">
+            <p className="font-semibold text-xl mb-4 text-center">
+              Your Application is currently under review.
+            </p>
+            <p>
+              <span className="font-bold ">Note : </span> Please be patient , we
+              will inform you about the status once after its updated.
+            </p>
+            <button
+              type="button"
+              className=" border-1 mt-5 border-slate-400 px-4  cursor-pointer "
+              onClick={() => navigate("/")}
+            >
+              Back
+            </button>
           </div>
         )}
 
-        {/* Show form only if status is not pending or approved */}
         {applicationStatus?.status !== "pending" &&
           applicationStatus?.status !== "approved" && (
             <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
@@ -448,7 +472,6 @@ const TrainerApply = () => {
               </div>
             </form>
           )}
-
       </div>
     </div>
   );

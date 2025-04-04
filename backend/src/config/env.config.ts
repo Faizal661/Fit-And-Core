@@ -234,4 +234,34 @@ export const env = {
     }
     return process.env.SMTP_PASSWORD;
   },
+
+  get CLOUDINARY_CLOUD_NAME(): string {
+    if (!process.env.CLOUDINARY_CLOUD_NAME) {
+      throw new CustomError(
+        EnvErrMsg.CLOUDINARY_CLOUD_NAME_UNDEFINED,
+        HttpResCode.INTERNAL_SERVER_ERROR
+      );
+    }
+    return process.env.CLOUDINARY_CLOUD_NAME;
+  },
+  
+  get CLOUDINARY_API_KEY(): string {
+    if (!process.env.CLOUDINARY_API_KEY) {
+      throw new CustomError(
+        EnvErrMsg.CLOUDINARY_API_KEY_UNDEFINED,
+        HttpResCode.INTERNAL_SERVER_ERROR
+      );
+    }
+    return process.env.CLOUDINARY_API_KEY;
+  },
+  
+  get CLOUDINARY_API_SECRET(): string {
+    if (!process.env.CLOUDINARY_API_SECRET) {
+      throw new CustomError(
+        EnvErrMsg.CLOUDINARY_API_SECRET_UNDEFINED,
+        HttpResCode.INTERNAL_SERVER_ERROR
+      );
+    }
+    return process.env.CLOUDINARY_API_SECRET;
+  },
 };
