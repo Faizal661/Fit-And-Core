@@ -2,13 +2,22 @@ import { inject, injectable } from "tsyringe";
 import { Types } from "mongoose";
 import { IUserService } from "../Interface/IUserService";
 import { IUserRepository } from "../../repositories/Interface/IUserRepository";
-import { IUser, IUserProfile, UserProfileUpdateData } from "../../types/user.types";
-import { deleteFromS3, uploadToS3 } from "../../utils/s3-upload";
+import {
+  IUser,
+  IUserProfile,
+  UserProfileUpdateData,
+} from "../../types/user.types";
+import {
+  deleteFromCloudinary,
+  extractPublicIdFromUrl,
+  uploadToCloudinary,
+} from "../../utils/s3-upload";
 import { HttpResCode } from "../../constants/response.constants";
 import { CustomError } from "../../errors/CustomError";
 import { IAuthRepository } from "../../repositories/Interface/IAuthRepository";
 import bcrypt from "bcryptjs";
 import { IUserModel } from "../../models/user.models";
+import logger from "../../utils/logger.utils";
 
 interface UsersResponse {
   users: {
@@ -25,7 +34,7 @@ interface UsersResponse {
 @injectable()
 export default class UserService implements IUserService {
   private userRepository: IUserRepository;
-  private authRepository:IAuthRepository;
+  private authRepository: IAuthRepository;
 
   constructor(
     @inject("UserRepository")
@@ -34,10 +43,14 @@ export default class UserService implements IUserService {
     authRepository: IAuthRepository
   ) {
     this.userRepository = userRepository;
-    this.authRepository=authRepository;
+    this.authRepository = authRepository;
   }
 
-  async getUsers(page: number, limit: number, search: string): Promise<UsersResponse> {
+  async getUsers(
+    page: number,
+    limit: number,
+    search: string
+  ): Promise<UsersResponse> {
     const skip = (page - 1) * limit;
     let filter: any = { role: { $ne: "admin" } }; // Exclude admins from the list
 
@@ -49,12 +62,12 @@ export default class UserService implements IUserService {
     }
 
     const [users, total] = await Promise.all([
-      this.userRepository.find(filter).skip(skip).limit(limit).exec(), 
+      this.userRepository.find(filter).skip(skip).limit(limit).exec(),
       this.userRepository.countDocuments(filter),
     ]);
 
     const formattedUsers = users.map((user: IUserModel) => ({
-      _id: (user._id as Types.ObjectId).toString(), 
+      _id: (user._id as Types.ObjectId).toString(),
       username: user.username,
       profilePicture: user.profilePicture || "",
       email: user.email,
@@ -73,7 +86,10 @@ export default class UserService implements IUserService {
     }
 
     if (user.role === "admin") {
-      throw new CustomError("Cannot block an admin user", HttpResCode.FORBIDDEN);
+      throw new CustomError(
+        "Cannot block an admin user",
+        HttpResCode.FORBIDDEN
+      );
     }
 
     const updatedUser = await this.userRepository.update(
@@ -82,11 +98,14 @@ export default class UserService implements IUserService {
     );
 
     if (!updatedUser) {
-      throw new CustomError("Failed to update user status", HttpResCode.INTERNAL_SERVER_ERROR);
+      throw new CustomError(
+        "Failed to update user status",
+        HttpResCode.INTERNAL_SERVER_ERROR
+      );
     }
 
     return {
-      _id: (updatedUser._id as Types.ObjectId).toString(), 
+      _id: (updatedUser._id as Types.ObjectId).toString(),
       username: updatedUser.username,
       profilePicture: updatedUser.profilePicture || "",
       email: updatedUser.email,
@@ -160,24 +179,21 @@ export default class UserService implements IUserService {
     file: Express.Multer.File
   ): Promise<IUserProfile> {
     const objectId =
-      typeof userId === "string" ? new Types.ObjectId(userId) : userId;
+    typeof userId === "string" ? new Types.ObjectId(userId) : userId;
 
     const currentUser = await this.userRepository.findById(objectId);
     if (!currentUser) {
       throw new CustomError("User not found", HttpResCode.NOT_FOUND);
     }
 
-    let oldProfilePictureKey = null;
+    let oldPublicId = null;
     if (currentUser.profilePicture) {
-      const urlParts = currentUser.profilePicture.split(".s3.amazonaws.com/");
-      if (urlParts.length > 1) {
-        oldProfilePictureKey = urlParts[1];
-      }
+      oldPublicId = extractPublicIdFromUrl(currentUser.profilePicture);
     }
 
-    const s3Result = await uploadToS3(file, "profile-pictures");
+    const cloudinaryResult = await uploadToCloudinary(file, "profile-pictures");
 
-    const updateData = { profilePicture: s3Result.Location };
+    const updateData = { profilePicture: cloudinaryResult.Location };
     const updatedUser = await this.userRepository.update(objectId, updateData);
 
     if (!updatedUser) {
@@ -187,11 +203,11 @@ export default class UserService implements IUserService {
       );
     }
 
-    if (oldProfilePictureKey) {
+    if (oldPublicId) {
       try {
-        await deleteFromS3(oldProfilePictureKey);
+        await deleteFromCloudinary(oldPublicId);
       } catch (error) {
-        console.error("Failed to delete old profile picture:", error);
+        logger.error("Failed to delete old profile picture:", error);
       }
     }
 
@@ -221,7 +237,10 @@ export default class UserService implements IUserService {
         HttpResCode.NOT_FOUND
       );
     }
-    const isPasswordValid = await bcrypt.compare(currentPassword, user.password!);
+    const isPasswordValid = await bcrypt.compare(
+      currentPassword,
+      user.password!
+    );
     if (!isPasswordValid) {
       throw new CustomError(
         "Current Password is invalid",
