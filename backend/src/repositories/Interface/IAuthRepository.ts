@@ -1,5 +1,3 @@
-import IBaseRepository from './IBaseRepository.ts'
-import { IUser } from '../../types/user.types.ts'; 
 import { IUserModel } from '../../models/user.models.ts';
 import { IGoogleUser } from '../../types/auth.types.ts';
 
