@@ -4,6 +4,7 @@ import { IArticleService } from "../../services/Interface/IArticleService";
 import { sendResponse } from "../../utils/send-response";
 import { HttpResCode, HttpResMsg } from "../../constants/response.constants";
 import { IArticleController } from "../Interface/IArticleController";
+import { uploadToCloudinary } from "../../utils/s3-upload";
 
 @injectable()
 export class ArticleController implements IArticleController {
@@ -17,7 +18,23 @@ export class ArticleController implements IArticleController {
   }
 
   async createArticle(req: Request, res: Response, next: NextFunction) {
-    const { title, content, tags, thumbnail } = req.body;
+    const { title, content, tags } = req.body;
+
+    let thumbnailURL = null;
+    if (req.file) {
+      const thumbnailFile = req.file;
+      const uploadResult = await uploadToCloudinary(
+        thumbnailFile,
+        "thumbnails"
+      );
+      thumbnailURL = uploadResult.Location;
+    }
+
+    if (thumbnailURL === null) {
+      sendResponse(res, HttpResCode.BAD_REQUEST, "No thumbnail uploaded");
+      return;
+    }
+
     const createdBy = req.decoded?.id;
     if (!createdBy) {
       sendResponse(res, HttpResCode.UNAUTHORIZED, HttpResMsg.UNAUTHORIZED);
@@ -28,19 +45,15 @@ export class ArticleController implements IArticleController {
       title,
       content,
       tags,
-      thumbnail,
+      thumbnail:thumbnailURL,
       createdBy,
     });
-    sendResponse(res, HttpResCode.CREATED, HttpResMsg.SUCCESS, article);
+    sendResponse(res, HttpResCode.CREATED, HttpResMsg.SUCCESS, { article });
   }
 
   async getAllArticles(req: Request, res: Response, next: NextFunction) {
     try {
       const articles = await this.articleService!.getAllArticles();
-      console.log(
-        "🚀 ~ ArticleController ~ getArticleById ~ article:",
-        articles
-      );
       sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, { articles });
     } catch (error) {
       next(error);

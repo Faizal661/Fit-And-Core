@@ -1,7 +1,9 @@
 import { Schema, model, Types, Document } from "mongoose";
 import { IArticle } from "../types/article.types";
 
-export interface IArticleModel extends Document, Omit<IArticle, "_id"> {}
+export interface IArticleModel extends Document, Omit<IArticle, "_id"> {
+    [x: string]: any;
+}
 
 const articleSchema = new Schema<IArticleModel>(
   {

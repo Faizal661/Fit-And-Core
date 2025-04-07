@@ -14,6 +14,7 @@ export default class articleService implements IArticleService{
   }
 
   async createArticle(articleData: IArticle): Promise<IArticleModel> {
+
     return await this.articleRepository.create(articleData);
   }
 

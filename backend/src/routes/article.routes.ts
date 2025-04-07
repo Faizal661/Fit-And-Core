@@ -3,6 +3,7 @@ import "../config/tsyringe.config";
 import { container } from "tsyringe";
 
 import express from "express";
+import { upload } from "../utils/multer.util";
 import { verifyAccessToken } from "../middlewares/verify-token.middleware";
 import { IArticleController } from "../controllers/Interface/IArticleController";
 import { checkBlockedUser } from "../middlewares/check-blocked-user.middleware";
@@ -17,6 +18,7 @@ router.post(
   verifyAccessToken,
   checkBlockedUser,
   authorizeRoles(["trainer"]),
+  upload.single("thumbnail"),
   (req, res, next) => articleController.createArticle(req, res, next)
 );
 

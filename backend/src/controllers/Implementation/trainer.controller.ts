@@ -38,13 +38,6 @@ export default class TrainerController implements ITrainerController {
       const achievements: string[] = [];
 
       // Process document proofs
-      // if (req.files && Array.isArray(req.files.documentProofs)) {
-      //   for (const file of req.files.documentProofs) {
-      //     const uploadResult = await uploadToS3(file, "document-proofs");
-      //     documentProofs.push(uploadResult.Location);
-      //   }
-      // }
-      // Process document proofs
       if (req.files && Array.isArray(req.files.documentProofs)) {
         for (const file of req.files.documentProofs) {
           const uploadResult = await uploadToCloudinary(
@@ -56,13 +49,6 @@ export default class TrainerController implements ITrainerController {
       }
 
       // Process certifications
-      // if (req.files && Array.isArray(req.files.certifications)) {
-      //   for (const file of req.files.certifications) {
-      //     const uploadResult = await uploadToS3(file, "certifications");
-      //     certifications.push(uploadResult.Location);
-      //   }
-      // }
-      // Process certifications
       if (req.files && Array.isArray(req.files.certifications)) {
         for (const file of req.files.certifications) {
           const uploadResult = await uploadToCloudinary(file, "certifications");
@@ -70,13 +56,6 @@ export default class TrainerController implements ITrainerController {
         }
       }
 
-      // Process achievements
-      // if (req.files && Array.isArray(req.files.achievements)) {
-      //   for (const file of req.files.achievements) {
-      //     const uploadResult = await uploadToS3(file, "achievements");
-      //     achievements.push(uploadResult.Location);
-      //   }
-      // }
       // Process achievements
       if (req.files && Array.isArray(req.files.achievements)) {
         for (const file of req.files.achievements) {
