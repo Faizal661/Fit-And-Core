@@ -5,7 +5,7 @@ import {
   approveTrainer,
   rejectTrainer,
 } from "../../services/admin/trainerManagement";
-import { Trainer } from "../../types/trainer";
+import { Trainer } from "../../types/trainer.type";
 import { z } from "zod";
 const rejectReasonSchema = z
   .string()

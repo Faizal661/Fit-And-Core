@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import '../../../assets/styles/toast.css';
 import icons from '../../../assets/icons/ToastIcons'
-import { ToastItemProps } from '../../../types/toast';
+import { ToastItemProps } from '../../../types/toast.type';
 
 export const ToastItem: React.FC<ToastItemProps> = ({ id, type, message, onClose }) => {
     useEffect(() => {

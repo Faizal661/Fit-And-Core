@@ -1,4 +1,3 @@
-// src/models/article.model.ts
 import { Schema, model, Types, Document } from "mongoose";
 import { IArticle } from "../types/article.types";
 

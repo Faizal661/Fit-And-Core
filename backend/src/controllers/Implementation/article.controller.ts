@@ -37,7 +37,11 @@ export class ArticleController implements IArticleController {
   async getAllArticles(req: Request, res: Response, next: NextFunction) {
     try {
       const articles = await this.articleService!.getAllArticles();
-      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, articles);
+      console.log(
+        "🚀 ~ ArticleController ~ getArticleById ~ article:",
+        articles
+      );
+      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, { articles });
     } catch (error) {
       next(error);
     }

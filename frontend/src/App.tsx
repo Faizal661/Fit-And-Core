@@ -23,11 +23,14 @@ import LandingPage from "./pages/user/LandingPage";
 import UserProfile from "./pages/user/UserProfile.tsx";
 // trainer
 import HomeTrainer from "./pages/trainer/HomeTrainer.tsx";
+import TrainerArticles from "./pages/trainer/artilce/TrainerArticles.tsx";
 import TrainerApply from "./pages/trainer/TrainerApply.tsx";
 // admin
 import HomeAdmin from "./pages/admin/HomeAdmin.tsx";
 import UserManage from "./pages/admin/UserManage.tsx";
 import TrainerManage from "./pages/admin/TrainerManage.tsx";
+import CreateArticle from "./pages/trainer/artilce/CreateArticle.tsx";
+import ErrorBoundary from "./components/shared/errorBoundary.tsx";
 
 
 function App() {
@@ -50,6 +53,8 @@ function App() {
 
         <Route element={<PrivateRoute allowedRoles={["trainer"]} />}>
           <Route path="/trainer" element={<HomeTrainer />} />
+          <Route path="/trainer/articles" element={<ErrorBoundary>< TrainerArticles /></ErrorBoundary >} />
+          <Route path="/trainer/articles/create" element={< CreateArticle />} />
         </Route>
 
         <Route element={<PrivateRoute allowedRoles={["admin"]} />}>

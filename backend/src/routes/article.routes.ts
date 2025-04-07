@@ -20,4 +20,12 @@ router.post(
   (req, res, next) => articleController.createArticle(req, res, next)
 );
 
+router.get(
+  "/all-articles",
+  verifyAccessToken,
+  checkBlockedUser,
+  authorizeRoles(["trainer"]),
+  (req, res, next) => articleController.getAllArticles(req, res, next)
+);
+
 export default router;

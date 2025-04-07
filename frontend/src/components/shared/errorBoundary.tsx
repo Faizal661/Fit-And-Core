@@ -35,8 +35,8 @@ class ErrorBoundary extends React.Component<Props, State> {
             <h2 className="text-xl font-semibold text-gray-800 mb-2">
               Oops! Something went wrong.
             </h2>
-            <p className="text-gray-600 mb-4 w-100">
-              Unexpected issue. Please try again later.
+            <p className="text-gray-600 mb-4">
+            We've encountered an unexpected issue . Please try again later.
             </p>
             {this.state.error && (
               <details className="text-left mt-4 border border-gray-300  p-4 bg-gray-50 overflow-auto max-h-48">
