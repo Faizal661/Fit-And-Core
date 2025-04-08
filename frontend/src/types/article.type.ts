@@ -16,3 +16,10 @@ export interface ArticleCardProps {
   articles: Article[];
   userId: string;
 }
+
+export interface ArticlesResponse {
+  articles: Article[];
+  total: number;
+  page: number;
+  limit: number;
+}

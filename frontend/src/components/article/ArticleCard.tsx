@@ -5,12 +5,16 @@ import remarkGfm from "remark-gfm";
 import { ArticleCardProps } from "../../types/article.type";
 import { formatDate } from "../../utils/dateFormat";
 
-export const ArticleCard = ({ article, userId ,articles}: ArticleCardProps) => {
+export const ArticleCard = ({
+  article,
+  userId,
+  articles,
+}: ArticleCardProps) => {
   const navigate = useNavigate();
   const isUpvoted = article.upvotes.includes(userId);
 
   const handleCardClick = () => {
-    navigate(`/article/${article._id}`,{ state: { articles } });
+    navigate(`/article/${article._id}`, { state: { articles } });
   };
 
   const truncatedContent = `${article.content.slice(0, 150)}...`;
@@ -55,7 +59,7 @@ export const ArticleCard = ({ article, userId ,articles}: ArticleCardProps) => {
           </span>
           <button className="flex items-center text-gray-600 hover:text-blue-600">
             {isUpvoted ? (
-              <ThumbsUp className="w-5 h-5 fill-current text-blue-600" />
+              <ThumbsUp className="w-5 h-5 fill-current text-blue-400" />
             ) : (
               <ThumbsUpIcon className="w-5 h-5" />
             )}

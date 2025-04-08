@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { X, User, Users, Globe, TrendingUp, Utensils, Bell, History, Home, Award, Calendar } from "lucide-react";
+import { X, User, Users, Globe, TrendingUp, Utensils, Bell, History, Home, Award, Calendar, FileText } from "lucide-react";
 
 interface UserSidebarProps {
   username: string | undefined;
@@ -9,7 +9,7 @@ interface UserSidebarProps {
 
 const UserSidebar = ({ username, onClose, onLogout }: UserSidebarProps) => {
   return (
-    <div className="absolute top-0 right-0 h-full bg-white w-96 p-3 pl-8 shadow-lg">
+    <div className="absolute top-0 right-0 h-full bg-white w-96 p-3 pl-8 shadow-lg overflow-y-auto">
       <div className="flex justify-between items-center mb-6 pt-2">
         <button onClick={onClose} className="hover:bg-gray-100 p-1 rounded-full">
           <X size={25} color="blue" />
@@ -30,11 +30,11 @@ const UserSidebar = ({ username, onClose, onLogout }: UserSidebarProps) => {
             <Calendar size={16} className="mr-1" />
             <span className="text-sm text-gray-600">Bookings</span>
           </div>
-        </div>
-        <div className="flex mt-4">
+        {/* </div>
+        <div className="flex mt-4"> */}
           <div className="flex items-center border-1 p-2 rounded-md border-[#2916BA] hover:bg-blue-50 transition-colors cursor-pointer">
             <TrendingUp size={16} className="mr-1" />
-            <span className="text-sm text-gray-600">Streak: 5</span>
+            <span className="text-sm text-gray-600">Streak: 0</span>
           </div>
         </div>
       </div>
@@ -53,28 +53,35 @@ const UserSidebar = ({ username, onClose, onLogout }: UserSidebarProps) => {
           className="text-blue-950 hover:text-blue-700 hover:bg-blue-50 p-2 rounded transition-colors flex items-center gap-3"
         >
           <User size={18} />
-          MY PROFILE
+           PROFILE
         </Link>
         <Link
           to="/trainers"
           className="text-gray-950 hover:text-blue-700 hover:bg-blue-50 p-2 rounded transition-colors flex items-center gap-3"
         >
           <Users size={18} />
-          MY TRAINERS
+           TRAINERS
         </Link>
         <Link
           to="/communities"
           className="text-gray-950 hover:text-blue-700 hover:bg-blue-50 p-2 rounded transition-colors flex items-center gap-3"
         >
           <Globe size={18} />
-          MY COMMUNITIES
+           COMMUNITIES
         </Link>
         <Link
           to="/progress"
           className="text-gray-950 hover:text-blue-700 hover:bg-blue-50 p-2 rounded transition-colors flex items-center gap-3"
         >
           <TrendingUp size={18} />
-          MY PROGRESS
+           PROGRESSION
+        </Link>
+        <Link
+          to="/articles"
+          className="text-gray-950 hover:text-blue-700 hover:bg-blue-50 p-2 rounded transition-colors flex items-center gap-3"
+        >
+          <FileText size={18} />
+          ARTICLES
         </Link>
         <Link
           to="/nutrition"
@@ -99,7 +106,7 @@ const UserSidebar = ({ username, onClose, onLogout }: UserSidebarProps) => {
         </Link>
       </nav>
 
-      <div className="mt-6 pt-4 border-t border-gray-200">
+      <div className="my-6 pt-4 border-t border-gray-200">
         <button
           type="button"
           className="text-sm text-gray-950 hover:text-blue-700 hover:bg-blue-50 p-2 rounded transition-colors font-semibold cursor-pointer flex items-center gap-3"

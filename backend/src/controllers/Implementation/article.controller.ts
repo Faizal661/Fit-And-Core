@@ -5,6 +5,7 @@ import { sendResponse } from "../../utils/send-response";
 import { HttpResCode, HttpResMsg } from "../../constants/response.constants";
 import { IArticleController } from "../Interface/IArticleController";
 import { uploadToCloudinary } from "../../utils/s3-upload";
+import { CustomError } from "../../errors/CustomError";
 
 @injectable()
 export class ArticleController implements IArticleController {
@@ -67,8 +68,15 @@ export class ArticleController implements IArticleController {
 
   async getAllArticles(req: Request, res: Response, next: NextFunction) {
     try {
-      const articles = await this.articleService!.getAllArticles();
-      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, { articles });
+      const { page = 1, limit = 5, search } = req.query;
+      const pageNum = parseInt(page as string, 10);
+      const limitNum = parseInt(limit as string, 10);
+      if (isNaN(pageNum) || isNaN(limitNum) || pageNum < 1 || limitNum < 1) {
+        throw new CustomError("Invalid pagination parameters", HttpResCode.BAD_REQUEST);
+      }
+      const {articles,total} = await this.articleService!.getAllArticles(pageNum, limitNum, search as string);
+      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS,{ articles,total, page: Number(page), limit: Number(limit) }
+      );
     } catch (error) {
       next(error);
     }

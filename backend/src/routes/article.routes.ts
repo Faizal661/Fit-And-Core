@@ -34,7 +34,7 @@ router.get(
   "/all-articles",
   verifyAccessToken,
   checkBlockedUser,
-  authorizeRoles(["trainer"]),
+  authorizeRoles(["user"]),
   (req, res, next) => articleController.getAllArticles(req, res, next)
 );
 
