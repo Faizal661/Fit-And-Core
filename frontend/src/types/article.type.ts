@@ -1,6 +1,18 @@
 export interface Article {
-  tags: string[];
-  title: string;
+  _id: string;
+  authorName: string;
   content: string;
-  thumbnail: File | null;
+  createdAt: string;
+  createdBy: string;
+  tags: string[];
+  thumbnail: string;
+  title: string;
+  updatedAt?: string;
+  upvotes: string[];
+}
+
+export interface ArticleCardProps {
+  article: Article;
+  articles: Article[];
+  userId: string;
 }

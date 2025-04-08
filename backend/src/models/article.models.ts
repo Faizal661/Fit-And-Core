@@ -12,6 +12,7 @@ const articleSchema = new Schema<IArticleModel>(
     content: { type: String, required: true },
     tags: [{ type: String }],
     createdBy: { type: Schema.Types.ObjectId, ref: "Trainer", required: true },
+    authorName: { type: String, required: true },
     upvotes: [{ type: Schema.Types.ObjectId, ref: "User" }],
   },
   {

@@ -10,7 +10,7 @@ export const createTrainerArticle = async (data: ArticleFormData) => {
   return res.data;
 };
 
-export const getTrainerArticles = async () => {
-  const res = await axios.get(`/article/all-articles`);
+export const getMyArticles = async () => {
+  const res = await axios.get(`/article/my-articles`);
   return res.data.articles
 };

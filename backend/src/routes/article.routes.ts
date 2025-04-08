@@ -23,6 +23,14 @@ router.post(
 );
 
 router.get(
+  "/my-articles",
+  verifyAccessToken,
+  checkBlockedUser,
+  authorizeRoles(["trainer"]),
+  (req, res, next) => articleController.getMyArticles(req, res, next)
+);
+
+router.get(
   "/all-articles",
   verifyAccessToken,
   checkBlockedUser,

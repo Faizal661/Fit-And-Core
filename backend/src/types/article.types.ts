@@ -7,6 +7,7 @@ export interface IArticle {
     content: string;
     tags: string[];
     createdBy: Types.ObjectId | string;
+    authorName?:string;
     upvotes?: string[];
     createdAt?: Date;
     updatedAt?: Date;

@@ -2,11 +2,11 @@ import { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { articleSchema, ArticleFormData } from "../../../schemas/articleSchema";
-import { MarkdownEditor } from "../../../components/article/MarkdownEditor";
-import { createTrainerArticle } from "../../../services/article/articleService";
+import { articleSchema, ArticleFormData } from "../../schemas/articleSchema";
+import { MarkdownEditor } from "../../components/article/MarkdownEditor";
+import { createTrainerArticle } from "../../services/article/articleService";
 import { useNavigate } from "react-router-dom";
-import { useToast } from "../../../context/ToastContext";
+import { useToast } from "../../context/ToastContext";
 
 const CreateArticle = () => {
   const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
@@ -14,7 +14,6 @@ const CreateArticle = () => {
   const [tagInput, setTagInput] = useState("");
   const navigate = useNavigate();
   const { showToast } = useToast();
-  // const [markdownContent, setMarkdownContent] = useState("");
 
   const {
     register,
@@ -22,7 +21,6 @@ const CreateArticle = () => {
     control,
     formState: { errors },
     setValue,
-    // watch,
   } = useForm<ArticleFormData>({
     resolver: zodResolver(articleSchema),
     defaultValues: {
@@ -32,7 +30,6 @@ const CreateArticle = () => {
     },
   });
 
-  // const watchContent = watch("content");
 
   const createArticleMutation = useMutation({
     mutationFn: createTrainerArticle,

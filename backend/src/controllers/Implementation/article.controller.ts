@@ -45,10 +45,24 @@ export class ArticleController implements IArticleController {
       title,
       content,
       tags,
-      thumbnail:thumbnailURL,
+      thumbnail: thumbnailURL,
       createdBy,
     });
     sendResponse(res, HttpResCode.CREATED, HttpResMsg.SUCCESS, { article });
+  }
+
+  async getMyArticles(req: Request, res: Response, next: NextFunction) {
+    try {
+      const trainerId = req.decoded?.id;
+      if (!trainerId) {
+        sendResponse(res, HttpResCode.UNAUTHORIZED, HttpResMsg.UNAUTHORIZED);
+        return;
+      }
+      const articles = await this.articleService!.getMyArticles(trainerId);
+      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, { articles });
+    } catch (error) {
+      next(error);
+    }
   }
 
   async getAllArticles(req: Request, res: Response, next: NextFunction) {
