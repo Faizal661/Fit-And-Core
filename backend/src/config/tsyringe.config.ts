@@ -31,6 +31,13 @@ import { ITrainerRepository } from "../repositories/Interface/ITrainerRepository
 import { ITrainerService } from "../services/Interface/ITrainerService";
 import { ITrainerController } from "../controllers/Interface/ITrainerController";
 
+import articleService from "../services/Implementation/article.service";
+import { ArticleController } from "../controllers/Implementation/article.controller";
+import { ArticleRepository } from "../repositories/Implementation/article.repository";
+import { IArticleController } from "../controllers/Interface/IArticleController";
+import { IArticleRepository } from "../repositories/Interface/IArticleRepository";
+import { IArticleService } from "../services/Interface/IArticleService";
+
 //
 container.registerInstance('RedisClient', redisClient);
 
@@ -49,3 +56,7 @@ container.register<IUserRepository>("UserRepository", { useClass: UserRepository
 container.register<ITrainerController>("TrainerController", { useClass: TrainerController,});
 container.register<ITrainerService>("TrainerService", { useClass: TrainerService,});
 container.register<ITrainerRepository>("TrainerRepository", { useClass: TrainerRepository,});
+
+container.register<IArticleController>("ArticleController", { useClass: ArticleController,});
+container.register<IArticleService>("ArticleService", { useClass: articleService,});
+container.register<IArticleRepository>("ArticleRepository", { useClass: ArticleRepository,});

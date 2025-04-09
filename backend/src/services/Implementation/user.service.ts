@@ -52,7 +52,7 @@ export default class UserService implements IUserService {
     search: string
   ): Promise<UsersResponse> {
     const skip = (page - 1) * limit;
-    let filter: any = { role: { $ne: "admin" } }; // Exclude admins from the list
+    let filter: any = { role: { $ne: "admin" } }; 
 
     if (search) {
       filter.$or = [

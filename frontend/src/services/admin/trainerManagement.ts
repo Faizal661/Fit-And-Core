@@ -1,4 +1,4 @@
-import { Trainer } from "../../types/trainer";
+import { Trainer } from "../../types/trainer.type";
 import axios from "../../config/axios.config";
 
 

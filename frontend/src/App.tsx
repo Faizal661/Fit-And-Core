@@ -23,20 +23,25 @@ import LandingPage from "./pages/user/LandingPage";
 import UserProfile from "./pages/user/UserProfile.tsx";
 // trainer
 import HomeTrainer from "./pages/trainer/HomeTrainer.tsx";
+import TrainerArticles from "./pages/article/TrainerArticles.tsx";
 import TrainerApply from "./pages/trainer/TrainerApply.tsx";
 // admin
 import HomeAdmin from "./pages/admin/HomeAdmin.tsx";
 import UserManage from "./pages/admin/UserManage.tsx";
 import TrainerManage from "./pages/admin/TrainerManage.tsx";
+import CreateArticle from "./pages/article/CreateArticle.tsx";
+import ErrorBoundary from "./components/shared/errorBoundary.tsx";
+import ArticleFullView from "./pages/article/ArticleFullView.tsx";
+import UserArticles from "./pages/article/UserArticles.tsx";
 
 
 function App() {
   const user = useSelector((state: RootState) => state.auth.user);
-  const isLoading = useSelector((state: RootState) => state.loading.isLoading);
+  // const isLoading = useSelector((state: RootState) => state.loading.isLoading);
 
   return (
     <div className="min-h-screen flex flex-col">
-      {isLoading && <Loader />}
+      {/* {isLoading && <Loader />} */}
       <ToastContainer />
       <MenuButton />
       <FloatButton />
@@ -46,10 +51,17 @@ function App() {
           <Route path="/user" element={<Navigate to="/" />} />
           <Route path="/profile" element={<UserProfile />} />
           <Route path="/trainer/apply" element={<TrainerApply />} />
+          <Route path="/articles" element={<ErrorBoundary>< UserArticles /></ErrorBoundary >} />
         </Route>
 
         <Route element={<PrivateRoute allowedRoles={["trainer"]} />}>
           <Route path="/trainer" element={<HomeTrainer />} />
+          <Route path="/trainer/articles" element={<ErrorBoundary>< TrainerArticles /></ErrorBoundary >} />
+          <Route path="/trainer/articles/create" element={< CreateArticle />} />
+        </Route>
+
+        <Route element={<PrivateRoute allowedRoles={["user","trainer"]} />}>
+          <Route path="/article/:id" element={<ErrorBoundary>< ArticleFullView /></ErrorBoundary >} />
         </Route>
 
         <Route element={<PrivateRoute allowedRoles={["admin"]} />}>
