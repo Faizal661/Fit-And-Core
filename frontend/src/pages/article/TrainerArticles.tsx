@@ -17,7 +17,7 @@ const TrainerArticles = () => {
     isLoading,
     error,
   } = useQuery<Article[]>({
-    queryKey: ["trainerArticles"],
+    queryKey: ["articles"],
     queryFn: getMyArticles,
   });
 

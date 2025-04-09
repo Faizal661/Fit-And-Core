@@ -12,4 +12,5 @@ export interface IArticleService {
   getMyArticles(trainerId:string | Types.ObjectId): Promise<IArticleModel[]>
   getAllArticles(page: number, limit: number, search: string): Promise<articleResponse>
   getArticleById(id: string): Promise<IArticleModel | null>
+  toggleUpvote(articleId: string, userId: string): Promise<IArticleModel>
 }

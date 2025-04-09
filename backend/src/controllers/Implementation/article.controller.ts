@@ -82,16 +82,32 @@ export class ArticleController implements IArticleController {
     }
   }
 
-  async getArticleById(req: Request, res: Response, next: NextFunction) {
+  async upvoteArticle(req: Request, res: Response, next: NextFunction) {
     try {
-      const article = await this.articleService!.getArticleById(req.params.id);
-      if (!article) {
-        sendResponse(res, HttpResCode.NOT_FOUND, HttpResMsg.NOT_FOUND);
+      const userId = req.decoded?.id;
+      if (!userId) {
+        sendResponse(res, HttpResCode.UNAUTHORIZED, HttpResMsg.UNAUTHORIZED);
         return;
       }
+      const article = await this.articleService!.toggleUpvote(req.params.articleId,userId);
+
+      console.log("🚀 ~ ArticleController ~ upvoteArticle ~ article:",article)
       sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, article);
     } catch (error) {
       next(error);
     }
   }
+
+  // async getArticleById(req: Request, res: Response, next: NextFunction) {
+  //   try {
+  //     const article = await this.articleService!.getArticleById(req.params.id);
+  //     if (!article) {
+  //       sendResponse(res, HttpResCode.NOT_FOUND, HttpResMsg.NOT_FOUND);
+  //       return;
+  //     }
+  //     sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, article);
+  //   } catch (error) {
+  //     next(error);
+  //   }
+  // }
 }

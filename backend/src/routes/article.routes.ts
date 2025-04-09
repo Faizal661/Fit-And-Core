@@ -38,4 +38,11 @@ router.get(
   (req, res, next) => articleController.getAllArticles(req, res, next)
 );
 
+router.post(
+  "/:articleId/upvote",
+  verifyAccessToken,
+  authorizeRoles(["user","trainer"]),
+  (req, res, next) => articleController.upvoteArticle(req, res, next)
+);
+
 export default router;

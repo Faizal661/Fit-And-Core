@@ -37,11 +37,11 @@ import UserArticles from "./pages/article/UserArticles.tsx";
 
 function App() {
   const user = useSelector((state: RootState) => state.auth.user);
-  const isLoading = useSelector((state: RootState) => state.loading.isLoading);
+  // const isLoading = useSelector((state: RootState) => state.loading.isLoading);
 
   return (
     <div className="min-h-screen flex flex-col">
-      {isLoading && <Loader />}
+      {/* {isLoading && <Loader />} */}
       <ToastContainer />
       <MenuButton />
       <FloatButton />

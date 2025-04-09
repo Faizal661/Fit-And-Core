@@ -23,7 +23,7 @@ export const Articles = async () => {
 
 export const getAllArticles = async ({
   page = 1,
-  limit = 5,
+  limit = 4,
   search,
 }: {
   page?: number;
@@ -33,5 +33,11 @@ export const getAllArticles = async ({
   const response = await axios.get('/article/all-articles', {
     params: { page, limit, search },
   });
-  return response.data; // { articles, total, page, limit }
+  return response.data; // { articles[{}], total, page, limit }
+};
+
+
+export const upvoteArticle = async (articleId: string) => {
+  const response = await axios.post(`/article/${articleId}/upvote`);
+  return response.data;
 };

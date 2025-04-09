@@ -1,26 +1,21 @@
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getAllArticles } from '../../services/article/articleService';
+import { getAllArticles } from "../../services/article/articleService";
 import { Skeleton } from "@mui/material";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { ArticlesResponse } from "../../types/article.type";
 import { ArticleCard } from "../../components/article/ArticleCard";
 
-
 const UserArticles = () => {
   const userId = useSelector((state: RootState) => state.auth.user?.id || "");
 
   const [activePage, setActivePage] = useState<number>(1);
-  const [recordsPerPage] = useState<number>(4); 
-  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [recordsPerPage] = useState<number>(4);
+  const [searchTerm, setSearchTerm] = useState<string>("");
 
-  const {
-    data,
-    isLoading,
-    error,
-  } = useQuery<ArticlesResponse, Error>({
-    queryKey: ['articles', activePage, recordsPerPage, searchTerm],
+  const { data, isLoading, error } = useQuery<ArticlesResponse, Error>({
+    queryKey: ["articles", activePage, recordsPerPage, searchTerm],
     queryFn: () =>
       getAllArticles({
         page: activePage,
@@ -44,13 +39,16 @@ const UserArticles = () => {
           <h2 className="text-3xl font-semibold">Articles</h2>
 
           {/* Single Search Input */}
-          <form onSubmit={handleSearch} className="flex items-center border-2 border-black rounded-lg bg-slate-200">
+          <form
+            onSubmit={handleSearch}
+            className="flex items-center border-2 border-black rounded-lg bg-slate-200"
+          >
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search by title, trainer name, or tags..."
-              className="px-4 py-2 text-black rounded-l-lg focus:outline-none focus:ring-2 focus:ring-black" 
+              className="px-4 py-2 text-black rounded-l-lg focus:outline-none focus:ring-2 focus:ring-black"
             />
             <button
               type="submit"
@@ -60,6 +58,7 @@ const UserArticles = () => {
             </button>
           </form>
         </div>
+        <p className="flex justify-end mb-3 pe-1">Total Articles : {data?.total}</p>
 
         {isLoading ? (
           <div>

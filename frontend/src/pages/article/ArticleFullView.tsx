@@ -1,4 +1,6 @@
 import { useLocation, useParams } from "react-router-dom";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { upvoteArticle } from "../../services/article/articleService";
 import { useSelector } from "react-redux"; // Assuming you're using Redux for user state
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -7,17 +9,39 @@ import { RootState } from "../../redux/store";
 import { Article } from "../../types/article.type";
 import { components } from "../../components/article/MarkdownComponents";
 import { formatDate } from "../../utils/dateFormat";
+import PageNotFound from "../../components/shared/PageNotFound";
 
 const ArticleFullView = () => {
+  const queryClient = useQueryClient();
   const { id } = useParams<{ id: string }>();
   const { state } = useLocation();
-  const userId = useSelector((state: RootState) => state.auth.user?.id || "");
   const articles = state?.articles || [];
   const article = articles.find((a: Article) => a._id === id);
+  
+  if (!article) return <PageNotFound/>;
+  
+  const userId = useSelector((state: RootState) => state.auth.user?.id || "");
+  let isUpvoted = article.upvotes.includes(userId);
 
-  if (!article) return <div>Article not found</div>;
+  const mutation = useMutation({
+    mutationFn: () => upvoteArticle(article._id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["articles"] });
+    },
+    onError: (error) => {
+      console.error("Error upvoting article:", error);
+    },
+  });
 
-  const isUpvoted = article.upvotes.includes(userId);
+  const handleUpvote = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (isUpvoted) {
+      article.upvotes = article.upvotes.filter((id:string) => id !== userId); 
+    } else {
+      article.upvotes.push(userId); 
+    }
+    mutation.mutate();
+  };
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg pt-16">
@@ -32,14 +56,18 @@ const ArticleFullView = () => {
           <span className="text-sm font-medium text-gray-400 mr-4">
             {formatDate(article.createdAt)}
           </span>
-          <button className="flex items-center text-gray-600 hover:text-blue-600 hover:cursor-pointer">
-            {isUpvoted ? (
-              <ThumbsUp className="w-6 h-6 fill-current text-blue-600" />
-            ) : (
-              <ThumbsUpIcon className="w-5 h-5" />
-            )}
-            <span className="ml-2">{article.upvotes.length}</span>
-          </button>
+          <button
+              onClick={handleUpvote}
+              disabled={mutation.isPending}
+              className="flex items-center text-gray-600 hover:text-blue-600 disabled:opacity-50 cursor-pointer"
+            >
+              {isUpvoted ? (
+                <ThumbsUp className="w-5 h-5 fill-current text-blue-400" />
+              ) : (
+                <ThumbsUpIcon className="w-5 h-5" />
+              )}
+              <span className="ml-1">{article.upvotes.length}</span>
+            </button>
         </div>
       </div>
       <h1 className="text-3xl font-bold text-gray-900 mb-4">{article.title}</h1>
