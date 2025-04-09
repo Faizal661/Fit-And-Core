@@ -3,7 +3,7 @@ import {
   GoogleAuthResponse,
   LoginCredentials,
   LoginResponse,
-} from "../types/auth";
+} from "../types/auth.type";
 
 export const checkEmailUsername = async (data: {
   username: string;

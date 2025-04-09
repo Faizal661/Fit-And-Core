@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { ToastContextType, ToastMessage, ToastType } from '../types/toast';
+import { ToastContextType, ToastMessage, ToastType } from '../types/toast.type';
 
 const ToastContext = createContext<ToastContextType | undefined>(undefined);
 

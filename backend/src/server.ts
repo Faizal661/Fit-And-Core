@@ -12,6 +12,7 @@ import { HttpResCode } from "./constants/response.constants.ts";
 dotenv.config();
 import connectDB from "./config/db.config";
 import configurePassport from "./config/passport";
+import { env } from "./config/env.config.ts";
 
 // Middlewares
 import requestLogging from "./middlewares/request-logger.middleware.ts";
@@ -22,14 +23,13 @@ import authRoutes from "./routes/auth.routes";
 import adminRoutes from "./routes/admin.routes";
 import userRoutes from "./routes/user.routes.ts";
 import trainerRoutes from "./routes/trainer.routes.ts";
-import { env } from "./config/env.config.ts";
+import articleRoutes from "./routes/article.routes.ts"
 
 
 const app = express();
 
 const PORT = env.PORT || 5000;
 
-// 
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -48,6 +48,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/trainer", trainerRoutes);
+app.use("/api/article", articleRoutes);
 
 // Error handling middlewares
 app.use((req, res, next) => {

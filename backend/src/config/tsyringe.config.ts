@@ -31,23 +31,32 @@ import { ITrainerRepository } from "../repositories/Interface/ITrainerRepository
 import { ITrainerService } from "../services/Interface/ITrainerService";
 import { ITrainerController } from "../controllers/Interface/ITrainerController";
 
+import articleService from "../services/Implementation/article.service";
+import { ArticleController } from "../controllers/Implementation/article.controller";
+import { ArticleRepository } from "../repositories/Implementation/article.repository";
+import { IArticleController } from "../controllers/Interface/IArticleController";
+import { IArticleRepository } from "../repositories/Interface/IArticleRepository";
+import { IArticleService } from "../services/Interface/IArticleService";
+
 //
 container.registerInstance('RedisClient', redisClient);
 
-// Controllers
 container.register<IAuthController>('AuthController', { useClass: AuthController });
-container.register<IAdminController>('AdminController', { useClass: AdminController });
-container.register<IUserController>("UserController", { useClass: UserController });
-container.register<ITrainerController>("TrainerController", { useClass: TrainerController,});
-
-// Services
 container.register<IAuthService>('AuthService', { useClass: AuthService });
-container.register<IAdminService>('AdminService', { useClass: adminService });
-container.register<IUserService>("UserService", { useClass: UserService });
-container.register<ITrainerService>("TrainerService", { useClass: TrainerService,});
-
-// Repositories
 container.register<IAuthRepository>('AuthRepository',{useClass: AuthRepository})
+
+container.register<IAdminController>('AdminController', { useClass: AdminController });
 container.register<IAdminRepository>('AdminRepository',{useClass: AdminRepository})
+container.register<IAdminService>('AdminService', { useClass: adminService });
+
+container.register<IUserController>("UserController", { useClass: UserController });
+container.register<IUserService>("UserService", { useClass: UserService });
 container.register<IUserRepository>("UserRepository", { useClass: UserRepository });
+
+container.register<ITrainerController>("TrainerController", { useClass: TrainerController,});
+container.register<ITrainerService>("TrainerService", { useClass: TrainerService,});
 container.register<ITrainerRepository>("TrainerRepository", { useClass: TrainerRepository,});
+
+container.register<IArticleController>("ArticleController", { useClass: ArticleController,});
+container.register<IArticleService>("ArticleService", { useClass: articleService,});
+container.register<IArticleRepository>("ArticleRepository", { useClass: ArticleRepository,});

@@ -4,7 +4,7 @@ import { HttpResCode, HttpResMsg } from "../../constants/response.constants";
 import { ITrainerController } from "../Interface/ITrainerController";
 import { ITrainerService } from "../../services/Interface/ITrainerService";
 import { sendResponse } from "../../utils/send-response";
-import { uploadToS3 } from "../../utils/s3-upload";
+import { uploadToCloudinary } from "../../utils/s3-upload";
 import { CustomRequest } from "../../types/trainer.types";
 import { CustomError } from "../../errors/CustomError";
 
@@ -40,7 +40,10 @@ export default class TrainerController implements ITrainerController {
       // Process document proofs
       if (req.files && Array.isArray(req.files.documentProofs)) {
         for (const file of req.files.documentProofs) {
-          const uploadResult = await uploadToS3(file, "document-proofs");
+          const uploadResult = await uploadToCloudinary(
+            file,
+            "document-proofs"
+          );
           documentProofs.push(uploadResult.Location);
         }
       }
@@ -48,7 +51,7 @@ export default class TrainerController implements ITrainerController {
       // Process certifications
       if (req.files && Array.isArray(req.files.certifications)) {
         for (const file of req.files.certifications) {
-          const uploadResult = await uploadToS3(file, "certifications");
+          const uploadResult = await uploadToCloudinary(file, "certifications");
           certifications.push(uploadResult.Location);
         }
       }
@@ -56,7 +59,7 @@ export default class TrainerController implements ITrainerController {
       // Process achievements
       if (req.files && Array.isArray(req.files.achievements)) {
         for (const file of req.files.achievements) {
-          const uploadResult = await uploadToS3(file, "achievements");
+          const uploadResult = await uploadToCloudinary(file, "achievements");
           achievements.push(uploadResult.Location);
         }
       }
@@ -112,7 +115,11 @@ export default class TrainerController implements ITrainerController {
     }
   }
 
-  async getApplicationStatus(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async getApplicationStatus(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
     try {
       const userId = req.decoded?.id;
       if (!userId) {
@@ -127,69 +134,76 @@ export default class TrainerController implements ITrainerController {
     }
   }
 
-    async approveTrainer(
-      req: Request,
-      res: Response,
-      next: NextFunction
-    ): Promise<void> {
-      try {
-        const { trainerId } = req.params;
+  async approveTrainer(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const { trainerId } = req.params;
 
-        const result = await this.trainerService.approveTrainer(trainerId);
+      const result = await this.trainerService.approveTrainer(trainerId);
 
-        sendResponse(
-          res,
-          HttpResCode.OK,
-          "Trainer application approved successfully",
-          result
-        );
-      } catch (error) {
-        next(error);
-      }
+      sendResponse(
+        res,
+        HttpResCode.OK,
+        "Trainer application approved successfully",
+        result
+      );
+    } catch (error) {
+      next(error);
     }
+  }
 
-    async rejectTrainer(req: Request, res: Response, next: NextFunction): Promise<void> {
-      try {
-        const { trainerId } = req.params;
-        const { reason } = req.body;
-  
-        if (!reason || typeof reason !== 'string') {
-          throw new CustomError('Rejection reason is required', HttpResCode.BAD_REQUEST);
-        }
-  
-        const result = await this.trainerService.rejectTrainer(trainerId, reason);
-  
-        sendResponse(res, HttpResCode.OK, "Trainer application rejected successfully", result);
-      } catch (error) {
-        next(error);
-      }
-    }
+  async rejectTrainer(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const { trainerId } = req.params;
+      const { reason } = req.body;
 
-    async getTrainerApplications(
-      req: Request,
-      res: Response,
-      next: NextFunction
-    ): Promise<void> {
-      try {
-        const isApproved =
-          req.query.approved === "true"
-            ? true
-            : req.query.approved === "false"
-            ? false
-            : undefined;
-
-        const applications = await this.trainerService.getTrainerApplications(
-          isApproved
+      if (!reason || typeof reason !== "string") {
+        throw new CustomError(
+          "Rejection reason is required",
+          HttpResCode.BAD_REQUEST
         );
-
-        sendResponse(
-          res,
-          HttpResCode.OK,
-          HttpResMsg.SUCCESS,
-          {applications}
-        );
-      } catch (error) {
-        next(error);
       }
+
+      const result = await this.trainerService.rejectTrainer(trainerId, reason);
+
+      sendResponse(
+        res,
+        HttpResCode.OK,
+        "Trainer application rejected successfully",
+        result
+      );
+    } catch (error) {
+      next(error);
     }
+  }
+
+  async getTrainerApplications(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const isApproved =
+        req.query.approved === "true"
+          ? true
+          : req.query.approved === "false"
+          ? false
+          : undefined;
+
+      const applications = await this.trainerService.getTrainerApplications(
+        isApproved
+      );
+
+      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, { applications });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
