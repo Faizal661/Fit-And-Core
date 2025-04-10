@@ -10,7 +10,7 @@ export interface Trainer {
   documentProofs: string[];
   certifications: string[];
   achievements: string[];
-  isApproved: boolean;
+  // isApproved: boolean;
   status: "pending" | "approved" | "rejected";
   reason?:string;
   createdAt: string;

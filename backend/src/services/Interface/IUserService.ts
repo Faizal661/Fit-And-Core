@@ -1,19 +1,10 @@
 import { Types } from "mongoose";
-import { IUserProfile, UserProfileUpdateData } from "../../types/user.types";
-interface UsersResponse {
-  users: {
-    _id: string;
-    username: string;
-    profilePicture: string;
-    email: string;
-    isBlocked: boolean;
-    createdAt: Date;
-  }[];
-  total: number;
-}
+import { AllUsersData, IUserProfile, UserProfileUpdateData } from "../../types/user.types";
+import { IUserModel } from "../../models/user.models";
+
 export interface IUserService {
-  getUsers(page: number, limit: number, search: string): Promise<UsersResponse>
-  toggleBlockStatus(userId: string, isBlocked: boolean): Promise<any>
+  getUsers(page: number, limit: number, search: string): Promise<AllUsersData>
+  toggleBlockStatus(userId: string, isBlocked: boolean): Promise<IUserModel>
   updateUserProfile(
     userId: string | Types.ObjectId,
     updateData: UserProfileUpdateData

@@ -177,7 +177,7 @@ export default class TrainerController implements ITrainerController {
         res,
         HttpResCode.OK,
         "Trainer application rejected successfully",
-        result
+        {result}
       );
     } catch (error) {
       next(error);

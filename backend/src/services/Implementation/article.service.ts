@@ -1,7 +1,7 @@
 import { inject, injectable } from "tsyringe";
-import { IArticle } from "../../types/article.types";
+import { IArticle, articleResponse } from "../../types/article.types";
 import { IArticleRepository } from "../../repositories/Interface/IArticleRepository";
-import { IArticleService, articleResponse } from "../Interface/IArticleService";
+import { IArticleService } from "../Interface/IArticleService";
 import { IArticleModel } from "../../models/article.models";
 import { Types } from "mongoose";
 import { IUserRepository } from "../../repositories/Interface/IUserRepository";

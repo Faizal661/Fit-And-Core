@@ -1,4 +1,5 @@
 import { Types } from "mongoose";
+import { IArticleModel } from "../models/article.models";
 
 export interface IArticle {
     _id?: string;
@@ -13,3 +14,7 @@ export interface IArticle {
     updatedAt?: Date;
   }
   
+  export interface articleResponse {
+    articles:IArticleModel[];
+    total: number;
+  }

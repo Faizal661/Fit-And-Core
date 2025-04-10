@@ -208,9 +208,9 @@ export default class authService implements IAuthService {
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user);
 
-    return {
+    const result= {
       user: {
-        id: user._id,
+        id: user.id,
         username: user.username,
         email: user.email,
         role: user.role,
@@ -218,5 +218,6 @@ export default class authService implements IAuthService {
       accessToken,
       refreshToken,
     };
+    return result
   }
 }
