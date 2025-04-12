@@ -1,8 +1,12 @@
 import { useState, FormEvent } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { User, UsersResponse, fetchUsers, toggleBlockStatus } from "../../services/admin/userManagement";
-
-
+import {
+  User,
+  UsersResponse,
+  fetchUsers,
+  toggleBlockStatus,
+} from "../../services/admin/userManagement";
+import Footer from "../../components/shared/Footer";
 
 const UserManagement = () => {
   const [activePage, setActivePage] = useState<number>(1);
@@ -171,7 +175,8 @@ const UserManagement = () => {
                             : user.isBlocked
                             ? "Unblock"
                             : "Block"}
-                        </button><span> &nbsp;&nbsp;</span>
+                        </button>
+                        <span> &nbsp;&nbsp;</span>
                         <button
                           onClick={() => openDetailsModal(user)}
                           className="px-2 py-1 rounded text-xs font-medium  text-blue-600 hover:text-blue-900 mx-1 bg-blue-100 "
@@ -288,6 +293,7 @@ const UserManagement = () => {
           </div>
         </div>
       )}
+      <Footer />
     </div>
   );
 };

@@ -1,12 +1,13 @@
-import React from 'react';
-import { Node } from 'unist'; 
+// import React from 'react';
+// import { Node } from 'unist'; 
 
-interface CommonProps {
-  node: Node;
-  children?: React.ReactNode;
-  className?: string;
-  [key: string]: any;
-}
+type CommonProps=any;
+// interface CommonProps {
+//   node: Node;
+//   children?: React.ReactNode;
+//   className?: string;
+//   [key: string]: any;
+// }
 
 
 export   const components = {
