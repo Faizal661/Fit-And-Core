@@ -14,6 +14,7 @@ export interface ITrainer {
   certifications: string[];
   achievements: string[];
   // isApproved: boolean;
+  profilePicture:string;
   status: string;
   reason?: string;
   createdAt?: Date;

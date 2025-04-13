@@ -7,4 +7,6 @@ export interface ITrainerService {
   rejectTrainer(trainerId: string, reason: string): Promise<ITrainerModel>;
   approveTrainer(trainerId: string): Promise<ITrainerModel>;
   getTrainerApplications(isApproved?: boolean): Promise<ITrainerModel[]>;
+  getApprovedTrainers(): Promise<ITrainerModel[]>;
+  getOneTrainerDetails(trainerId: string): Promise<ITrainerModel>;
 }

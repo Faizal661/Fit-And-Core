@@ -4,7 +4,7 @@ import { ITrainerService } from "../Interface/ITrainerService";
 import { ITrainerRepository } from "../../repositories/Interface/ITrainerRepository";
 import { IUserRepository } from "../../repositories/Interface/IUserRepository";
 import { TrainerApplicationData } from "../../types/trainer.types";
-import { HttpResCode } from "../../constants/response.constants";
+import { HttpResCode, HttpResMsg } from "../../constants/response.constants";
 import { CustomError } from "../../errors/CustomError";
 import { ITrainerModel } from "../../models/trainer.models";
 
@@ -44,6 +44,7 @@ export default class TrainerService implements ITrainerService {
       username: user.username,
       email: user.email,
       phone: data.phone,
+      profilePicture:user.profilePicture,
       specialization: data.specialization,
       yearsOfExperience: data.yearsOfExperience,
       about: data.about,
@@ -107,4 +108,18 @@ export default class TrainerService implements ITrainerService {
     const filter = isApproved !== undefined ? { isApproved } : {};
     return this.trainerRepository.find(filter);
   }
+  
+  async getApprovedTrainers(): Promise<ITrainerModel[]> {
+    const filter = {status:'approved'}
+    return this.trainerRepository.find(filter);
+  }
+
+  async getOneTrainerDetails(trainerId: string): Promise<ITrainerModel>{
+    const trainer = await this.trainerRepository.findById(new Types.ObjectId(trainerId));
+    if (!trainer) {
+      throw new CustomError(HttpResMsg.NOT_FOUND, HttpResCode.NOT_FOUND);
+    }
+    return trainer
+  }
+
 }

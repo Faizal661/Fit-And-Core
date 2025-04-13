@@ -54,4 +54,18 @@ router.put(
   (req, res, next) => trainerController.rejectTrainer(req, res, next)
 );
 
+router.get(
+  "/trainer-approved",
+  verifyAccessToken,
+  authorizeRoles(["user"]),
+  (req, res, next) => trainerController.getApprovedTrainers(req, res, next)
+);
+
+router.get(
+  "/:trainerId",
+  verifyAccessToken,
+  authorizeRoles(["admin","user"]),
+  (req, res, next) => trainerController.getOneTrainerDetails(req, res, next)
+);
+
 export default router;
