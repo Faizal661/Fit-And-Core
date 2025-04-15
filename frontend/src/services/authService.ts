@@ -55,7 +55,7 @@ export const loginUser = async (
 
 // New Google authentication methods
 export const initiateGoogleLogin = () => {
-  window.location.href = `http://localhost:5000/api/auth/google`;
+  window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`;
 };
 
 export const verifyGoogleToken = async (

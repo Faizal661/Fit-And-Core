@@ -1,9 +1,5 @@
 import axios from "../../config/axios.config";
-
-export interface ApplicationStatus {
-  status: "none" | "pending" | "approved" | "rejected";
-  reason?: string;
-}
+import { ApplicationStatus } from "../../types/trainer.type";
 
 export const checkTrainerApplicationStatus =
   async (): Promise<ApplicationStatus> => {

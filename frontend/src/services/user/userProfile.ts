@@ -1,5 +1,5 @@
-import { UserProfileFormData } from "../../schemas/userSchema";
 import axios from "../../config/axios.config";
+import { UserProfileFormData } from "../../schemas/userSchema";
 import { ChangePasswordFormData } from "../../schemas/authSchema";
 
 export const fetchUserProfile = async () => {

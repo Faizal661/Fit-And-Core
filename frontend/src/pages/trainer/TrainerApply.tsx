@@ -5,17 +5,15 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-import { useToast } from "../../context/ToastContext";
-import { submitTrainerApplication } from "../../services/authService";
-import {
-  ApplicationStatus,
-  checkTrainerApplicationStatus,
-} from "../../services/trainer/trainerService";
-import Footer from "../../components/shared/Footer";
 import {
   TrainerApplyFormData,
   trainerApplySchema,
 } from "../../schemas/trainerSchema";
+import { useToast } from "../../context/ToastContext";
+import { submitTrainerApplication } from "../../services/authService";
+import { checkTrainerApplicationStatus } from "../../services/trainer/trainerService";
+import Footer from "../../components/shared/Footer";
+import { ApplicationStatus } from "../../types/trainer.type";
 import { STATUS } from "../../constants/status.messges";
 import { INFO_MESSAGES } from "../../constants/info.messages";
 import { SUCCESS_MESSAGES } from "../../constants/success.messages";
