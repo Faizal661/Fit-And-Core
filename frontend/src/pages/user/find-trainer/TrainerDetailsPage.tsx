@@ -4,12 +4,15 @@ import { useMutation } from "@tanstack/react-query";
 import { Trainer } from "../../../types/trainer.type";
 import { Skeleton } from "@mui/material";
 import { useToast } from "../../../context/ToastContext";
-import axios from "../../../config/axios.config";
 import Footer from "../../../components/shared/Footer";
 import PageNotFound from "../../../components/shared/PageNotFound";
 import { subscriptionPlans } from "../../../types/subscription.type";
 import { loadStripe } from "@stripe/stripe-js";
 import { createCheckoutSession } from "../../../services/stripe/subscriptionPlan";
+import { STATUS } from "../../../constants/status.messges";
+import { REDIRECT_MESSAGES } from "../../../constants/redirect.messges";
+import { getTrainerData } from "../../../services/trainer/trainerService";
+import { ERR_MESSAGES } from "../../../constants/error.messages";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PK);
 
@@ -23,10 +26,7 @@ const TrainerDetailsPage = () => {
     // error,
   } = useQuery<Trainer>({
     queryKey: ["trainer", trainerId],
-    queryFn: async () => {
-      const response = await axios.get(`/trainer/${trainerId}`);
-      return response.data.trainerData;
-    },
+    queryFn: () => getTrainerData(trainerId),
   });
 
   const checkoutMutation = useMutation({
@@ -38,8 +38,8 @@ const TrainerDetailsPage = () => {
       });
     },
     onError: (error) => {
-      console.error("Error processing payment:", error);
-      showToast("error", "Payment system error. Please try again.");
+      console.error(ERR_MESSAGES.PAYMENT_ERROR, error);
+      showToast(STATUS.ERROR, ERR_MESSAGES.PAYMENT_ERROR);
     },
   });
 
@@ -58,16 +58,16 @@ const TrainerDetailsPage = () => {
   }
 
   if (!trainer) {
-    return trainerId?.length === 24  ? (
+    return trainerId?.length === 24 ? (
       <PageNotFound
-        message="Failed to load trainer data."
-        linkText="View all available trainers"
+        message={REDIRECT_MESSAGES.FAILED_TO_LOAD_TRAINER_DATA}
+        linkText={REDIRECT_MESSAGES.VIEW_ALL_AVAILABLE_TRAINERS}
         linkTo="/find-trainers"
       />
     ) : (
       <PageNotFound
-        message="No Trainer Found"
-        linkText="View all available trainers"
+        message={REDIRECT_MESSAGES.NO_TRAINER_FOUND}
+        linkText={REDIRECT_MESSAGES.VIEW_ALL_AVAILABLE_TRAINERS}
         linkTo="/find-trainers"
       />
     );

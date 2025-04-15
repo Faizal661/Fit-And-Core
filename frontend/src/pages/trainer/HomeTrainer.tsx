@@ -1,5 +1,5 @@
-import { Fragment } from "react";
-import { useQuery } from "@tanstack/react-query";
+// import { Fragment } from "react";
+// import { useQuery } from "@tanstack/react-query";
 import {
   Users,
   Dumbbell,
@@ -17,11 +17,11 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-import {
-  fetchUserCount,
-  fetchTrainerCount,
-  fetchMonthlyRegistrationData,
-} from "../../services/admin/adminDashboard";
+// import {
+//   fetchUserCount,
+//   fetchTrainerCount,
+//   fetchMonthlyRegistrationData,
+// } from "../../services/admin/adminDashboard";
 import Footer from "../../components/shared/Footer";
 import { MetricCard } from "../../components/shared/MetricCard";
 

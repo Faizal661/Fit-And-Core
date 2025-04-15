@@ -1,11 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
-import axios from "../../../config/axios.config";
 import { useNavigate } from "react-router-dom";
 import { Trainer } from "../../../types/trainer.type";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
 import { Skeleton } from "@mui/material";
 import Footer from "../../../components/shared/Footer";
+import { getSubscribedTrainers } from "../../../services/trainer/trainerService";
 
 const TrainersPage = () => {
   const navigate = useNavigate();
@@ -17,10 +17,7 @@ const TrainersPage = () => {
     // error,
   } = useQuery<Trainer[]>({
     queryKey: ["subscribedTrainers", userId],
-    queryFn: async () => {
-      const response = await axios.get(`/trainer/subscribed/${userId}`);
-      return response.data;
-    },
+    queryFn: () => getSubscribedTrainers(userId),
   });
 
   const handleFindNewTrainers = () => {
@@ -40,7 +37,7 @@ const TrainersPage = () => {
               Find trainers
             </button>
           </div>
-  
+
           {isLoading ? (
             <div className="space-y-6">
               <Skeleton height={120} animation="wave" />

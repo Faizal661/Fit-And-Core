@@ -14,6 +14,7 @@ import { type SignUpFormData, SignUpSchema } from "../../../schemas/authSchema";
 import { useToast } from "../../../context/ToastContext";
 import { useGoogleAuth } from "../../../hooks/useGoogleAuth";
 import Footer from "../../../components/shared/Footer";
+import { STATUS } from "../../../constants/status.messges";
 
 const RegisterForm = () => {
   const navigate = useNavigate();
@@ -41,7 +42,7 @@ const RegisterForm = () => {
             password: data.password,
           })
         );
-        showToast("success", AUTH_MESSAGES.OTP_SENT);
+        showToast(STATUS.SUCCESS, AUTH_MESSAGES.OTP_SENT);
         navigate("/signup/verify-otp");
       } else {
         setError(data.message);
@@ -50,10 +51,10 @@ const RegisterForm = () => {
     onError: (error) => {
       if (axios.isAxiosError(error)) {
         setError(error.response?.data.message);
-        showToast("error", error.response?.data.message);
+        showToast(STATUS.ERROR, error.response?.data.message);
       } else {
         setError(AUTH_MESSAGES.SERVER_ERROR);
-        showToast("error", AUTH_MESSAGES.SERVER_ERROR);
+        showToast(STATUS.ERROR, AUTH_MESSAGES.SERVER_ERROR);
       }
     },
   });

@@ -68,12 +68,7 @@ export const verifyGoogleToken = async (
 // Logout user
 export const logoutUser = async (): Promise<boolean> => {
   try {
-    const data = await axios.post(
-      `/auth/logout`,
-      {},
-      { withCredentials: true }
-    );
-    console.log("LOGOUT RES------", data);
+    await axios.post(`/auth/logout`, {}, { withCredentials: true });
     return true;
   } catch (error) {
     throw error;

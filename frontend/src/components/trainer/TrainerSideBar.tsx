@@ -1,13 +1,11 @@
 import { Link } from "react-router-dom";
 import { X, Calendar, Users, MessageSquare, FileText, Bell, TrendingUp, Home, LogOut } from "lucide-react";
+import { SidebarProps } from "../../types/shared.type";
+import { SIDEBAR_MESSAGES } from "../../constants/sidebar.messages";
 
-interface TrainerSidebarProps {
-  username: string | undefined;
-  onClose: () => void;
-  onLogout: () => void;
-}
 
-const TrainerSidebar = ({ username, onClose, onLogout }: TrainerSidebarProps) => {
+
+const TrainerSidebar = ({ username, onClose, onLogout }: SidebarProps) => {
   return (
     <div className="absolute top-0 right-0 h-full bg-white w-80 p-6 border-l border-gray-100 shadow-sm">
       <div className="flex justify-end mb-8">
@@ -19,16 +17,16 @@ const TrainerSidebar = ({ username, onClose, onLogout }: TrainerSidebarProps) =>
       {/* Trainer greeting */}
       <div className="mb-8">
         <p className="text-gray-700 text-sm">
-          Welcome back, Coach {username || ""}
+        {SIDEBAR_MESSAGES.WELCOME} {username || SIDEBAR_MESSAGES.TRAINER}
         </p>
         <div className="mt-2">
           <span className="text-xs text-green-600 bg-green-50 px-3 py-1 rounded-full">
-            Certified Trainer
+            {SIDEBAR_MESSAGES.CERTIFIED_TRAINER}
           </span>
         </div>
         <div className="mt-4 flex items-center text-xs text-gray-600">
           <Calendar size={14} className="mr-2" />
-          <span><span className="font-medium">3</span> Sessions Today</span>
+          <span><span className="font-medium">0</span> {SIDEBAR_MESSAGES.SESSION_TODAY}</span>
         </div>
       </div>
 
@@ -39,56 +37,56 @@ const TrainerSidebar = ({ username, onClose, onLogout }: TrainerSidebarProps) =>
           className="text-gray-600 hover:text-gray-900 flex items-center gap-3"
         >
           <Home size={14} />
-          Dashboard
+          {SIDEBAR_MESSAGES.DASHBOARD}
         </Link>
         <Link
           to="/trainer/sessions"
           className="text-gray-600 hover:text-gray-900 flex items-center gap-3"
         >
           <Calendar size={14} />
-          Session Management
+          {SIDEBAR_MESSAGES.SESSION_MANAGEMENT}
         </Link>
         <Link
           to="/trainer/trainees"
           className="text-gray-600 hover:text-gray-900 flex items-center gap-3"
         >
           <Users size={14} />
-          Trainee Management
+          {SIDEBAR_MESSAGES.TRAINEE_MANAGEMENT}
         </Link>
         <Link
           to="/trainer/chats"
           className="text-gray-600 hover:text-gray-900 flex items-center gap-3"
         >
           <MessageSquare size={14} />
-          Chats
+          {SIDEBAR_MESSAGES.CHATS}
         </Link>
         <Link
           to="/trainer/articles"
           className="text-gray-600 hover:text-gray-900 flex items-center gap-3"
         >
           <FileText size={14} />
-          Article Management
+          {SIDEBAR_MESSAGES.ARTICLE_MANAGEMENT}
         </Link>
         <Link
           to="/trainer/upcoming"
           className="text-gray-600 hover:text-gray-900 flex items-center gap-3"
         >
           <Calendar size={14} />
-          Upcoming Sessions
+          {SIDEBAR_MESSAGES.UPCOMING_SESSIONS}
         </Link>
         <Link
           to="/trainer/finance"
           className="text-gray-600 hover:text-gray-900 flex items-center gap-3"
         >
           <TrendingUp size={14} />
-          Finance Tracking
+          {SIDEBAR_MESSAGES.FINANCE_MANAGEMENT}
         </Link>
         <Link
           to="/trainer/notifications"
           className="text-gray-600 hover:text-gray-900 flex items-center gap-3"
         >
           <Bell size={14} />
-          Notifications
+          {SIDEBAR_MESSAGES.NOTIFICATIONS}
         </Link>
       </nav>
 
@@ -99,7 +97,7 @@ const TrainerSidebar = ({ username, onClose, onLogout }: TrainerSidebarProps) =>
           onClick={onLogout}
         >
           <LogOut size={14} />
-          Sign out
+          {SIDEBAR_MESSAGES.SIGN_OUT}
         </button>
       </div>
     </div>

@@ -1,13 +1,9 @@
 import { Link } from "react-router-dom";
 import { X, Users, Dumbbell, DollarSign, BarChart, Globe } from "lucide-react";
+import { SidebarProps } from "../../types/shared.type";
+import { SIDEBAR_MESSAGES } from "../../constants/sidebar.messages";
 
-interface AdminSidebarProps {
-  username: string | undefined;
-  onClose: () => void;
-  onLogout: () => void;
-}
-
-const AdminSidebar = ({ username, onClose, onLogout }: AdminSidebarProps) => {
+const AdminSidebar = ({ username, onClose, onLogout }: SidebarProps) => {
   return (
     <div className="absolute top-0 right-0 h-full bg-white w-80 p-6 border-l border-gray-100">
       <div className="flex justify-end mb-8">
@@ -19,11 +15,11 @@ const AdminSidebar = ({ username, onClose, onLogout }: AdminSidebarProps) => {
       {/* Admin greeting */}
       <div className="mb-8">
         <p className="text-gray-700 text-sm">
-          Welcome back, {username || ""}
+          {SIDEBAR_MESSAGES.WELCOME} {username || SIDEBAR_MESSAGES.ADMIN}
         </p>
         <div className="mt-1">
           <span className="text-xs text-gray-500">
-            Administrator
+            {SIDEBAR_MESSAGES.ADMIN}
           </span>
         </div>
       </div>
@@ -35,42 +31,42 @@ const AdminSidebar = ({ username, onClose, onLogout }: AdminSidebarProps) => {
           className="text-gray-600 hover:text-gray-900 flex items-center gap-3"
         >
           <BarChart size={14} />
-          Dashboard
+          {SIDEBAR_MESSAGES.DASHBOARD}
         </Link>
         <Link
           to="/admin/user-management"
           className="text-gray-600 hover:text-gray-900 flex items-center gap-3"
         >
           <Users size={14} />
-          User Management
+          {SIDEBAR_MESSAGES.USER_MANAGEMENT}
         </Link>
         <Link
           to="/admin/trainer-management"
           className="text-gray-600 hover:text-gray-900 flex items-center gap-3"
         >
           <Dumbbell size={14} />
-          Trainer Management
+          {SIDEBAR_MESSAGES.TRAINER_MANAGEMENT}
         </Link>
         <Link
           to="/admin/finance-management"
           className="text-gray-600 hover:text-gray-900 flex items-center gap-3"
         >
           <DollarSign size={14} />
-          Finance Management
+          {SIDEBAR_MESSAGES.FINANCE_MANAGEMENT}
         </Link>
         <Link
           to="/admin/report-management"
           className="text-gray-600 hover:text-gray-900 flex items-center gap-3"
         >
           <BarChart size={14} />
-          Report Management
+          {SIDEBAR_MESSAGES.REPORT_MANAGEMENT}
         </Link>
         <Link
           to="/admin/community-management"
           className="text-gray-600 hover:text-gray-900 flex items-center gap-3"
         >
           <Globe size={14} />
-          Community Management
+          {SIDEBAR_MESSAGES.COMMUNITY_MANAGEMENT}
         </Link>
       </nav>
 
@@ -80,7 +76,7 @@ const AdminSidebar = ({ username, onClose, onLogout }: AdminSidebarProps) => {
           className="text-xs text-gray-500 cursor-pointer"
           onClick={onLogout}
         >
-          Sign out
+          {SIDEBAR_MESSAGES.SIGN_OUT}
         </button>
       </div>
     </div>

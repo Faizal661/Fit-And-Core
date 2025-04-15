@@ -1,13 +1,9 @@
 import { Link } from "react-router-dom";
 import { X, User, Users, Globe, TrendingUp, Utensils, Bell, History, Home, Award, Calendar, FileText, LogOut } from "lucide-react";
+import { SidebarProps } from "../../types/shared.type";
+import { SIDEBAR_MESSAGES } from "../../constants/sidebar.messages";
 
-interface UserSidebarProps {
-  username: string | undefined;
-  onClose: () => void;
-  onLogout: () => void;
-}
-
-const UserSidebar = ({ username, onClose, onLogout }: UserSidebarProps) => {
+const UserSidebar = ({ username, onClose, onLogout }: SidebarProps) => {
 return (
     <div className="absolute top-0 right-0 h-full bg-white w-80 p-6 border-l border-gray-100 shadow-sm overflow-y-auto">
       <div className="flex justify-end mb-8">
@@ -19,11 +15,11 @@ return (
       {/* User greeting */}
       <div className="mb-8">
         <p className="text-gray-700 text-sm">
-          Welcome back, {username || "User"}
+          {SIDEBAR_MESSAGES.WELCOME} {username || SIDEBAR_MESSAGES.USER}
         </p>
         <div className="mt-1">
           <span className="text-xs text-gray-500">
-            Member
+            {SIDEBAR_MESSAGES.MEMBER}
           </span>
         </div>
       </div>
@@ -32,15 +28,15 @@ return (
       <div className="flex gap-3 mb-6">
         <div className="flex items-center text-gray-600 text-xs cursor-pointer">
           <Award size={14} className="mr-1" />
-          <span>Credits</span>
+          <span>{SIDEBAR_MESSAGES.CREDITS}</span>
         </div>
         <div className="flex items-center text-gray-600 text-xs cursor-pointer">
           <Calendar size={14} className="mr-1" />
-          <span>Bookings</span>
+          <span>{SIDEBAR_MESSAGES.BOOKINGS}</span>
         </div>
         <div className="flex items-center text-gray-600 text-xs cursor-pointer">
           <TrendingUp size={14} className="mr-1" />
-          <span>Streak: 0</span>
+          <span>{SIDEBAR_MESSAGES.STREAK} 0</span>
         </div>
       </div>
 
@@ -51,42 +47,42 @@ return (
           className="text-gray-600 hover:text-gray-900 flex items-center gap-3"
         >
           <Home size={14} />
-          Home
+          {SIDEBAR_MESSAGES.HOME}
         </Link>
         <Link
           to="/profile"
           className="text-gray-600 hover:text-gray-900 flex items-center gap-3"
         >
           <User size={14} />
-          Profile
+          {SIDEBAR_MESSAGES.PROFILE}
         </Link>
         <Link
           to="/articles"
           className="text-gray-600 hover:text-gray-900 flex items-center gap-3"
         >
           <FileText size={14} />
-          Articles
+          {SIDEBAR_MESSAGES.ARTICLES}
         </Link>
         <Link
           to="/trainers"
           className="text-gray-600 hover:text-gray-900 flex items-center gap-3"
         >
           <Users size={14} />
-          Trainers
+          {SIDEBAR_MESSAGES.TRAINERS}
         </Link>
         <Link
           to="/communities"
           className="text-gray-600 hover:text-gray-900 flex items-center gap-3"
         >
           <Globe size={14} />
-          Communities
+          {SIDEBAR_MESSAGES.COMMUNITIES}
         </Link>
         <Link
           to="/progress"
           className="text-gray-600 hover:text-gray-900 flex items-center gap-3"
         >
           <TrendingUp size={14} />
-          Progression
+          {SIDEBAR_MESSAGES.PROGRESSION}
         </Link>
        
         <Link
@@ -94,21 +90,21 @@ return (
           className="text-gray-600 hover:text-gray-900 flex items-center gap-3"
         >
           <Utensils size={14} />
-          Nutrition
+          {SIDEBAR_MESSAGES.NUTRITION}
         </Link>
         <Link
           to="/notifications"
           className="text-gray-600 hover:text-gray-900 flex items-center gap-3"
         >
           <Bell size={14} />
-          Notifications
+          {SIDEBAR_MESSAGES.NOTIFICATIONS}
         </Link>
         <Link
           to="/history"
           className="text-gray-600 hover:text-gray-900 flex items-center gap-3"
         >
           <History size={14} />
-          History
+          {SIDEBAR_MESSAGES.HISTORY}
         </Link>
       </nav>
 
@@ -119,7 +115,7 @@ return (
           onClick={onLogout}
         >
           <LogOut size={14} />
-          Sign out
+          {SIDEBAR_MESSAGES.SIGN_OUT}
         </button>
       </div>
     </div>

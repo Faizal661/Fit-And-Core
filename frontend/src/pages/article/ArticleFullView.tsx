@@ -11,6 +11,7 @@ import { components } from "../../components/article/MarkdownComponents";
 import { formatDate } from "../../utils/dateFormat";
 import PageNotFound from "../../components/shared/PageNotFound";
 import Footer from "../../components/shared/Footer";
+import { REDIRECT_MESSAGES } from "../../constants/redirect.messges";
 
 const ArticleFullView = () => {
   const queryClient = useQueryClient();
@@ -19,7 +20,14 @@ const ArticleFullView = () => {
   const articles = state?.articles || [];
   const article = articles.find((a: Article) => a._id === id);
 
-  if (!article) return <PageNotFound message="Article not found." linkText="Browse other articles" linkTo="/articles" />;
+  if (!article)
+    return (
+      <PageNotFound
+        message={REDIRECT_MESSAGES.ARTILCE_NOT_FOUND}
+        linkText={REDIRECT_MESSAGES.ARTICLES}
+        linkTo="/articles"
+      />
+    );
 
   const userId = useSelector((state: RootState) => state.auth.user?.id || "");
   let isUpvoted = article.upvotes.includes(userId);

@@ -43,7 +43,7 @@ import PaymentSuccessPage from "./pages/shared/PaymentSuccessPage.tsx";
 
 function App() {
   const user = useSelector((state: RootState) => state.auth.user);
-  const isLoading = useSelector((state: RootState) => state.loading.isLoading);
+  // const isLoading = useSelector((state: RootState) => state.loading.isLoading);
 
   return (
     <div className="min-h-screen flex flex-col">

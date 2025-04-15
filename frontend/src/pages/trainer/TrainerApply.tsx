@@ -4,10 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import {
-  TrainerApplyFormData,
-  trainerApplySchema,
-} from "../../schemas/authSchema";
+
 import { useToast } from "../../context/ToastContext";
 import { submitTrainerApplication } from "../../services/authService";
 import {
@@ -15,6 +12,15 @@ import {
   checkTrainerApplicationStatus,
 } from "../../services/trainer/trainerService";
 import Footer from "../../components/shared/Footer";
+import {
+  TrainerApplyFormData,
+  trainerApplySchema,
+} from "../../schemas/trainerSchema";
+import { STATUS } from "../../constants/status.messges";
+import { INFO_MESSAGES } from "../../constants/info.messages";
+import { SUCCESS_MESSAGES } from "../../constants/success.messages";
+import { WARNING_MESSAGES } from "../../constants/warning.messages";
+import { ERR_MESSAGES } from "../../constants/error.messages";
 
 const TrainerApply = () => {
   const navigate = useNavigate();
@@ -37,23 +43,19 @@ const TrainerApply = () => {
 
     if (applicationStatus) {
       processedRef.current = true;
-      if (applicationStatus.status === "pending") {
+      if (applicationStatus.status === STATUS.PENDING) {
+        showToast(STATUS.INFO, INFO_MESSAGES.TRAINER_APPLICATION_UNDER_REVIEW);
+      } else if (applicationStatus.status === STATUS.APPROVED) {
         showToast(
-          "info",
-          "Your trainer application is currently under review."
-        );
-        // navigate("/")
-      } else if (applicationStatus.status === "approved") {
-        showToast(
-          "success",
-          "Your trainer application has been approved! Please log out and log in to access trainer functionalities.",
+          STATUS.SUCCESS,
+          SUCCESS_MESSAGES.TRAINER_APPLICATION_APPROVED,
           10000
         );
         navigate("/");
-      } else if (applicationStatus.status === "rejected") {
+      } else if (applicationStatus.status === STATUS.REJECTED) {
         showToast(
-          "warning",
-          "Previous Application Rejected , Please address the issue and apply again. "
+          STATUS.WARNING,
+          WARNING_MESSAGES.TRAINER_APPLICATION_REJECTED
         );
       }
     }
@@ -81,7 +83,7 @@ const TrainerApply = () => {
     if (files && documentProofs.length + files.length <= 3) {
       setDocumentProofs((prev) => [...prev, ...Array.from(files)]);
     } else {
-      showToast("warning", "Maximum 3 document proofs allowed");
+      showToast(STATUS.WARNING, WARNING_MESSAGES.MAX_DOCUMENT_PROOFS);
     }
   };
 
@@ -92,7 +94,7 @@ const TrainerApply = () => {
     if (files && certifications.length + files.length <= 5) {
       setCertifications((prev) => [...prev, ...Array.from(files)]);
     } else {
-      showToast("warning", "Maximum 5 certifications allowed");
+      showToast(STATUS.WARNING, WARNING_MESSAGES.MAX_CERTIFICATIONS);
     }
   };
 
@@ -101,7 +103,7 @@ const TrainerApply = () => {
     if (files && achievements.length + files.length <= 5) {
       setAchievements((prev) => [...prev, ...Array.from(files)]);
     } else {
-      showToast("warning", "Maximum 5 achievements allowed");
+      showToast(STATUS.WARNING, WARNING_MESSAGES.MAX_ACHIEVEMENTS);
     }
   };
 
@@ -122,8 +124,8 @@ const TrainerApply = () => {
     mutationFn: submitTrainerApplication,
     onSuccess: () => {
       showToast(
-        "success",
-        "Your trainer application has been submitted successfully! Our team will review your application.",
+        STATUS.SUCCESS,
+        SUCCESS_MESSAGES.TRAINER_APPLICATION_SUBMITED,
         10000
       );
       reset();
@@ -133,34 +135,30 @@ const TrainerApply = () => {
       navigate("/");
     },
     onError: (error) => {
-      console.error("Error submitting application:", error);
       if (axios.isAxiosError(error)) {
         if (error?.response?.status === 409) {
-          showToast("warning", error.response.data.message);
+          showToast(STATUS.WARNING, error.response.data.message);
         } else {
           showToast(
-            "error",
-            "There was an error submitting your application. Please try again."
+            STATUS.ERROR,
+            ERR_MESSAGES.TRAINER_APPLICATION_SUBMIT_ERROR
           );
         }
       } else {
-        showToast(
-          "error",
-          "There was an error submitting your application. Please try again."
-        );
+        showToast(STATUS.ERROR, ERR_MESSAGES.TRAINER_APPLICATION_SUBMIT_ERROR);
       }
     },
   });
 
   const onSubmit = (data: TrainerApplyFormData) => {
     if (documentProofs.length === 0) {
-      return showToast("warning", "Please upload at least one document proof");
+      return showToast(STATUS.WARNING, WARNING_MESSAGES.MIN_DOCUMENT_PROOFS);
     }
     if (certifications.length === 0) {
-      return showToast("warning", "Please upload at least one certification");
+      return showToast(STATUS.WARNING, WARNING_MESSAGES.MIN_CERTIFICATIONS);
     }
     if (achievements.length === 0) {
-      return showToast("warning", "Please upload at least one achievement");
+      return showToast(STATUS.WARNING, WARNING_MESSAGES.MIN_ACHIEVEMENTS);
     }
 
     const formData = new FormData();
@@ -196,7 +194,9 @@ const TrainerApply = () => {
             <h1 className="text-gray-800 font-semibold text-3xl mb-2">
               Become a Trainer
             </h1>
-            <p className="text-gray-600 text-lg">Apply to join our Fit-Core team.</p>
+            <p className="text-gray-600 text-lg">
+              Apply to join our Fit-Core team.
+            </p>
           </div>
 
           {/* Show rejection reason if status is rejected */}
@@ -204,10 +204,12 @@ const TrainerApply = () => {
             <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 mb-6 rounded-md">
               <p className="font-semibold">Application Rejected</p>
               <p className="text-sm">
-                <span className="font-medium">Reason:</span> {applicationStatus.reason}
+                <span className="font-medium">Reason:</span>{" "}
+                {applicationStatus.reason}
               </p>
               <p className="text-sm">
-                <span className="font-medium">Note:</span> Please address the issue and apply again below.
+                <span className="font-medium">Note:</span> Please address the
+                issue and apply again below.
               </p>
             </div>
           )}
@@ -219,7 +221,8 @@ const TrainerApply = () => {
                 Your Application is Under Review
               </p>
               <p className="text-sm">
-                <span className="font-medium">Note:</span> Please be patient, we will inform you about the status once it's updated.
+                <span className="font-medium">Note:</span> Please be patient, we
+                will inform you about the status once it's updated.
               </p>
               <button
                 type="button"
@@ -236,7 +239,10 @@ const TrainerApply = () => {
               <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
                 {/* Phone */}
                 <div>
-                  <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor="phone"
+                    className="block text-sm font-medium text-gray-700"
+                  >
                     Phone
                   </label>
                   <div className="mt-1">
@@ -248,13 +254,18 @@ const TrainerApply = () => {
                     />
                   </div>
                   {errors.phone && (
-                    <p className="text-red-500 text-xs mt-1">{errors.phone.message}</p>
+                    <p className="text-red-500 text-xs mt-1">
+                      {errors.phone.message}
+                    </p>
                   )}
                 </div>
 
                 {/* Specialization */}
                 <div>
-                  <label htmlFor="specialization" className="block text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor="specialization"
+                    className="block text-sm font-medium text-gray-700"
+                  >
                     Specialization
                   </label>
                   <div className="mt-1">
@@ -267,13 +278,18 @@ const TrainerApply = () => {
                     />
                   </div>
                   {errors.specialization && (
-                    <p className="text-red-500 text-xs mt-1">{errors.specialization.message}</p>
+                    <p className="text-red-500 text-xs mt-1">
+                      {errors.specialization.message}
+                    </p>
                   )}
                 </div>
 
                 {/* Years of Experience */}
                 <div>
-                  <label htmlFor="yearsOfExperience" className="block text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor="yearsOfExperience"
+                    className="block text-sm font-medium text-gray-700"
+                  >
                     Years of Experience
                   </label>
                   <div className="mt-1">
@@ -286,13 +302,18 @@ const TrainerApply = () => {
                     />
                   </div>
                   {errors.yearsOfExperience && (
-                    <p className="text-red-500 text-xs mt-1">{errors.yearsOfExperience.message}</p>
+                    <p className="text-red-500 text-xs mt-1">
+                      {errors.yearsOfExperience.message}
+                    </p>
                   )}
                 </div>
 
                 {/* About */}
                 <div>
-                  <label htmlFor="about" className="block text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor="about"
+                    className="block text-sm font-medium text-gray-700"
+                  >
                     About
                   </label>
                   <div className="mt-1">
@@ -305,13 +326,17 @@ const TrainerApply = () => {
                     />
                   </div>
                   {errors.about && (
-                    <p className="text-red-500 text-xs mt-1">{errors.about.message}</p>
+                    <p className="text-red-500 text-xs mt-1">
+                      {errors.about.message}
+                    </p>
                   )}
                 </div>
 
                 {/* Document Proofs */}
                 <div className="pt-4">
-                  <h2 className="text-lg font-medium text-gray-800 mb-2">Document Proofs</h2>
+                  <h2 className="text-lg font-medium text-gray-800 mb-2">
+                    Document Proofs
+                  </h2>
                   <div className="border border-gray-300 rounded-md p-4">
                     {documentProofs.length > 0 ? (
                       <div className="space-y-2">
@@ -320,7 +345,9 @@ const TrainerApply = () => {
                             key={index}
                             className="flex items-center justify-between bg-gray-100 p-2 rounded-md"
                           >
-                            <span className="text-gray-700 text-sm truncate">{file.name}</span>
+                            <span className="text-gray-700 text-sm truncate">
+                              {file.name}
+                            </span>
                             <button
                               type="button"
                               className="text-red-500 hover:text-red-700"
@@ -333,7 +360,9 @@ const TrainerApply = () => {
                       </div>
                     ) : (
                       <div className="text-center py-2">
-                        <p className="text-gray-500 text-sm">No documents uploaded.</p>
+                        <p className="text-gray-500 text-sm">
+                          No documents uploaded.
+                        </p>
                       </div>
                     )}
                     {documentProofs.length < 3 && (
@@ -342,7 +371,20 @@ const TrainerApply = () => {
                           htmlFor="documentProofs"
                           className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 cursor-pointer w-full justify-center"
                         >
-                          <svg className="-ml-1 mr-2 h-5 w-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0l-4 4m4-4v12"></path></svg>
+                          <svg
+                            className="-ml-1 mr-2 h-5 w-5 text-gray-500"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0l-4 4m4-4v12"
+                            ></path>
+                          </svg>
                           Upload Images
                         </label>
                         <input
@@ -353,7 +395,9 @@ const TrainerApply = () => {
                           className="hidden"
                           multiple
                         />
-                        <p className="text-gray-500 text-xs mt-1 text-center">Min 1, Max 3 images</p>
+                        <p className="text-gray-500 text-xs mt-1 text-center">
+                          Min 1, Max 3 images
+                        </p>
                       </div>
                     )}
                   </div>
@@ -361,7 +405,9 @@ const TrainerApply = () => {
 
                 {/* Certifications */}
                 <div>
-                  <h2 className="text-lg font-medium text-gray-800 mb-2">Certifications</h2>
+                  <h2 className="text-lg font-medium text-gray-800 mb-2">
+                    Certifications
+                  </h2>
                   <div className="border border-gray-300 rounded-md p-4">
                     {certifications.length > 0 ? (
                       <div className="space-y-2">
@@ -370,7 +416,9 @@ const TrainerApply = () => {
                             key={index}
                             className="flex items-center justify-between bg-gray-100 p-2 rounded-md"
                           >
-                            <span className="text-gray-700 text-sm truncate">{file.name}</span>
+                            <span className="text-gray-700 text-sm truncate">
+                              {file.name}
+                            </span>
                             <button
                               type="button"
                               className="text-red-500 hover:text-red-700"
@@ -383,7 +431,9 @@ const TrainerApply = () => {
                       </div>
                     ) : (
                       <div className="text-center py-2">
-                        <p className="text-gray-500 text-sm">No certifications uploaded.</p>
+                        <p className="text-gray-500 text-sm">
+                          No certifications uploaded.
+                        </p>
                       </div>
                     )}
                     {certifications.length < 5 && (
@@ -392,7 +442,20 @@ const TrainerApply = () => {
                           htmlFor="certifications"
                           className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 cursor-pointer w-full justify-center"
                         >
-                          <svg className="-ml-1 mr-2 h-5 w-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0l-4 4m4-4v12"></path></svg>
+                          <svg
+                            className="-ml-1 mr-2 h-5 w-5 text-gray-500"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0l-4 4m4-4v12"
+                            ></path>
+                          </svg>
                           Upload Images
                         </label>
                         <input
@@ -403,7 +466,9 @@ const TrainerApply = () => {
                           className="hidden"
                           multiple
                         />
-                        <p className="text-gray-500 text-xs mt-1 text-center">Min 1, Max 5 images</p>
+                        <p className="text-gray-500 text-xs mt-1 text-center">
+                          Min 1, Max 5 images
+                        </p>
                       </div>
                     )}
                   </div>
@@ -411,7 +476,9 @@ const TrainerApply = () => {
 
                 {/* Achievements */}
                 <div>
-                  <h2 className="text-lg font-medium text-gray-800 mb-2">Achievements</h2>
+                  <h2 className="text-lg font-medium text-gray-800 mb-2">
+                    Achievements
+                  </h2>
                   <div className="border border-gray-300 rounded-md p-4">
                     {achievements.length > 0 ? (
                       <div className="space-y-2">
@@ -420,7 +487,9 @@ const TrainerApply = () => {
                             key={index}
                             className="flex items-center justify-between bg-gray-100 p-2 rounded-md"
                           >
-                            <span className="text-gray-700 text-sm truncate">{file.name}</span>
+                            <span className="text-gray-700 text-sm truncate">
+                              {file.name}
+                            </span>
                             <button
                               type="button"
                               className="text-red-500 hover:text-red-700"
@@ -433,7 +502,9 @@ const TrainerApply = () => {
                       </div>
                     ) : (
                       <div className="text-center py-2">
-                        <p className="text-gray-500 text-sm">No achievements uploaded.</p>
+                        <p className="text-gray-500 text-sm">
+                          No achievements uploaded.
+                        </p>
                       </div>
                     )}
                     {achievements.length < 5 && (
@@ -442,7 +513,20 @@ const TrainerApply = () => {
                           htmlFor="achievements"
                           className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 cursor-pointer w-full justify-center"
                         >
-                          <svg className="-ml-1 mr-2 h-5 w-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0l-4 4m4-4v12"></path></svg>
+                          <svg
+                            className="-ml-1 mr-2 h-5 w-5 text-gray-500"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0l-4 4m4-4v12"
+                            ></path>
+                          </svg>
                           Upload Images
                         </label>
                         <input
@@ -453,7 +537,9 @@ const TrainerApply = () => {
                           className="hidden"
                           multiple
                         />
-                        <p className="text-gray-500 text-xs mt-1 text-center">Min 1, Max 5 images</p>
+                        <p className="text-gray-500 text-xs mt-1 text-center">
+                          Min 1, Max 5 images
+                        </p>
                       </div>
                     )}
                   </div>
@@ -466,7 +552,9 @@ const TrainerApply = () => {
                     disabled={mutation.isPending}
                     className="w-full py-3  bg-indigo-600 hover:bg-indigo-700 text-white font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                   >
-                    {mutation.isPending ? "Submitting..." : "Submit Application"}
+                    {mutation.isPending
+                      ? "Submitting..."
+                      : "Submit Application"}
                   </button>
                 </div>
               </form>

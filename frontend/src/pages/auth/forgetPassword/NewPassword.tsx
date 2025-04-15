@@ -13,6 +13,7 @@ import { AUTH_MESSAGES } from "../../../constants/auth.messages";
 import LoginBody from "../../../components/auth/LoginBody";
 import setPasswordImage from "../../../assets/images/calisthenics1.jpg";
 import Footer from "../../../components/shared/Footer";
+import { STATUS } from "../../../constants/status.messges";
 
 const NewPassword = () => {
   const location = useLocation();
@@ -37,10 +38,10 @@ const NewPassword = () => {
     mutationFn: resetPassword,
     onSuccess: () => {
       navigate("/login");
-      showToast("success", AUTH_MESSAGES.PASSWORD_RESET_SUCCESS);
+      showToast(STATUS.SUCCESS, AUTH_MESSAGES.PASSWORD_RESET_SUCCESS);
     },
     onError: () => {
-      showToast("error", AUTH_MESSAGES.SERVER_ERROR);
+      showToast(STATUS.ERROR, AUTH_MESSAGES.SERVER_ERROR);
       setServerError(AUTH_MESSAGES.SERVER_ERROR);
     },
   });

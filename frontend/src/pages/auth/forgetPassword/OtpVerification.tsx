@@ -10,6 +10,7 @@ import { type OtpFormData, otpSchema } from "../../../schemas/authSchema";
 import { verifyOtp, ResendOtp } from "../../../services/authService";
 import { useToast } from "../../../context/ToastContext";
 import Footer from "../../../components/shared/Footer";
+import { STATUS } from "../../../constants/status.messges";
 
 const OtpVerification: React.FC = () => {
   const location = useLocation();
@@ -42,14 +43,14 @@ const OtpVerification: React.FC = () => {
     onSuccess: (data) => {
       if (data.success) {
         navigate("/new-reset-password", { state: { email } });
-        showToast("success", AUTH_MESSAGES.OTP_SUCCESS);
+        showToast(STATUS.SUCCESS, AUTH_MESSAGES.OTP_SUCCESS);
       } else {
         setServerError(AUTH_MESSAGES.INVALID_OTP);
       }
     },
     onError: () => {
       setServerError(AUTH_MESSAGES.SERVER_ERROR);
-      showToast("error", AUTH_MESSAGES.SERVER_ERROR);
+      showToast(STATUS.ERROR, AUTH_MESSAGES.SERVER_ERROR);
     },
   });
 
@@ -74,7 +75,7 @@ const OtpVerification: React.FC = () => {
     setServerError("");
     setValue("otp", "");
     ResendOtp(email);
-    showToast("info", AUTH_MESSAGES.OTP_RESENT);
+    showToast(STATUS.INFO, AUTH_MESSAGES.OTP_RESENT);
   };
 
   const handleBoxClick = (index: number) => {

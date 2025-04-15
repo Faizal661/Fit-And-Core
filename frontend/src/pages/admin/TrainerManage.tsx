@@ -8,18 +8,16 @@ import {
 import { Trainer } from "../../types/trainer.type";
 import { z } from "zod";
 import Footer from "../../components/shared/Footer";
-const rejectReasonSchema = z
-  .string()
-  .min(10, "Reason must be at least 10 characters")
-  .max(500, "Reason cannot exceed 500 characters");
+import { rejectReasonSchema } from "../../schemas/trainerSchema";
+import { STATUS } from "../../constants/status.messges";
 
 const TrainerManage: React.FC = () => {
   const queryClient = useQueryClient();
   const [selectedTrainer, setSelectedTrainer] = useState<Trainer | null>(null);
   const [viewMode, setViewMode] = useState<"details" | null>(null);
   const [activeTab, setActiveTab] = useState<
-    "pending" | "approved" | "rejected"
-  >("pending");
+    STATUS.PENDING | STATUS.APPROVED | STATUS.REJECTED
+  >(STATUS.PENDING);
   const [currentImageUrl, setCurrentImageUrl] = useState<string | null>(null);
 
   const [showRejectModal, setShowRejectModal] = useState(false);
@@ -36,11 +34,11 @@ const TrainerManage: React.FC = () => {
   });
 
   const pendingTrainers =
-    trainers?.filter((trainer) => trainer.status === "pending") || [];
+    trainers?.filter((trainer) => trainer.status === STATUS.PENDING) || [];
   const approvedTrainers =
-    trainers?.filter((trainer) => trainer.status === "approved") || [];
+    trainers?.filter((trainer) => trainer.status === STATUS.APPROVED) || [];
   const rejectedTrainers =
-    trainers?.filter((trainer) => trainer.status === "rejected") || [];
+    trainers?.filter((trainer) => trainer.status === STATUS.REJECTED) || [];
 
   const approveMutation = useMutation({
     mutationFn: approveTrainer,
@@ -141,7 +139,7 @@ const TrainerManage: React.FC = () => {
                 ? "bg-blue-600 text-white"
                 : "bg-white text-gray-700 hover:bg-gray-100"
             }`}
-            onClick={() => setActiveTab("pending")}
+            onClick={() => setActiveTab(STATUS.PENDING)}
           >
             Pending Requests ({pendingTrainers.length})
           </button>
@@ -151,7 +149,7 @@ const TrainerManage: React.FC = () => {
                 ? "bg-green-600 text-white"
                 : "bg-white text-gray-700 hover:bg-gray-100"
             }`}
-            onClick={() => setActiveTab("approved")}
+            onClick={() => setActiveTab(STATUS.APPROVED)}
           >
             Approved Trainers ({approvedTrainers.length})
           </button>
@@ -161,7 +159,7 @@ const TrainerManage: React.FC = () => {
                 ? "bg-red-600 text-white"
                 : "bg-white text-gray-700 hover:bg-gray-100"
             }`}
-            onClick={() => setActiveTab("rejected")}
+            onClick={() => setActiveTab(STATUS.REJECTED)}
           >
             Rejected Applications ({rejectedTrainers.length})
           </button>

@@ -13,6 +13,7 @@ import axios from "axios";
 import UserSidebar from "../user/UserSideBar";
 import AdminSidebar from "../admin/AdminSideBar";
 import TrainerSidebar from "../trainer/TrainerSideBar";
+import { STATUS } from "../../constants/status.messges";
 
 const FloatButton = () => {
   const username = useSelector((state: RootState) => state.auth.user?.username);
@@ -38,15 +39,15 @@ const FloatButton = () => {
       await persistor.purge();
       navigate("/login");
       setSidebarOpen(!sidebarOpen);
-      showToast("success", AUTH_MESSAGES.LOGOUT_SUCCESS);
+      showToast(STATUS.SUCCESS, AUTH_MESSAGES.LOGOUT_SUCCESS);
     } catch (error) {
       dispatch(clearAuth());
       await persistor.purge();
       navigate("/login");
       if (axios.isAxiosError(error)) {
-        showToast("error", error.message);
+        showToast(STATUS.ERROR, error.message);
       } else {
-        showToast("warning", AUTH_MESSAGES.SESSION_EXPIRED);
+        showToast(STATUS.WARNING, AUTH_MESSAGES.SESSION_EXPIRED);
       }
     }
   };
