@@ -16,6 +16,7 @@ import { useToast } from "../../../context/ToastContext";
 import { useGoogleAuth } from "../../../hooks/useGoogleAuth";
 import axios from "axios";
 import Footer from "../../../components/shared/Footer";
+import { STATUS } from "../../../constants/status.messges";
 
 const UserLogin = () => {
   const navigate = useNavigate();
@@ -26,10 +27,10 @@ const UserLogin = () => {
 
   useEffect(() => {
     if (localStorage.getItem("sessionExpired")) {
-      showToast("warning", AUTH_MESSAGES.SESSION_EXPIRED);
+      showToast(STATUS.WARNING, AUTH_MESSAGES.SESSION_EXPIRED);
       localStorage.removeItem("sessionExpired");
     } else if (localStorage.getItem("blocked")) {
-      showToast("warning", "Your account is blocked. Please contact support.");
+      showToast(STATUS.WARNING, AUTH_MESSAGES.ACCOUNT_BLOCKED);
       localStorage.removeItem("blocked");
     }
   }, []);
@@ -55,7 +56,7 @@ const UserLogin = () => {
           accessToken: data.accessToken,
         })
       );
-      showToast("success", AUTH_MESSAGES.LOGIN_SUCCESS);
+      showToast(STATUS.SUCCESS, AUTH_MESSAGES.LOGIN_SUCCESS);
       navigate(`/${data.user.role}`);
     },
     onError: (error: Error) => {

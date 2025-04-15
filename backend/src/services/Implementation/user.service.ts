@@ -17,7 +17,10 @@ import bcrypt from "bcryptjs";
 import logger from "../../utils/logger.utils";
 import { CustomError } from "../../errors/CustomError";
 import { IUserModel } from "../../models/user.models";
-import { HttpResCode } from "../../constants/response.constants";
+import {
+  HttpResCode,
+  HttpResMsg,
+} from "../../constants/http-response.constants";
 import { IAuthRepository } from "../../repositories/Interface/IAuthRepository";
 import { FilterQuery } from "mongoose";
 
@@ -72,11 +75,14 @@ export default class UserService implements IUserService {
     const user = await this.userRepository.findById(new Types.ObjectId(userId));
 
     if (!user) {
-      throw new CustomError("User not found", HttpResCode.NOT_FOUND);
+      throw new CustomError(HttpResMsg.USER_NOT_FOUND, HttpResCode.NOT_FOUND);
     }
 
     if (user.role === "admin") {
-      throw new CustomError("Cannot block an admin", HttpResCode.FORBIDDEN);
+      throw new CustomError(
+        HttpResMsg.CAN_NOT_BLOCK_ADMIN,
+        HttpResCode.FORBIDDEN
+      );
     }
 
     const updatedUser = await this.userRepository.update(
@@ -86,7 +92,7 @@ export default class UserService implements IUserService {
 
     if (!updatedUser) {
       throw new CustomError(
-        "Failed to update user status",
+        HttpResMsg.FAILED_UPDATE_USER_STATUS,
         HttpResCode.INTERNAL_SERVER_ERROR
       );
     }
@@ -100,7 +106,7 @@ export default class UserService implements IUserService {
     );
 
     if (!user) {
-      throw new CustomError("User not found", HttpResCode.NOT_FOUND);
+      throw new CustomError(HttpResMsg.USER_NOT_FOUND, HttpResCode.NOT_FOUND);
     }
 
     return {
@@ -126,7 +132,7 @@ export default class UserService implements IUserService {
 
     if (updateData.username || updateData.password) {
       throw new CustomError(
-        "Username and password cannot be updated through this endpoint",
+        HttpResMsg.CAN_NOT_UPDATE_USERNAME_AND_PASSWORD,
         HttpResCode.BAD_REQUEST
       );
     }
@@ -134,10 +140,7 @@ export default class UserService implements IUserService {
     const updatedUser = await this.userRepository.update(objectId, updateData);
 
     if (!updatedUser) {
-      throw new CustomError(
-        "User not found or update failed",
-        HttpResCode.NOT_FOUND
-      );
+      throw new CustomError(HttpResMsg.USER_NOT_FOUND, HttpResCode.NOT_FOUND);
     }
 
     return {
@@ -163,7 +166,7 @@ export default class UserService implements IUserService {
 
     const currentUser = await this.userRepository.findById(objectId);
     if (!currentUser) {
-      throw new CustomError("User not found", HttpResCode.NOT_FOUND);
+      throw new CustomError(HttpResMsg.USER_NOT_FOUND, HttpResCode.NOT_FOUND);
     }
 
     let oldPublicId = null;
@@ -178,7 +181,7 @@ export default class UserService implements IUserService {
 
     if (!updatedUser) {
       throw new CustomError(
-        "User not found or update failed",
+        HttpResMsg.USER_NOT_FOUND,
         HttpResCode.NOT_FOUND
       );
     }
@@ -187,7 +190,7 @@ export default class UserService implements IUserService {
       try {
         await deleteFromCloudinary(oldPublicId);
       } catch (error) {
-        logger.error("Failed to delete old profile picture:", error);
+        logger.error(HttpResMsg.FAILED_DELETE_OLD_PROFILE, error);
       }
     }
 
@@ -213,7 +216,7 @@ export default class UserService implements IUserService {
     const user = await this.authRepository.findByEmail(email);
     if (!user) {
       throw new CustomError(
-        "User not found or update failed",
+        HttpResMsg.USER_NOT_FOUND,
         HttpResCode.NOT_FOUND
       );
     }
@@ -223,7 +226,7 @@ export default class UserService implements IUserService {
     );
     if (!isPasswordValid) {
       throw new CustomError(
-        "Current Password is invalid",
+        HttpResMsg.INVALID_CURRENT_PASSWORD,
         HttpResCode.BAD_REQUEST
       );
     }

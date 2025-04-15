@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import axios from "../../../config/axios.config";
 import { useNavigate } from "react-router-dom";
 import { Trainer } from "../../../types/trainer.type";
 import { Skeleton } from "@mui/material";
 import Footer from "../../../components/shared/Footer";
+import { getApprovedTrainers } from "../../../services/trainer/trainerService";
 
 const FindTrainersPage = () => {
   const navigate = useNavigate();
@@ -16,12 +16,7 @@ const FindTrainersPage = () => {
     // error,
   } = useQuery<Trainer[]>({
     queryKey: ["approvedTrainers", specialization],
-    queryFn: async () => {
-      const response = await axios.get("/trainer/trainer-approved", {
-        params: { specialization },
-      });
-      return response.data.approvedTrainers;
-    },
+    queryFn:() => getApprovedTrainers({specialization})
   });
 
   const handleSearch = (e: React.FormEvent) => {

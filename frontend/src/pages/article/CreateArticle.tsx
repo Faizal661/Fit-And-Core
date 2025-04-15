@@ -8,6 +8,9 @@ import { createTrainerArticle } from "../../services/article/articleService";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "../../context/ToastContext";
 import Footer from "../../components/shared/Footer";
+import { STATUS } from "../../constants/status.messges";
+import { SUCCESS_MESSAGES } from "../../constants/success.messages";
+import { WARNING_MESSAGES } from "../../constants/warning.messages";
 
 const CreateArticle = () => {
   const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
@@ -34,11 +37,11 @@ const CreateArticle = () => {
   const createArticleMutation = useMutation({
     mutationFn: createTrainerArticle,
     onSuccess: () => {
-      showToast("success", "Article created successfully!");
+      showToast(STATUS.SUCCESS, SUCCESS_MESSAGES.ARTICLE_CREATED);
       navigate("/trainer/articles");
     },
     onError: () => {
-      showToast("error", "Failed to create article.");
+      showToast(STATUS.ERROR, WARNING_MESSAGES.ARTICLE_CREATION_FAILED);
     },
   });
 

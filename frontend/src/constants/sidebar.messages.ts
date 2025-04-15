@@ -1,0 +1,36 @@
+export enum SIDEBAR_MESSAGES {
+  WELCOME = "Welcome back,",
+  DASHBOARD = "Dashboard",
+  HOME = "Home",
+  CHATS = "Chats",
+  NOTIFICATIONS = "Notifications",
+  SIGN_OUT = "Sign out",
+
+  ADMIN = "Administrator",
+  USER_MANAGEMENT = "User Management",
+  TRAINER_MANAGEMENT = " Trainer Management",
+  FINANCE_MANAGEMENT = "Finance Management",
+  REPORT_MANAGEMENT = "Report Management",
+  COMMUNITY_MANAGEMENT = "Community Management",
+
+  TRAINER = "Trainer",
+  SESSION_TODAY = "Sessions Today",
+  CERTIFIED_TRAINER = "Certified Trainer",
+  SESSION_MANAGEMENT = "Session Management",
+  TRAINEE_MANAGEMENT = "Trainee Management",
+  ARTICLE_MANAGEMENT = "Article Management",
+  UPCOMING_SESSIONS = "Upcoming Sessions",
+
+  USER = "User",
+  MEMBER = "Member",
+  CREDITS = "Credits",
+  BOOKINGS = "Bookings",
+  STREAK = "Streak: ",
+  PROFILE="Profile",
+  ARTICLES="Articles",
+  TRAINERS="Trainers",
+  COMMUNITIES="Communities",
+  PROGRESSION="Progression",
+  NUTRITION="Nutrition",
+  HISTORY="History"
+}

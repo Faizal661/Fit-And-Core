@@ -69,7 +69,7 @@ export const MarkdownEditor: React.FC<Props> = ({ value, onChange }) => {
           <button
             onClick={() => setPreview(!preview)}
             type="button"
-            className="text-black bg-white px-3 py-1 text-sm  "
+            className="text-black bg-white px-3 py-1 text-sm"
           >
             {preview ? "Edit" : "Preview"}
           </button>

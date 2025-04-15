@@ -3,7 +3,7 @@ import { container } from "tsyringe";
 import jwt from "jsonwebtoken";
 import { IJwtDecoded } from "../types/auth.types";
 import { CustomError } from "../errors/CustomError";
-import { HttpResCode } from "../constants/response.constants";
+import { HttpResCode, HttpResMsg } from "../constants/http-response.constants";
 import { env } from "../config/env.config";
 import { generateAccessToken } from "../utils/token.util";
 import { IAuthRepository } from "../repositories/Interface/IAuthRepository";
@@ -25,7 +25,7 @@ export const verifyAccessToken = async (
     const accessToken = req.headers.authorization?.split(" ")[1];
     if (!accessToken) {
       throw new CustomError(
-        "Access denied. No token provided.",
+        HttpResMsg.NO_ACCESS_TOKEN,
         HttpResCode.UNAUTHORIZED
       );
     }
@@ -43,7 +43,7 @@ export const verifyAccessToken = async (
         const refreshToken = req.cookies.refreshToken;
         if (!refreshToken) {
           throw new CustomError(
-            "Refresh token required.", 
+            HttpResMsg.REFRESH_TOKEN_REQUIRED, 
             HttpResCode.UNAUTHORIZED
           );
         }
@@ -59,7 +59,7 @@ export const verifyAccessToken = async (
           const user = await authRepository.findByEmail(decodedRefresh.email);
 
           if (!user) {
-            throw new CustomError("User not found.", HttpResCode.UNAUTHORIZED);
+            throw new CustomError(HttpResMsg.USER_NOT_FOUND, HttpResCode.UNAUTHORIZED);
           }
 
           const newAccessToken = generateAccessToken(user);
@@ -70,13 +70,13 @@ export const verifyAccessToken = async (
           next();
         } catch (refreshError) {
           throw new CustomError(
-            "Invalid or expired refresh token.",
+            HttpResMsg.INVALID_OR_EXPIRED_REFRESH_TOKEN,
             HttpResCode.UNAUTHORIZED
           );
         }
       } else {
         throw new CustomError(
-          "Invalid access token.",
+          HttpResMsg.INVALID_ACCESS_TOKEN,
           HttpResCode.UNAUTHORIZED
         );
       }

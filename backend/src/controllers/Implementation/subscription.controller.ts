@@ -3,7 +3,10 @@ import { inject, injectable } from "tsyringe";
 import { ISubscriptionController } from "../Interface/ISubscriptionController";
 import { ISubscriptionService } from "../../services/Interface/ISubscriptionService";
 import { sendResponse } from "../../utils/send-response";
-import { HttpResCode, HttpResMsg } from "../../constants/response.constants";
+import {
+  HttpResCode,
+  HttpResMsg,
+} from "../../constants/http-response.constants";
 import { CustomError } from "../../errors/CustomError";
 
 @injectable()
@@ -55,10 +58,9 @@ export class SubscriptionController implements ISubscriptionController {
   ): Promise<void> {
     try {
       const { session_id } = req.query;
-
       if (!session_id) {
         throw new CustomError(
-          "Session ID is required",
+          HttpResMsg.SESSION_ID_REQUIRED,
           HttpResCode.BAD_REQUEST
         );
       }
@@ -85,7 +87,7 @@ export class SubscriptionController implements ISubscriptionController {
 
       if (!sig) {
         throw new CustomError(
-          "Missing Stripe signature",
+          HttpResMsg.STRIPE_SIGNATURE_MISSING,
           HttpResCode.BAD_REQUEST
         );
       }
@@ -93,9 +95,9 @@ export class SubscriptionController implements ISubscriptionController {
       await this.subscriptionService.processWebhookEvent(req.body, sig);
       res.status(200).send();
     } catch (error) {
-      console.error("Webhook error:", error);
-      // Still return 200 to Stripe to prevent retries for known errors
+      console.error(HttpResMsg.WEBHOOK_ERROR, error);
       if (error instanceof CustomError) {
+        // Still return 200 to Stripe to prevent retries for known errors
         res.status(200).send();
       } else {
         next(error);

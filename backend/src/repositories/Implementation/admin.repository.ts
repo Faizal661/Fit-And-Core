@@ -22,12 +22,12 @@ export class AdminRepository
     year: number,
     month: number
   ): Promise<number> {
-    const firstDayOfMonth = new Date(year, month - 1, 1); 
+    const firstDayOfMonth = new Date(year, month - 1, 1);
     const lastDayOfMonth = new Date(year, month, 0);
-  
+
     const count = await this.model.countDocuments({
       [field]: value,
-      createdAt: { $gte: firstDayOfMonth, $lte: lastDayOfMonth }, 
+      createdAt: { $gte: firstDayOfMonth, $lte: lastDayOfMonth },
     });
     return count;
   }
@@ -42,7 +42,7 @@ export class AdminRepository
           createdAt: {
             $gte: new Date(
               new Date().getFullYear(),
-              new Date().getMonth()-12,
+              new Date().getMonth() - 12,
               1
             ),
           },
@@ -78,7 +78,6 @@ export class AdminRepository
       [key: string]: MonthlyDataEntry;
     } = {};
 
-
     const months = [
       "Jan",
       "Feb",
@@ -97,13 +96,12 @@ export class AdminRepository
     const currentDate = new Date();
     let currentMonth = currentDate.getMonth();
     let currentYear = currentDate.getFullYear();
-    
 
     for (let i = 0; i < 12; i++) {
       const monthName = months[currentMonth];
       const key = `${monthName}-${currentYear}`;
       formattedData[key] = { users: 0, trainers: 0 };
-    
+
       currentMonth--;
       if (currentMonth < 0) {
         currentMonth = 11; // December
@@ -116,15 +114,13 @@ export class AdminRepository
       const key = `${monthName}-${item.year}`;
       if (formattedData[key]) {
         const entry = formattedData[key];
-        if (item.role === 'user') {
+        if (item.role === "user") {
           entry.users = item.count;
-        } else if (item.role === 'trainer') {
+        } else if (item.role === "trainer") {
           entry.trainers = item.count;
         }
       }
     });
-
-
 
     const outputArray: {
       name: string;

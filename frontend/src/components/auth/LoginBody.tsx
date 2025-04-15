@@ -10,9 +10,8 @@ interface LoginBodyProps {
 
 const LoginBody: React.FC<LoginBodyProps> = ({ children, imageSrc, welcomeMessage }) => {
   return (
-    <div className="h-screen overflow-hidden"> {/* Added h-screen and overflow-hidden to the main container */}
-      <div className="flex h-full"> {/* Changed h-screen to h-full for the flex container */}
-        {/* Left Side Image */}
+    <div className="h-screen overflow-hidden"> 
+      <div className="flex h-full"> 
         <div className="w-1/2 bg-gray-200 items-center justify-center hidden md:flex">
           <img
             src={imageSrc}
@@ -21,9 +20,7 @@ const LoginBody: React.FC<LoginBodyProps> = ({ children, imageSrc, welcomeMessag
           />
         </div>
 
-        {/* Right Side with Blurred Background */}
         <div className="relative w-full md:w-1/2 flex flex-col justify-center items-center p-10 text-white">
-          {/* Blurred Background Image */}
           <div
             className="absolute inset-0 z-0"
             style={{ backgroundImage: `url(${LoginImage})` }}

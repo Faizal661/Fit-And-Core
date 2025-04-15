@@ -1,7 +1,8 @@
-import { useForm } from "react-hook-form";
-import React, { useRef, useState } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  fetchUserProfile,
+  updateUserProfile,
+  updateProfilePicture,
+} from "../../services/user/userProfile";
 import {
   UserProfileFormData,
   userProfileSchema,
@@ -10,18 +11,20 @@ import {
   ChangePasswordFormData,
   changePasswordSchema,
 } from "../../schemas/authSchema";
-import { changePassword } from "../../services/user/userProfile";
-import {
-  fetchUserProfile,
-  updateUserProfile,
-  updateProfilePicture,
-} from "../../services/user/userProfile";
+import { STATUS } from "../../constants/status.messges";
+import { ERR_MESSAGES } from "../../constants/error.messages";
+import { AUTH_MESSAGES } from "../../constants/auth.messages";
+import { SUCCESS_MESSAGES } from "../../constants/success.messages";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "../../context/ToastContext";
 import { formatDateForInput } from "../../utils/dateFormat";
-import { AUTH_MESSAGES } from "../../constants/auth.messages";
+import { changePassword } from "../../services/user/userProfile";
+import React, { useRef, useState } from "react";
 import axios from "axios";
-import Footer from "../../components/shared/Footer";
 import Loader from "../../components/shared/Loader";
+import Footer from "../../components/shared/Footer";
 
 const UserProfile = () => {
   const queryClient = useQueryClient();
@@ -75,13 +78,13 @@ const UserProfile = () => {
     mutationFn: updateUserProfile,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["userProfile"] });
-      showToast("success", "Profile updated successfully!");
+      showToast(STATUS.SUCCESS, SUCCESS_MESSAGES.PROFILE_UPDATED);
     },
     onError: (error) => {
       if (axios.isAxiosError(error)) {
-        showToast("error", error.response?.data.message);
+        showToast(STATUS.ERROR, error.response?.data.message);
       } else {
-        showToast("error", AUTH_MESSAGES.SERVER_ERROR);
+        showToast(STATUS.ERROR, AUTH_MESSAGES.SERVER_ERROR);
       }
     },
   });
@@ -89,14 +92,14 @@ const UserProfile = () => {
   const passwordMutation = useMutation({
     mutationFn: changePassword,
     onSuccess: () => {
-      showToast("success", "Password changed successfully!");
+      showToast(STATUS.SUCCESS, SUCCESS_MESSAGES.PASSWORD_CHANGED);
       resetPassword();
     },
     onError: (error) => {
       if (axios.isAxiosError(error)) {
-        showToast("error", error.response?.data.message);
+        showToast(STATUS.ERROR, error.response?.data.message);
       } else {
-        showToast("error", AUTH_MESSAGES.SERVER_ERROR);
+        showToast(STATUS.ERROR, AUTH_MESSAGES.SERVER_ERROR);
       }
     },
   });
@@ -105,13 +108,13 @@ const UserProfile = () => {
     mutationFn: updateProfilePicture,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["userProfile"] });
-      showToast("success", "Profile picture updated successfully!");
+      showToast(STATUS.SUCCESS, SUCCESS_MESSAGES.PROFILE_PICTURE_UPDATED);
     },
     onError: (error) => {
       if (axios.isAxiosError(error)) {
-        showToast("error", error.response?.data.message);
+        showToast(STATUS.ERROR, error.response?.data.message);
       } else {
-        showToast("error", AUTH_MESSAGES.SERVER_ERROR);
+        showToast(STATUS.ERROR, AUTH_MESSAGES.SERVER_ERROR);
       }
     },
   });
@@ -152,12 +155,12 @@ const UserProfile = () => {
     if (!file) return;
 
     if (!file.type.startsWith("image/")) {
-      showToast("error", "Please upload an image file");
+      showToast(STATUS.ERROR, ERR_MESSAGES.NOT_AN_IMAGE_ERROR);
       return;
     }
 
     if (file.size > 5 * 1024 * 1024) {
-      showToast("error", "Image size should be less than 5MB");
+      showToast(STATUS.ERROR,ERR_MESSAGES.MAX_IMAGE_SIZE_ERROR);
       return;
     }
 

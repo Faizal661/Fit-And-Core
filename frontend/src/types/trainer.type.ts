@@ -17,3 +17,9 @@ export interface Trainer {
   createdAt: string;
   updatedAt: string;
 }
+
+
+export interface ApplicationStatus {
+  status: "none" | "pending" | "approved" | "rejected";
+  reason?: string;
+}

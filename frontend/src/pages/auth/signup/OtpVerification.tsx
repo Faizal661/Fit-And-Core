@@ -16,6 +16,7 @@ import {
 } from "../../../services/authService";
 import { useToast } from "../../../context/ToastContext";
 import Footer from "../../../components/shared/Footer";
+import { STATUS } from "../../../constants/status.messges";
 
 const SignUpOtpVerification = () => {
   const navigate = useNavigate();
@@ -67,7 +68,7 @@ const SignUpOtpVerification = () => {
     },
     onError: () => {
       setServerError(AUTH_MESSAGES.SERVER_ERROR);
-      showToast("error", AUTH_MESSAGES.SERVER_ERROR);
+      showToast(STATUS.ERROR, AUTH_MESSAGES.SERVER_ERROR);
     },
   });
 
@@ -76,10 +77,10 @@ const SignUpOtpVerification = () => {
     onSuccess: () => {
       localStorage.removeItem("registrationData");
       navigate("/login");
-      showToast("success", AUTH_MESSAGES.ACCOUNT_CREATED);
+      showToast(STATUS.SUCCESS, AUTH_MESSAGES.ACCOUNT_CREATED);
     },
     onError: () => {
-      showToast("error", AUTH_MESSAGES.SERVER_ERROR);
+      showToast(STATUS.ERROR, AUTH_MESSAGES.SERVER_ERROR);
       setServerError(AUTH_MESSAGES.SERVER_ERROR);
     },
   });
@@ -105,7 +106,7 @@ const SignUpOtpVerification = () => {
     setServerError("");
     setValue("otp", "");
     ResendOtp(registrationData.email);
-    showToast("info", AUTH_MESSAGES.OTP_RESENT);
+    showToast(STATUS.INFO, AUTH_MESSAGES.OTP_RESENT);
   };
 
   const handleBoxClick = (index: number) => {

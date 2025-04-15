@@ -10,6 +10,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { EmailFormData, emailSchema } from "../../../schemas/authSchema";
 import axios from "axios";
 import Footer from "../../../components/shared/Footer";
+import { STATUS } from "../../../constants/status.messges";
 
 const EmailVerify = () => {
   const navigate = useNavigate();
@@ -29,13 +30,13 @@ const EmailVerify = () => {
       if (data.isValid) {
         navigate("/otp-verify", { state: { email: data.email } });
       } else {
-        showToast("error", AUTH_MESSAGES.INVALID_EMAIL);
+        showToast(STATUS.ERROR, AUTH_MESSAGES.INVALID_EMAIL);
       }
     },
     onError: (error) => {
       if (axios.isAxiosError(error)) {
         if (error.response?.status === 404) {
-          showToast("error", AUTH_MESSAGES.INVALID_EMAIL);
+          showToast(STATUS.ERROR, AUTH_MESSAGES.INVALID_EMAIL);
         } else {
           showToast(
             "error",

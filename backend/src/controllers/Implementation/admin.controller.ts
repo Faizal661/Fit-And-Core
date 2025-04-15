@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { inject, injectable } from "tsyringe";
-import { HttpResCode, HttpResMsg } from "../../constants/response.constants";
+import { HttpResCode, HttpResMsg } from "../../constants/http-response.constants";
 import { IAdminController } from "../Interface/IAdminController";
 import { IAdminService } from "../../services/Interface/IAdminService";
 import { sendResponse } from "../../utils/send-response";
