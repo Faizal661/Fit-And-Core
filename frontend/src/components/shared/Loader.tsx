@@ -18,7 +18,7 @@ const StyledWrapper = styled.div`
     background: conic-gradient(
       from 120deg at 50% 64%,
       #0000,
-      #fff 1deg 120deg,
+      #666666 1deg 120deg,
       #0000 121deg
     );
     animation: l27-0 1.5s infinite cubic-bezier(0.3, 1, 0, 1);

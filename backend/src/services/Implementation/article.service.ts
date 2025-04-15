@@ -11,7 +11,7 @@ import { HttpResCode, HttpResMsg } from "../../constants/response.constants";
 import { CustomError } from "../../errors/CustomError";
 
 @injectable()
-export default class articleService implements IArticleService {
+export default class ArticleService implements IArticleService {
   constructor(
     @inject("ArticleRepository") private articleRepository: IArticleRepository,
     @inject("UserRepository") private userRepository: IUserRepository

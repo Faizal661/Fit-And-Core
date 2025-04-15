@@ -19,7 +19,7 @@ const ArticleFullView = () => {
   const articles = state?.articles || [];
   const article = articles.find((a: Article) => a._id === id);
 
-  if (!article) return <PageNotFound />;
+  if (!article) return <PageNotFound message="Article not found." linkText="Browse other articles" linkTo="/articles" />;
 
   const userId = useSelector((state: RootState) => state.auth.user?.id || "");
   let isUpvoted = article.upvotes.includes(userId);
@@ -46,11 +46,11 @@ const ArticleFullView = () => {
 
   return (
     <div>
-      <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg pt-16">
+      <div className="max-w-4xl mx-auto p-6 bg-white pt-16">
         <img
           src={article.thumbnail}
           alt={article.title}
-          className="w-full  object-cover rounded-t-lg mb-4"
+          className="w-full  object-cover mb-4"
         />
         <div className="flex items-center justify-between mb-8">
           <span className="text-md font-medium text-gray-800">
@@ -81,7 +81,7 @@ const ArticleFullView = () => {
           {article.tags.map((tag: string, index: number) => (
             <span
               key={index}
-              className="text-sm bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded-full"
+              className="text-sm bg-blue-100 border-1 border-slate-400 text-blue-800 px-1.5 py-0.5"
             >
               {tag}
             </span>

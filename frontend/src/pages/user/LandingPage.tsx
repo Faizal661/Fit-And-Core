@@ -112,7 +112,7 @@ const LandingPage = () => {
             Get exclusive workouts from professional trainers
           </p>
           <Link
-            to="/workouts"
+            to="/find-trainers"
             className="px-8 py-3 bg-white text-gray-800 hover:bg-gray-100 transition-colors"
           >
             Let's Go

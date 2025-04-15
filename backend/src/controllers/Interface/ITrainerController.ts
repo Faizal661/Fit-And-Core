@@ -9,4 +9,5 @@ export interface ITrainerController {
   getTrainerApplications(req: Request, res: Response, next: NextFunction): Promise<void>;
   getApprovedTrainers(req: Request, res: Response, next: NextFunction): Promise<void>;
   getOneTrainerDetails(req: Request, res: Response, next: NextFunction): Promise<void>;
+  subscribedTrainersDetails(req: Request, res: Response, next: NextFunction): Promise<void>;
 }

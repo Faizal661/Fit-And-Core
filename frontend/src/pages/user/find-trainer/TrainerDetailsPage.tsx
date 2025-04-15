@@ -1,17 +1,26 @@
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import axios from "../../../config/axios.config";
+import { useMutation } from "@tanstack/react-query";
 import { Trainer } from "../../../types/trainer.type";
 import { Skeleton } from "@mui/material";
+import { useToast } from "../../../context/ToastContext";
+import axios from "../../../config/axios.config";
 import Footer from "../../../components/shared/Footer";
+import PageNotFound from "../../../components/shared/PageNotFound";
+import { subscriptionPlans } from "../../../types/subscription.type";
+import { loadStripe } from "@stripe/stripe-js";
+import { createCheckoutSession } from "../../../services/stripe/subscriptionPlan";
+
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PK);
 
 const TrainerDetailsPage = () => {
   const { trainerId } = useParams<{ trainerId: string }>();
+  const { showToast } = useToast();
 
   const {
     data: trainer,
     isLoading,
-    error,
+    // error,
   } = useQuery<Trainer>({
     queryKey: ["trainer", trainerId],
     queryFn: async () => {
@@ -20,20 +29,98 @@ const TrainerDetailsPage = () => {
     },
   });
 
-  if (!trainer)
+  const checkoutMutation = useMutation({
+    mutationFn: createCheckoutSession,
+    onSuccess: async (data) => {
+      const stripe = await stripePromise;
+      await stripe?.redirectToCheckout({
+        sessionId: data.stripeSessionId,
+      });
+    },
+    onError: (error) => {
+      console.error("Error processing payment:", error);
+      showToast("error", "Payment system error. Please try again.");
+    },
+  });
+
+  if (isLoading) {
     return (
-      <div className="min-h-screen pt-16 min-w-4xl mx-auto">
-        {" "}
-        <h1 className="text-3xl font-bold mb-6">Trainer Details</h1>
-        <p className="text-xl  mb-6">Trainer not found</p>{" "}
+      <div className="min-h-screen bg-white p-8 pt-16">
+        <div className="max-w-3xl mx-auto">
+          <div className="space-y-6 pt-16">
+            <Skeleton height={120} animation="wave" />
+            <Skeleton height={220} animation="wave" />
+            <Skeleton height={120} animation="wave" />
+          </div>
+        </div>
       </div>
     );
+  }
+
+  if (!trainer) {
+    return trainerId?.length === 24  ? (
+      <PageNotFound
+        message="Failed to load trainer data."
+        linkText="View all available trainers"
+        linkTo="/find-trainers"
+      />
+    ) : (
+      <PageNotFound
+        message="No Trainer Found"
+        linkText="View all available trainers"
+        linkTo="/find-trainers"
+      />
+    );
+  }
 
   const subscriptionPlans = [
-    { duration: "1 Month", amount: "₹1500", savings: 0 },
-    { duration: "6 Months", amount: "₹7500", savings: 1500 },
-    { duration: "12 Months", amount: "₹13500", savings: 4500 },
+    { duration: "1 Month", amount: "₹1500", amountInPaise: 150000, savings: 0 },
+    {
+      duration: "6 Months",
+      amount: "₹7500",
+      amountInPaise: 750000,
+      savings: 1500,
+    },
+    {
+      duration: "12 Months",
+      amount: "₹13500",
+      amountInPaise: 1350000,
+      savings: 4500,
+    },
   ];
+
+  const features = [
+    "Personalized training",
+    "Nutrition advice",
+    "Progress tracking",
+    "Priority support",
+  ];
+
+  const handleSubscription = (plan: subscriptionPlans) => {
+    checkoutMutation.mutate({
+      trainerId: trainer._id,
+      planDuration: plan.duration,
+      amountInPaise: plan.amountInPaise,
+      planName: `${trainer.username} - ${plan.duration} Training Plan`,
+    });
+  };
+
+  const FeatureItem = ({ text }: { text: string }) => (
+    <div className="flex items-start">
+      <svg
+        className="w-4 h-4 text-green-500 mt-0.5 mr-2 flex-shrink-0"
+        fill="currentColor"
+        viewBox="0 0 20 20"
+      >
+        <path
+          fillRule="evenodd"
+          d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+          clipRule="evenodd"
+        />
+      </svg>
+      <span className="text-sm text-gray-600">{text}</span>
+    </div>
+  );
 
   return (
     <div>
@@ -53,7 +140,7 @@ const TrainerDetailsPage = () => {
                   <img
                     src={trainer.profilePicture}
                     alt={`${trainer.username}'s profile`}
-                    className="w-16 h-16 rounded-full object-cover"
+                    className="w-16 h-16 rounded-full border-1 border-slate-300 object-cover"
                   />
                 )}
                 <h2 className="text-lg">{trainer.username}</h2>
@@ -79,7 +166,7 @@ const TrainerDetailsPage = () => {
                 <div className="flex">
                   <span className="text-gray-400 text-sm w-36">Experience</span>
                   <span className="text-gray-600 text-sm">
-                    {trainer.yearsOfExperience} years
+                    {trainer.yearsOfExperience}
                   </span>
                 </div>
                 <div className="flex">
@@ -168,106 +255,51 @@ const TrainerDetailsPage = () => {
                   <div>
                     <h3 className="text-base mb-6">Subscription plans</h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                      {subscriptionPlans.map((plan, index) => {
-                        return (
-                          <div
-                            key={index}
-                            className="border border-slate-300 rounded-lg p-6 hover:shadow-md transition-shadow relative overflow-hidden"
-                          >
-                            {index === 1 && (
-                              <div className="absolute top-0 right-0 bg-green-500 text-white text-xs py-1 px-3 rounded-bl-lg">
-                                Popular
-                              </div>
-                            )}
-                            <h4 className="font-medium text-base mb-2">
-                              {plan.duration}
-                            </h4>
-                            <div className="mb-2">
-                              <span className="text-xl font-bold text-gray-800">
-                                {plan.amount}
-                              </span>
+                      {subscriptionPlans.map((plan, index) => (
+                        <div
+                          key={index}
+                          className="border border-slate-300 rounded-lg p-6 hover:shadow-md transition-shadow relative overflow-hidden"
+                        >
+                          {index === 1 && (
+                            <div className="absolute top-0 right-0 bg-green-500 text-white text-xs py-1 px-3 rounded-bl-lg">
+                              Popular
                             </div>
+                          )}
 
-                            {
-                              <div className="mb-4 bg-green-50 text-green-700 text-xs font-medium py-1 px-2 rounded inline-block">
-                                {plan.savings > 0 && ` Save ₹${plan.savings}`}
-                              </div>
-                            }
+                          <h4 className="font-medium text-base mb-2">
+                            {plan.duration}
+                          </h4>
 
-                            <div className="space-y-2 mb-6">
-                              <div className="flex items-start">
-                                <svg
-                                  className="w-4 h-4 text-green-500 mt-0.5 mr-2 flex-shrink-0"
-                                  fill="currentColor"
-                                  viewBox="0 0 20 20"
-                                >
-                                  <path
-                                    fillRule="evenodd"
-                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                    clipRule="evenodd"
-                                  />
-                                </svg>
-                                <span className="text-sm text-gray-600">
-                                  Personalized training
-                                </span>
-                              </div>
-                              <div className="flex items-start">
-                                <svg
-                                  className="w-4 h-4 text-green-500 mt-0.5 mr-2 flex-shrink-0"
-                                  fill="currentColor"
-                                  viewBox="0 0 20 20"
-                                >
-                                  <path
-                                    fillRule="evenodd"
-                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                    clipRule="evenodd"
-                                  />
-                                </svg>
-                                <span className="text-sm text-gray-600">
-                                  Nutrition advice
-                                </span>
-                              </div>
-                              <div className="flex items-start">
-                                <svg
-                                  className="w-4 h-4 text-green-500 mt-0.5 mr-2 flex-shrink-0"
-                                  fill="currentColor"
-                                  viewBox="0 0 20 20"
-                                >
-                                  <path
-                                    fillRule="evenodd"
-                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                    clipRule="evenodd"
-                                  />
-                                </svg>
-                                <span className="text-sm text-gray-600">
-                                  Progress tracking
-                                </span>
-                              </div>
-                              <div className="flex items-start">
-                                <svg
-                                  className="w-4 h-4 text-green-500 mt-0.5 mr-2 flex-shrink-0"
-                                  fill="currentColor"
-                                  viewBox="0 0 20 20"
-                                >
-                                  <path
-                                    fillRule="evenodd"
-                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                    clipRule="evenodd"
-                                  />
-                                </svg>
-                                <span className="text-sm text-gray-600">
-                                  Priority support
-                                </span>
-                              </div>
-                            </div>
-                            <button
-                              className={`w-full py-2 px-4 rounded text-sm font-medium hover:bg-green-500 hover:text-white bg-slate-100 text-gray-800 transition-colors`}
-                            >
-                              Choose plan
-                            </button>
+                          <div className="mb-2">
+                            <span className="text-xl font-bold text-gray-800">
+                              {plan.amount}
+                            </span>
                           </div>
-                        );
-                      })}
+
+                          {
+                            <div className="mb-4 bg-green-50 text-green-700 text-xs font-medium py-1 px-2 rounded inline-block">
+                              {plan.savings > 0 && `Save ₹${plan.savings}`}
+                            </div>
+                          }
+
+                          <div className="space-y-2 mb-6">
+                            {features.map((feature, idx) => (
+                              <FeatureItem key={idx} text={feature} />
+                            ))}
+                          </div>
+                          <button
+                            disabled={checkoutMutation.isPending}
+                            className={`w-full py-2 px-4 rounded text-sm font-medium hover:bg-green-500 hover:text-white bg-slate-100 text-gray-800 transition-colors ${
+                              checkoutMutation.isPending
+                                ? "cursor-progress"
+                                : "hover:cursor-pointer"
+                            }`}
+                            onClick={() => handleSubscription(plan)}
+                          >
+                            Choose plan
+                          </button>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 )}

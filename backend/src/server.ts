@@ -24,11 +24,15 @@ import adminRoutes from "./routes/admin.routes";
 import userRoutes from "./routes/user.routes.ts";
 import trainerRoutes from "./routes/trainer.routes.ts";
 import articleRoutes from "./routes/article.routes.ts"
+import { subscriptionRoutes, webhookRoutes } from "./routes/subscription.routes.ts"
 
 
 const app = express();
 
 const PORT = env.PORT || 5000;
+
+// For handling stripe webhooks, need raw, unparsed reqeust body to verify signature.
+app.use("/api/subscription", webhookRoutes);
 
 app.use(cookieParser());
 app.use(express.json());
@@ -49,10 +53,11 @@ app.use("/api/user", userRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/trainer", trainerRoutes);
 app.use("/api/article", articleRoutes);
+app.use("/api/subscription", subscriptionRoutes);
 
 // Error handling middlewares
 app.use((req, res, next) => {
-  next(new CustomError(`Route ${req.originalUrl} not found`,HttpResCode.NOT_FOUND));
+  next(new CustomError(`Route "${req.originalUrl}" not found`,HttpResCode.NOT_FOUND));
 });
 app.use(errorHandler); 
 

@@ -5,7 +5,7 @@ import { updateToken, clearAuth } from "../redux/slices/authSlice";
 import { AUTH_MESSAGES } from "../constants/auth.messages";
 
 const api = axios.create({
-  baseURL: `${import.meta.env.VITE_API_URL}/api`,
+  baseURL: `${import.meta.env.VITE_API_URL}`,
   withCredentials: true,
   timeout: 10000,
 });
@@ -62,7 +62,7 @@ api.interceptors.response.use(
 
     if (error.response?.status === 401) {
       console.error(AUTH_MESSAGES.SESSION_EXPIRED);
-      localStorage.setItem("sessionExpired", "true");
+      // localStorage.setItem("sessionExpired", "true");
       store.dispatch(clearAuth());
       return Promise.reject(error);
     }

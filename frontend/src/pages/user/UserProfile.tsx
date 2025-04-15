@@ -21,6 +21,7 @@ import { formatDateForInput } from "../../utils/dateFormat";
 import { AUTH_MESSAGES } from "../../constants/auth.messages";
 import axios from "axios";
 import Footer from "../../components/shared/Footer";
+import Loader from "../../components/shared/Loader";
 
 const UserProfile = () => {
   const queryClient = useQueryClient();
@@ -170,15 +171,7 @@ const UserProfile = () => {
     fileInputRef.current?.click();
   };
 
-  // Loading and Error States
-  if (isLoading)
-    return (
-      <div className="h-screen bg-slate-700 flex justify-center items-center text-4xl font-bold">
-        <div className="text-center ">
-          <span className="ml-2">Loading profile...</span>
-        </div>
-      </div>
-    );
+  if (isLoading) return <Loader />;
 
   if (error)
     return (
@@ -191,8 +184,8 @@ const UserProfile = () => {
 
   return (
     <div>
-      <div className="min-h-screen bg-slate-700 flex flex-col items-center p-4 py-8">
-        <h1 className="text-white text-4xl mb-2 capitalize  mb-6">
+      <div className="min-h-screen text-slate-900 flex flex-col items-center p-4 py-8">
+        <h1 className="text-4xl mb-2 capitalize  mb-6">
           {userData?.username || "User Profile"}
         </h1>
 
@@ -230,11 +223,11 @@ const UserProfile = () => {
           />
 
           {profilePictureMutation.isPending && (
-            <div className="mt-2 text-white text-sm">Uploading...</div>
+            <div className="mt-2  text-sm">Uploading...</div>
           )}
         </div>
 
-        <div className="w-full max-w-md  text-white">
+        <div className="w-full max-w-md  ">
           {/* Navigation between Profile and Password Sections */}
           <div className="flex mb-6">
             <button
@@ -263,15 +256,15 @@ const UserProfile = () => {
           <div className="mb-6 border-b border-slate-400 pb-4">
             <div className="mb-4">
               <p className="text-xs  mb-1">USERNAME</p>
-              <p className="text-white">{userData?.username}</p>
+              <p className="">{userData?.username}</p>
             </div>
             <div className="mb-4">
               <p className="text-xs  mb-1">EMAIL</p>
-              <p className="text-white">{userData?.email}</p>
+              <p className="">{userData?.email}</p>
             </div>
             <div className="mb-4">
               <p className="text-xs  mb-1">JOINED DATE</p>
-              <p className="text-white">
+              <p className="">
                 {new Date(userData?.joinedDate).toLocaleDateString()}
               </p>
             </div>
@@ -290,7 +283,7 @@ const UserProfile = () => {
                 <input
                   type="text"
                   {...registerProfile("gender")}
-                  className="w-full bg-transparent border-b  text-white pb-1 focus:outline-none"
+                  className="w-full bg-transparent border-b   pb-1 focus:outline-none"
                 />
                 {profileErrors.gender && (
                   <p className="text-red-400 text-xs mt-1">
@@ -304,7 +297,7 @@ const UserProfile = () => {
                 <input
                   type="date"
                   {...registerProfile("dateOfBirth")}
-                  className="w-full bg-transparent border-b  text-white pb-1 focus:outline-none"
+                  className="w-full bg-transparent border-b   pb-1 focus:outline-none"
                 />
                 {profileErrors.dateOfBirth && (
                   <p className="text-red-400 text-xs mt-1">
@@ -318,7 +311,7 @@ const UserProfile = () => {
                 <input
                   type="tel"
                   {...registerProfile("phone")}
-                  className="w-full bg-transparent border-b  text-white pb-1 focus:outline-none"
+                  className="w-full bg-transparent border-b   pb-1 focus:outline-none"
                 />
                 {profileErrors.phone && (
                   <p className="text-red-400 text-xs mt-1">
@@ -328,14 +321,14 @@ const UserProfile = () => {
               </div>
 
               <div className="pt-4">
-                <h2 className="text-white mb-4">ADDRESS</h2>
+                <h2 className=" mb-4">ADDRESS</h2>
 
                 <div className="mb-4">
                   <label className="text-xs ">ADDRESS</label>
                   <input
                     type="text"
                     {...registerProfile("address")}
-                    className="w-full bg-transparent border-b  text-white pb-1 focus:outline-none"
+                    className="w-full bg-transparent border-b   pb-1 focus:outline-none"
                   />
                   {profileErrors.address && (
                     <p className="text-red-400 text-xs mt-1">
@@ -350,7 +343,7 @@ const UserProfile = () => {
                     <input
                       type="text"
                       {...registerProfile("pinCode")}
-                      className="w-full bg-transparent border-b  text-white pb-1 focus:outline-none"
+                      className="w-full bg-transparent border-b   pb-1 focus:outline-none"
                     />
                     {profileErrors.pinCode && (
                       <p className="text-red-400 text-xs mt-1">
@@ -364,7 +357,7 @@ const UserProfile = () => {
                     <input
                       type="text"
                       {...registerProfile("city")}
-                      className="w-full bg-transparent border-b  text-white pb-1 focus:outline-none"
+                      className="w-full bg-transparent border-b   pb-1 focus:outline-none"
                     />
                     {profileErrors.city && (
                       <p className="text-red-400 text-xs mt-1">
@@ -384,8 +377,8 @@ const UserProfile = () => {
                       ? "hover:cursor-progress"
                       : isDirty
                       ? "hover:cursor-pointer"
-                      : "bg-black opacity-40 hover:cursor-not-allowed"
-                  } text-white transition-colors text-center`}
+                      : "bg-black opacity-40 text-white hover:cursor-not-allowed"
+                  }  transition-colors text-center`}
                 >
                   {profileMutation.isPending
                     ? "Saving Changes..."
@@ -407,7 +400,7 @@ const UserProfile = () => {
                 <input
                   type="password"
                   {...registerPassword("currentPassword")}
-                  className="w-full bg-transparent border-b  text-white pb-1 focus:outline-none"
+                  className="w-full bg-transparent border-b   pb-1 focus:outline-none"
                 />
                 {passwordErrors.currentPassword && (
                   <p className="text-red-400 text-xs mt-1">
@@ -421,7 +414,7 @@ const UserProfile = () => {
                 <input
                   type="password"
                   {...registerPassword("newPassword")}
-                  className="w-full bg-transparent border-b  text-white pb-1 focus:outline-none"
+                  className="w-full bg-transparent border-b   pb-1 focus:outline-none"
                 />
                 {passwordErrors.newPassword && (
                   <p className="text-red-400 text-xs mt-1">
@@ -435,7 +428,7 @@ const UserProfile = () => {
                 <input
                   type="password"
                   {...registerPassword("confirmNewPassword")}
-                  className="w-full bg-transparent border-b  text-white pb-1 focus:outline-none"
+                  className="w-full bg-transparent border-b   pb-1 focus:outline-none"
                 />
                 {passwordErrors.confirmNewPassword && (
                   <p className="text-red-400 text-xs mt-1">
@@ -448,7 +441,11 @@ const UserProfile = () => {
                 <button
                   type="submit"
                   disabled={passwordMutation.isPending}
-                  className={`w-full py-3 border-1 ${passwordMutation.isPending ? "hover:cursor-progress" : "hover:cursor-pointer" } text-white transition-colors text-center`}
+                  className={`w-full py-3 border-1 ${
+                    passwordMutation.isPending
+                      ? "hover:cursor-progress"
+                      : "hover:cursor-pointer"
+                  }  transition-colors text-center`}
                 >
                   {passwordMutation.isPending
                     ? "Changing Password..."

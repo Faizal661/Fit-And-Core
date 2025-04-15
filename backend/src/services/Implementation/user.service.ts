@@ -38,7 +38,6 @@ export default class UserService implements IUserService {
     limit: number,
     search: string
   ): Promise<AllUsersData> {
-
     const skip = (page - 1) * limit;
     let filter: FilterQuery<IUserModel> = { role: { $ne: "admin" } };
 
@@ -66,7 +65,10 @@ export default class UserService implements IUserService {
     return { users: formattedUsers, total };
   }
 
-  async toggleBlockStatus(userId: string, isBlocked: boolean): Promise<IUserModel> {
+  async toggleBlockStatus(
+    userId: string,
+    isBlocked: boolean
+  ): Promise<IUserModel> {
     const user = await this.userRepository.findById(new Types.ObjectId(userId));
 
     if (!user) {
@@ -74,10 +76,7 @@ export default class UserService implements IUserService {
     }
 
     if (user.role === "admin") {
-      throw new CustomError(
-        "Cannot block an admin",
-        HttpResCode.FORBIDDEN
-      );
+      throw new CustomError("Cannot block an admin", HttpResCode.FORBIDDEN);
     }
 
     const updatedUser = await this.userRepository.update(
@@ -92,7 +91,7 @@ export default class UserService implements IUserService {
       );
     }
 
-    return updatedUser
+    return updatedUser;
   }
 
   async getUserProfile(userId: string | Types.ObjectId): Promise<IUserProfile> {
@@ -210,7 +209,7 @@ export default class UserService implements IUserService {
     email: string,
     currentPassword: string,
     newPassword: string
-  ): Promise<{ isUpdated: boolean }> {
+  ): Promise<void> {
     const user = await this.authRepository.findByEmail(email);
     if (!user) {
       throw new CustomError(
@@ -229,7 +228,6 @@ export default class UserService implements IUserService {
       );
     }
     const newHashedPassword = await bcrypt.hash(newPassword, 10);
-    await this.authRepository.updatepassword(email, newHashedPassword);
-    return { isUpdated: true };
+    return await this.authRepository.updatepassword(email, newHashedPassword);
   }
 }

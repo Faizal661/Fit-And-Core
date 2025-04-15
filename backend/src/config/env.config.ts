@@ -264,4 +264,24 @@ export const env = {
     }
     return process.env.CLOUDINARY_API_SECRET;
   },
+
+  get STRIPE_SECRET_KEY(): string {
+    if (!process.env.STRIPE_SECRET_KEY) {
+      throw new CustomError(
+        EnvErrMsg.STRIPE_SECRET_KEY_UNDEFINED,
+        HttpResCode.INTERNAL_SERVER_ERROR
+      );
+    }
+    return process.env.STRIPE_SECRET_KEY;
+  },
+
+  get STRIPE_WEBHOOK_SECRET(): string {
+    if (!process.env.STRIPE_WEBHOOK_SECRET) {
+      throw new CustomError(
+        EnvErrMsg.STRIPE_WEBHOOK_SECRET_UNDEFINED,
+        HttpResCode.INTERNAL_SERVER_ERROR
+      );
+    }
+    return process.env.STRIPE_WEBHOOK_SECRET;
+  },
 };

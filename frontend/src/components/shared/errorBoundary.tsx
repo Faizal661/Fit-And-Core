@@ -29,7 +29,7 @@ class ErrorBoundary extends React.Component<Props, State> {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="flex flex-col items-center justify-center h-screen bg-[#2916BA]">
+        <div className="flex flex-col items-center justify-center h-screen bg-red-200">
           <div className="bg-white shadow-xl p-8 text-center">
               {icons.alert}
             <h2 className="text-xl font-semibold text-gray-800 mb-2">

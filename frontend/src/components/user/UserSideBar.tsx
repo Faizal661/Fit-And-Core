@@ -61,6 +61,13 @@ return (
           Profile
         </Link>
         <Link
+          to="/articles"
+          className="text-gray-600 hover:text-gray-900 flex items-center gap-3"
+        >
+          <FileText size={14} />
+          Articles
+        </Link>
+        <Link
           to="/trainers"
           className="text-gray-600 hover:text-gray-900 flex items-center gap-3"
         >
@@ -81,13 +88,7 @@ return (
           <TrendingUp size={14} />
           Progression
         </Link>
-        <Link
-          to="/articles"
-          className="text-gray-600 hover:text-gray-900 flex items-center gap-3"
-        >
-          <FileText size={14} />
-          Articles
-        </Link>
+       
         <Link
           to="/nutrition"
           className="text-gray-600 hover:text-gray-900 flex items-center gap-3"

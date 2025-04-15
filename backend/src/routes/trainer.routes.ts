@@ -68,4 +68,12 @@ router.get(
   (req, res, next) => trainerController.getOneTrainerDetails(req, res, next)
 );
 
+
+router.get(
+  "/subscribed/:userId",
+  verifyAccessToken,
+  authorizeRoles(["admin","user"]),
+  (req, res, next) => trainerController.subscribedTrainersDetails(req, res, next)
+);
+
 export default router;

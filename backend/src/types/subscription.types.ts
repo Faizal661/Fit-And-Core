@@ -1,14 +1,23 @@
 import { Types } from "mongoose";
 
 export interface ISubscripton {
-    _id:  Types.ObjectId;
+    _id: Types.ObjectId;
     userId:  Types.ObjectId ;
     trianerId:  Types.ObjectId ;
-    plan: String ;
+    planDuration: String ;
     amount: Number;
-    endDate: Date ;
-    startDate: Date;
-    paymentId:  Types.ObjectId ;
+    status: 'pending' | 'active' | 'cancelled' | 'expired';
+    startDate: Date | null;
+    expiryDate: Date | null;
+    paymentId:  Types.ObjectId | null ;
     createdAt?: Date;
     updatedAt?: Date;
+  }
+
+  export interface CheckoutSubscriptionParams {
+    userId:string,
+    trainerId: string;
+    planDuration: string;
+    amountInPaise: number;
+    planName: string;
   }

@@ -65,7 +65,7 @@ const TrainersPage = () => {
                         {trainer.specialization}
                       </p>
                       <p className="text-xs text-gray-400">
-                        {trainer.yearsOfExperience} years experience
+                        {trainer.yearsOfExperience} experience
                       </p>
                     </div>
                   ))}

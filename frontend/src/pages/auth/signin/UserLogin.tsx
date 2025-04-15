@@ -141,7 +141,6 @@ const UserLogin = () => {
             </Link>
           </p>
           <button
-            type="submit"
             className="mt-14 border-1 py-2 hover:bg-indigo-900 disabled:opacity-70 cursor-pointer"
             disabled={isSubmitting || loginMutation.isPending}
           >

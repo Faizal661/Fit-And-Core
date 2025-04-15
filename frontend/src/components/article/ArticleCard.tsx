@@ -77,10 +77,10 @@ return (
           <button
             onClick={handleUpvote}
             disabled={mutation.isPending}
-            className="flex items-center text-gray-400 hover:text-gray-600 disabled:opacity-50"
+            className="flex items-center text-gray-400 hover:text-gray-600 hover:cursor-pointer disabled:opacity-50"
           >
             {isUpvoted ? (
-              <ThumbsUp className="w-4 h-4 text-gray-600" />
+              <ThumbsUp className="w-4 h-4 text-gray-600 fill-current" />
             ) : (
               <ThumbsUpIcon className="w-4 h-4" />
             )}

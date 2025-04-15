@@ -37,6 +37,7 @@ const FloatButton = () => {
       dispatch(clearAuth());
       await persistor.purge();
       navigate("/login");
+      setSidebarOpen(!sidebarOpen);
       showToast("success", AUTH_MESSAGES.LOGOUT_SUCCESS);
     } catch (error) {
       dispatch(clearAuth());
@@ -104,7 +105,6 @@ const FloatButton = () => {
         <span className="ml-2 font-medium">{getButtonText()}</span>
       </button>
   
-      {/* Conditionally show sidebar */}
       {username && sidebarOpen && (
         <div className="fixed inset-0 z-40">
           <div
@@ -112,7 +112,6 @@ const FloatButton = () => {
             onClick={handleCloseSidebar}
           ></div>
   
-          {/* Dynamically render the appropriate sidebar */}
           {renderSidebar()}
         </div>
       )}

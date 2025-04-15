@@ -37,6 +37,8 @@ import UserArticles from "./pages/article/UserArticles.tsx";
 import TrainersPage from "./pages/user/find-trainer/TrainersPage.tsx";
 import FindTrainersPage from "./pages/user/find-trainer/FindTrainersPage.tsx";
 import TrainerDetailsPage from "./pages/user/find-trainer/TrainerDetailsPage.tsx";
+import ScrollToTop from "./components/shared/ScrollToTop.tsx";
+import PaymentSuccessPage from "./pages/shared/PaymentSuccessPage.tsx";
 
 
 function App() {
@@ -46,6 +48,7 @@ function App() {
   return (
     <div className="min-h-screen flex flex-col">
       {/* {isLoading && <Loader />} */}
+      <ScrollToTop/>
       <ToastContainer />
       <MenuButton />
       <FloatButton />
@@ -85,6 +88,7 @@ function App() {
           <Route path="/forget-password" element={<ForgetPassword />}/>
           <Route path="/otp-verify" element={<OtpVerification />} />
           <Route path="/new-reset-password" element={<NewPassword />} />
+          <Route path="/payment-success" element={<PaymentSuccessPage />} />
           <Route path="*" element={<PageNotFound />} />
         </Routes>
       </Suspense>

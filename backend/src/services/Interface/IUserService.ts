@@ -15,5 +15,5 @@ export interface IUserService {
     updateData: UserProfileUpdateData
   ): Promise<IUserProfile>;
   updateProfilePicture(userId: string | Types.ObjectId, file: Express.Multer.File): Promise<IUserProfile>;
-  updatePassword(email:string,currentPassword:string, newPassword:string): Promise<{isUpdated:boolean}>;
+  updatePassword(email:string,currentPassword:string, newPassword:string): Promise<void>;
 }
