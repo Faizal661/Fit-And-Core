@@ -1,7 +1,7 @@
 import { inject, injectable } from "tsyringe";
-import { IArticle } from "../../types/article.types";
+import { IArticle, articleResponse } from "../../types/article.types";
 import { IArticleRepository } from "../../repositories/Interface/IArticleRepository";
-import { IArticleService, articleResponse } from "../Interface/IArticleService";
+import { IArticleService } from "../Interface/IArticleService";
 import { IArticleModel } from "../../models/article.models";
 import { Types } from "mongoose";
 import { IUserRepository } from "../../repositories/Interface/IUserRepository";
@@ -11,7 +11,7 @@ import { HttpResCode, HttpResMsg } from "../../constants/response.constants";
 import { CustomError } from "../../errors/CustomError";
 
 @injectable()
-export default class articleService implements IArticleService {
+export default class ArticleService implements IArticleService {
   constructor(
     @inject("ArticleRepository") private articleRepository: IArticleRepository,
     @inject("UserRepository") private userRepository: IUserRepository

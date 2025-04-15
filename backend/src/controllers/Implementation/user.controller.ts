@@ -140,7 +140,7 @@ export default class UserController implements IUserController {
         return;
       }
 
-      const isUpdated = await this.userService.updatePassword(email,currentPassword, newPassword);
+      await this.userService.updatePassword(email,currentPassword, newPassword);
       sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS);
     } catch (error) {
       next(error);

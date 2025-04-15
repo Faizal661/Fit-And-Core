@@ -42,3 +42,15 @@ export interface IUserProfile {
     city?: string;
     pinCode?: string;
   }
+
+  export interface AllUsersData {
+    users: {
+      _id: string;
+      username: string;
+      profilePicture: string;
+      email: string;
+      isBlocked: boolean;
+      createdAt: Date;
+    }[];
+    total: number;
+  }

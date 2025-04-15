@@ -10,6 +10,7 @@ import { Article } from "../../types/article.type";
 import { components } from "../../components/article/MarkdownComponents";
 import { formatDate } from "../../utils/dateFormat";
 import PageNotFound from "../../components/shared/PageNotFound";
+import Footer from "../../components/shared/Footer";
 
 const ArticleFullView = () => {
   const queryClient = useQueryClient();
@@ -17,9 +18,9 @@ const ArticleFullView = () => {
   const { state } = useLocation();
   const articles = state?.articles || [];
   const article = articles.find((a: Article) => a._id === id);
-  
-  if (!article) return <PageNotFound/>;
-  
+
+  if (!article) return <PageNotFound message="Article not found." linkText="Browse other articles" linkTo="/articles" />;
+
   const userId = useSelector((state: RootState) => state.auth.user?.id || "");
   let isUpvoted = article.upvotes.includes(userId);
 
@@ -36,27 +37,30 @@ const ArticleFullView = () => {
   const handleUpvote = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (isUpvoted) {
-      article.upvotes = article.upvotes.filter((id:string) => id !== userId); 
+      article.upvotes = article.upvotes.filter((id: string) => id !== userId);
     } else {
-      article.upvotes.push(userId); 
+      article.upvotes.push(userId);
     }
     mutation.mutate();
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg pt-16">
-      <img
-        src={article.thumbnail}
-        alt={article.title}
-        className="w-full  object-cover rounded-t-lg mb-4"
-      />
-      <div className="flex items-center justify-between mb-8">
-        <span className="text-md font-medium text-gray-800">{article.authorName}</span>
-        <div className=" flex items-center">
-          <span className="text-sm font-medium text-gray-400 mr-4">
-            {formatDate(article.createdAt)}
+    <div>
+      <div className="max-w-4xl mx-auto p-6 bg-white pt-16">
+        <img
+          src={article.thumbnail}
+          alt={article.title}
+          className="w-full  object-cover mb-4"
+        />
+        <div className="flex items-center justify-between mb-8">
+          <span className="text-md font-medium text-gray-800">
+            {article.authorName}
           </span>
-          <button
+          <div className=" flex items-center">
+            <span className="text-sm font-medium text-gray-400 mr-4">
+              {formatDate(article.createdAt)}
+            </span>
+            <button
               onClick={handleUpvote}
               disabled={mutation.isPending}
               className="flex items-center text-gray-600 hover:text-blue-600 disabled:opacity-50 cursor-pointer"
@@ -68,23 +72,29 @@ const ArticleFullView = () => {
               )}
               <span className="ml-1">{article.upvotes.length}</span>
             </button>
+          </div>
+        </div>
+        <h1 className="text-3xl font-bold text-gray-900 mb-4">
+          {article.title}
+        </h1>
+        <div className="flex flex-wrap gap-2 mb-4">
+          {article.tags.map((tag: string, index: number) => (
+            <span
+              key={index}
+              className="text-sm bg-blue-100 border-1 border-slate-400 text-blue-800 px-1.5 py-0.5"
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
+        <div className="prose max-w-none pb-16">
+          <ReactMarkdown remarkPlugins={[remarkGfm]} components={components}>
+            {article.content}
+          </ReactMarkdown>
         </div>
       </div>
-      <h1 className="text-3xl font-bold text-gray-900 mb-4">{article.title}</h1>
-      <div className="flex flex-wrap gap-2 mb-4">
-        {article.tags.map((tag: string, index: number) => (
-          <span
-            key={index}
-            className="text-sm bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded-full"
-          >
-            {tag}
-          </span>
-        ))}
-      </div>
-      <div className="prose max-w-none pb-16">
-        <ReactMarkdown remarkPlugins={[remarkGfm]} components={components}>
-          {article.content}
-        </ReactMarkdown>
+      <div className=" max-w-none px-16">
+        <Footer />
       </div>
     </div>
   );

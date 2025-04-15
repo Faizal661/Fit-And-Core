@@ -51,19 +51,19 @@ export class AuthRepository
     return UserModel.findOne({ email });
   }
 
-  async findOrCreateGoogleUser(googleUser: IGoogleUser): Promise<any> {
+  async findOrCreateGoogleUser(googleUser: IGoogleUser): Promise<IUserModel> {
     const existingUser = await UserModel.findOne({ email: googleUser.email });
 
     if (existingUser) {
       if (!existingUser.googleId && googleUser.id) {
         existingUser.googleId = googleUser.id;
         existingUser.profilePicture =
-          googleUser.profilePicture || existingUser.profilePicture;
+        googleUser.profilePicture || existingUser.profilePicture;
         await existingUser.save();
       }
       return existingUser;
     }
-
+    
     const newUser = new UserModel({
       email: googleUser.email,
       username: googleUser.displayName,

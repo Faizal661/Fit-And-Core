@@ -47,7 +47,7 @@ const AuthCallback = () => {
           <p>There was an error processing your login. Please try again.</p>
           <button
             type="button"
-            className="mt-4 border-1 rounded-4xl border-slate-400 p-2 px-5 cursor-pointer"
+            className="mt-4 border-1  border-slate-400 p-2 px-5 cursor-pointer"
             onClick={() => navigate("/login")}
           >
             Back to Login

@@ -3,6 +3,7 @@ import { Types } from "mongoose";
 import { IUserService } from "../Interface/IUserService";
 import { IUserRepository } from "../../repositories/Interface/IUserRepository";
 import {
+  AllUsersData,
   IUser,
   IUserProfile,
   UserProfileUpdateData,
@@ -12,35 +13,21 @@ import {
   extractPublicIdFromUrl,
   uploadToCloudinary,
 } from "../../utils/s3-upload";
-import { HttpResCode } from "../../constants/response.constants";
-import { CustomError } from "../../errors/CustomError";
-import { IAuthRepository } from "../../repositories/Interface/IAuthRepository";
 import bcrypt from "bcryptjs";
-import { IUserModel } from "../../models/user.models";
 import logger from "../../utils/logger.utils";
-
-interface UsersResponse {
-  users: {
-    _id: string;
-    username: string;
-    profilePicture: string;
-    email: string;
-    isBlocked: boolean;
-    createdAt: Date;
-  }[];
-  total: number;
-}
+import { CustomError } from "../../errors/CustomError";
+import { IUserModel } from "../../models/user.models";
+import { HttpResCode } from "../../constants/response.constants";
+import { IAuthRepository } from "../../repositories/Interface/IAuthRepository";
+import { FilterQuery } from "mongoose";
 
 @injectable()
 export default class UserService implements IUserService {
-  private userRepository: IUserRepository;
-  private authRepository: IAuthRepository;
-
   constructor(
     @inject("UserRepository")
-    userRepository: IUserRepository,
+    private userRepository: IUserRepository,
     @inject("AuthRepository")
-    authRepository: IAuthRepository
+    private authRepository: IAuthRepository
   ) {
     this.userRepository = userRepository;
     this.authRepository = authRepository;
@@ -50,9 +37,9 @@ export default class UserService implements IUserService {
     page: number,
     limit: number,
     search: string
-  ): Promise<UsersResponse> {
+  ): Promise<AllUsersData> {
     const skip = (page - 1) * limit;
-    let filter: any = { role: { $ne: "admin" } }; 
+    let filter: FilterQuery<IUserModel> = { role: { $ne: "admin" } };
 
     if (search) {
       filter.$or = [
@@ -78,7 +65,10 @@ export default class UserService implements IUserService {
     return { users: formattedUsers, total };
   }
 
-  async toggleBlockStatus(userId: string, isBlocked: boolean): Promise<any> {
+  async toggleBlockStatus(
+    userId: string,
+    isBlocked: boolean
+  ): Promise<IUserModel> {
     const user = await this.userRepository.findById(new Types.ObjectId(userId));
 
     if (!user) {
@@ -86,10 +76,7 @@ export default class UserService implements IUserService {
     }
 
     if (user.role === "admin") {
-      throw new CustomError(
-        "Cannot block an admin user",
-        HttpResCode.FORBIDDEN
-      );
+      throw new CustomError("Cannot block an admin", HttpResCode.FORBIDDEN);
     }
 
     const updatedUser = await this.userRepository.update(
@@ -104,14 +91,7 @@ export default class UserService implements IUserService {
       );
     }
 
-    return {
-      _id: (updatedUser._id as Types.ObjectId).toString(),
-      username: updatedUser.username,
-      profilePicture: updatedUser.profilePicture || "",
-      email: updatedUser.email,
-      isBlocked: updatedUser.isBlocked,
-      createdAt: updatedUser.createdAt,
-    };
+    return updatedUser;
   }
 
   async getUserProfile(userId: string | Types.ObjectId): Promise<IUserProfile> {
@@ -179,7 +159,7 @@ export default class UserService implements IUserService {
     file: Express.Multer.File
   ): Promise<IUserProfile> {
     const objectId =
-    typeof userId === "string" ? new Types.ObjectId(userId) : userId;
+      typeof userId === "string" ? new Types.ObjectId(userId) : userId;
 
     const currentUser = await this.userRepository.findById(objectId);
     if (!currentUser) {
@@ -229,7 +209,7 @@ export default class UserService implements IUserService {
     email: string,
     currentPassword: string,
     newPassword: string
-  ): Promise<{ isUpdated: boolean }> {
+  ): Promise<void> {
     const user = await this.authRepository.findByEmail(email);
     if (!user) {
       throw new CustomError(
@@ -248,7 +228,6 @@ export default class UserService implements IUserService {
       );
     }
     const newHashedPassword = await bcrypt.hash(newPassword, 10);
-    await this.authRepository.updatepassword(email, newHashedPassword);
-    return { isUpdated: true };
+    return await this.authRepository.updatepassword(email, newHashedPassword);
   }
 }

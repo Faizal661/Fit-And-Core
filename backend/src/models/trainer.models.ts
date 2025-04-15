@@ -11,11 +11,11 @@ const trainerSchema = new Schema<ITrainerModel>(
     phone: { type: String, required: true },
     specialization: { type: String, required: true },
     yearsOfExperience: { type: String, required: true },
+    profilePicture: { type: String, required: true },
     about: { type: String, required: true },
     documentProofs: [{ type: String, required: true }],
     certifications: [{ type: String, required: true }],
     achievements: [{ type: String, required: true }],
-    // isApproved: { type: Boolean, default: false },
     status: {
       type: String,
       enum: ["pending", "approved", "rejected"],

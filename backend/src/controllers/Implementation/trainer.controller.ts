@@ -177,7 +177,7 @@ export default class TrainerController implements ITrainerController {
         res,
         HttpResCode.OK,
         "Trainer application rejected successfully",
-        result
+        {result}
       );
     } catch (error) {
       next(error);
@@ -206,4 +206,45 @@ export default class TrainerController implements ITrainerController {
       next(error);
     }
   }
+
+  async getApprovedTrainers(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const approvedTrainers = await this.trainerService.getApprovedTrainers();
+
+      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, { approvedTrainers });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getOneTrainerDetails(req: Request, res: Response, next: NextFunction): Promise<void>{
+    const { trainerId } = req.params;
+    try {
+      const trainerData = await this.trainerService.getOneTrainerDetails(trainerId);
+
+      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, { trainerData });
+    } catch (error) {
+      next(error);
+      
+    }
+
+  }
+
+  async subscribedTrainersDetails(req: Request, res: Response, next: NextFunction): Promise<void>{
+    const { userId } = req.params;
+    try {
+      // const trainerData = await this.trainerService.getOneTrainerDetails(trainerId);
+
+      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, { userId });
+    } catch (error) {
+      next(error);
+      
+    }
+
+  }
+
 }

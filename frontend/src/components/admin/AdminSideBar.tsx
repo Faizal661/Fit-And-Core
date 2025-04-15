@@ -9,85 +9,78 @@ interface AdminSidebarProps {
 
 const AdminSidebar = ({ username, onClose, onLogout }: AdminSidebarProps) => {
   return (
-    <div className="absolute top-0 right-0 h-full bg-white w-96 p-3 pl-8 shadow-lg">
-      <div className="flex justify-between items-center mb-6 pt-2">
-        <button onClick={onClose} className="hover:bg-gray-100 p-1 rounded-full cursor-pointer">
-          <X size={25} color="blue" />
+    <div className="absolute top-0 right-0 h-full bg-white w-80 p-6 border-l border-gray-100">
+      <div className="flex justify-end mb-8">
+        <button onClick={onClose} className="p-1 cursor-pointer">
+          <X size={18} className="text-gray-400" />
         </button>
       </div>
 
       {/* Admin greeting */}
-      <div className="mb-6 pt-5">
-        <p className="text-gray-700 font-semibold text-lg">
-          Hi Admin {username || ""}, welcome back!
+      <div className="mb-8">
+        <p className="text-gray-700 text-sm">
+          Welcome back, {username || ""}
         </p>
-        <div className="mt-2">
-          <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
+        <div className="mt-1">
+          <span className="text-xs text-gray-500">
             Administrator
           </span>
         </div>
       </div>
 
       {/* Navigation links */}
-      <nav className="pt-3 space-y-3 text-md flex flex-col font-semibold"  onClick={onClose}>
+      <nav className="space-y-4 text-sm" onClick={onClose}>
         <Link
           to="/admin"
-          className="text-gray-950 hover:text-blue-700 hover:bg-blue-50 p-2 rounded transition-colors flex items-center gap-3"
+          className="text-gray-600 hover:text-gray-900 flex items-center gap-3"
         >
-          <BarChart size={18} />
-          DASHBOARD
+          <BarChart size={14} />
+          Dashboard
         </Link>
         <Link
           to="/admin/user-management"
-          className="text-gray-950 hover:text-blue-700 hover:bg-blue-50 p-2 rounded transition-colors flex items-center gap-3"
+          className="text-gray-600 hover:text-gray-900 flex items-center gap-3"
         >
-          <Users size={18} />
-          USER MANAGEMENT
+          <Users size={14} />
+          User Management
         </Link>
         <Link
           to="/admin/trainer-management"
-          className="text-gray-950 hover:text-blue-700 hover:bg-blue-50 p-2 rounded transition-colors flex items-center gap-3"
+          className="text-gray-600 hover:text-gray-900 flex items-center gap-3"
         >
-          <Dumbbell size={18} />
-          TRAINER MANAGEMENT
+          <Dumbbell size={14} />
+          Trainer Management
         </Link>
         <Link
           to="/admin/finance-management"
-          className="text-gray-950 hover:text-blue-700 hover:bg-blue-50 p-2 rounded transition-colors flex items-center gap-3"
+          className="text-gray-600 hover:text-gray-900 flex items-center gap-3"
         >
-          <DollarSign size={18} />
-          FINANCE MANAGEMENT
+          <DollarSign size={14} />
+          Finance Management
         </Link>
         <Link
           to="/admin/report-management"
-          className="text-gray-950 hover:text-blue-700 hover:bg-blue-50 p-2 rounded transition-colors flex items-center gap-3"
+          className="text-gray-600 hover:text-gray-900 flex items-center gap-3"
         >
-          <BarChart size={18} />
-          REPORT MANAGEMENT
+          <BarChart size={14} />
+          Report Management
         </Link>
         <Link
           to="/admin/community-management"
-          className="text-gray-950 hover:text-blue-700 hover:bg-blue-50 p-2 rounded transition-colors flex items-center gap-3"
+          className="text-gray-600 hover:text-gray-900 flex items-center gap-3"
         >
-          <Globe size={18} />
-          COMMUNITY MANAGEMENT
-        </Link>
-        <Link
-          to="/admin/settings"
-          className="text-gray-950 hover:text-blue-700 hover:bg-blue-50 p-2 rounded transition-colors flex items-center gap-3"
-        >
-          <Globe size={18} />
-          PLATFORM SETTINGS
+          <Globe size={14} />
+          Community Management
         </Link>
       </nav>
 
-      <div className="mt-6 pt-4 border-t border-gray-200">
+      <div className="mt-12 pt-4 border-t border-gray-100">
         <button
           type="button"
-          className="text-sm text-gray-950 hover:text-blue-700 hover:bg-blue-50 p-2 rounded transition-colors font-semibold cursor-pointer"
+          className="text-xs text-gray-500 cursor-pointer"
           onClick={onLogout}
         >
-          SIGN OUT
+          Sign out
         </button>
       </div>
     </div>

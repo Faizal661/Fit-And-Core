@@ -4,7 +4,7 @@ import { ITrainerService } from "../Interface/ITrainerService";
 import { ITrainerRepository } from "../../repositories/Interface/ITrainerRepository";
 import { IUserRepository } from "../../repositories/Interface/IUserRepository";
 import { TrainerApplicationData } from "../../types/trainer.types";
-import { HttpResCode } from "../../constants/response.constants";
+import { HttpResCode, HttpResMsg } from "../../constants/response.constants";
 import { CustomError } from "../../errors/CustomError";
 import { ITrainerModel } from "../../models/trainer.models";
 
@@ -44,6 +44,7 @@ export default class TrainerService implements ITrainerService {
       username: user.username,
       email: user.email,
       phone: data.phone,
+      profilePicture:user.profilePicture,
       specialization: data.specialization,
       yearsOfExperience: data.yearsOfExperience,
       about: data.about,
@@ -70,7 +71,7 @@ export default class TrainerService implements ITrainerService {
     };
   }
 
-  async approveTrainer(trainerId: string): Promise<any> {
+  async approveTrainer(trainerId: string): Promise<ITrainerModel> {
     const trainer = await this.trainerRepository.findById(new Types.ObjectId(trainerId));
     if (!trainer) {
       throw new CustomError('Trainer application not found',HttpResCode.NOT_FOUND);
@@ -87,18 +88,10 @@ export default class TrainerService implements ITrainerService {
     user.role = 'trainer';
     await user.save();
 
-    return {
-      trainer,
-      user: {
-        _id: user._id,
-        username: user.username,
-        email: user.email,
-        role: user.role
-      }
-    };
+    return trainer;
   }
 
-  async rejectTrainer(trainerId: string, reason: string): Promise<any> {
+  async rejectTrainer(trainerId: string, reason: string): Promise<ITrainerModel> {
     const trainer = await this.trainerRepository.findById(new Types.ObjectId(trainerId));
     if (!trainer) {
       throw new CustomError('Trainer application not found', HttpResCode.NOT_FOUND);
@@ -108,13 +101,25 @@ export default class TrainerService implements ITrainerService {
     trainer.reason = reason;
     await trainer.save();
 
-    return {
-      trainer
-    };
+    return trainer;
   }
 
-  async getTrainerApplications(isApproved?: boolean): Promise<any> {
+  async getTrainerApplications(isApproved?: boolean): Promise<ITrainerModel[]> {
     const filter = isApproved !== undefined ? { isApproved } : {};
     return this.trainerRepository.find(filter);
   }
+  
+  async getApprovedTrainers(): Promise<ITrainerModel[]> {
+    const filter = {status:'approved'}
+    return this.trainerRepository.find(filter);
+  }
+
+  async getOneTrainerDetails(trainerId: string): Promise<ITrainerModel>{
+    const trainer = await this.trainerRepository.findById(new Types.ObjectId(trainerId));
+    if (!trainer) {
+      throw new CustomError(HttpResMsg.NOT_FOUND, HttpResCode.NOT_FOUND);
+    }
+    return trainer
+  }
+
 }

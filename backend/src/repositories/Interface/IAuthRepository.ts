@@ -9,6 +9,6 @@ export interface IAuthRepository {
     deleteOtp(email: string): Promise<void>
     createUser(data: Partial<IUserModel>): Promise<IUserModel>
     findByEmail(email: string): Promise<IUserModel | null> 
-    findOrCreateGoogleUser(googleUser: IGoogleUser): Promise<any>;
+    findOrCreateGoogleUser(googleUser: IGoogleUser): Promise<IUserModel>;
     updatepassword(email: string,password:string): Promise<void>
 }
