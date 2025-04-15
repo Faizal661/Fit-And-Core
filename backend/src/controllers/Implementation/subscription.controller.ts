@@ -89,7 +89,6 @@ export class SubscriptionController implements ISubscriptionController {
           HttpResCode.BAD_REQUEST
         );
       }
-      console.log("🚀 ~ SubscriptionController ~ req:", req.body)
 
       await this.subscriptionService.processWebhookEvent(req.body, sig);
       res.status(200).send();

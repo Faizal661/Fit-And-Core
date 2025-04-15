@@ -60,7 +60,7 @@ const UserArticles = () => {
             </form>
           </div>
           
-          <p className="text-xs text-gray-400 mb-6 text-right">
+          <p className="text-xs text-gray-800 mb-6 text-right">
             {data?.total} articles
           </p>
   
@@ -73,7 +73,7 @@ const UserArticles = () => {
           ) : (
             <div className="flex flex-col gap-y-6">
               {data?.articles.length === 0 && (
-                <p className="text-sm text-gray-500 py-12 text-center">No articles found.</p>
+                <p className="text-sm text-gray-800 py-12 text-center">No articles found.</p>
               )}
               {data?.articles.map((article) => (
                 <ArticleCard
@@ -98,11 +98,11 @@ const UserArticles = () => {
               <button
                 onClick={() => setActivePage((prev) => Math.max(prev - 1, 1))}
                 disabled={activePage === 1}
-                className="text-gray-500 hover:text-gray-800 disabled:text-gray-300 transition-colors"
+                className="text-gray-600 hover:text-gray-800 disabled:text-gray-300 transition-colors"
               >
                 Previous
               </button>
-              <span className="text-xs text-gray-400">
+              <span className="text-xs text-gray-600">
                 Page {activePage} of {totalPages}
               </span>
               <button
@@ -110,7 +110,7 @@ const UserArticles = () => {
                   setActivePage((prev) => Math.min(prev + 1, totalPages))
                 }
                 disabled={activePage === totalPages}
-                className="text-gray-500 hover:text-gray-800 disabled:text-gray-300 transition-colors"
+                className="text-gray-600 hover:text-gray-800 disabled:text-gray-300 transition-colors"
               >
                 Next
               </button>

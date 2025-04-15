@@ -87,6 +87,7 @@ export default class SubscriptionService implements ISubscriptionService {
   async verifyPayment(sessionId: string): Promise<any> {
     try {
       const session = await this.stripe.checkout.sessions.retrieve(sessionId);
+      console.log("🚀 ~ SubscriptionService ~ verifyPayment ~ session:", session)
       
       if (!session) {
         throw new CustomError("Session not found", HttpResCode.NOT_FOUND);
@@ -128,6 +129,8 @@ export default class SubscriptionService implements ISubscriptionService {
   }
 
   async processWebhookEvent(payload: any, signature: string): Promise<void> {
+    console.log("🚀 ~ SubscriptionService ~ processWebhookEvent ~ signature:", signature)
+    console.log("🚀 ~ SubscriptionService ~ processWebhookEvent ~ payload:", payload)
     try {
       // Verify the event came from Stripe
       const event = this.stripe.webhooks.constructEvent(
@@ -152,36 +155,22 @@ export default class SubscriptionService implements ISubscriptionService {
   }
 
   private async handleSuccessfulPayment(session: Stripe.Checkout.Session): Promise<void> {
-    // Extract metadata
     const { subscriptionId, userId, trainerId, planDuration } = session.metadata || {};
     
     if (!subscriptionId || !userId || !trainerId) {
       throw new CustomError("Invalid session metadata", HttpResCode.BAD_REQUEST);
     }
     
-    // Calculate expiry date based on plan duration
     const expiryDate = this.calculateExpiryDate(planDuration);
     
-    // Update the subscription
     await this.subscriptionRepository.update(
       new Types.ObjectId(subscriptionId),
       {
         status: 'active',
-        paymentId: session.payment_intent as any, 
+        paymentId: session.payment_intent as string, 
         startDate: new Date(),
         expiryDate
       }
-    );
-    
-    // Update user-trainer relationship
-    await this.userRepository.updateOne(
-      { _id: new Types.ObjectId(userId) }, 
-      { $addToSet: { trainers: new Types.ObjectId(trainerId) } }
-    );
-    
-    await this.trainerRepository.updateOne(
-      { _id: new Types.ObjectId(trainerId) },
-      { $addToSet: { clients: new Types.ObjectId(userId) } }
     );
   }
 
@@ -196,7 +185,6 @@ export default class SubscriptionService implements ISubscriptionService {
       return new Date(today.setMonth(today.getMonth() + 12));
     }
     
-    // Default fallback
     return new Date(today.setMonth(today.getMonth() + 1));
   }
 }

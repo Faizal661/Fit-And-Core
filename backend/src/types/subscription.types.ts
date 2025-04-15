@@ -9,7 +9,8 @@ export interface ISubscripton {
     status: 'pending' | 'active' | 'cancelled' | 'expired';
     startDate: Date | null;
     expiryDate: Date | null;
-    paymentId:  Types.ObjectId | null ;
+    // paymentId:  Types.ObjectId | null ;
+    paymentId:  String | null ;
     createdAt?: Date;
     updatedAt?: Date;
   }
