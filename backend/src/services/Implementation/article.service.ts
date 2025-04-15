@@ -7,7 +7,10 @@ import { Types } from "mongoose";
 import { IUserRepository } from "../../repositories/Interface/IUserRepository";
 import { FilterQuery } from "mongoose";
 import { sendResponse } from "../../utils/send-response";
-import { HttpResCode, HttpResMsg } from "../../constants/response.constants";
+import {
+  HttpResCode,
+  HttpResMsg,
+} from "../../constants/http-response.constants";
 import { CustomError } from "../../errors/CustomError";
 
 @injectable()
@@ -56,16 +59,20 @@ export default class ArticleService implements IArticleService {
       this.articleRepository.countDocuments(query),
     ]);
 
-    return {articles, total} ;
+    return { articles, total };
   }
 
   async getArticleById(id: string): Promise<IArticleModel | null> {
     return await this.articleRepository.findById(new Types.ObjectId(id));
   }
 
-  async toggleUpvote(articleId: string, userId: string): Promise<IArticleModel> {
-
-    const article = await this.articleRepository.findById(new Types.ObjectId(articleId));
+  async toggleUpvote(
+    articleId: string,
+    userId: string
+  ): Promise<IArticleModel> {
+    const article = await this.articleRepository.findById(
+      new Types.ObjectId(articleId)
+    );
     if (!article) {
       throw new CustomError(HttpResMsg.NOT_FOUND, HttpResCode.NOT_FOUND);
     }
@@ -83,7 +90,9 @@ export default class ArticleService implements IArticleService {
       );
     }
 
-    const updatedArticle = await this.articleRepository.findById(new Types.ObjectId(articleId));
-    return updatedArticle!; 
+    const updatedArticle = await this.articleRepository.findById(
+      new Types.ObjectId(articleId)
+    );
+    return updatedArticle!;
   }
 }

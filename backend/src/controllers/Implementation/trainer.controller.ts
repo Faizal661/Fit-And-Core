@@ -1,6 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 import { inject, injectable } from "tsyringe";
-import { HttpResCode, HttpResMsg } from "../../constants/response.constants";
+import {
+  HttpResCode,
+  HttpResMsg,
+} from "../../constants/http-response.constants";
 import { ITrainerController } from "../Interface/ITrainerController";
 import { ITrainerService } from "../../services/Interface/ITrainerService";
 import { sendResponse } from "../../utils/send-response";
@@ -68,7 +71,7 @@ export default class TrainerController implements ITrainerController {
         sendResponse(
           res,
           HttpResCode.BAD_REQUEST,
-          "At least one document proof is required"
+          HttpResMsg.DOCUMENT_PROOF_REQUIRED
         );
         return;
       }
@@ -77,7 +80,7 @@ export default class TrainerController implements ITrainerController {
         sendResponse(
           res,
           HttpResCode.BAD_REQUEST,
-          "At least one certification is required"
+          HttpResMsg.CERTIFICATION_REQUIRED
         );
         return;
       }
@@ -86,7 +89,7 @@ export default class TrainerController implements ITrainerController {
         sendResponse(
           res,
           HttpResCode.BAD_REQUEST,
-          "At least one achievement is required"
+          HttpResMsg.ACHIEVEMENT_REQUIRED
         );
         return;
       }
@@ -107,7 +110,7 @@ export default class TrainerController implements ITrainerController {
       sendResponse(
         res,
         HttpResCode.CREATED,
-        "Trainer application submitted successfully",
+        HttpResMsg.TRAINER_APPLICATION_SUBMITTED,
         result
       );
     } catch (error) {
@@ -147,7 +150,7 @@ export default class TrainerController implements ITrainerController {
       sendResponse(
         res,
         HttpResCode.OK,
-        "Trainer application approved successfully",
+        HttpResMsg.TRAINER_APPLICATION_APPROVED,
         result
       );
     } catch (error) {
@@ -166,7 +169,7 @@ export default class TrainerController implements ITrainerController {
 
       if (!reason || typeof reason !== "string") {
         throw new CustomError(
-          "Rejection reason is required",
+          HttpResMsg.REJECTION_REASON_REQUIRED,
           HttpResCode.BAD_REQUEST
         );
       }
@@ -176,8 +179,8 @@ export default class TrainerController implements ITrainerController {
       sendResponse(
         res,
         HttpResCode.OK,
-        "Trainer application rejected successfully",
-        {result}
+        HttpResMsg.TRAINER_APPLICATION_REJECTED,
+        { result }
       );
     } catch (error) {
       next(error);
@@ -215,26 +218,36 @@ export default class TrainerController implements ITrainerController {
     try {
       const approvedTrainers = await this.trainerService.getApprovedTrainers();
 
-      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, { approvedTrainers });
+      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, {
+        approvedTrainers,
+      });
     } catch (error) {
       next(error);
     }
   }
 
-  async getOneTrainerDetails(req: Request, res: Response, next: NextFunction): Promise<void>{
+  async getOneTrainerDetails(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
     const { trainerId } = req.params;
     try {
-      const trainerData = await this.trainerService.getOneTrainerDetails(trainerId);
+      const trainerData = await this.trainerService.getOneTrainerDetails(
+        trainerId
+      );
 
       sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, { trainerData });
     } catch (error) {
       next(error);
-      
     }
-
   }
 
-  async subscribedTrainersDetails(req: Request, res: Response, next: NextFunction): Promise<void>{
+  async subscribedTrainersDetails(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
     const { userId } = req.params;
     try {
       // const trainerData = await this.trainerService.getOneTrainerDetails(trainerId);
@@ -242,9 +255,6 @@ export default class TrainerController implements ITrainerController {
       sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, { userId });
     } catch (error) {
       next(error);
-      
     }
-
   }
-
 }

@@ -1,5 +1,6 @@
 import { createClient } from "redis";
 import { env } from "./env.config";
+import { HttpResMsg } from "../constants/http-response.constants";
 
 const redisClient = createClient({
     username: env.REDIS_USERNAME,
@@ -11,12 +12,12 @@ const redisClient = createClient({
 });
 
 redisClient.on("error", (err) => {
-    console.error("Redis Client Error:❌", err);
+    console.error(HttpResMsg.REDIS_CLIENT_ERROR, err);
     console.log(Date.now())
 });
 
 redisClient.connect().then(() => {
-    console.log("Redis Connection    ✅");
+    console.log(HttpResMsg.REDIS_CONNECTION);
 });
 
 export default redisClient;

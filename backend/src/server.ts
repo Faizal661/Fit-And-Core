@@ -6,7 +6,10 @@ import dotenv from "dotenv";
 import passport from "passport";
 import cookieParser from "cookie-parser";
 import { CustomError } from "./errors/CustomError.ts";
-import { HttpResCode } from "./constants/response.constants.ts";
+import {
+  HttpResCode,
+  HttpResMsg,
+} from "./constants/http-response.constants.ts";
 
 // Configurations
 dotenv.config();
@@ -16,36 +19,38 @@ import { env } from "./config/env.config.ts";
 
 // Middlewares
 import requestLogging from "./middlewares/request-logger.middleware.ts";
-import { errorHandler } from "./middlewares/error-handler.middleware.ts"; 
+import { errorHandler } from "./middlewares/error-handler.middleware.ts";
 
 // Import routers
 import authRoutes from "./routes/auth.routes";
 import adminRoutes from "./routes/admin.routes";
 import userRoutes from "./routes/user.routes.ts";
 import trainerRoutes from "./routes/trainer.routes.ts";
-import articleRoutes from "./routes/article.routes.ts"
-import { subscriptionRoutes, webhookRoutes } from "./routes/subscription.routes.ts"
-
+import articleRoutes from "./routes/article.routes.ts";
+import {
+  subscriptionRoutes,
+  webhookRoutes,
+} from "./routes/subscription.routes.ts";
 
 const app = express();
 
 const PORT = env.PORT || 5000;
 
-// For handling stripe webhooks, need raw, unparsed reqeust body to verify signature.
+// For handling stripe webhooks, need raw and unparsed reqeust body to verify signature.
 app.use("/api/subscription", webhookRoutes);
 
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors({ origin: env.CLIENT_ORIGIN, credentials: true })); 
+app.use(cors({ origin: env.CLIENT_ORIGIN, credentials: true }));
 
 //log req & res details
 const loggers = requestLogging();
 loggers.forEach((middleware) => app.use(middleware));
 
 // Initialize Passport
-configurePassport(); 
-app.use(passport.initialize()); 
+configurePassport();
+app.use(passport.initialize());
 
 // Routers
 app.use("/api/auth", authRoutes);
@@ -57,12 +62,12 @@ app.use("/api/subscription", subscriptionRoutes);
 
 // Error handling middlewares
 app.use((req, res, next) => {
-  next(new CustomError(`Route "${req.originalUrl}" not found`,HttpResCode.NOT_FOUND));
+  next(new CustomError(HttpResMsg.ROUTE_NOT_FOUND, HttpResCode.NOT_FOUND));
 });
-app.use(errorHandler); 
+app.use(errorHandler);
 
 connectDB().then(() => {
   app.listen(PORT, () => {
-    console.log(`Server connection   ✅`)
+    console.log(HttpResMsg.SERVER_CONNECTION);
   });
 });

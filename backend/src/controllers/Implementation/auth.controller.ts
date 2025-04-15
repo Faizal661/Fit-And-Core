@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { inject, injectable } from "tsyringe";
-import { HttpResCode, HttpResMsg } from "../../constants/response.constants";
+import { HttpResCode, HttpResMsg } from "../../constants/http-response.constants";
 import { IAuthController } from "../Interface/IAuthController";
 import { IAuthService } from "../../services/Interface/IAuthService";
 import { sendResponse } from "../../utils/send-response";
@@ -28,7 +28,6 @@ export default class AuthController implements IAuthController {
     try {
       const { email, username,password }: { email: string; username: string;password:string } = req.body;
       const result = await this.authService.nameEmailCheck(email, username);
-      // console.warn("result", result);
       if (!result.available) {
         sendResponse(res, HttpResCode.CONFLICT, result.message);
         return;
@@ -98,14 +97,11 @@ export default class AuthController implements IAuthController {
   ): Promise<void> {
     try {
       const { email, password } = req.body;
-      console.log(req.body);
-
       if (!email || !password) {
         sendResponse(res, HttpResCode.BAD_REQUEST, HttpResMsg.BAD_REQUEST);
         return;
       }
       const isUpdated = await this.authService.updatePassword(email, password);
-      console.log("user password changed => ", isUpdated);
       sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS);
     } catch (error) {
       next(error);
@@ -129,7 +125,6 @@ export default class AuthController implements IAuthController {
         email,
         password
       );
-      console.log("user created => ", newUser);
       sendResponse(res, HttpResCode.CREATED, HttpResMsg.CREATED, {
         user: {
           id: newUser._id,
@@ -213,7 +208,7 @@ export default class AuthController implements IAuthController {
     try {
       const { token } = req.body;
       if (!token) {
-        throw new CustomError("Access denied. No token provided.",HttpResCode.UNAUTHORIZED);
+        throw new CustomError(HttpResMsg.NO_ACCESS_TOKEN,HttpResCode.UNAUTHORIZED);
       }
 
       const { user, accessToken, refreshToken } =

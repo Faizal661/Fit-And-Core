@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { BaseError } from "../errors/BaseError";
 import logger from "../utils/logger.utils";
+import { HttpResMsg } from "../constants/http-response.constants";
 
 export const errorHandler = (
   err: Error,
@@ -8,18 +9,16 @@ export const errorHandler = (
   res: Response,
   next: NextFunction
 ): void => {
-
   // Clear cookie In case of an UnAuthorized Access
   if (
-    err.message === "Refresh token required." ||
-    err.message === "Invalid or expired refresh token."
+    err.message === HttpResMsg.REFRESH_TOKEN_REQUIRED ||
+    err.message === HttpResMsg.INVALID_OR_EXPIRED_REFRESH_TOKEN
   ) {
     res.clearCookie("refreshToken");
   }
 
   // Log unexpected errors for debugging
-  // console.log("error handler message:::");
-  logger.error(`${err.message}`, err.stack);
+  logger.error(`${err.message} "${req.originalUrl}"`, err.stack);
 
   // Custom Error Handling
   if (err instanceof BaseError) {
@@ -27,8 +26,8 @@ export const errorHandler = (
   } else {
     // Handle server errors
     res.status(500).json({
-      error: "Internal Server Error",
-      message: err.message || "Something went wrong.",
+      error: HttpResMsg.INTERNAL_SERVER_ERROR,
+      message: err.message || HttpResMsg.SOMETHING_WENT_WRONG,
     });
   }
 };

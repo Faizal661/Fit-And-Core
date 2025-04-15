@@ -1,7 +1,7 @@
 import { v2 as cloudinary } from "cloudinary";
 import { v4 as uuidv4 } from "uuid";
 import { CustomError } from "../errors/CustomError";
-import { HttpResCode } from "../constants/response.constants";
+import { HttpResCode, HttpResMsg } from "../constants/http-response.constants";
 import { env } from "../config/env.config";
 import logger from "./logger.utils";
 
@@ -11,7 +11,6 @@ cloudinary.config({
   api_secret: env.CLOUDINARY_API_SECRET!,
   secure: true,
 });
-
 
 interface UploadedFile {
   originalname: string;
@@ -54,9 +53,9 @@ export const uploadToCloudinary = async (
     if (error instanceof Error) {
       throw new CustomError(error.message, HttpResCode.INTERNAL_SERVER_ERROR);
     } else {
-      logger.error(`Failed to upload file to Cloudinary: ${error}`);
+      logger.error(HttpResMsg.FAILED_UPLOAD_FILE);
       throw new CustomError(
-        `Failed to upload file`,
+        HttpResMsg.FAILED_UPLOAD_FILE,
         HttpResCode.INTERNAL_SERVER_ERROR
       );
     }
@@ -66,13 +65,13 @@ export const uploadToCloudinary = async (
 export const deleteFromCloudinary = async (publicId: string): Promise<void> => {
   try {
     await cloudinary.uploader.destroy(publicId);
-    logger.info(`File deleted from Cloudinary: ${publicId}`);
+    logger.info(HttpResMsg.FAILED_DELETE_FROM_CLOUDINARY);
   } catch (error: unknown) {
     if (error instanceof Error) {
       throw new CustomError(error.message, HttpResCode.INTERNAL_SERVER_ERROR);
     } else {
       throw new CustomError(
-        `Failed to delete existing file.`,
+        HttpResMsg.FAILED_DELETE_FROM_CLOUDINARY,
         HttpResCode.INTERNAL_SERVER_ERROR
       );
     }
@@ -84,8 +83,7 @@ export const extractPublicIdFromUrl = (url: string): string | null => {
     const matches = url.match(/\/upload\/(?:v\d+\/)?(.+)\.(.+)$/);
     return matches ? matches[1] : null;
   } catch (error) {
-    logger.error("Failed to extract public_id from URL:", error);
+    logger.error(HttpResMsg.FAILED_EXTRACT_PUBLIC_ID, error);
     return null;
   }
 };
-

@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { CustomError } from "../errors/CustomError";
-import { HttpResCode,HttpResMsg } from "../constants/response.constants";
+import { HttpResCode,HttpResMsg } from "../constants/http-response.constants";
 
 export const authorizeRoles = (roles: Array<"user" | "trainer" | "admin">) => {
   return (req: Request, res: Response, next: NextFunction) => {

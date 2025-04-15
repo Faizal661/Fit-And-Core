@@ -1,5 +1,5 @@
 import { EnvErrMsg } from "../constants/env-error-messages.constants";
-import { HttpResCode } from "../constants/response.constants";
+import { HttpResCode } from "../constants/http-response.constants";
 import { CustomError } from "../errors/CustomError";
 
 export const env = {

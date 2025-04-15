@@ -1,9 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import { container } from "tsyringe";
 import { CustomError } from "../errors/CustomError";
-import { HttpResCode, HttpResMsg } from "../constants/response.constants";
+import { HttpResCode, HttpResMsg } from "../constants/http-response.constants";
 import { IAuthRepository } from "../repositories/Interface/IAuthRepository";
-
 
 export const checkBlockedUser = async (
   req: Request,
@@ -16,20 +15,16 @@ export const checkBlockedUser = async (
     if (!decoded) {
       throw new CustomError(HttpResMsg.UNAUTHORIZED, HttpResCode.UNAUTHORIZED);
     }
-    const authRepository = container.resolve<IAuthRepository>('AuthRepository');
+    const authRepository = container.resolve<IAuthRepository>("AuthRepository");
 
     const user = await authRepository.findByEmail(decoded.email);
 
-  
     if (!user) {
-      throw new CustomError("User not found", HttpResCode.NOT_FOUND);
+      throw new CustomError(HttpResMsg.USER_NOT_FOUND, HttpResCode.NOT_FOUND);
     }
 
     if (user.isBlocked) {
-      throw new CustomError(
-        "Your account is blocked. Please contact support.",
-        HttpResCode.FORBIDDEN
-      );
+      throw new CustomError(HttpResMsg.ACCOUNT_BLOCKED, HttpResCode.FORBIDDEN);
     }
 
     next();
