@@ -23,3 +23,31 @@ export interface ArticlesResponse {
   page: number;
   limit: number;
 }
+
+export interface GetAllArticlesParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+  sortBy?: "createdAt" | "upvotes" | ""; 
+}
+
+export interface GetAllArticlesResponse {
+  articles: Article[];
+  total: number;
+  page: number;
+  limit: number;
+}
+
+export interface GetMyArticlesParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+  sortBy?: "createdAt" | "upvotes" | "";
+}
+
+export interface MyArticlesResponse {
+  articles: Article[];
+  total: number;
+  page: number;
+  limit: number;
+}
