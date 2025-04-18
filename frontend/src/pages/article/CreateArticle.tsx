@@ -3,7 +3,7 @@ import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { articleSchema, ArticleFormData } from "../../schemas/articleSchema";
-import { MarkdownEditor } from "../../components/article/MarkdownEditor";
+import { MarkdownEditor } from "../../components/shared/article/MarkdownEditor";
 import { createTrainerArticle } from "../../services/article/articleService";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "../../context/ToastContext";
@@ -86,22 +86,22 @@ const CreateArticle = () => {
 
   return (
     <div>
-      <div className="min-h-screen bg-slate-600 flex  justify-center items-center">
+      <div className="min-h-screen bg-slate-100 flex  justify-center items-center">
         <div className="flex flex-col  md:min-w-2xl lg:min-w-4xl  pt-16 pb-12">
-          <h1 className="text-3xl font-bold text-white mb-6 text-center ">
+          <h1 className="text-3xl font-bold text-black mb-6 text-center ">
             Create New Article
           </h1>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             {/* Title field */}
             <div>
-              <label htmlFor="title" className="block text-white mb-2">
+              <label htmlFor="title" className="block text-black mb-2">
                 Title
               </label>
               <input
                 id="title"
                 {...register("title")}
-                className="w-full p-3 border-1  text-white focus:outline-none"
+                className="w-full p-3 border-1  text-black focus:outline-none"
                 placeholder="Article title"
               />
               {errors.title && (
@@ -110,7 +110,7 @@ const CreateArticle = () => {
             </div>
 
             <div>
-              <label htmlFor="thumbnail" className="block text-white mb-2">
+              <label htmlFor="thumbnail" className="block text-black mb-2">
                 Thumbnail Image
               </label>
               <input
@@ -118,7 +118,7 @@ const CreateArticle = () => {
                 type="file"
                 accept="image/jpeg,image/jpg,image/png,image/webp"
                 onChange={handleThumbnailChange}
-                className="w-full p-3 border-1  text-white focus:outline-none"
+                className="w-full p-3 border-1  text-black focus:outline-none"
               />
               {errors.thumbnail && (
                 <p className="text-red-500 mt-1">{errors.thumbnail.message}</p>
@@ -136,7 +136,7 @@ const CreateArticle = () => {
             </div>
 
             <div>
-              <label htmlFor="tags" className="block text-white mb-2">
+              <label htmlFor="tags" className="block text-black mb-2">
                 Tags
               </label>
               <div className="flex">
@@ -147,13 +147,13 @@ const CreateArticle = () => {
                   onKeyPress={(e) =>
                     e.key === "Enter" && (e.preventDefault(), addTag())
                   }
-                  className="flex-14 p-3 border-y-1 border-l-1 text-white focus:outline-none"
+                  className="flex-14 p-3 border-y-1 border-l-1 text-black focus:outline-none"
                   placeholder="Add a tag"
                 />
                 <button
                   type="button"
                   onClick={addTag}
-                  className="flex-1 bg-black text-white px-4 border-y-1 border-r-1 border-white"
+                  className="flex-1 bg-black text-white px-4 border-y-1 border-r-1 border-black hover:cursor-pointer hover:bg-slate-500"
                 >
                   Add
                 </button>
@@ -163,7 +163,7 @@ const CreateArticle = () => {
                 {tags.map((tag) => (
                   <span
                     key={tag}
-                    className="text-white border-1 border-black px-3 py-1 flex items-center "
+                    className="text-black border-1 border-black px-3 py-1 flex items-center "
                   >
                     {tag}
                     <button
@@ -183,7 +183,7 @@ const CreateArticle = () => {
             </div>
 
             <div>
-              <label className="block text-white mb-2">
+              <label className="block text-black mb-2">
                 Content (Markdown)
               </label>
               <Controller
@@ -205,7 +205,7 @@ const CreateArticle = () => {
               <button
                 type="submit"
                 disabled={createArticleMutation.isPending}
-                className="text-white py-2 px-6 border-1 hover:bg-black hover:cursor-pointer disabled:opacity-50 "
+                className="text-black py-2 px-6 border-1 hover:bg-black hover:cursor-pointer disabled:opacity-50 "
               >
                 {createArticleMutation.isPending
                   ? "Publishing..."

@@ -3,10 +3,10 @@ import { ThumbsUp, ThumbsUpIcon } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { upvoteArticle } from "../../services/article/articleService";
-import { ArticleCardProps } from "../../types/article.type";
-import { formatDate } from "../../utils/dateFormat";
-import { ERR_MESSAGES } from "../../constants/error.messages";
+import { upvoteArticle } from "../../../services/article/articleService";
+import { ArticleCardProps } from "../../../types/article.type";
+import { formatDate } from "../../../utils/dateFormat";
+import { ERR_MESSAGES } from "../../../constants/error.messages";
 
 export const ArticleCard = ({
   article,

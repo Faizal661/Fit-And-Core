@@ -7,7 +7,7 @@ import remarkGfm from "remark-gfm";
 import { ThumbsUp, ThumbsUpIcon } from "lucide-react";
 import { RootState } from "../../redux/store";
 import { Article } from "../../types/article.type";
-import { components } from "../../components/article/MarkdownComponents";
+import { components } from "../../components/shared/article/MarkdownComponents";
 import { formatDate } from "../../utils/dateFormat";
 import PageNotFound from "../../components/shared/PageNotFound";
 import Footer from "../../components/shared/Footer";

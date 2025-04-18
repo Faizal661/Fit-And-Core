@@ -2,7 +2,7 @@
 import { HomeIcon } from "lucide-react";
 import { Fragment } from 'react';
 import { useSelector } from "react-redux";
-import { RootState } from "../../redux/store";
+import { RootState } from "../../../redux/store";
 import { useNavigate } from "react-router-dom";
 
 const MenuButton = () => {

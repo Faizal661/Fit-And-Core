@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate, RouteObject } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { lazy } from "react";

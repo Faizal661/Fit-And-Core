@@ -2,8 +2,8 @@ import { Suspense } from "react";
 import AppRoutes from "./routes/AppRoutes.tsx";
 
 // shared component
-import MenuButton from "../src/components/shared/MenuButton";
-import FloatButton from "../src/components/shared/FloatButton";
+import MenuButton from "./components/shared/buttons/MenuButton.tsx";
+import FloatButton from "./components/shared/buttons/FloatButton.tsx";
 import Loader from "./components/shared/Loader";
 import ToastContainer from "./components/shared/customToast/ToastContainer.tsx";
 import ScrollToTop from "./components/shared/ScrollToTop.tsx";

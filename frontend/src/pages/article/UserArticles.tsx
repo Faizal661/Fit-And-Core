@@ -5,7 +5,7 @@ import { Skeleton } from "@mui/material";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { ArticlesResponse } from "../../types/article.type";
-import { ArticleCard } from "../../components/article/ArticleCard";
+import { ArticleCard } from "../../components/shared/article/ArticleCard";
 import Footer from "../../components/shared/Footer";
 import { ChangeEventHandler } from "react";
 

@@ -5,7 +5,7 @@ import { Skeleton } from "@mui/material";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { ArticlesResponse } from "../../types/article.type";
-import { ArticleCard } from "../../components/article/ArticleCard";
+import { ArticleCard } from "../../components/shared/article/ArticleCard";
 import { useState, FormEvent } from "react";
 import Footer from "../../components/shared/Footer";
 
@@ -57,14 +57,14 @@ const TrainerArticles = () => {
 
         <div className="flex items-center gap-4 mb-6">
           <div className="flex items-center border border-gray-900 ">
-            <span className="px-3 text-sm text-gray-900">Sort By:</span>
+            <span className="px-3 text-sm text-gray-900 hidden sm:block">Sort By:</span>
             <select
               id="sort-by"
               value={sortBy}
               onChange={(e) =>
                 handleSortChange(e.target.value as "createdAt" | "upvotes" | "")
               }
-              className="appearance-none bg-transparent border-l border-gray-900 px-3 py-2 text-sm text-black focus:outline-none"
+              className="appearance-none  bg-transparent border-l border-gray-900 px-3 py-2 text-sm text-black focus:outline-none"
             >
               <option value="">None</option>
               <option value="createdAt">Newest</option>
@@ -85,7 +85,7 @@ const TrainerArticles = () => {
             />
             <button
               type="submit"
-              className="px-3 py-2 border-l border-gray-900 text-gray-900 bg-transparent hover:text-white hover:bg-black text-sm transition-colors"
+              className="px-3 py-2 hidden sm:block border-l border-gray-900 text-gray-900 bg-transparent hover:text-white hover:bg-black text-sm transition-colors"
             >
               Search
             </button>
@@ -101,7 +101,7 @@ const TrainerArticles = () => {
         ) : (
           <div>
             {data?.articles.length === 0 ? (
-              <p className="text-3xl mt-20 text-center text-gray-300">
+              <p className="text-3xl my-52 text-center text-gray-500 ">
                 No articles found.
               </p>
             ) : (
