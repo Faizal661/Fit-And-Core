@@ -13,6 +13,7 @@ import axios from "axios";
 import UserSidebar from "../user/UserSideBar";
 import AdminSidebar from "../admin/AdminSideBar";
 import TrainerSidebar from "../trainer/TrainerSideBar";
+import { STATUS } from "../../constants/status.messges";
 
 const FloatButton = () => {
   const username = useSelector((state: RootState) => state.auth.user?.username);
@@ -37,15 +38,16 @@ const FloatButton = () => {
       dispatch(clearAuth());
       await persistor.purge();
       navigate("/login");
-      showToast("success", AUTH_MESSAGES.LOGOUT_SUCCESS);
+      setSidebarOpen(!sidebarOpen);
+      showToast(STATUS.SUCCESS, AUTH_MESSAGES.LOGOUT_SUCCESS);
     } catch (error) {
       dispatch(clearAuth());
       await persistor.purge();
       navigate("/login");
       if (axios.isAxiosError(error)) {
-        showToast("error", error.message);
+        showToast(STATUS.ERROR, error.message);
       } else {
-        showToast("warning", AUTH_MESSAGES.SESSION_EXPIRED);
+        showToast(STATUS.WARNING, AUTH_MESSAGES.SESSION_EXPIRED);
       }
     }
   };
@@ -97,21 +99,20 @@ const FloatButton = () => {
     <>
       <button
         onClick={handleButtonClick}
-        className="fixed top-3 right-3 bg-white opacity-90 text-[#2916BA] py-2 px-3 rounded-full flex flex-row border-b-2 border-b-amber-500 border-t-2 border-t-fuchsia-500 border-l-2 border-l-red-500 border-r-2 border-r-green-400 hover:bg-slate-300 hover:cursor-pointer z-50 shadow-md transition-all"
+        className={`fixed top-4 right-4 bg-white text-gray-800 py-2 px-4 flex items-center ${
+          sidebarOpen ? "" : "shadow-sm  hover:shadow-md  transition-all" } cursor-pointer  z-50`}
       >
-        <CircleUserRound />
-        <p className="ml-3 font-bold">{getButtonText()}</p>
+        <CircleUserRound size={18} />
+        <span className="ml-2 font-medium">{getButtonText()}</span>
       </button>
-
-      {/* Conditionally show sidebar */}
+  
       {username && sidebarOpen && (
         <div className="fixed inset-0 z-40">
           <div
-            className="absolute inset-0 bg-black/10 backdrop-blur-xs"
+            className="absolute inset-0 bg-black/5 backdrop-blur-sm"
             onClick={handleCloseSidebar}
           ></div>
-
-          {/* Dynamically render the appropriate sidebar */}
+  
           {renderSidebar()}
         </div>
       )}

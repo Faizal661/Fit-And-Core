@@ -18,6 +18,7 @@ const icons = {
   error: (
     <svg
       xmlns="http://www.w3.org/2000/svg"
+      className="w-12 h-12 text-red-500 mx-auto mb-4"
       width="24"
       height="24"
       viewBox="0 0 24 24"

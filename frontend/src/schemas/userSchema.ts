@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+export type UserProfileFormData = z.infer<typeof userProfileSchema>;
+
 export const userProfileSchema = z.object({
   gender: z.string().min(1, "Gender is required"),
   dateOfBirth: z.string().min(1, "Date of birth is required"),
@@ -18,4 +20,3 @@ export const userProfileSchema = z.object({
     .regex(/^[0-9]+$/, "Pin code can only contain digits"),
 });
 
-export type UserProfileFormData = z.infer<typeof userProfileSchema>;

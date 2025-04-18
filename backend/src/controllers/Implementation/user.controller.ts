@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { inject, injectable } from "tsyringe";
-import { HttpResCode, HttpResMsg } from "../../constants/response.constants";
+import { HttpResCode, HttpResMsg } from "../../constants/http-response.constants";
 import { IUserController } from "../Interface/IUserController";
 import { IUserService } from "../../services/Interface/IUserService";
 import { sendResponse } from "../../utils/send-response";
@@ -140,7 +140,7 @@ export default class UserController implements IUserController {
         return;
       }
 
-      const isUpdated = await this.userService.updatePassword(email,currentPassword, newPassword);
+      await this.userService.updatePassword(email,currentPassword, newPassword);
       sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS);
     } catch (error) {
       next(error);

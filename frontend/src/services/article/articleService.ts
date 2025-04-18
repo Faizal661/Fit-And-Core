@@ -1,5 +1,11 @@
 import axios from "../../config/axios.config";
 import { ArticleFormData } from "../../schemas/articleSchema";
+import {
+  GetAllArticlesParams,
+  GetAllArticlesResponse,
+  GetMyArticlesParams,
+  MyArticlesResponse,
+} from "../../types/article.type";
 
 export const createTrainerArticle = async (data: ArticleFormData) => {
   const res = await axios.post("/article/create-article", data, {
@@ -10,32 +16,30 @@ export const createTrainerArticle = async (data: ArticleFormData) => {
   return res.data;
 };
 
-export const getMyArticles = async () => {
-  const res = await axios.get(`/article/my-articles`);
-  return res.data.articles
+
+export const getMyArticles = async (params: GetMyArticlesParams): Promise<MyArticlesResponse> => {
+  const res = await axios.get(`/article/my-articles`, {
+    params,
+  });
+  return res.data;
 };
 
 export const Articles = async () => {
   const res = await axios.get(`/article/all-articles`);
-  return res.data.articles
+  return res.data.articles;
 };
-
 
 export const getAllArticles = async ({
   page = 1,
   limit = 4,
   search,
-}: {
-  page?: number;
-  limit?: number;
-  search?: string;
-}) => {
-  const response = await axios.get('/article/all-articles', {
-    params: { page, limit, search },
+  sortBy,
+}: GetAllArticlesParams): Promise<GetAllArticlesResponse> => {
+  const response = await axios.get("/article/all-articles", {
+    params: { page, limit, search, sortBy },
   });
-  return response.data; // { articles[{}], total, page, limit }
+  return response.data;
 };
-
 
 export const upvoteArticle = async (articleId: string) => {
   const response = await axios.post(`/article/${articleId}/upvote`);

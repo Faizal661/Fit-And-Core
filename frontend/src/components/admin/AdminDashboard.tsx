@@ -1,13 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import {
-  ArrowUp,
-  ArrowDown,
   Users,
   Dumbbell,
-  // Activity,
   CreditCard,
   RefreshCcw,
-  LucideIcon,
 } from "lucide-react";
 import {
   LineChart,
@@ -25,6 +21,7 @@ import {
   fetchMonthlyRegistrationData,
 } from "../../services/admin/adminDashboard";
 import Skeleton from '@mui/material/Skeleton';
+import { MetricCard } from "../shared/MetricCard";
 
  
 const subscriptionData = [
@@ -45,75 +42,6 @@ const subscriptionData = [
   { name: "Mar", users: 0, trainers: 0 },
 ];
 
-const MetricCard = ({
-  title,
-  totalValue,
-  currentMonthValue,
-  change,
-  icon: Icon,
-  isLoading,
-  isError,
-}: {
-  title: string;
-  totalValue: string;
-  currentMonthValue: string;
-  change: number;
-  icon: LucideIcon;
-  isLoading: boolean;
-  isError: Error | null;
-}) => {
-  const isPositive = change >= 0;
-
-  return (
-    <div className="bg-white rounded-lg shadow-md p-4 flex flex-col">
-      <div className="text-sm text-gray-500 mb-1 flex items-center">
-        {Icon && <Icon size={16} className="mr-2" />}
-        {title}
-      </div>
-      {isError ? (
-        <div className="text-red-600 text-xl font-semibold my-6">Failed to fetch data.</div> 
-      ) : (
-        <div>
-          <div className="text-2xl font-bold mb-1">
-            {isLoading ? (
-              <Skeleton
-                width={30}
-                animation="wave"
-              />
-            ) : (
-              totalValue
-            )}
-          </div>
-          {currentMonthValue !== undefined && (
-            <div className="text-sm text-gray-600 mb-1">
-              This Month:{" "}
-              {isLoading ? <Skeleton width={40} /> : currentMonthValue}
-            </div>
-          )}
-          <div
-            className={`text-xs ${
-              isPositive ? "text-green-500" : "text-red-500"
-            } flex items-center`}
-          >
-            {isLoading ? (
-              <Skeleton width={150} />
-            ) : (
-              <>
-                {isPositive ? (
-                  <ArrowUp size={12} className="mr-1" />
-                ) : (
-                  <ArrowDown size={12} className="mr-1" />
-                )}
-                {Math.abs(change || 0)}% {isPositive ? "increase" : "decrease"}{" "}
-                from last month
-              </>
-            )}
-          </div>
-        </div>
-      )}
-    </div>
-  );
-};
 
 const AdminDashboard = () => {
   const {
@@ -147,73 +75,80 @@ const AdminDashboard = () => {
   });
 
   return (
-    <div className="">
-      <h1 className="text-2xl font-bold pl-20 mb-3 px-6 pt-4 ">DASHBOARD</h1>
-      <div className="border-b-1 pt-2 mb-5"></div>
+    <div className="bg-gray-50 min-h-screen">
+        <h1 className="text-2xl font-normal px-8 ps-16 pt-5 pb-4">Dashboard</h1>
+      <div className="border-b border-gray-100 mb-6"></div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6 px-6 py-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 px-8 mb-8">
         {/* Revenue Card */}
-        <MetricCard
-          title="Revenue"
-          totalValue={"₹0"}
-          currentMonthValue="₹0"
-          change={0}
-          icon={CreditCard}
-          isLoading={false}
-          isError={null}
-        />
+        <div className="bg-white border border-gray-50">
+          <MetricCard
+            title="Revenue"
+            totalValue={"₹0"}
+            currentMonthValue="₹0"
+            change={0}
+            icon={CreditCard}
+            isLoading={false}
+            isError={null}
+          />
+        </div>
 
         {/* Refund Card */}
-        <MetricCard
-          title="Refund"
-          totalValue={"₹0"}
-          currentMonthValue="₹0"
-          change={0}
-          icon={RefreshCcw}
-          isLoading={false}
-          isError={null}
-        />
+        <div className="bg-white border border-gray-50">
+          <MetricCard
+            title="Refund"
+            totalValue={"₹0"}
+            currentMonthValue="₹0"
+            change={0}
+            icon={RefreshCcw}
+            isLoading={false}
+            isError={null}
+          />
+        </div>
 
         {/* Income Card */}
-        <MetricCard
-          title="Income"
-          totalValue={"₹0"}
-          currentMonthValue="₹0"
-          change={0}
-          icon={CreditCard}
-          isLoading={false}
-          isError={null}
-        />
+        <div className="bg-white border border-gray-50">
+          <MetricCard
+            title="Income"
+            totalValue={"₹0"}
+            currentMonthValue="₹0"
+            change={0}
+            icon={CreditCard}
+            isLoading={false}
+            isError={null}
+          />
+        </div>
       </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 px-6 py-4">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 px-8">
         {/* Chart */}
-
-        <div className="lg:col-span-2 bg-white rounded-lg shadow-md p-4">
-          <h2 className="text-lg font-semibold mb-4">New Registrations</h2>
+        <div className="lg:col-span-2 bg-white border-1 p-6">
+          <h2 className="text-sm font-medium mb-6 text-gray-700 ">New Registrations</h2>
           {isLoadingMonthly ? (
-            <Skeleton height={300} variant="rounded" animation='wave' />
+            <Skeleton height={280} variant="rectangular" animation="wave" />
           ) : (
-            <div className="h-80">
+            <div className="h-72">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={graphData?.monthlyData || subscriptionData}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Line
-                    type="monotone"
-                    dataKey="users"
-                    stroke="#2D31FA"
-                    strokeWidth={2}
-                    activeDot={{ r: 8 }}
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f5f5f5" vertical={false} />
+                  <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fontSize: 11}} />
+                  <YAxis axisLine={false} tickLine={false} tick={{fontSize: 11}} />
+                  <Tooltip contentStyle={{borderRadius: 0, boxShadow: 'none', border: '1px solid #f0f0f0'}} />
+                  <Legend iconType="circle" iconSize={8} />
+                  <Line 
+                    type="monotone" 
+                    dataKey="users" 
+                    stroke="#333" 
+                    strokeWidth={1.5}
+                    dot={{r: 0}}
+                    activeDot={{ r: 4 }} 
                   />
-                  <Line
-                    type="monotone"
-                    dataKey="trainers"
-                    stroke="#51C1CB"
-                    strokeWidth={2}
+                  <Line 
+                    type="monotone" 
+                    dataKey="trainers" 
+                    stroke="#888" 
+                    strokeWidth={1.5}
+                    dot={{r: 0}}
+                    activeDot={{ r: 4 }}
                   />
                 </LineChart>
               </ResponsiveContainer>
@@ -221,25 +156,29 @@ const AdminDashboard = () => {
           )}
         </div>
 
-        <div className="space-y-6">
-          <MetricCard
-            title="Total Users"
-            totalValue={totalUserData?.totalCount}
-            currentMonthValue={totalUserData?.currentMonthCount || "0"}
-            change={totalUserData?.percentChange || 0}
-            icon={Users}
-            isLoading={isLoadingUsers}
-            isError={userError}
-          />
-          <MetricCard
-            title="Total Trainers"
-            totalValue={totalTrainerData?.totalCount}
-            currentMonthValue={totalTrainerData?.currentMonthCount || "0"}
-            change={totalTrainerData?.percentChange || 0}
-            icon={Dumbbell}
-            isLoading={isLoadingTrainers}
-            isError={trainerError}
-          />
+          <div className="space-y-4">
+          <div className="bg-white border border-gray-50">
+            <MetricCard
+              title="Total Users"
+              totalValue={totalUserData?.totalCount}
+              currentMonthValue={totalUserData?.currentMonthCount || "0"}
+              change={totalUserData?.percentChange || 0}
+              icon={Users}
+              isLoading={isLoadingUsers}
+              isError={userError}
+            />
+          </div>
+          <div className="bg-white border border-gray-50">
+            <MetricCard
+              title="Total Trainers"
+              totalValue={totalTrainerData?.totalCount}
+              currentMonthValue={totalTrainerData?.currentMonthCount || "0"}
+              change={totalTrainerData?.percentChange || 0}
+              icon={Dumbbell}
+              isLoading={isLoadingTrainers}
+              isError={trainerError}
+            />
+          </div>
           {/* <MetricCard
             title="Active Users"
             totalValue={activeUserData?.totalCount || "0"} // Assuming you'll implement total active users

@@ -4,6 +4,7 @@ import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { initiateGoogleLogin, verifyGoogleToken } from '../services/authService';
 import { setAuth } from '../redux/slices/authSlice';
+import { STATUS } from '../constants/status.messges';
 import { AUTH_MESSAGES } from '../constants/auth.messages';
 import { useToast } from '../context/ToastContext';
 
@@ -12,7 +13,6 @@ export const useGoogleAuth = () => {
   const navigate = useNavigate();
   const {showToast}=useToast()
 
-  // Mutation for verifying Google token
   const verifyTokenMutation = useMutation({
     mutationFn: verifyGoogleToken,
     onSuccess: (data) => {
@@ -22,11 +22,11 @@ export const useGoogleAuth = () => {
           accessToken: data.accessToken,
         })
       );
-      showToast("success", AUTH_MESSAGES.LOGIN_SUCCESS);
+      showToast(STATUS.SUCCESS, AUTH_MESSAGES.LOGIN_SUCCESS);
       navigate(`/${data.user.role}`);
     },
     onError: () => {
-      showToast("error", AUTH_MESSAGES.GOOGLE_AUTH_FAIL);
+      showToast(STATUS.ERROR, AUTH_MESSAGES.GOOGLE_AUTH_FAIL);
       navigate("/login");
     },
   });

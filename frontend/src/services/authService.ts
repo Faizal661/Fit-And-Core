@@ -55,7 +55,7 @@ export const loginUser = async (
 
 // New Google authentication methods
 export const initiateGoogleLogin = () => {
-  window.location.href = `http://localhost:5000/api/auth/google`;
+  window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`;
 };
 
 export const verifyGoogleToken = async (
@@ -68,12 +68,7 @@ export const verifyGoogleToken = async (
 // Logout user
 export const logoutUser = async (): Promise<boolean> => {
   try {
-    const data = await axios.post(
-      `/auth/logout`,
-      {},
-      { withCredentials: true }
-    );
-    console.log("LOGOUT RES------", data);
+    await axios.post(`/auth/logout`, {}, { withCredentials: true });
     return true;
   } catch (error) {
     throw error;

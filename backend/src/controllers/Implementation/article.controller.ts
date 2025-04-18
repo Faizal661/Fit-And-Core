@@ -2,7 +2,10 @@ import { Request, Response, NextFunction } from "express";
 import { inject, injectable } from "tsyringe";
 import { IArticleService } from "../../services/Interface/IArticleService";
 import { sendResponse } from "../../utils/send-response";
-import { HttpResCode, HttpResMsg } from "../../constants/response.constants";
+import {
+  HttpResCode,
+  HttpResMsg,
+} from "../../constants/http-response.constants";
 import { IArticleController } from "../Interface/IArticleController";
 import { uploadToCloudinary } from "../../utils/s3-upload";
 import { CustomError } from "../../errors/CustomError";
@@ -32,7 +35,7 @@ export class ArticleController implements IArticleController {
     }
 
     if (thumbnailURL === null) {
-      sendResponse(res, HttpResCode.BAD_REQUEST, "No thumbnail uploaded");
+      sendResponse(res, HttpResCode.BAD_REQUEST, HttpResMsg.NO_FILE_UPLOADED);
       return;
     }
 
@@ -59,8 +62,30 @@ export class ArticleController implements IArticleController {
         sendResponse(res, HttpResCode.UNAUTHORIZED, HttpResMsg.UNAUTHORIZED);
         return;
       }
-      const articles = await this.articleService!.getMyArticles(trainerId);
-      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, { articles });
+
+      const { page = 1, limit = 5, search, sortBy } = req.query;
+      const pageNum = parseInt(page as string, 10);
+      const limitNum = parseInt(limit as string, 10);
+      if (isNaN(pageNum) || isNaN(limitNum) || pageNum < 1 || limitNum < 1) {
+        throw new CustomError(
+          HttpResMsg.INVALID_PAGINATION,
+          HttpResCode.BAD_REQUEST
+        );
+      }
+
+      const { articles, total } = await this.articleService.getMyArticles(
+        trainerId,
+        pageNum,
+        limitNum,
+        search as string,
+        sortBy as "createdAt" | "upvotes" | undefined
+      );
+      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, {
+        articles,
+        total,
+        page: Number(page),
+        limit: Number(limit),
+      });
     } catch (error) {
       next(error);
     }
@@ -68,15 +93,27 @@ export class ArticleController implements IArticleController {
 
   async getAllArticles(req: Request, res: Response, next: NextFunction) {
     try {
-      const { page = 1, limit = 5, search } = req.query;
+      const { page = 1, limit = 5, search, sortBy } = req.query;
       const pageNum = parseInt(page as string, 10);
       const limitNum = parseInt(limit as string, 10);
       if (isNaN(pageNum) || isNaN(limitNum) || pageNum < 1 || limitNum < 1) {
-        throw new CustomError("Invalid pagination parameters", HttpResCode.BAD_REQUEST);
+        throw new CustomError(
+          HttpResMsg.INVALID_PAGINATION,
+          HttpResCode.BAD_REQUEST
+        );
       }
-      const {articles,total} = await this.articleService!.getAllArticles(pageNum, limitNum, search as string);
-      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS,{ articles,total, page: Number(page), limit: Number(limit) }
+      const { articles, total } = await this.articleService.getAllArticles(
+        pageNum,
+        limitNum,
+        search as string,
+        sortBy as "createdAt" | "upvotes" | undefined
       );
+      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, {
+        articles,
+        total,
+        page: Number(page),
+        limit: Number(limit),
+      });
     } catch (error) {
       next(error);
     }
@@ -89,9 +126,11 @@ export class ArticleController implements IArticleController {
         sendResponse(res, HttpResCode.UNAUTHORIZED, HttpResMsg.UNAUTHORIZED);
         return;
       }
-      const article = await this.articleService!.toggleUpvote(req.params.articleId,userId);
+      const article = await this.articleService!.toggleUpvote(
+        req.params.articleId,
+        userId
+      );
 
-      console.log("🚀 ~ ArticleController ~ upvoteArticle ~ article:",article)
       sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, article);
     } catch (error) {
       next(error);

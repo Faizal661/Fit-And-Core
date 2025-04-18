@@ -6,6 +6,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { upvoteArticle } from "../../services/article/articleService";
 import { ArticleCardProps } from "../../types/article.type";
 import { formatDate } from "../../utils/dateFormat";
+import { ERR_MESSAGES } from "../../constants/error.messages";
 
 export const ArticleCard = ({
   article,
@@ -22,7 +23,7 @@ export const ArticleCard = ({
       queryClient.invalidateQueries({ queryKey: ["articles"] });
     },
     onError: (error) => {
-      console.error("Error upvoting article:", error);
+      console.error(ERR_MESSAGES.UPVOTE_ARTICLE_ERROR, error);
     },
   });
 
@@ -39,58 +40,58 @@ export const ArticleCard = ({
 
   return (
     <div
-      className="flex items-start p-4 bg-white rounded-sm shadow-md cursor-pointer hover:shadow-lg transition-shadow "
+      className="flex items-start p-6 mb-4 bg-white border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors"
       onClick={handleCardClick}
     >
-      <div className="flex-3 pr-4 ">
-        <div className="mb-2">
-          <span className="text-sm text-gray-600 capitalize">
-            {article.authorName}
-          </span>
+      <div className="flex-3 pr-6">
+        <div className="mb-3">
+          <span className="text-xs text-gray-500">{article.authorName}</span>
         </div>
-        <h2 className="text-xl font-bold text-gray-900 mb-2">
+        <h2 className="text-lg font-normal text-gray-800 mb-3">
           {article.title}
         </h2>
-        <div className="text-gray-600 mb-2 line-clamp-3">
+        <div className="text-sm text-gray-500 mb-4 line-clamp-3">
           <ReactMarkdown remarkPlugins={[remarkGfm]}>
             {truncatedContent}
           </ReactMarkdown>
         </div>
-        <div className="flex justify-between ">
-          <div className="flex flex-wrap gap-2">
-            {article.tags.map((tag, index) => (
-              <span
-                key={index}
-                className="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded-full"
-              >
-                {tag}
+        <div className="flex justify-between items-center">
+          <div className="flex gap-2">
+            {article.tags.slice(0, 2).map((tag, index) => (
+              <span key={index} className="text-xs text-gray-500">
+                #{tag}
               </span>
             ))}
+            {article.tags.length > 2 && (
+              <span className="text-xs text-gray-400">
+                +{article.tags.length - 2}
+              </span>
+            )}
           </div>
-          <div className="flex justify-between items-center gap-6">
-            <span className="text-sm  text-gray-400 hidden sm:block">
+          <div className="flex items-center gap-4">
+            <span className="text-xs text-gray-400 hidden sm:block">
               {formatDate(article.createdAt)}
             </span>
             <button
               onClick={handleUpvote}
               disabled={mutation.isPending}
-              className="flex items-center text-gray-600 hover:text-blue-600 disabled:opacity-50 hover:cursor-pointer"
+              className="flex items-center text-gray-400 hover:text-gray-600 hover:cursor-pointer disabled:opacity-50"
             >
               {isUpvoted ? (
-                <ThumbsUp className="w-5 h-5 fill-current text-blue-400" />
+                <ThumbsUp className="w-4 h-4 text-gray-600 fill-current" />
               ) : (
-                <ThumbsUpIcon className="w-5 h-5" />
+                <ThumbsUpIcon className="w-4 h-4" />
               )}
-              <span className="ml-1">{article.upvotes.length}</span>
+              <span className="ml-1 text-xs">{article.upvotes.length}</span>
             </button>
           </div>
         </div>
       </div>
-      <div className="flex-1 flex-col items-end mt-1">
+      <div className="flex-1 flex-col items-end">
         <img
           src={article.thumbnail}
-          alt={article.title}
-          className="w-full h-36 object-cover  rounded-md my-2 "
+          alt=""
+          className="w-full h-28 object-cover"
         />
       </div>
     </div>

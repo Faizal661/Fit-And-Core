@@ -1,10 +1,4 @@
 import { inject, injectable } from "tsyringe";
-import { IAuthService } from "../Interface/IAuthService";
-import { IAuthRepository } from "../../repositories/Interface/IAuthRepository";
-import { sendEmail } from "../../utils/email.util";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
-import { IUserModel } from "../../models/user.models";
 import {
   generateAccessToken,
   generateRefreshToken,
@@ -14,11 +8,20 @@ import {
   IJwtDecoded,
   ILoginResponse,
 } from "../../types/auth.types";
-import { generateOtp } from "../../utils/otp-generate.util";
+import jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs";
 import logger from "../../utils/logger.utils";
-import { CustomError } from "../../errors/CustomError";
-import { HttpResCode } from "../../constants/response.constants";
 import { env } from "../../config/env.config";
+import { IAuthService } from "../Interface/IAuthService";
+import { sendEmail } from "../../utils/email.util";
+import { IUserModel } from "../../models/user.models";
+import { generateOtp } from "../../utils/otp-generate.util";
+import { CustomError } from "../../errors/CustomError";
+import { IAuthRepository } from "../../repositories/Interface/IAuthRepository";
+import {
+  HttpResCode,
+  HttpResMsg,
+} from "../../constants/http-response.constants";
 
 @injectable()
 export default class authService implements IAuthService {
@@ -43,15 +46,15 @@ export default class authService implements IAuthService {
     const isUsernameTaken = await this.authRepository.isUsernameTaken(username);
     const isEmailTaken = await this.authRepository.isEmailTaken(email);
     if (isUsernameTaken) {
-      return { available: false, message: "Username already taken" };
+      return { available: false, message: HttpResMsg.USERNAME_CONFLICT};
     } else if (isEmailTaken) {
-      return { available: false, message: "Email already taken" };
+      return { available: false, message: HttpResMsg.EMAIL_CONFLICT };
     }
     return {
       available: true,
       username: username,
       email: email,
-      message: "Username and Email are available.",
+      message: HttpResMsg.USERNAME_EMAIL_AVAILABLE,
     };
   }
 
@@ -79,7 +82,7 @@ export default class authService implements IAuthService {
         throw new CustomError(error.message, HttpResCode.INTERNAL_SERVER_ERROR);
       } else {
         throw new CustomError(
-          "OTP sending failed: Unknown error occurred",
+          HttpResMsg.OTP_SEND_FAILED,
           HttpResCode.INTERNAL_SERVER_ERROR
         );
       }
@@ -92,10 +95,10 @@ export default class authService implements IAuthService {
   ): Promise<{ success: boolean; message: string }> {
     const storedOtp = await this.authRepository.getOtp(email);
     if (!storedOtp || storedOtp !== otp) {
-      return { success: false, message: "Invalid or expired OTP" };
+      return { success: false, message: HttpResMsg.INVALID_OTP };
     }
     await this.authRepository.deleteOtp(email);
-    return { success: true, message: "OTP verified successfully" };
+    return { success: true, message: HttpResMsg.OTP_VERIFIED };
   }
 
   async updatePassword(
@@ -124,27 +127,24 @@ export default class authService implements IAuthService {
     const user = await this.authRepository.findByEmail(email);
 
     if (!user) {
-      logger.warn(`Failed login attempt for email: ${email}`);
+      logger.warn(`${HttpResMsg.INVALID_CREDENTIALS} ${email}`);
       throw new CustomError(
-        "Invalid email or password",
+        HttpResMsg.INVALID_CREDENTIALS,
         HttpResCode.UNAUTHORIZED
       );
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password!);
     if (!isPasswordValid) {
-      logger.warn(`Failed login attempt for email: ${email}`);
+      logger.warn(`${HttpResMsg.INVALID_CREDENTIALS} ${email}`);
       throw new CustomError(
-        "Invalid email or password",
+        HttpResMsg.INVALID_CREDENTIALS,
         HttpResCode.UNAUTHORIZED
       );
     }
 
     if (user.isBlocked) {
-      throw new CustomError(
-        "Your account is blocked. Please contact support.",
-        HttpResCode.FORBIDDEN
-      );
+      throw new CustomError(HttpResMsg.ACCOUNT_BLOCKED, HttpResCode.FORBIDDEN);
     }
 
     const accessToken = generateAccessToken(user);
@@ -167,7 +167,7 @@ export default class authService implements IAuthService {
       const accessToken = token;
       if (!accessToken) {
         throw new CustomError(
-          "Access denied. No token provided.",
+          HttpResMsg.NO_ACCESS_TOKEN,
           HttpResCode.UNAUTHORIZED
         );
       }
@@ -179,7 +179,7 @@ export default class authService implements IAuthService {
       const user = await this.authRepository.findByEmail(decoded.email);
       if (!user) {
         throw new CustomError(
-          "No user Found on this email",
+          HttpResMsg.USER_NOT_FOUND,
           HttpResCode.UNAUTHORIZED
         );
       }
@@ -196,7 +196,7 @@ export default class authService implements IAuthService {
       };
     } catch (tokenError) {
       throw new CustomError(
-        "Invalid or expired access token.",
+        HttpResMsg.INVALID_ACCESS_TOKEN,
         HttpResCode.UNAUTHORIZED
       );
     }
@@ -208,9 +208,9 @@ export default class authService implements IAuthService {
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user);
 
-    return {
+    const result = {
       user: {
-        id: user._id,
+        id: user.id,
         username: user.username,
         email: user.email,
         role: user.role,
@@ -218,5 +218,6 @@ export default class authService implements IAuthService {
       accessToken,
       refreshToken,
     };
+    return result;
   }
 }

@@ -4,15 +4,22 @@ export interface Trainer {
   username: string;
   email: string;
   phone: string;
+  profilePicture?:string;
   specialization: string;
   yearsOfExperience: string;
   about: string;
   documentProofs: string[];
   certifications: string[];
   achievements: string[];
-  isApproved: boolean;
+  // isApproved: boolean;
   status: "pending" | "approved" | "rejected";
   reason?:string;
   createdAt: string;
   updatedAt: string;
+}
+
+
+export interface ApplicationStatus {
+  status: "none" | "pending" | "approved" | "rejected";
+  reason?: string;
 }

@@ -1,5 +1,5 @@
 import { EnvErrMsg } from "../constants/env-error-messages.constants";
-import { HttpResCode } from "../constants/response.constants";
+import { HttpResCode } from "../constants/http-response.constants";
 import { CustomError } from "../errors/CustomError";
 
 export const env = {
@@ -263,5 +263,25 @@ export const env = {
       );
     }
     return process.env.CLOUDINARY_API_SECRET;
+  },
+
+  get STRIPE_SECRET_KEY(): string {
+    if (!process.env.STRIPE_SECRET_KEY) {
+      throw new CustomError(
+        EnvErrMsg.STRIPE_SECRET_KEY_UNDEFINED,
+        HttpResCode.INTERNAL_SERVER_ERROR
+      );
+    }
+    return process.env.STRIPE_SECRET_KEY;
+  },
+
+  get STRIPE_WEBHOOK_SECRET(): string {
+    if (!process.env.STRIPE_WEBHOOK_SECRET) {
+      throw new CustomError(
+        EnvErrMsg.STRIPE_WEBHOOK_SECRET_UNDEFINED,
+        HttpResCode.INTERNAL_SERVER_ERROR
+      );
+    }
+    return process.env.STRIPE_WEBHOOK_SECRET;
   },
 };

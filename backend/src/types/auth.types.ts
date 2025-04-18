@@ -19,10 +19,7 @@ export interface ILoginResponse {
 export interface IJwtDecoded {
   id: string;
   email: string;
-  role: "user" | "trainer"|"admin",
-  iat:number;
-  exp:number;
+  role: "user" | "trainer" | "admin";
+  iat: number;
+  exp: number;
 }
-
-
-

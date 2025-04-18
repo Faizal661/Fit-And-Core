@@ -9,9 +9,14 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type OtpFormData, otpSchema } from "../../../schemas/authSchema";
 
-import { verifyOtp, ResendOtp,createUser } from "../../../services/authService";
+import {
+  verifyOtp,
+  ResendOtp,
+  createUser,
+} from "../../../services/authService";
 import { useToast } from "../../../context/ToastContext";
-
+import Footer from "../../../components/shared/Footer";
+import { STATUS } from "../../../constants/status.messges";
 
 const SignUpOtpVerification = () => {
   const navigate = useNavigate();
@@ -24,12 +29,12 @@ const SignUpOtpVerification = () => {
   const { showToast } = useToast();
 
   const registrationData = JSON.parse(
-    localStorage.getItem('registrationData') || '{}'
+    localStorage.getItem("registrationData") || "{}"
   );
 
   useEffect(() => {
     if (!registrationData.email) {
-      navigate('/signup');
+      navigate("/signup");
     }
   }, []);
 
@@ -63,23 +68,22 @@ const SignUpOtpVerification = () => {
     },
     onError: () => {
       setServerError(AUTH_MESSAGES.SERVER_ERROR);
-      showToast("error", AUTH_MESSAGES.SERVER_ERROR);
+      showToast(STATUS.ERROR, AUTH_MESSAGES.SERVER_ERROR);
     },
   });
 
   const createUserMutation = useMutation({
     mutationFn: createUser,
     onSuccess: () => {
-      localStorage.removeItem('registrationData');
-      navigate('/login');
-      showToast('success', AUTH_MESSAGES.ACCOUNT_CREATED);
+      localStorage.removeItem("registrationData");
+      navigate("/login");
+      showToast(STATUS.SUCCESS, AUTH_MESSAGES.ACCOUNT_CREATED);
     },
     onError: () => {
-      showToast('error', AUTH_MESSAGES.SERVER_ERROR);
+      showToast(STATUS.ERROR, AUTH_MESSAGES.SERVER_ERROR);
       setServerError(AUTH_MESSAGES.SERVER_ERROR);
     },
   });
-
 
   useEffect(() => {
     if (timeLeft > 0) {
@@ -102,7 +106,7 @@ const SignUpOtpVerification = () => {
     setServerError("");
     setValue("otp", "");
     ResendOtp(registrationData.email);
-    showToast("info", AUTH_MESSAGES.OTP_RESENT);
+    showToast(STATUS.INFO, AUTH_MESSAGES.OTP_RESENT);
   };
 
   const handleBoxClick = (index: number) => {
@@ -117,79 +121,79 @@ const SignUpOtpVerification = () => {
   };
 
   return (
-    <LoginBody
-      imageSrc={userLoginImage}
-      welcomeMessage={AUTH_MESSAGES.ENTER_OTP}
-    >
-      <div className=" p-6  w-96">
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <input
-            {...register("otp")}
-            ref={(e) => {
-              register("otp").ref(e);
-              otpInputRef.current = e;
-            }}
-            type="text"
-            value={currentOtp}
-            onChange={handleOtpChange}
-            maxLength={6}
-            className="absolute opacity-0 pointer-events-none"
-            autoFocus
-          />
+    <div>
+      <LoginBody
+        imageSrc={userLoginImage}
+        welcomeMessage={AUTH_MESSAGES.ENTER_OTP}
+      >
+        <div className=" p-6  w-96">
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <input
+              {...register("otp")}
+              ref={(e) => {
+                register("otp").ref(e);
+                otpInputRef.current = e;
+              }}
+              type="text"
+              value={currentOtp}
+              onChange={handleOtpChange}
+              maxLength={6}
+              className="absolute opacity-0 pointer-events-none"
+              autoFocus
+            />
 
-          <div className="flex justify-center mt-4 gap-4">
-            {[...Array(6)].map((_, index) => (
-              <div
-                key={index}
-                onClick={() => handleBoxClick(index)}
-                className={`w-12 h-12 flex items-center justify-center border rounded-md text-lg cursor-pointer ${
-                  errors.otp 
-                    ? "border-red-500"
-                    : activeIndex === index
-                    ? "border-slate-500 bg-cyan-400"
-                    : "border-gray-300 hover:border-gray-500"
-                }
-                ${
-                  serverError 
-                    && "border-red-500"
+            <div className="flex justify-center mt-4 gap-4">
+              {[...Array(6)].map((_, index) => (
+                <div
+                  key={index}
+                  onClick={() => handleBoxClick(index)}
+                  className={`w-12 h-12 flex items-center justify-center border text-lg cursor-pointer ${
+                    errors.otp
+                      ? "border-red-500"
+                      : activeIndex === index
+                      ? "border-slate-500 bg-cyan-400"
+                      : "border-gray-300 hover:border-gray-500"
+                  }
+                ${serverError && "border-red-500"}`}
+                >
+                  {currentOtp?.[index] || ""}
+                </div>
+              ))}
+            </div>
+
+            {(errors.otp || serverError) && (
+              <p className="text-red-500 mt-2 text-sm">
+                {errors.otp?.message || serverError}
+              </p>
+            )}
+
+            <div className="flex justify-between items-center mt-8">
+              <button
+                type="button"
+                onClick={handleResendOtp}
+                disabled={isResendDisabled}
+                className={`${
+                  isResendDisabled
+                    ? "opacity-50 cursor-not-allowed"
+                    : "cursor-pointer"
                 }`}
               >
-                {currentOtp?.[index] || ""}
-              </div>
-            ))}
-          </div>
+                Resend OTP
+              </button>
+              <span className="">{timeLeft}s</span>
+            </div>
 
-          {(errors.otp || serverError) && (
-            <p className="text-red-500 mt-2 text-sm">
-              {errors.otp?.message || serverError}
-            </p>
-          )}
-
-          <div className="flex justify-between items-center mt-8">
             <button
-              type="button"
-              onClick={handleResendOtp}
-              disabled={isResendDisabled}
-              className={`${
-                isResendDisabled
-                  ? "opacity-50 cursor-not-allowed"
-                  : "cursor-pointer"
-              }`}
+              type="submit"
+              className="mt-10 w-full border-1  py-2 hover:bg-black"
             >
-              Resend OTP
+              Submit OTP
             </button>
-            <span className="">{timeLeft}s</span>
-          </div>
-
-          <button
-            type="submit"
-            className="mt-10 w-full border-1 rounded-4xl py-2 hover:bg-blue-900"
-          >
-            Submit OTP
-          </button>
-        </form>
-      </div>
-    </LoginBody>
+          </form>
+        </div>
+      </LoginBody>
+      <Footer />
+    </div>
   );
 };
 

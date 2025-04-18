@@ -3,7 +3,7 @@ import { IAdminService } from "../Interface/IAdminService";
 import { IAdminRepository } from "../../repositories/Interface/IAdminRepository";
 
 @injectable()
-export default class adminService implements IAdminService {
+export default class AdminService implements IAdminService {
   private adminRepository: IAdminRepository;
 
   private calculatePercentageChange(previous: number, current: number): number {

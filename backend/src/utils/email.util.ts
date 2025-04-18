@@ -1,6 +1,6 @@
 import nodemailer from "nodemailer";
 import { CustomError } from "../errors/CustomError";
-import { HttpResCode } from "../constants/response.constants";
+import { HttpResCode, HttpResMsg } from "../constants/http-response.constants";
 import { env } from "../config/env.config";
 
 const transporter = nodemailer.createTransport({
@@ -75,12 +75,12 @@ export const sendEmail = async (toEmail: string, otp: string) => {
     };
 
     const info = await transporter.sendMail(mailOptions);
-    console.log(
-      "Email sent successfully!",
-      toEmail,
-      "Message ID:",
-      info.messageId
-    );
+    // console.log(
+    //   "Email sent successfully!",
+    //   toEmail,
+    //   "Message ID:",
+    //   info.messageId
+    // );
 
     // return info;
   } catch (error: unknown) {
@@ -88,7 +88,7 @@ export const sendEmail = async (toEmail: string, otp: string) => {
       throw new CustomError(error.message, HttpResCode.INTERNAL_SERVER_ERROR);
     } else {
       throw new CustomError(
-        "Failed to send email: Unknown error occurred",
+        HttpResMsg.FAILED_SEND_EMAIL,
         HttpResCode.INTERNAL_SERVER_ERROR
       );
     }
