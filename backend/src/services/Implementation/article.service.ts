@@ -32,20 +32,60 @@ export default class ArticleService implements IArticleService {
   }
 
   async getMyArticles(
-    trainerId: string | Types.ObjectId
-  ): Promise<IArticleModel[]> {
-    return await this.articleRepository.find({
+    trainerId: string | Types.ObjectId,
+    page: number,
+    limit: number,
+    search?: string,
+    sortBy?: "createdAt" | "upvotes"
+  ): Promise<articleResponse> {
+    const skip = (page - 1) * limit;
+    const query: FilterQuery<IArticleModel> = {
       createdBy: new Types.ObjectId(trainerId),
-    });
+    };
+    const sortOptions: Record<string, 1 | -1> = {};
+
+    if (search) {
+      query.$or = [
+        { title: { $regex: search, $options: "i" } },
+        { tags: { $in: [new RegExp(search, "i")] } },
+      ];
+    }
+
+    if (sortBy === "createdAt") {
+      sortOptions.createdAt = -1;
+    } else if (sortBy === "upvotes") {
+      sortOptions["upvotes"] = -1; 
+    }
+
+    const [articles, total] = await Promise.all([
+      this.articleRepository
+        .find(query)
+        .skip(skip)
+        .limit(limit)
+        .sort(sortOptions)
+        .exec(),
+      this.articleRepository.countDocuments(query),
+    ]);
+
+    if (sortBy === "upvotes") {
+      articles.sort(
+        (a, b) => (b.upvotes?.length || 0) - (a.upvotes?.length || 0)
+      );
+    }
+
+    return { articles, total };
   }
 
   async getAllArticles(
     page: number,
     limit: number,
-    search: string
+    search: string,
+    sortBy?: "createdAt" | "upvotes"
   ): Promise<articleResponse> {
     const skip = (page - 1) * limit;
     const query: FilterQuery<IArticleModel> = {};
+    const sortOptions: Record<string, 1 | -1> = {};
+
     if (search) {
       query.$or = [
         { title: { $regex: search, $options: "i" } },
@@ -54,10 +94,27 @@ export default class ArticleService implements IArticleService {
       ];
     }
 
+    if (sortBy === "createdAt") {
+      sortOptions.createdAt = -1;
+    } else if (sortBy === "upvotes") {
+      sortOptions["upvotes"] = -1;
+    }
+
     const [articles, total] = await Promise.all([
-      this.articleRepository.find(query).skip(skip).limit(limit).exec(),
+      this.articleRepository
+        .find(query)
+        .skip(skip)
+        .limit(limit)
+        .sort(sortOptions)
+        .exec(),
       this.articleRepository.countDocuments(query),
     ]);
+
+    if (sortBy === "upvotes") {
+      articles.sort(
+        (a, b) => (b.upvotes?.length || 0) - (a.upvotes?.length || 0)
+      );
+    }
 
     return { articles, total };
   }
