@@ -9,7 +9,11 @@ export const ToastProvider: React.FC<{ children: ReactNode }> = ({
 }) => {
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
-  const showToast = (type: ToastType, message: string, duration = 3300) => {
+  const showToast = (
+    type: ToastType,
+    message: string,
+    duration: number = 3300
+  ) => {
     const id = Date.now().toString();
     const newToast = { id, type, message, duration };
 
