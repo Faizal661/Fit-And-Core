@@ -40,6 +40,7 @@ import axios from "axios";
 import Loader from "../../components/shared/Loader";
 import Footer from "../../components/shared/Footer";
 import { GlowButton } from "../../components/shared/buttons/GlowButton";
+import ErrorPage from "../../components/shared/ErrorPage";
 
 // Animation variants
 const fadeIn = {
@@ -216,15 +217,7 @@ const UserProfile = () => {
   };
 
   if (isLoading) return <Loader />;
-  if (error)
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-600 flex justify-center items-center">
-        <div className="text-center text-white">
-          <h2 className="text-3xl font-bold mb-4">Error Loading Profile</h2>
-          <p className="text-white/80">Please try again later</p>
-        </div>
-      </div>
-    );
+  if (error) return <ErrorPage />;
 
   return (
     <div className="min-h-screen bg-gray-50">

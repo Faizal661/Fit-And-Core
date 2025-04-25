@@ -7,6 +7,7 @@ import { upvoteArticle } from "../../../services/article/articleService";
 import { ArticleCardProps } from "../../../types/article.type";
 import { formatDate } from "../../../utils/dateFormat";
 import { ERR_MESSAGES } from "../../../constants/error.messages";
+import { motion } from "framer-motion";
 
 export const ArticleCard = ({
   article,
@@ -17,7 +18,7 @@ export const ArticleCard = ({
   const queryClient = useQueryClient();
   const isUpvoted = article.upvotes.includes(userId);
 
-  const mutation = useMutation({
+  const upvoteMutation = useMutation({
     mutationFn: () => upvoteArticle(article._id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["articles"] });
@@ -33,15 +34,19 @@ export const ArticleCard = ({
 
   const handleUpvote = (e: React.MouseEvent) => {
     e.stopPropagation();
-    mutation.mutate();
+    upvoteMutation.mutate();
   };
 
   const truncatedContent = `${article.content.slice(0, 150)}...`;
 
   return (
-    <div
-      className="flex items-start p-6 mb-4 bg-white border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors"
+    <motion.div
+      className="flex items-start p-6 mb-4 bg-white border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors rounded-md shadow-sm" // Added rounded-md and shadow-sm for better visual appeal
       onClick={handleCardClick}
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.2 }}
+      whileHover={{ scale: 1.02, transition: { duration: 0.1 } }} // Subtle scale on hover
     >
       <div className="flex-3 pr-6">
         <div className="mb-3">
@@ -58,7 +63,10 @@ export const ArticleCard = ({
         <div className="flex justify-between items-center">
           <div className="flex gap-2">
             {article.tags.slice(0, 2).map((tag, index) => (
-              <span key={index} className="text-xs text-gray-500">
+              <span
+                key={index}
+                className="inline-block text-xs text-gray-500 bg-gray-100 rounded-full px-2 py-0.5" // Added background and padding for tag appearance
+              >
                 #{tag}
               </span>
             ))}
@@ -72,10 +80,11 @@ export const ArticleCard = ({
             <span className="text-xs text-gray-400 hidden sm:block">
               {formatDate(article.createdAt)}
             </span>
-            <button
+            <motion.button
               onClick={handleUpvote}
-              disabled={mutation.isPending}
-              className="flex items-center text-gray-400 hover:text-gray-600 hover:cursor-pointer disabled:opacity-50"
+              disabled={upvoteMutation.isPending}
+              className="flex items-center text-gray-400 hover:text-gray-600 hover:cursor-pointer disabled:opacity-50 focus:outline-none" // Added focus outline reset
+              whileTap={{ scale: 0.95 }} // Subtle tap feedback
             >
               {isUpvoted ? (
                 <ThumbsUp className="w-4 h-4 text-gray-600 fill-current" />
@@ -83,7 +92,7 @@ export const ArticleCard = ({
                 <ThumbsUpIcon className="w-4 h-4" />
               )}
               <span className="ml-1 text-xs">{article.upvotes.length}</span>
-            </button>
+            </motion.button>
           </div>
         </div>
       </div>
@@ -91,9 +100,9 @@ export const ArticleCard = ({
         <img
           src={article.thumbnail}
           alt=""
-          className="w-full h-28 object-cover"
+          className="w-full h-28 object-cover rounded-md" // Added rounded-md to the thumbnail
         />
       </div>
-    </div>
+    </motion.div>
   );
 };

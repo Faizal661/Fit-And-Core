@@ -251,7 +251,7 @@ const LandingPage = () => {
         {/* Scroll indicator */}
         <motion.div
           className="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-30"
-          animate={{ y: [0, 10, 0] }}
+          animate={{ y: [0, -30, 0] }}
           transition={{
             repeat: Infinity,
             duration: 1.5,
@@ -295,16 +295,18 @@ const LandingPage = () => {
               <div className="aspect-video bg-gray-900">
                 <div className="w-full h-full flex items-center justify-center text-white">
                   <div className="text-center">
-                    <p className="text-2xl mb-4">Video Player Placeholder</p>
+                    
+                    <video src="https://res.cloudinary.com/dno9qcs9o/video/upload/v1745405547/2376809-hd_1920_1080_24fps_2_iwb2zj.mp4" autoPlay controls loop ></video>
+                    {/* <p className="text-2xl mb-4">Video Player Placeholder</p>
                     <p className="text-gray-400">
                       Your promotional video would play here
-                    </p>
+                    </p> */}
                   </div>
                 </div>
               </div>
               <button
                 onClick={() => setVideoModalOpen(false)}
-                className="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/50 flex items-center justify-center text-white hover:bg-black/80 transition-colors"
+                className="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/50 flex items-center justify-center text-white hover:bg-black/80 transition-colors hover:cursor-pointer"
               >
                 ✕
               </button>
