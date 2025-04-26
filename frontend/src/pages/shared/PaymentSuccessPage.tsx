@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { verifyPayment } from "../../services/stripe/subscriptionPlan";
+import { verifyPayment } from "../../services/stripe/subscriptionService";
 import { motion } from "framer-motion";
 import { Check, Home, Users, ChevronRight} from "lucide-react";
 import Loader from "../../components/shared/Loader";

@@ -1,5 +1,5 @@
 import api from "../../config/axios.config";
-import { SubscriptionData } from "../../types/subscription.type";
+import { SubscriptionData, SubscriptionStatus } from "../../types/subscription.type";
 import { loadStripe } from "@stripe/stripe-js";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PK);
@@ -30,4 +30,10 @@ export const redirectToCheckout = async (sessionId:string) => {
 export const verifyPayment = async (sessionId:string | null) => {
     const response = await api.get(`/subscription/verify-payment?session_id=${sessionId}`);
     return response.data;
+};
+
+
+export const checkSubscriptionStatus = async (trainerId: string): Promise<SubscriptionStatus> => {
+  const { data } = await api.get(`/subscription/check?trainerId=${trainerId}`);
+  return data;
 };

@@ -6,9 +6,15 @@ import { Skeleton } from "@mui/material";
 import { useToast } from "../../../context/ToastContext";
 import Footer from "../../../components/shared/Footer";
 import PageNotFound from "../../../components/shared/PageNotFound";
-import { subscriptionPlans } from "../../../types/subscription.type";
+import {
+  SubscriptionStatus,
+  subscriptionPlans,
+} from "../../../types/subscription.type";
 import { loadStripe } from "@stripe/stripe-js";
-import { createCheckoutSession } from "../../../services/stripe/subscriptionPlan";
+import {
+  checkSubscriptionStatus,
+  createCheckoutSession,
+} from "../../../services/stripe/subscriptionService";
 import { STATUS } from "../../../constants/status.messges";
 import { REDIRECT_MESSAGES } from "../../../constants/redirect.messges";
 import { getTrainerData } from "../../../services/trainer/trainerService";
@@ -27,6 +33,16 @@ const TrainerDetailsPage = () => {
   } = useQuery<Trainer>({
     queryKey: ["trainer", trainerId],
     queryFn: () => getTrainerData(trainerId),
+  });
+
+  const {
+    data: subscriptionData,
+    isLoading: subscriptionLoading,
+    error: subscriptionError,
+  } = useQuery<SubscriptionStatus>({
+    queryKey: ["subscriptionStatus", trainerId],
+    queryFn: () => checkSubscriptionStatus(trainerId!),
+    enabled: !!trainerId,
   });
 
   const checkoutMutation = useMutation({
@@ -251,58 +267,102 @@ const TrainerDetailsPage = () => {
                   </div>
                 )}
 
-                {subscriptionPlans && subscriptionPlans.length > 0 && (
-                  <div>
-                    <h3 className="text-base mb-6">Subscription plans</h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                      {subscriptionPlans.map((plan, index) => (
-                        <div
-                          key={index}
-                          className="border border-slate-300 rounded-lg p-6 hover:shadow-md transition-shadow relative overflow-hidden"
-                        >
-                          {index === 1 && (
-                            <div className="absolute top-0 right-0 bg-green-500 text-white text-xs py-1 px-3 rounded-bl-lg">
-                              Popular
-                            </div>
-                          )}
-
-                          <h4 className="font-medium text-base mb-2">
-                            {plan.duration}
-                          </h4>
-
-                          <div className="mb-2">
-                            <span className="text-xl font-bold text-gray-800">
-                              {plan.amount}
-                            </span>
-                          </div>
-
-                          {
-                            <div className="mb-4 bg-green-50 text-green-700 text-xs font-medium py-1 px-2 rounded inline-block">
-                              {plan.savings > 0 && `Save ₹${plan.savings}`}
-                            </div>
-                          }
-
-                          <div className="space-y-2 mb-6">
-                            {features.map((feature, idx) => (
-                              <FeatureItem key={idx} text={feature} />
-                            ))}
-                          </div>
-                          <button
-                            disabled={checkoutMutation.isPending}
-                            className={`w-full py-2 px-4 rounded text-sm font-medium hover:bg-green-500 hover:text-white bg-slate-100 text-gray-800 transition-colors ${
-                              checkoutMutation.isPending
-                                ? "cursor-progress"
-                                : "hover:cursor-pointer"
-                            }`}
-                            onClick={() => handleSubscription(plan)}
-                          >
-                            Choose plan
-                          </button>
-                        </div>
-                      ))}
-                    </div>
+                {subscriptionLoading ? (
+                  // you can replace this with a proper Skeleton if you like
+                  <div className="text-center py-8 text-gray-500">
+                    Loading plans…
                   </div>
+                ) : subscriptionError ? (
+                  <div className="text-center py-8 text-red-500">
+                    Couldn’t load your subscription status.
+                  </div>
+                ) : (
+                  subscriptionPlans.length > 0 && (
+                    <div>
+                      <h3 className="text-base mb-6">Subscription plans</h3>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                        {subscriptionPlans.map((plan, index) => {
+                          const isCurrentPlan =
+                            subscriptionData?.isSubscribed &&
+                            plan.duration ===
+                              subscriptionData.subscription?.planDuration;
+
+                          return (
+                            <div
+                              key={plan.duration}
+                              className={`border border-slate-300 rounded-lg p-6 hover:shadow-md transition-shadow relative overflow-hidden  ${
+                                isCurrentPlan
+                                  ? "bg-green-100 cursor-not-allowed"
+                                  : ""
+                              }`}
+                            >
+                              {(index === 1 && !isCurrentPlan) && (
+                                <div className="absolute top-0 right-0 bg-green-500 text-white text-xs py-1 px-3 rounded-bl-lg">
+                                  Popular
+                                </div>
+                              )}
+                              {isCurrentPlan&& (
+                                <div className="absolute top-0 right-0 bg-green-700 text-white text-xs py-1 px-3 rounded-bl-lg">
+                                  Current Plan
+                                </div>
+                              )}
+
+                              <h4 className="font-medium text-base mb-2">
+                                {plan.duration}
+                              </h4>
+
+                              <div className="mb-2">
+                                <span className="text-xl font-bold text-gray-800">
+                                  {plan.amount}
+                                </span>
+                              </div>
+
+                              {plan.savings > 0 && (
+                                <div className="mb-4 bg-green-50 text-green-700 text-xs font-medium py-1 px-2 rounded inline-block">
+                                  Save ₹{plan.savings}
+                                </div>
+                              )}
+
+                              <div className="space-y-2 mb-6">
+                                {features.map((feature, idx) => (
+                                  <FeatureItem key={idx} text={feature} />
+                                ))}
+                              </div>
+
+                              <button
+                                disabled={
+                                  isCurrentPlan || checkoutMutation.isPending
+                                }
+                                onClick={() => handleSubscription(plan)}
+                                className={`
+                  w-full py-2 px-4 rounded text-sm font-medium transition-colors
+                  ${
+                    isCurrentPlan
+                      ? "bg-green-500 text-white cursor-not-allowed"
+                      : "bg-slate-100 text-gray-800 hover:bg-green-500 hover:text-white"
+                  }
+                  ${
+                    checkoutMutation.isPending
+                      ? "cursor-progress"
+                      : ""
+                  }
+                `}
+                              >
+                                {isCurrentPlan
+                                  ? "Subscribed"
+                                  : subscriptionData?.isSubscribed
+                                  ? "Upgrade"
+                                  : "Choose Plan"}
+                              </button>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )
                 )}
+
+
               </div>
             </div>
           </div>

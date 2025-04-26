@@ -60,10 +60,12 @@ app.use("/api/trainer", trainerRoutes);
 app.use("/api/article", articleRoutes);
 app.use("/api/subscription", subscriptionRoutes);
 
-// Error handling middlewares
+// throw error for unknown routes
 app.use((req, res, next) => {
   next(new CustomError(HttpResMsg.ROUTE_NOT_FOUND, HttpResCode.NOT_FOUND));
 });
+
+// Error handling 
 app.use(errorHandler);
 
 connectDB().then(() => {

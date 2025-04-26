@@ -11,3 +11,13 @@ export interface subscriptionPlans {
   amountInPaise: number;
   savings: number;
 }
+
+export interface SubscriptionStatus {
+  isSubscribed: boolean;
+  subscription: {
+    planDuration: string;
+    status: string;
+    startDate: string;
+    expiryDate: string;
+  } | null;
+}
