@@ -18,7 +18,7 @@ const ForgetPassword = lazy(() => import("../pages/auth/forgetPassword/EmailVeri
 const NewPassword = lazy(() => import("../pages/auth/forgetPassword/NewPassword"));
 
 // user
-const LandingPage = lazy(() => import("../pages/user/LandingPage"));
+import LandingPage from "../pages/user/LandingPage"
 const UserProfile = lazy(() => import("../pages/user/UserProfile"));
 const TrainersPage = lazy(() => import("../pages/user/find-trainer/TrainersPage"));
 const FindTrainersPage = lazy(() => import("../pages/user/find-trainer/FindTrainersPage"));

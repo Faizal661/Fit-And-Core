@@ -25,7 +25,7 @@ export const InfiniteCarousel = () => {
     centerPadding: "0px",
     dots: true,
     arrows: false,
-    beforeChange: (current: number, next: number) => setActiveSlide(next),
+    beforeChange: (_current: number, next: number) => setActiveSlide(next),
     customPaging: (i: number) => (
       <div
         style={{

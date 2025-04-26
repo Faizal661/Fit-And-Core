@@ -25,15 +25,15 @@ const buttonVariants = {
     },
   },
   hover: {
-    scale: 1.03,
-    boxShadow:
-      "0 10px 25px -5px rgba(59, 130, 246, 0.1), 0 8px 10px -6px rgba(59, 130, 246, 0.1)",
-    transition: {
-      duration: 0.3,
-    },
+    // scale: 1.03,
+    // boxShadow:
+    //   "0 10px 25px -5px rgba(59, 130, 246, 0.1), 0 8px 10px -6px rgba(59, 130, 246, 0.1)",
+    // transition: {
+    //   duration: 0.3,
+    // },
   },
   tap: {
-    scale: 0.98,
+    scale: 0.80,
   },
 };
 const sidebarVariants = {
