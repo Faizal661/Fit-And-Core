@@ -19,6 +19,8 @@ const NewPassword = lazy(() => import("../pages/auth/forgetPassword/NewPassword"
 
 // user
 import LandingPage from "../pages/user/LandingPage"
+import SessionManagementPage from "../pages/session/SessionManagement";
+import AvailabilitySetupPage from "../pages/session/AvailabilitySetup";
 const UserProfile = lazy(() => import("../pages/user/UserProfile"));
 const TrainersPage = lazy(() => import("../pages/user/find-trainer/TrainersPage"));
 const FindTrainersPage = lazy(() => import("../pages/user/find-trainer/FindTrainersPage"));
@@ -69,6 +71,9 @@ const AppRoutes = () => {
         <Route path="/trainer" element={<HomeTrainer />} />
         <Route path="/trainer/articles" element={<TrainerArticles />} />
         <Route path="/trainer/articles/create" element={<CreateArticle />} />
+        <Route path="/trainer/sessions" element={<SessionManagementPage />} />
+        <Route path="/trainer/availability-setup" element={<AvailabilitySetupPage />} />
+
       </Route>
 
       <Route element={<ProtectedRoutes allowedRoles={["user", "trainer"]} />}>

@@ -187,4 +187,10 @@ export enum HttpResMsg {
   CAN_NOT_UPDATE_USERNAME_AND_PASSWORD = "Username and password cannot be updated through this endpoint",
   FAILED_UPDATE_USER_STATUS = "Failed to update user status",
   FAILED_DELETE_OLD_PROFILE = "Failed to delete old profile picture:",
+
+  FAILED_TO_CREATE_AVAILABILITY="Failed to create availability",
+  FAILED_TO_GET_AVAILABILITY="Failed to fetch availability",
+  FAILED_TO_DELETE_AVAILABILITY="Failed to delete availability",
+
+  
 }

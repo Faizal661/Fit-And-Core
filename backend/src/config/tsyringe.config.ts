@@ -45,6 +45,15 @@ import { ISubscriptionController } from "../controllers/Interface/ISubscriptionC
 import { ISubscriptionService } from "../services/Interface/ISubscriptionService";
 import { ISubscriptionRepository } from "../repositories/Interface/ISubscriptionRepository";
 
+import { SessionController } from "../controllers/Implementation/session.controller";
+import { ISessionController } from "../controllers/Interface/ISessionController";
+import { IAvailabilityRepository } from "../repositories/Interface/IAvailabilityRepository";
+import { AvailabilityRepository } from "../repositories/Implementation/availability.repository";
+import { ISlotRepository } from "../repositories/Interface/ISlotRepository";
+import { SlotRepository } from "../repositories/Implementation/slot.repository";
+import SessionService from "../services/Implementation/session.service";
+import { ISessionService } from "../services/Interface/ISessionService";
+
 container.registerInstance('RedisClient', redisClient);
 
 container.register<IAuthController>('AuthController', { useClass: AuthController });
@@ -70,3 +79,9 @@ container.register<IArticleRepository>("ArticleRepository", { useClass: ArticleR
 container.register<ISubscriptionController>("SubscriptionController", { useClass: SubscriptionController,});
 container.register<ISubscriptionService>("SubscriptionService", { useClass: SubscriptionService,});
 container.register<ISubscriptionRepository>("SubscriptionRepository", { useClass: SubscriptionRepository,});
+
+container.register<ISessionController>("SessionController", { useClass: SessionController,});
+container.register<ISessionService>("SessionService", { useClass: SessionService,});
+container.register<IAvailabilityRepository>("AvailabilityRepository", { useClass: AvailabilityRepository,});
+container.register<ISlotRepository>("SlotRepository", { useClass: SlotRepository,});
+// container.register<IBookingRepository>("BookingRepository", { useClass: BookingRepository,});

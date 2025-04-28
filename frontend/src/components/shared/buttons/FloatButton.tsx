@@ -25,12 +25,12 @@ const buttonVariants = {
     },
   },
   hover: {
-    // scale: 1.03,
-    // boxShadow:
-    //   "0 10px 25px -5px rgba(59, 130, 246, 0.1), 0 8px 10px -6px rgba(59, 130, 246, 0.1)",
-    // transition: {
-    //   duration: 0.3,
-    // },
+    scale: 1.03,
+    boxShadow:
+      "0 10px 25px -5px rgba(59, 130, 246, 0.1), 0 8px 10px -6px rgba(59, 130, 246, 0.1)",
+    transition: {
+      duration: 0.3,
+    },
   },
   tap: {
     scale: 0.80,
@@ -113,7 +113,7 @@ const FloatButton = () => {
         animate="animate"
         whileHover="hover"
         whileTap="tap"
-        className={`fixed top-4 right-4 bg-white text-gray-800 py-2.5 px-5 rounded-lg flex items-center gap-2 ${
+        className={`fixed top-4 right-4 bg-white text-gray-800 py-2.5 px-5 rounded-lg flex items-center gap-2 hover:cursor-pointer  ${
           sidebarOpen ? "" : "shadow-lg backdrop-blur-sm bg-white/90"
         } z-50 font-medium transition-all duration-300`}
       >

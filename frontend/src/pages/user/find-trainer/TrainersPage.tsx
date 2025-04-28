@@ -147,13 +147,13 @@ const TrainersPage = () => {
                   key={trainer._id}
                   variants={fadeIn}
                   whileHover={{ y: -5 }}
-                  className="p-6 bg-gray-50 rounded-xl border border-gray-200 transition-all duration-300"
+                  onClick={() => handleViewDetails(trainer._id)}
+                  className="p-6 bg-gray-50 rounded-xl border border-gray-200 transition-all duration-300 cursor-pointer"
                 >
                   <div className="flex items-start gap-6">
                     <img
                       src={trainer.profilePicture}
                       alt={`${trainer.username}'s profile`}
-                      onClick={() => handleViewDetails(trainer._id)}
                       className="w-20 h-20 rounded-xl object-cover cursor-pointer transition-transform duration-300 hover:scale-105"
                     />
                     

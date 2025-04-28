@@ -27,6 +27,7 @@ import adminRoutes from "./routes/admin.routes";
 import userRoutes from "./routes/user.routes.ts";
 import trainerRoutes from "./routes/trainer.routes.ts";
 import articleRoutes from "./routes/article.routes.ts";
+import sessionRoutes from "./routes/session.routes.ts";
 import {
   subscriptionRoutes,
   webhookRoutes,
@@ -58,6 +59,7 @@ app.use("/api/user", userRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/trainer", trainerRoutes);
 app.use("/api/article", articleRoutes);
+app.use("/api/session", sessionRoutes);
 app.use("/api/subscription", subscriptionRoutes);
 
 // throw error for unknown routes

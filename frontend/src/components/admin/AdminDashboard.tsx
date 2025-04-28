@@ -156,27 +156,44 @@ const AdminDashboard = () => {
 
   return (
     <motion.div
-      className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-600 py-6 "
+      className="min-h-screen  bg-gray-50 text-gray-800 overflow-hidden"
       initial="hidden"
       animate="visible"
       variants={fadeIn}
     >
-      <div
-        className="absolute inset-0 bg-black/10 opacity-30"
-        style={{
-          backgroundImage:
-            "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.15'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
-        }}
-      ></div>
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.h1
-          className="text-3xl font-bold text-white mb-6 ps-4"
-          variants={fadeIn}
-          transition={{ delay: 0.1 }}
+      {/* Hero section */}
+      <div className="relative py-24 bg-gradient-to-r from-blue-600/90 to-purple-600/90">
+        <div
+          className="absolute inset-0 bg-black/10 z-0 opacity-30"
+          style={{
+            backgroundImage:
+              "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.15'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
+          }}
+        ></div>
+
+        <motion.div
+          ref={ref}
+          initial="hidden"
+          animate={inView ? "visible" : "hidden"}
+          variants={staggerContainer}
+          className="relative z-10 max-w-6xl mx-auto px-6 text-center"
         >
-          Dashboard
-        </motion.h1>
+          <motion.h1
+            variants={fadeIn}
+            className="text-4xl md:text-5xl font-bold text-white mb-6"
+          >
+            Dashboard
+          </motion.h1>
+          <motion.div
+            variants={fadeIn}
+            className="w-20 h-1 bg-white/30 mx-auto mb-6 rounded-full"
+          ></motion.div>
+        </motion.div>
+      </div>
+
+      {/* main content */}
+      <div className="relative max-w-7xl mx-auto px-4 -mt-16 sm:px-6 lg:px-8 py-6 min-h-screen  z-10">
         <motion.div
           ref={ref}
           initial="hidden"
@@ -237,7 +254,7 @@ const AdminDashboard = () => {
           {/* Chart */}
           <motion.div
             variants={fadeIn}
-            className="lg:col-span-2 bg-white rounded-lg shadow-md p-6"
+            className="lg:col-span-2 bg-white rounded-lg shadow-lg border border-gray-100 hover:shadow-xl p-6"
           >
             <h2 className="text-lg font-medium mb-4 text-gray-700">
               New Registrations

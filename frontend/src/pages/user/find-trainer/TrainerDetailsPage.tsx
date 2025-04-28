@@ -2,7 +2,6 @@ import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { Trainer } from "../../../types/trainer.type";
-import { Skeleton } from "@mui/material";
 import { useToast } from "../../../context/ToastContext";
 import Footer from "../../../components/shared/Footer";
 import PageNotFound from "../../../components/shared/PageNotFound";
@@ -19,18 +18,53 @@ import { STATUS } from "../../../constants/status.messges";
 import { REDIRECT_MESSAGES } from "../../../constants/redirect.messges";
 import { getTrainerData } from "../../../services/trainer/trainerService";
 import { ERR_MESSAGES } from "../../../constants/error.messages";
+import { motion } from "framer-motion";
+import { useInView } from "react-intersection-observer";
+import {
+  Medal,
+  Clock,
+  Mail,
+  Phone,
+  Award,
+  FileText,
+  Star,
+  ChevronRight,
+} from "lucide-react";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PK);
+
+// Animation variants
+const fadeIn = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.6,
+      ease: [0.25, 0.1, 0.25, 1],
+    },
+  },
+};
+
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
 
 const TrainerDetailsPage = () => {
   const { trainerId } = useParams<{ trainerId: string }>();
   const { showToast } = useToast();
+  const [ref, inView] = useInView({
+    triggerOnce: true,
+    threshold: 0.1,
+  });
 
-  const {
-    data: trainer,
-    isLoading,
-    // error,
-  } = useQuery<Trainer>({
+  const { data: trainer, isLoading } = useQuery<Trainer>({
     queryKey: ["trainer", trainerId],
     queryFn: () => getTrainerData(trainerId),
   });
@@ -61,13 +95,10 @@ const TrainerDetailsPage = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-white p-8 pt-16">
-        <div className="max-w-3xl mx-auto">
-          <div className="space-y-6 pt-16">
-            <Skeleton height={120} animation="wave" />
-            <Skeleton height={220} animation="wave" />
-            <Skeleton height={120} animation="wave" />
-          </div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-t-blue-600 border-blue-200 rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading trainer details...</p>
         </div>
       </div>
     );
@@ -106,10 +137,12 @@ const TrainerDetailsPage = () => {
   ];
 
   const features = [
-    "Personalized training",
-    "Nutrition advice",
-    "Progress tracking",
-    "Priority support",
+    "Personalized training programs",
+    "Nutrition guidance and meal plans",
+    "24/7 chat support",
+    "Weekly progress tracking",
+    "Video call consultations",
+    "Custom workout schedules",
   ];
 
   const handleSubscription = (plan: subscriptionPlans) => {
@@ -121,255 +154,270 @@ const TrainerDetailsPage = () => {
     });
   };
 
-  const FeatureItem = ({ text }: { text: string }) => (
-    <div className="flex items-start">
-      <svg
-        className="w-4 h-4 text-green-500 mt-0.5 mr-2 flex-shrink-0"
-        fill="currentColor"
-        viewBox="0 0 20 20"
-      >
-        <path
-          fillRule="evenodd"
-          d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-          clipRule="evenodd"
-        />
-      </svg>
-      <span className="text-sm text-gray-600">{text}</span>
-    </div>
-  );
-
   return (
-    <div>
-      <div className="min-h-screen bg-white p-8 pt-16">
-        {isLoading ? (
-          <div className="max-w-3xl mx-auto space-y-6">
-            <Skeleton height={120} animation="wave" />
-            <Skeleton height={320} animation="wave" />
-            <Skeleton height={120} animation="wave" />
+    <div className="min-h-screen bg-gray-50 text-gray-800 overflow-hidden">
+      {/* Hero Section */}
+      <div className="relative py-24 bg-gradient-to-r from-blue-600/90 to-purple-600/90">
+        <div
+          className="absolute inset-0 bg-black/10 z-0 opacity-30"
+          style={{
+            backgroundImage:
+              "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.15'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
+          }}
+        ></div>
+
+        <motion.div
+          ref={ref}
+          initial="hidden"
+          animate={inView ? "visible" : "hidden"}
+          variants={staggerContainer}
+          className="relative z-10 max-w-4xl mx-auto px-6 text-center"
+        >
+          <div className="mb-8">
+            <img
+              src={trainer.profilePicture}
+              alt={trainer.username}
+              className="w-32 h-32 rounded-full border-4 border-white/20 mx-auto object-cover shadow-xl"
+            />
           </div>
-        ) : (
-          <div className="max-w-3xl mx-auto">
-            <h1 className="text-xl text-gray-800 mb-12">Trainer details</h1>
-            <div className="border border-slate-300 p-8 rounded">
-              <div className="flex items-center gap-6 mb-6">
-                {trainer.profilePicture && (
-                  <img
-                    src={trainer.profilePicture}
-                    alt={`${trainer.username}'s profile`}
-                    className="w-16 h-16 rounded-full border-1 border-slate-300 object-cover"
-                  />
-                )}
-                <h2 className="text-lg">{trainer.username}</h2>
+          <motion.h1
+            variants={fadeIn}
+            className="text-4xl md:text-5xl font-bold text-white mb-4"
+          >
+            {trainer.username}
+          </motion.h1>
+          <motion.div
+            variants={fadeIn}
+            className="w-20 h-1 bg-white/30 mx-auto mb-6 rounded-full"
+          ></motion.div>
+          <motion.div
+            variants={fadeIn}
+            className="flex items-center justify-center gap-6 text-white/80"
+          >
+            <div className="flex items-center gap-2">
+              <Medal size={18} />
+              <span>{trainer.specialization}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Clock size={18} />
+              <span>{trainer.yearsOfExperience} experience</span>
+            </div>
+          </motion.div>
+        </motion.div>
+      </div>
+
+      {/* Main Content */}
+      <div className="max-w-4xl mx-auto px-6 -mt-16 relative z-10">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white rounded-xl shadow-xl border border-gray-100 p-8 mb-16"
+        >
+          {/* Contact Info */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+            <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
+              <Mail className="text-blue-600" size={24} />
+              <div>
+                <p className="text-sm text-gray-500">Email</p>
+                <p className="font-medium">{trainer.email}</p>
               </div>
-
-              <div className="space-y-4 mb-12">
-                <div className="flex">
-                  <span className="text-gray-400 text-sm w-36">Email</span>
-                  <span className="text-gray-600 text-sm">{trainer.email}</span>
-                </div>
-                <div className="flex">
-                  <span className="text-gray-400 text-sm w-36">Phone</span>
-                  <span className="text-gray-600 text-sm">{trainer.phone}</span>
-                </div>
-                <div className="flex">
-                  <span className="text-gray-400 text-sm w-36">
-                    Specialization
-                  </span>
-                  <span className="text-gray-600 text-sm">
-                    {trainer.specialization}
-                  </span>
-                </div>
-                <div className="flex">
-                  <span className="text-gray-400 text-sm w-36">Experience</span>
-                  <span className="text-gray-600 text-sm">
-                    {trainer.yearsOfExperience}
-                  </span>
-                </div>
-                <div className="flex">
-                  <span className="text-gray-400 text-sm w-36">Joined</span>
-                  <span className="text-gray-600 text-sm">
-                    {new Date(trainer.createdAt).toLocaleDateString()}
-                  </span>
-                </div>
-              </div>
-
-              <div className="border-t border-slate-300 pt-6 mb-8">
-                <h3 className="text-base mb-4">About</h3>
-                <p className="text-sm text-gray-600">{trainer.about}</p>
-              </div>
-
-              <div className="space-y-8">
-                {trainer.documentProofs &&
-                  trainer.documentProofs.length > 0 && (
-                    <div>
-                      <h3 className="text-base mb-4">Document proofs</h3>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                        {trainer.documentProofs.map((proof, index) => (
-                          <div
-                            key={index}
-                            className="border border-slate-300 p-2 rounded"
-                          >
-                            <img
-                              src={proof}
-                              alt={`Document proof ${index + 1}`}
-                              className="w-full h-40 object-cover"
-                              onClick={() => window.open(proof, "_blank")}
-                              style={{ cursor: "pointer" }}
-                            />
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                {trainer.certifications &&
-                  trainer.certifications.length > 0 && (
-                    <div>
-                      <h3 className="text-base mb-4">Certifications</h3>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                        {trainer.certifications.map((cert, index) => (
-                          <div
-                            key={index}
-                            className="border border-slate-300 p-2 rounded"
-                          >
-                            <img
-                              src={cert}
-                              alt={`Certification ${index + 1}`}
-                              className="w-full h-40 object-cover"
-                              onClick={() => window.open(cert, "_blank")}
-                              style={{ cursor: "pointer" }}
-                            />
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                {trainer.achievements && trainer.achievements.length > 0 && (
-                  <div>
-                    <h3 className="text-base mb-4">Achievements</h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                      {trainer.achievements.map((achieve, index) => (
-                        <div
-                          key={index}
-                          className="border border-slate-300 p-2 rounded"
-                        >
-                          <img
-                            src={achieve}
-                            alt={`Achievement ${index + 1}`}
-                            className="w-full h-40 object-cover"
-                            onClick={() => window.open(achieve, "_blank")}
-                            style={{ cursor: "pointer" }}
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {subscriptionLoading ? (
-                  // you can replace this with a proper Skeleton if you like
-                  <div className="text-center py-8 text-gray-500">
-                    Loading plans…
-                  </div>
-                ) : subscriptionError ? (
-                  <div className="text-center py-8 text-red-500">
-                    Couldn’t load your subscription status.
-                  </div>
-                ) : (
-                  subscriptionPlans.length > 0 && (
-                    <div>
-                      <h3 className="text-base mb-6">Subscription plans</h3>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                        {subscriptionPlans.map((plan, index) => {
-                          const isCurrentPlan =
-                            subscriptionData?.isSubscribed &&
-                            plan.duration ===
-                              subscriptionData.subscription?.planDuration;
-
-                          return (
-                            <div
-                              key={plan.duration}
-                              className={`border border-slate-300 rounded-lg p-6 hover:shadow-md transition-shadow relative overflow-hidden  ${
-                                isCurrentPlan
-                                  ? "bg-green-100 cursor-not-allowed"
-                                  : ""
-                              }`}
-                            >
-                              {(index === 1 && !isCurrentPlan) && (
-                                <div className="absolute top-0 right-0 bg-green-500 text-white text-xs py-1 px-3 rounded-bl-lg">
-                                  Popular
-                                </div>
-                              )}
-                              {isCurrentPlan&& (
-                                <div className="absolute top-0 right-0 bg-green-700 text-white text-xs py-1 px-3 rounded-bl-lg">
-                                  Current Plan
-                                </div>
-                              )}
-
-                              <h4 className="font-medium text-base mb-2">
-                                {plan.duration}
-                              </h4>
-
-                              <div className="mb-2">
-                                <span className="text-xl font-bold text-gray-800">
-                                  {plan.amount}
-                                </span>
-                              </div>
-
-                              {plan.savings > 0 && (
-                                <div className="mb-4 bg-green-50 text-green-700 text-xs font-medium py-1 px-2 rounded inline-block">
-                                  Save ₹{plan.savings}
-                                </div>
-                              )}
-
-                              <div className="space-y-2 mb-6">
-                                {features.map((feature, idx) => (
-                                  <FeatureItem key={idx} text={feature} />
-                                ))}
-                              </div>
-
-                              <button
-                                disabled={
-                                  isCurrentPlan || checkoutMutation.isPending
-                                }
-                                onClick={() => handleSubscription(plan)}
-                                className={`
-                  w-full py-2 px-4 rounded text-sm font-medium transition-colors
-                  ${
-                    isCurrentPlan
-                      ? "bg-green-500 text-white cursor-not-allowed"
-                      : "bg-slate-100 text-gray-800 hover:bg-green-500 hover:text-white"
-                  }
-                  ${
-                    checkoutMutation.isPending
-                      ? "cursor-progress"
-                      : ""
-                  }
-                `}
-                              >
-                                {isCurrentPlan
-                                  ? "Subscribed"
-                                  : subscriptionData?.isSubscribed
-                                  ? "Upgrade"
-                                  : "Choose Plan"}
-                              </button>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )
-                )}
-
-
+            </div>
+            <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
+              <Phone className="text-emerald-600" size={24} />
+              <div>
+                <p className="text-sm text-gray-500">Phone</p>
+                <p className="font-medium">{trainer.phone}</p>
               </div>
             </div>
           </div>
-        )}
+
+          {/* About Section */}
+          <div className="mb-12">
+            <h2 className="text-2xl font-bold mb-6">About Me</h2>
+            <p className="text-gray-600 leading-relaxed">{trainer.about}</p>
+          </div>
+
+          {/* Documents & Certifications */}
+          <div className="space-y-12 mb-12">
+            {trainer.documentProofs && trainer.documentProofs.length > 0 && (
+              <div>
+                <div className="flex items-center gap-3 mb-6">
+                  <FileText className="text-blue-600" size={24} />
+                  <h2 className="text-2xl font-bold">Document Proofs</h2>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                  {trainer.documentProofs.map((proof, index) => (
+                    <motion.div
+                      key={index}
+                      whileHover={{ y: -5 }}
+                      className="overflow-hidden rounded-xl shadow-lg border border-gray-100"
+                    >
+                      <img
+                        src={proof}
+                        alt={`Document proof ${index + 1}`}
+                        className="w-full h-48 object-cover cursor-pointer transition-transform duration-300 hover:scale-110"
+                        onClick={() => window.open(proof, "_blank")}
+                      />
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {trainer.certifications && trainer.certifications.length > 0 && (
+              <div>
+                <div className="flex items-center gap-3 mb-6">
+                  <Award className="text-purple-600" size={24} />
+                  <h2 className="text-2xl font-bold">Certifications</h2>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                  {trainer.certifications.map((cert, index) => (
+                    <motion.div
+                      key={index}
+                      whileHover={{ y: -5 }}
+                      className="overflow-hidden rounded-xl shadow-lg border border-gray-100"
+                    >
+                      <img
+                        src={cert}
+                        alt={`Certification ${index + 1}`}
+                        className="w-full h-48 object-cover cursor-pointer transition-transform duration-300 hover:scale-110"
+                        onClick={() => window.open(cert, "_blank")}
+                      />
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {trainer.achievements && trainer.achievements.length > 0 && (
+              <div>
+                <div className="flex items-center gap-3 mb-6">
+                  <Star className="text-amber-600" size={24} />
+                  <h2 className="text-2xl font-bold">Achievements</h2>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                  {trainer.achievements.map((achieve, index) => (
+                    <motion.div
+                      key={index}
+                      whileHover={{ y: -5 }}
+                      className="overflow-hidden rounded-xl shadow-lg border border-gray-100"
+                    >
+                      <img
+                        src={achieve}
+                        alt={`Achievement ${index + 1}`}
+                        className="w-full h-48 object-cover cursor-pointer transition-transform duration-300 hover:scale-110"
+                        onClick={() => window.open(achieve, "_blank")}
+                      />
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Subscription Plans */}
+          {subscriptionLoading ? (
+            <div className="text-center py-8">
+              <div className="w-12 h-12 border-4 border-t-blue-600 border-blue-200 rounded-full animate-spin mx-auto mb-4"></div>
+              <p className="text-gray-600">Loading subscription plans...</p>
+            </div>
+          ) : subscriptionError ? (
+            <div className="text-center py-8 bg-red-50 rounded-xl border border-red-100">
+              <p className="text-red-600">
+                Failed to load subscription plans. Please try again later.
+              </p>
+            </div>
+          ) : (
+            <div>
+              <h2 className="text-2xl font-bold mb-8">Training Plans</h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {subscriptionPlans.map((plan, index) => {
+                  const isCurrentPlan =
+                    subscriptionData?.isSubscribed &&
+                    plan.duration ===
+                      subscriptionData.subscription?.planDuration;
+
+                  return (
+                    <motion.div
+                      key={plan.duration}
+                      whileHover={!isCurrentPlan ? { y: -5 } : {}}
+                      className={`rounded-xl border ${
+                        isCurrentPlan
+                          ? "bg-green-50 border-green-200"
+                          : "border-gray-200 hover:border-blue-200"
+                      } p-6 relative overflow-hidden`}
+                    >
+                      {index === 1 && !subscriptionData?.isSubscribed && (
+                        <div className="absolute top-0 right-0 bg-gradient-to-r from-blue-600 to-purple-600 text-white text-xs py-1 px-3 rounded-bl-lg">
+                          Popular
+                        </div>
+                      )}
+                      {isCurrentPlan && (
+                        <div className="absolute top-0 right-0 bg-green-600 text-white text-xs py-1 px-3 rounded-bl-lg">
+                          Current Plan
+                        </div>
+                      )}
+
+                      <h3 className="text-xl font-bold mb-2">
+                        {plan.duration}
+                      </h3>
+                      <div className="mb-4">
+                        <span className="text-3xl font-bold">
+                          {plan.amount}
+                        </span>
+                      </div>
+
+                      <div className="mb-4 inline-block ">
+                        {plan.savings > 0 && (
+                          <span className="px-3 py-1 bg-green-100 text-green-700 text-sm font-medium rounded-full">
+                            Save ₹{plan.savings}
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="space-y-3 mb-6">
+                        {features.map((feature, idx) => (
+                          <div key={idx} className="flex items-start gap-2">
+                            <ChevronRight
+                              size={18}
+                              className="text-green-500 flex-shrink-0 mt-0.5"
+                            />
+                            <span className="text-sm text-gray-600">
+                              {feature}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+
+                      <motion.button
+                        whileHover={!isCurrentPlan ? { scale: 1.02 } : {}}
+                        whileTap={!isCurrentPlan ? { scale: 0.98 } : {}}
+                        disabled={isCurrentPlan || checkoutMutation.isPending}
+                        onClick={() => handleSubscription(plan)}
+                        className={`w-full py-3 px-6 rounded-lg font-medium transition-all duration-300 ${
+                          isCurrentPlan
+                            ? "bg-green-600 text-white cursor-not-allowed"
+                            : "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg hover:shadow-blue-500/25"
+                        } ${checkoutMutation.isPending ? "cursor-progress":"" }`}
+                      >
+                        {isCurrentPlan
+                          ? "Current Plan"
+                          : subscriptionData?.isSubscribed
+                          ? "Upgrade Plan"
+                          : "Choose Plan"}
+                      </motion.button>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </motion.div>
       </div>
+
       <Footer />
     </div>
   );
 };
+
 export default TrainerDetailsPage;
