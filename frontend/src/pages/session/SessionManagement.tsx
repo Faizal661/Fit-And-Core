@@ -1,4 +1,4 @@
-// import { useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
@@ -8,10 +8,17 @@ import {
   User,
   ChevronRight,
   CalendarClock,
+  CalendarIcon,
+  CheckCircle,
+  AlertCircle,
 } from "lucide-react";
-// import { getTrainerBookings, getTrainerAvailability } from "../../../services/sessionService";
+import {
+  getTrainerBookings,
+  getTrainerAvailabilities,
+} from "../../services/session/sessionService";
 import Footer from "../../components/shared/Footer";
 import { useInView } from "react-intersection-observer";
+import { GroupedAvailability, IAvailability } from "../../types/session.type";
 
 const fadeIn = {
   hidden: { opacity: 0, y: 20 },
@@ -37,20 +44,23 @@ const staggerContainer = {
 
 const SessionManagementPage = () => {
   const navigate = useNavigate();
-  const trainerId = "CURRENT_TRAINER_ID";
   const [ref, inView] = useInView({
     triggerOnce: true,
     threshold: 0.1,
   });
 
-  //   const { data: bookings = [], isLoading: loadingBookings } = useQuery(
-  //     ["trainerBookings", trainerId],
-  //     () => getTrainerBookings(trainerId)
-  //   );
-  //   const { data: availability = [], isLoading: loadingAvail } = useQuery(
-  //     ["trainerAvailability", trainerId],
-  //     () => getTrainerAvailability(trainerId)
-  //   );
+  const {
+    data: groupedAvailabilityData = [],
+    isLoading: isLoadingAvailability,
+  } = useQuery({
+    queryKey: ["trainerAvailabilities"],
+    queryFn: getTrainerAvailabilities,
+  });
+
+  const { data: bookings = [], isLoading: loadingBookings } = useQuery({
+    queryKey: ["trainerBookings"],
+    queryFn: getTrainerBookings,
+  });
 
   const handleAddAvailability = () => navigate("/trainer/availability-setup");
   const handleViewBooking = (bookingId: string) =>
@@ -120,7 +130,7 @@ const SessionManagementPage = () => {
               </div>
             ) : (
               <div className="space-y-4">
-                {bookings.map((booking) => (
+                {/* {bookings.map((booking) => (
                   <motion.div
                     key={booking._id}
                     whileHover={{ y: -5 }}
@@ -160,7 +170,7 @@ const SessionManagementPage = () => {
                       />
                     </motion.button>
                   </motion.div>
-                ))}
+                ))} */}
               </div>
             )}
           </div>
@@ -184,50 +194,102 @@ const SessionManagementPage = () => {
               </motion.button>
             </div>
 
-            {loadingAvailability ? (
-              <div className="text-center py-8">
-                <div className="w-12 h-12 border-4 border-t-purple-600 border-purple-200 rounded-full animate-spin mx-auto mb-4"></div>
-                <p className="text-gray-600">Loading availability...</p>
+            {isLoadingAvailability ? (
+              <div className="py-6 text-center bg-gray-50 rounded-lg border border-gray-100 shadow-sm">
+                <div className="w-8 h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-3"></div>
+                <p className="text-gray-600">Loading availability data...</p>
               </div>
-            ) : availability.length === 0 ? (
-              <div className="text-center py-12 bg-gray-50 rounded-xl">
-                <CalendarClock className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-600">
-                  You haven't set any availability yet
-                </p>
+            ) : groupedAvailabilityData &&
+              Object.keys(groupedAvailabilityData).length > 0 ? (
+              <div className="mb-6 space-y-4">
+                <div className="bg-white rounded-lg border border-gray-100 shadow-sm">
+                  {Object.entries(groupedAvailabilityData)
+                    .sort()
+                    .map(([dateKey, availabilitiesForDate]) => {
+                      const date = new Date(dateKey);
+
+                      return (
+                        <motion.div
+                          key={dateKey}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{
+                            duration: 0.3,
+                            ease: [0.25, 0.1, 0.25, 1],
+                          }}
+                          className="border-b border-gray-100 last:border-b-0"
+                        >
+                          <div className="px-4 py-3 bg-gray-50/50 flex items-center">
+                            <CalendarIcon
+                              className="text-purple-600 mr-2"
+                              size={18}
+                            />
+                            <h4 className="font-medium text-gray-800">
+                              {date.toLocaleDateString("en-US", {
+                                weekday: "long",
+                                month: "long",
+                                day: "numeric",
+                              })}
+                            </h4>
+                          </div>
+
+                          <div className="px-4 py-2">
+                            {availabilitiesForDate.map(
+                              (availability: IAvailability) => (
+                                <motion.div
+                                  key={availability._id}
+                                  whileHover={{ x: 2 }}
+                                  className="flex items-center p-3 mb-2 last:mb-0 rounded-lg bg-gray-50 border border-gray-100 hover:border-blue-200 transition-colors"
+                                >
+                                  <div className="bg-blue-100 rounded-full p-2 mr-4">
+                                    <Clock
+                                      className="text-blue-600"
+                                      size={18}
+                                    />
+                                  </div>
+                                  <div className="flex-grow">
+                                    <div className="flex items-center justify-between">
+                                      <div className="flex items-center gap-2">
+                                        <span className="font-medium text-gray-800">
+                                          {availability.startTime}
+                                        </span>
+                                        <span className="text-gray-400">→</span>
+                                        <span className="font-medium text-gray-800">
+                                          {availability.endTime}
+                                        </span>
+                                      </div>
+                                      <div className="text-sm text-purple-600 font-medium">
+                                        {availability.slotDuration} minutes per
+                                        session
+                                      </div>
+                                    </div>
+                                  </div>
+                                </motion.div>
+                              )
+                            )}
+                          </div>
+                        </motion.div>
+                      );
+                    })}
+                </div>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {availability.map((slot) => (
-                  <motion.div
-                    key={`${slot.dayOfWeek}-${slot.startTime}`}
-                    whileHover={{ y: -5 }}
-                    className="p-6 bg-gray-50 rounded-xl border border-gray-200"
-                  >
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                      {
-                        [
-                          "Sunday",
-                          "Monday",
-                          "Tuesday",
-                          "Wednesday",
-                          "Thursday",
-                          "Friday",
-                          "Saturday",
-                        ][slot.dayOfWeek]
-                      }
-                    </h3>
-                    <div className="flex items-center gap-2 text-gray-600">
-                      <Clock size={16} />
-                      <span>
-                        {slot.startTime} - {slot.endTime}
-                      </span>
+              <div className="mb-6">
+                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100 rounded-lg p-4 shadow-sm">
+                  <div className="flex items-center">
+                    <div className="bg-blue-100 p-2 rounded-full mr-4">
+                      <AlertCircle className="text-blue-600" size={22} />
                     </div>
-                    <p className="text-sm text-gray-500 mt-2">
-                      {slot.slotDuration} minute sessions
-                    </p>
-                  </motion.div>
-                ))}
+                    <div>
+                      <p className="font-semibold text-blue-700 text-lg">
+                        No Availability Found
+                      </p>
+                      <p className="text-blue-600 mt-1">
+                        No upcoming availability was found .
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </div>
             )}
           </div>
@@ -241,65 +303,36 @@ const SessionManagementPage = () => {
 
 export default SessionManagementPage;
 
-// Dummy loading flags
-const loadingBookings = false;
-const loadingAvailability = false;
-
 // Dummy bookings array
-const bookings = [
-  {
-    _id: "bkg1",
-    slotStart: "2025-05-10T09:00:00.000Z",
-    slotEnd: "2025-05-10T09:30:00.000Z",
-    trainee: {
-      _id: "user123",
-      username: "alice_w",
-      profilePicture: "https://i.pravatar.cc/40?img=1",
-    },
-  },
-  {
-    _id: "bkg2",
-    slotStart: "2025-05-11T14:00:00.000Z",
-    slotEnd: "2025-05-11T14:30:00.000Z",
-    trainee: {
-      _id: "user456",
-      username: "bob_smith",
-      profilePicture: "https://i.pravatar.cc/40?img=2",
-    },
-  },
-  {
-    _id: "bkg3",
-    slotStart: "2025-05-12T16:30:00.000Z",
-    slotEnd: "2025-05-12T17:00:00.000Z",
-    trainee: {
-      _id: "user789",
-      username: "charlie_k",
-      profilePicture: "https://i.pravatar.cc/40?img=3",
-    },
-  },
-];
-
-// Dummy availability array
-const availability = [
-  {
-    _id: "avail1",
-    dayOfWeek: 1, // Monday
-    startTime: "09:00",
-    endTime: "12:00",
-    slotDuration: 30,
-  },
-  {
-    _id: "avail2",
-    dayOfWeek: 3, // Wednesday
-    startTime: "14:00",
-    endTime: "18:00",
-    slotDuration: 30,
-  },
-  {
-    _id: "avail3",
-    dayOfWeek: 5, // Friday
-    startTime: "10:00",
-    endTime: "15:00",
-    slotDuration: 30,
-  },
-];
+// const bookings = [
+//   {
+//     _id: "bkg1",
+//     slotStart: "2025-05-10T09:00:00.000Z",
+//     slotEnd: "2025-05-10T09:30:00.000Z",
+//     trainee: {
+//       _id: "user123",
+//       username: "alice_w",
+//       profilePicture: "https://i.pravatar.cc/40?img=1",
+//     },
+//   },
+//   {
+//     _id: "bkg2",
+//     slotStart: "2025-05-11T14:00:00.000Z",
+//     slotEnd: "2025-05-11T14:30:00.000Z",
+//     trainee: {
+//       _id: "user456",
+//       username: "bob_smith",
+//       profilePicture: "https://i.pravatar.cc/40?img=2",
+//     },
+//   },
+//   {
+//     _id: "bkg3",
+//     slotStart: "2025-05-12T16:30:00.000Z",
+//     slotEnd: "2025-05-12T17:00:00.000Z",
+//     trainee: {
+//       _id: "user789",
+//       username: "charlie_k",
+//       profilePicture: "https://i.pravatar.cc/40?img=3",
+//     },
+//   },
+// ];

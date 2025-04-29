@@ -15,11 +15,11 @@ export const UserSidebarItems = [
 
 export const TrainerSidebarItems = [
   { to: "/trainer", label: SIDEBAR_MESSAGES.DASHBOARD, icon: Home },
-  { to: "/trainer/sessions", label: SIDEBAR_MESSAGES.SESSION_MANAGEMENT, icon: Calendar },
   { to: "/trainer/trainees", label: SIDEBAR_MESSAGES.TRAINEE_MANAGEMENT, icon: Users },
-  { to: "/trainer/chats", label: SIDEBAR_MESSAGES.CHATS, icon: MessageSquare },
   { to: "/trainer/articles", label: SIDEBAR_MESSAGES.ARTICLE_MANAGEMENT, icon: FileText },
+  { to: "/trainer/sessions", label: SIDEBAR_MESSAGES.SESSION_MANAGEMENT, icon: Calendar },
   { to: "/trainer/upcoming", label: SIDEBAR_MESSAGES.UPCOMING_SESSIONS, icon: Calendar },
+  { to: "/trainer/chats", label: SIDEBAR_MESSAGES.CHATS, icon: MessageSquare },
   { to: "/trainer/finance", label: SIDEBAR_MESSAGES.FINANCE_MANAGEMENT, icon: TrendingUp },
   { to: "/trainer/notifications", label: SIDEBAR_MESSAGES.NOTIFICATIONS, icon: Bell },
 ];

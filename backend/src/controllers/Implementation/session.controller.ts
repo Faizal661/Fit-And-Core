@@ -50,58 +50,127 @@ export class SessionController implements ISessionController {
     }
   }
 
-  async getTrainerAvailability(
+  async getTrainerAvailabilityByDate(
     req: Request,
     res: Response,
     next: NextFunction
   ): Promise<void> {
     try {
-      const trainerId = req.params.trainerId || req.decoded?.id;
+      const dateString = req.query.date as string;
+      const userId = req.decoded?.id!; 
 
-      if (!trainerId) {
-        throw new CustomError(HttpResMsg.BAD_REQUEST, HttpResCode.BAD_REQUEST);
+      if (!dateString) {
+        throw new CustomError("Date query parameter 'date' is required.", HttpResCode.BAD_REQUEST);
       }
 
-      const availabilities = await this.sessionService.getTrainerAvailability(trainerId);
+      const availabilities = await this.sessionService.getAvailabilitiesByDate(userId, dateString); 
 
       sendResponse(
         res,
-        HttpResCode.OK,
+        HttpResCode.OK, 
         HttpResMsg.SUCCESS,
-        availabilities
+        { availabilities } 
       );
+
     } catch (error) {
       next(error);
     }
   }
 
-  async deleteAvailability(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
-    try {
-      const { availabilityId } = req.params;
-      const trainerId = req.decoded?.id;
-
-      if (!availabilityId || !trainerId) {
-        throw new CustomError(HttpResMsg.BAD_REQUEST, HttpResCode.BAD_REQUEST);
-      }
-
-      const result = await this.sessionService.deleteAvailability(availabilityId);
-
-      if (!result) {
-        throw new CustomError(HttpResMsg.NOT_FOUND, HttpResCode.NOT_FOUND);
-      }
-
-      sendResponse(
-        res,
-        HttpResCode.OK,
-        HttpResMsg.SUCCESS,
-        { message: "Availability deleted successfully" }
-      );
-    } catch (error) {
-      next(error);
+  async getUpcomingTrainerAvailabilities(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    const startDateString = req.query.startDate as string | undefined;
+    const userId = req.decoded?.id; 
+    if (!userId) {
+       throw new CustomError(HttpResMsg.UNAUTHORIZED, HttpResCode.UNAUTHORIZED);
     }
+
+    let dateToFetch: string;
+    if (startDateString) {
+        const date = new Date(startDateString);
+        if (isNaN(date.getTime())) {
+             throw new CustomError('Invalid start date format.', HttpResCode.BAD_REQUEST);
+        }
+        dateToFetch = startDateString; 
+    } else {
+        dateToFetch = new Date().toISOString().split('T')[0];
+    }
+
+
+    const groupedAvailabilities = await this.sessionService.getUpcomingAvailabilitiesGrouped(
+      userId,
+      dateToFetch 
+    );
+    console.log("🚀 ~ SessionController ~ groupedAvailabilities:", groupedAvailabilities)
+
+    sendResponse(
+      res,
+      HttpResCode.OK,
+      HttpResMsg.SUCCESS,
+      {groupedAvailabilities} 
+    );
+
+  } catch (error) {
+    next(error);
   }
+}
+
+  // async getTrainerAvailability(
+  //   req: Request,
+  //   res: Response,
+  //   next: NextFunction
+  // ): Promise<void> {
+  //   try {
+  //     const trainerId = req.params.trainerId || req.decoded?.id;
+
+  //     if (!trainerId) {
+  //       throw new CustomError(HttpResMsg.BAD_REQUEST, HttpResCode.BAD_REQUEST);
+  //     }
+
+  //     const availabilities = await this.sessionService.getTrainerAvailability(trainerId);
+
+  //     sendResponse(
+  //       res,
+  //       HttpResCode.OK,
+  //       HttpResMsg.SUCCESS,
+  //       availabilities
+  //     );
+  //   } catch (error) {
+  //     next(error);
+  //   }
+  // }
+
+  // async deleteAvailability(
+  //   req: Request,
+  //   res: Response,
+  //   next: NextFunction
+  // ): Promise<void> {
+  //   try {
+  //     const { availabilityId } = req.params;
+  //     const trainerId = req.decoded?.id;
+
+  //     if (!availabilityId || !trainerId) {
+  //       throw new CustomError(HttpResMsg.BAD_REQUEST, HttpResCode.BAD_REQUEST);
+  //     }
+
+  //     const result = await this.sessionService.deleteAvailability(availabilityId);
+
+  //     if (!result) {
+  //       throw new CustomError(HttpResMsg.NOT_FOUND, HttpResCode.NOT_FOUND);
+  //     }
+
+  //     sendResponse(
+  //       res,
+  //       HttpResCode.OK,
+  //       HttpResMsg.SUCCESS,
+  //       { message: "Availability deleted successfully" }
+  //     );
+  //   } catch (error) {
+  //     next(error);
+  //   }
+  // }
 }

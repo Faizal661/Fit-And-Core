@@ -33,9 +33,9 @@ export interface ISlot {
 
 export interface IBooking {
   _id?: Types.ObjectId;
-  slotId: Types.ObjectId;
   trainerId: Types.ObjectId;
   userId: Types.ObjectId;
+  slotId: Types.ObjectId;
   status: "confirmed" | "canceled" | "completed";
   notes?: string;
   createdAt?: Date;

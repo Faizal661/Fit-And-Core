@@ -11,5 +11,5 @@ export enum SUCCESS_MESSAGES {
 
   ARTICLE_CREATED="Article created successfully!",
 
-  AVAILABILITY_SAVED ="Availability saved!"
+  AVAILABILITY_SAVED ="New Availability saved!"
 }

@@ -20,4 +20,20 @@ router.post(
   (req, res, next) => sessionController.createAvailability(req, res, next)
 );
 
+router.get(
+  "/get-availability-by-date",
+  verifyAccessToken,
+  checkBlockedUser,
+  authorizeRoles(["trainer"]),
+  (req, res, next) => sessionController.getTrainerAvailabilityByDate(req, res, next)
+);
+
+router.get(
+  "/get-my-availabilities",
+  verifyAccessToken,
+  checkBlockedUser,
+  authorizeRoles(["trainer"]),
+  (req, res, next) => sessionController.getUpcomingTrainerAvailabilities(req, res, next)
+);
+
 export default router;

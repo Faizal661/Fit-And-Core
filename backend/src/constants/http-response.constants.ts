@@ -171,7 +171,8 @@ export enum HttpResMsg {
   REJECTION_REASON_REQUIRED = "Rejection reason is required",
   TRAINER_APPLICATION_CONFLICT = "You already have a trainer application pending",
   TRAINER_APPLICATION_NOT_FOUND = "Trainer application not found",
-
+  TRAINER_NOT_FOUND = "Trainer not found",
+  
   ACCOUNT_BLOCKED = "Your account is blocked. Please contact support.",
   USER_NOT_FOUND = "User not found",
   SOMETHING_WENT_WRONG = "Something went wrong.",
@@ -189,8 +190,11 @@ export enum HttpResMsg {
   FAILED_DELETE_OLD_PROFILE = "Failed to delete old profile picture:",
 
   FAILED_TO_CREATE_AVAILABILITY="Failed to create availability",
-  FAILED_TO_GET_AVAILABILITY="Failed to fetch availability",
+  FAILED_TO_GET_AVAILABILITY="Failed to fetch availability ",
+  FAILED_TO_CHECK_AVAILABILITY="Failed to check availability existence.",
   FAILED_TO_DELETE_AVAILABILITY="Failed to delete availability",
+  AVAILABILITY_OVERLAP_ERROR = "Time slot overlaps with existing availability.",
+
 
   
 }
