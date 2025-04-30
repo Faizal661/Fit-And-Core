@@ -185,6 +185,36 @@ export class SessionController implements ISessionController {
     }
   }
 
+  async cancelAvailableSlot(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const { slotId } = req.body;
+      const userId = req.decoded?.id;
+
+      if (!userId) {
+        throw new CustomError(
+          HttpResMsg.UNAUTHORIZED,
+          HttpResCode.UNAUTHORIZED
+        );
+      }
+      if (!slotId) {
+        throw new CustomError("Slot ID is required.", HttpResCode.BAD_REQUEST);
+      }
+
+      const canceledSlot = await this.sessionService.cancelAvailableSlot(
+        slotId,
+        userId
+      );
+
+      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, canceledSlot);
+    } catch (error) {
+      next(error);
+    }
+  }
+
   // -------- bookings
   async getUpcomingTrainerBookings(
     req: Request,
@@ -259,7 +289,7 @@ export class SessionController implements ISessionController {
     }
   }
 
-  async getAllUserBookingsWithTrainer( 
+  async getAllUserBookingsWithTrainer(
     req: Request,
     res: Response,
     next: NextFunction
@@ -269,25 +299,28 @@ export class SessionController implements ISessionController {
       const userId = req.decoded?.id;
 
       if (!userId) {
-         throw new CustomError(HttpResMsg.UNAUTHORIZED, HttpResCode.UNAUTHORIZED);
+        throw new CustomError(
+          HttpResMsg.UNAUTHORIZED,
+          HttpResCode.UNAUTHORIZED
+        );
       }
       if (!trainerId) {
-        throw new CustomError("Trainer ID query parameter 'trainerId' is required.", HttpResCode.BAD_REQUEST);
+        throw new CustomError(
+          "Trainer ID query parameter 'trainerId' is required.",
+          HttpResCode.BAD_REQUEST
+        );
       }
 
-      const allUserBookings = await this.sessionService.getAllUserBookingsWithTrainer(
-        userId,    
-        trainerId  
-      );
-      console.log("🚀 ~ SessionController ~ allUserBookings:", allUserBookings)
+      const allUserBookings =
+        await this.sessionService.getAllUserBookingsWithTrainer(
+          userId,
+          trainerId
+        );
+      console.log("🚀 ~ SessionController ~ allUserBookings:", allUserBookings);
 
-      sendResponse(
-        res,
-        HttpResCode.OK, 
-        HttpResMsg.SUCCESS,
-        { data: allUserBookings } 
-      );
-
+      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, {
+        data: allUserBookings,
+      });
     } catch (error) {
       next(error);
     }

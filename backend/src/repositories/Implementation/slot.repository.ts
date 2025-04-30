@@ -33,4 +33,24 @@ export class SlotRepository
     return this.model.find(filter).sort({ startTime: 1 }).exec();
   }
 
+  async cancelAvailableSlot(
+    slotId: Types.ObjectId,
+    trainerId: Types.ObjectId
+  ): Promise<ISlotModel | null> {
+    const filter: FilterQuery<ISlotModel> = {
+      _id: slotId,
+      trainerId: trainerId, 
+      status: 'available',  
+    };
+
+    const update = {
+      status: 'canceled', 
+    };
+    return this.model.findOneAndUpdate(
+      filter,
+      update,
+      { new: true, runValidators: true }
+    ).exec();
+  }
+
 }

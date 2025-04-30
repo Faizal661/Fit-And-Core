@@ -8,7 +8,8 @@ export interface ISessionController {
     //slots
     getTrainerSlotsByDate( req: Request, res: Response, next: NextFunction): Promise<void>
     bookSlot( req: Request, res: Response, next: NextFunction): Promise<void>
-
+    cancelAvailableSlot( req: Request, res: Response, next: NextFunction): Promise<void>
+    
     //boookiing
     getUpcomingTrainerBookings( req: Request, res: Response, next: NextFunction): Promise<void>
     trainerCancelBooking( req: Request, res: Response, next: NextFunction): Promise<void>

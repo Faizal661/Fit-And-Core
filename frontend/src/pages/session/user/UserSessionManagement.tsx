@@ -5,7 +5,6 @@ import { useState } from "react";
 import {
   Clock,
   Calendar,
-  User,
   ChevronRight,
   CalendarClock,
   X,

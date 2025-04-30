@@ -12,6 +12,7 @@ import {
   CalendarIcon,
   AlertCircle,
   X,
+  Edit,
 } from "lucide-react";
 import {
   getTrainerBookings,
@@ -122,6 +123,8 @@ const SessionManagementPage = () => {
   };
 
   const handleAddAvailability = () => navigate("/trainer/availability-setup");
+
+  const handleSlots = () => navigate("/trainer/slot-management");
 
   const handleViewBooking = (bookingId: string) =>
     navigate(`/trainer/session/${bookingId}`);
@@ -380,16 +383,26 @@ const SessionManagementPage = () => {
                 <CalendarClock className="text-purple-600" size={24} />
                 <h2 className="text-2xl font-bold">Your Availability</h2>
               </div>
-
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={handleAddAvailability}
-                className="flex items-center gap-2 px-4 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-lg shadow-lg hover:shadow-emerald-500/25 transition-all duration-300"
-              >
-                <PlusCircle size={18} />
-                Add / Edit Availability
-              </motion.button>
+              <div className="flex items-center justify between gap-2">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={handleAddAvailability}
+                  className="flex items-center gap-2 px-4 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-lg shadow-lg hover:shadow-emerald-500/25 transition-all duration-300"
+                >
+                  <PlusCircle size={18} />
+                  Add Availability
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={handleSlots}
+                  className="flex items-center gap-2 px-4 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg shadow-lg hover:shadow-emerald-500/25 transition-all duration-300"
+                >
+                  <Edit size={18} />
+                  Edit Slots
+                </motion.button>
+              </div>
             </div>
 
             {isLoadingAvailability ? (

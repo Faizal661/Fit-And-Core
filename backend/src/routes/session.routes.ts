@@ -58,6 +58,13 @@ router.post(
   authorizeRoles(["user"]),
   (req, res, next) => sessionController.bookSlot(req, res, next)
 );
+router.put(
+  "/cancel-slot",
+  verifyAccessToken,
+  checkBlockedUser,
+  authorizeRoles(["trainer"]),
+  (req, res, next) => sessionController.cancelAvailableSlot(req, res, next)
+);
 
 //bookings 
 router.get(

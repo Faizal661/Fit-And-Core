@@ -26,7 +26,11 @@ export interface ISessionService {
     dateString: string
   ): Promise<ISlotModel[]>;
   bookSlot(slotId: string, userId: string): Promise<ISlotModel | null>;
-
+  cancelAvailableSlot(
+    slotIdString: string,
+    userId: string       
+  ): Promise<ISlotModel | null>
+  
   //bookings
   getUpcomingTrainerBookings(userId: string): Promise<IBookingModel[]>;
   trainerancelBooking(

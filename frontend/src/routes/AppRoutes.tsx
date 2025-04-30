@@ -23,6 +23,7 @@ import SessionManagementPage from "../pages/session/SessionManagement";
 import AvailabilitySetupPage from "../pages/session/AvailabilitySetup";
 import BookTime from "../pages/session/BookTime";
 import UserSessionManagementPage from "../pages/session/user/UserSessionManagement";
+import SlotManagementPage from "../pages/session/trainer/SlotManagementPage";
 const UserProfile = lazy(() => import("../pages/user/UserProfile"));
 const TrainersPage = lazy(() => import("../pages/user/find-trainer/TrainersPage"));
 const FindTrainersPage = lazy(() => import("../pages/user/find-trainer/FindTrainersPage"));
@@ -76,6 +77,7 @@ const AppRoutes = () => {
         <Route path="/trainer/articles" element={<TrainerArticles />} />
         <Route path="/trainer/articles/create" element={<CreateArticle />} />
         <Route path="/trainer/sessions" element={<SessionManagementPage />} />
+        <Route path="/trainer/slot-management" element={<SlotManagementPage />} />
         <Route path="/trainer/availability-setup" element={<AvailabilitySetupPage />} />
 
       </Route>

@@ -201,9 +201,15 @@ export default class SessionService implements ISessionService {
         );
       }
 
-      const trainer = await this.trainerRepository.findOne({
+      let trainer = await this.trainerRepository.findOne({
         _id: new Types.ObjectId(trainerId),
       });
+      if (!trainer) {
+        trainer = await this.trainerRepository.findOne({
+          userId: new Types.ObjectId(trainerId),
+        });
+        if(trainer) trainerId=trainer.id
+      }
       if (!trainer) {
         throw new CustomError(
           HttpResMsg.TRAINER_NOT_FOUND,
@@ -280,6 +286,55 @@ export default class SessionService implements ISessionService {
       }
       throw new CustomError(
         HttpResMsg.FAILED_TO_BOOK_SLOT,
+        HttpResCode.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
+  async cancelAvailableSlot(
+    slotIdString: string, 
+    userId: string        
+  ): Promise<ISlotModel | null> {
+    try {
+      let slotId: Types.ObjectId;
+      try {
+        slotId = new Types.ObjectId(slotIdString);
+      } catch (error) {
+        throw new CustomError("Invalid slot ID format.", HttpResCode.BAD_REQUEST);
+      }
+
+      const trainer = await this.trainerRepository.findOne({ userId: userId }); 
+      if (!trainer) {
+        throw new CustomError(HttpResMsg.TRAINER_NOT_FOUND, HttpResCode.FORBIDDEN);
+      }
+      const trainerId = trainer._id; 
+
+
+      const canceledSlot = await this.slotRepository.cancelAvailableSlot(
+        slotId,
+        trainerId as Types.ObjectId
+      );
+
+      if (!canceledSlot) {
+          const slotAfterAttempt = await this.slotRepository.findById(slotId);
+
+          if (!slotAfterAttempt) {
+              throw new CustomError("Slot not found.", HttpResCode.NOT_FOUND);
+          } else if (!slotAfterAttempt.trainerId.equals(trainerId as Types.ObjectId)) {
+               throw new CustomError("You do not have permission to cancel this slot.", HttpResCode.FORBIDDEN);
+          } else {
+              throw new CustomError(`Slot is not available for cancellation. Current status: ${slotAfterAttempt.status}`, HttpResCode.CONFLICT);
+          }
+      }
+
+      return canceledSlot;
+
+    } catch (error) {
+      if (error instanceof CustomError) {
+        throw error;
+      }
+      throw new CustomError(
+        "Failed to cancel slot due to an unexpected error.",
         HttpResCode.INTERNAL_SERVER_ERROR
       );
     }
@@ -366,7 +421,7 @@ export default class SessionService implements ISessionService {
         );
       }
 
-      reason=`Trainer Cancellation Reason : ${reason}`
+      reason = `Trainer Cancellation Reason : ${reason}`;
 
       const updatedBooking = await this.bookingRepository.update(bookingId, {
         status: "canceled",
@@ -386,49 +441,54 @@ export default class SessionService implements ISessionService {
   }
 
   async getAllUserBookingsWithTrainer(
-    userIdString: string,  
-    trainerIdString: string 
-  ): Promise<any[]> { 
+    userIdString: string,
+    trainerIdString: string
+  ): Promise<any[]> {
     try {
       let userId: Types.ObjectId;
-       try {
+      try {
         userId = new Types.ObjectId(userIdString);
       } catch (error) {
-        throw new CustomError("Invalid user ID format.", HttpResCode.UNAUTHORIZED); // Should be handled by auth middleware, but defensive check
+        throw new CustomError(
+          "Invalid user ID format.",
+          HttpResCode.UNAUTHORIZED
+        ); // Should be handled by auth middleware, but defensive check
       }
 
       let trainerId: Types.ObjectId;
-       try {
+      try {
         trainerId = new Types.ObjectId(trainerIdString);
       } catch (error) {
-        throw new CustomError("Invalid trainer ID format.", HttpResCode.BAD_REQUEST);
+        throw new CustomError(
+          "Invalid trainer ID format.",
+          HttpResCode.BAD_REQUEST
+        );
       }
 
       const trainerExists = await this.trainerRepository.findById(trainerId);
-       if (!trainerExists) {
-           throw new CustomError("Trainer not found.", HttpResCode.NOT_FOUND);
-       }
+      if (!trainerExists) {
+        throw new CustomError("Trainer not found.", HttpResCode.NOT_FOUND);
+      }
 
-      const allUserBookings = await this.bookingRepository.findAllBookingsByUserAndTrainer(
-        userId,
-        trainerId
-      );
+      const allUserBookings =
+        await this.bookingRepository.findAllBookingsByUserAndTrainer(
+          userId,
+          trainerId
+        );
 
       return allUserBookings;
-
     } catch (error) {
-       if (error instanceof CustomError) {
-            throw error;
-       }
-       // Log other unexpected errors
-       console.error("Error fetching user bookings with trainer:", error);
-       throw new CustomError(
-         "Failed to fetch user bookings.",
-         HttpResCode.INTERNAL_SERVER_ERROR
-       );
+      if (error instanceof CustomError) {
+        throw error;
+      }
+      // Log other unexpected errors
+      console.error("Error fetching user bookings with trainer:", error);
+      throw new CustomError(
+        "Failed to fetch user bookings.",
+        HttpResCode.INTERNAL_SERVER_ERROR
+      );
     }
   }
-
 
   async userCancelBooking(
     bookingIdString: string,
@@ -465,7 +525,7 @@ export default class SessionService implements ISessionService {
         );
       }
 
-      reason=`Trainee Cancellation Reason :  ${reason}`
+      reason = `Trainee Cancellation Reason :  ${reason}`;
 
       const updatedBooking = await this.bookingRepository.update(bookingId, {
         status: "canceled",

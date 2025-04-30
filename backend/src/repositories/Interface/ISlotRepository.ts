@@ -7,4 +7,5 @@ export interface ISlotRepository
 
     createMany(data: Partial<ISlotModel>[]): Promise<ISlotModel[]>;
     findSlotsByAvailabilityIds( availabilityIds: Types.ObjectId[] ): Promise<ISlotModel[]>
+    cancelAvailableSlot(slotId: Types.ObjectId,trainerId: Types.ObjectId ): Promise<ISlotModel | null>
 }

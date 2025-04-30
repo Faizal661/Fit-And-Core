@@ -2,7 +2,6 @@ import api from "../../config/axios.config";
 import {
   GroupedAvailability,
   IAvailability,
-  IBooking,
   ICreateAvailabilityParams,
   ISlot,
   UserBooking,
@@ -54,23 +53,15 @@ export const bookTrainerSlot = async ({ slotId }: { slotId: string }) => {
   const response = await api.post(`/session/book-slot`, { slotId });
   return response.data;
 };
-
-export const trainerCancelBooking = async ({
-  bookingId,
-  reason,
-}: {
-  bookingId: string;
-  reason: string;
-}) => {
-  const response = await api.put("/session/trainer-cancel-booking", {
-    bookingId,
-    reason,
-  });
+export const cancelTrainerSlot = async ({ slotId }: { slotId: string }) => {
+  const response = await api.put(`/session/cancel-slot`, { slotId });
   return response.data;
 };
 
 // user Side
-export const getUserBookings = async (trainerId: string):Promise<UserBooking[]> => {
+export const getUserBookings = async (
+  trainerId: string
+): Promise<UserBooking[]> => {
   const response = await api.get(`/session/user-all-bookings`, {
     params: {
       trainerId: trainerId,
@@ -87,6 +78,20 @@ export const userCancelBooking = async ({
   reason: string;
 }) => {
   const response = await api.put("/session/user-cancel-booking", {
+    bookingId,
+    reason,
+  });
+  return response.data;
+};
+
+export const trainerCancelBooking = async ({
+  bookingId,
+  reason,
+}: {
+  bookingId: string;
+  reason: string;
+}) => {
+  const response = await api.put("/session/trainer-cancel-booking", {
     bookingId,
     reason,
   });
