@@ -1,6 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useState } from "react";
 import {
   PlusCircle,
   Clock,
@@ -9,16 +10,20 @@ import {
   ChevronRight,
   CalendarClock,
   CalendarIcon,
-  CheckCircle,
   AlertCircle,
+  X,
 } from "lucide-react";
 import {
   getTrainerBookings,
   getTrainerAvailabilities,
+  trainerCancelBooking,
 } from "../../services/session/sessionService";
 import Footer from "../../components/shared/Footer";
 import { useInView } from "react-intersection-observer";
-import { GroupedAvailability, IAvailability } from "../../types/session.type";
+import { IAvailability } from "../../types/session.type";
+import { useToast } from "../../context/ToastContext";
+import { STATUS } from "../../constants/status.messges";
+import axios from "axios";
 
 const fadeIn = {
   hidden: { opacity: 0, y: 20 },
@@ -43,7 +48,13 @@ const staggerContainer = {
 };
 
 const SessionManagementPage = () => {
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [cancelReason, setCancelReason] = useState("");
+  const [reasonError, setReasonError] = useState("");
+  const [selectedBookingId, setSelectedBookingId] = useState("");
+  const { showToast } = useToast();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [ref, inView] = useInView({
     triggerOnce: true,
     threshold: 0.1,
@@ -57,12 +68,61 @@ const SessionManagementPage = () => {
     queryFn: getTrainerAvailabilities,
   });
 
-  const { data: bookings = [], isLoading: loadingBookings } = useQuery({
-    queryKey: ["trainerBookings"],
+  const {
+    data: bookings = [],
+    isLoading: isLoadingBookings,
+    isError: isErrorBookings,
+    // error: bookingsError,
+  } = useQuery({
+    queryKey: ["trainerUpcomingBookingsList"],
     queryFn: getTrainerBookings,
   });
 
+  const cancelBookingMutation = useMutation({
+    mutationFn: trainerCancelBooking,
+    onSuccess: () => {
+      setShowCancelModal(false);
+      setCancelReason("");
+      queryClient.invalidateQueries({
+        queryKey: ["trainerUpcomingBookingsList"],
+      });
+      showToast(STATUS.SUCCESS, "Booking cancelled successfully");
+    },
+    onError: (error) => {
+      if (axios.isAxiosError(error)) {
+        showToast(STATUS.ERROR, error.response?.data.message);
+      } else {
+        showToast(STATUS.ERROR, "failed to Cancel booking");
+      }
+    },
+  });
+
+  const handleCancelClick = (bookingId: string) => {
+    setSelectedBookingId(bookingId);
+    setShowCancelModal(true);
+    setReasonError("");
+  };
+
+  const closeModal = () => {
+    setShowCancelModal(false);
+    setCancelReason("");
+    setReasonError("");
+  };
+
+  const handleCancelSubmit = () => {
+    if (!cancelReason.trim()) {
+      setReasonError("Please provide a reason for cancellation");
+      return;
+    }
+
+    cancelBookingMutation.mutate({
+      bookingId: selectedBookingId,
+      reason: cancelReason,
+    });
+  };
+
   const handleAddAvailability = () => navigate("/trainer/availability-setup");
+
   const handleViewBooking = (bookingId: string) =>
     navigate(`/trainer/session/${bookingId}`);
 
@@ -118,62 +178,200 @@ const SessionManagementPage = () => {
               <h2 className="text-2xl font-bold">Upcoming Sessions</h2>
             </div>
 
-            {loadingBookings ? (
-              <div className="text-center py-8">
-                <div className="w-12 h-12 border-4 border-t-blue-600 border-blue-200 rounded-full animate-spin mx-auto mb-4"></div>
-                <p className="text-gray-600">Loading sessions...</p>
+            {isLoadingBookings ? (
+              <div className="py-8 text-center">
+                <div className="w-8 h-8 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-3"></div>
+                <p className="text-gray-600">Loading upcoming bookings...</p>
               </div>
-            ) : bookings.length === 0 ? (
-              <div className="text-center py-12 bg-gray-50 rounded-xl">
-                <Calendar className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-600">No upcoming sessions scheduled</p>
+            ) : isErrorBookings ? (
+              <div className="py-8 text-center text-red-600">
+                <p>Error loading bookings.</p>
               </div>
-            ) : (
+            ) : bookings && bookings.length > 0 ? (
               <div className="space-y-4">
-                {/* {bookings.map((booking) => (
+                {bookings.map((booking: any) => (
                   <motion.div
                     key={booking._id}
                     whileHover={{ y: -5 }}
-                    className="p-6 bg-gray-50 rounded-xl border border-gray-200 flex items-center justify-between group"
+                    className="p-6 bg-white rounded-xl shadow-sm border border-gray-100 flex items-center justify-between group transition-all duration-300" // Styling for each booking item
                   >
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm">
-                        <Clock className="text-blue-600" size={24} />
+                      <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center shadow-inner overflow-hidden">
+                        {booking.trainee?.profilePicture ? (
+                          <img
+                            src={booking.trainee.profilePicture}
+                            alt={`${booking.trainee.username}'s profile`}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.onerror = null;
+                              const parent = target.parentElement;
+                              if (parent) {
+                                target.style.display = "none";
+                              }
+                            }}
+                          />
+                        ) : (
+                          <Clock className="text-blue-600" size={24} />
+                        )}
                       </div>
+
                       <div>
                         <p className="font-medium text-gray-900">
-                          {new Date(booking.slotStart).toLocaleString([], {
+                          {new Date(booking.slotStart).toLocaleDateString([], {
                             weekday: "long",
                             month: "long",
                             day: "numeric",
-                            hour: "2-digit",
-                            minute: "2-digit",
                           })}
+                          ,
                         </p>
-                        <div className="flex items-center gap-2 text-gray-500 text-sm">
-                          <User size={14} />
-                          <span>{booking.trainee.username}</span>
-                        </div>
+                        <p className="font-medium text-gray-900">
+                          {" "}
+                          {booking.slotDetails.startTime} -{" "}
+                          {booking.slotDetails.endTime}
+                        </p>
+                        {booking.trainee?.username && (
+                          <div className="flex items-center gap-1 text-gray-600 text-sm mt-1">
+                            <User size={14} className="text-gray-500" />{" "}
+                            <span>{booking.trainee.username}</span>{" "}
+                          </div>
+                        )}
+
+                        {booking.notes && (
+                          <>
+                            <p
+                              className={`text-sm mt-1 ${
+                                booking.status === "confirmed"
+                                  ? "text-green-600"
+                                  : booking.status === "canceled"
+                                  ? "text-red-600"
+                                  : "text-gray-600"
+                              }`}
+                            >
+                              Status: {booking.status}
+                            </p>
+                            <div className="text-sm text-red-500 italic">
+                              {booking.notes || "Not provided"}
+                            </div>
+                          </>
+                        )}
                       </div>
                     </div>
 
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => handleViewBooking(booking._id)}
-                      className="flex items-center gap-2 px-4 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg shadow-lg hover:shadow-blue-500/25 transition-all duration-300"
-                    >
-                      View Details
-                      <ChevronRight
-                        size={16}
-                        className="transition-transform duration-300 group-hover:translate-x-1"
-                      />
-                    </motion.button>
+                    <div className="flex items-center gap-3">
+                      {booking.status === "confirmed" ? (
+                        <>
+                          <motion.button
+                            whileHover={{ scale: 1.03 }}
+                            whileTap={{ scale: 0.97 }}
+                            onClick={() => handleCancelClick(booking._id)}
+                            className="flex items-center gap-1 px-3 py-2 bg-gradient-to-r from-red-200 to-red-100/50 text-red-600 rounded-md font-medium transition-all duration-300 text-sm hover:bg-red-200"
+                          >
+                            <X size={14} />
+                            Cancel
+                          </motion.button>
+                          <motion.button
+                            whileHover={{ scale: 1.03 }}
+                            whileTap={{ scale: 0.97 }}
+                            onClick={() => handleViewBooking(booking._id)}
+                            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-md font-medium shadow-sm hover:shadow-md transition-all duration-300 opacity-90 group-hover:opacity-100 text-sm"
+                          >
+                            View Details
+                            <ChevronRight
+                              size={16}
+                              className="transition-transform duration-300 group-hover:translate-x-1"
+                            />
+                          </motion.button>
+                        </>
+                      ) : booking.status === "canceled" ? (
+                        <>
+                          <motion.button
+                            whileHover={{ scale: 1.03 }}
+                            whileTap={{ scale: 0.97 }}
+                            onClick={() => handleViewBooking(booking._id)}
+                            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-md font-medium shadow-sm hover:shadow-md transition-all duration-300 opacity-90 group-hover:opacity-100 text-sm"
+                          >
+                            View Details
+                            <ChevronRight
+                              size={16}
+                              className="transition-transform duration-300 group-hover:translate-x-1"
+                            />
+                          </motion.button>
+                        </>
+                      ) : (
+                        <motion.button
+                          whileHover={{ scale: 1.03 }}
+                          whileTap={{ scale: 0.97 }}
+                          onClick={() => handleViewBooking(booking._id)}
+                          className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-md font-medium shadow-sm hover:shadow-md transition-all duration-300 opacity-90 group-hover:opacity-100 text-sm"
+                        >
+                          View Details
+                          <ChevronRight
+                            size={16}
+                            className="transition-transform duration-300 group-hover:translate-x-1"
+                          />
+                        </motion.button>
+                      )}
+                    </div>
                   </motion.div>
-                ))} */}
+                ))}
+              </div>
+            ) : (
+              <div className="py-8 text-center text-gray-500">
+                <p>No upcoming bookings found.</p>
               </div>
             )}
           </div>
+
+          {showCancelModal && (
+            <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 h-screen">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="bg-white rounded-lg p-6 w-full max-w-md shadow-xl"
+              >
+                <h2 className="text-xl font-semibold mb-4">Cancel Booking</h2>
+                <p className="mb-4 text-gray-600">
+                  Please provide a reason for cancellation:
+                </p>
+                <textarea
+                  value={cancelReason}
+                  onChange={(e) => setCancelReason(e.target.value)}
+                  className="w-full p-3 border border-gray-200 rounded-lg min-h-[120px] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                  placeholder="Enter cancellation reason..."
+                />
+                {reasonError && (
+                  <p className="text-red-600 text-sm mt-1">{reasonError}</p>
+                )}
+                <div className="mt-6 flex justify-end space-x-3">
+                  <motion.button
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
+                    onClick={closeModal}
+                    className="px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 font-medium text-gray-700 transition-all"
+                  >
+                    Cancel
+                  </motion.button>
+                  <motion.button
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
+                    onClick={handleCancelSubmit}
+                    className="px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-lg font-medium shadow-sm hover:shadow-md transition-all"
+                    disabled={cancelBookingMutation.isPending}
+                  >
+                    {cancelBookingMutation.isPending ? (
+                      <div className="flex items-center space-x-2">
+                        <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+                        <span>Submitting...</span>
+                      </div>
+                    ) : (
+                      "Confirm Cancel"
+                    )}
+                  </motion.button>
+                </div>
+              </motion.div>
+            </div>
+          )}
 
           {/* Availability Section */}
           <div>
@@ -302,37 +500,3 @@ const SessionManagementPage = () => {
 };
 
 export default SessionManagementPage;
-
-// Dummy bookings array
-// const bookings = [
-//   {
-//     _id: "bkg1",
-//     slotStart: "2025-05-10T09:00:00.000Z",
-//     slotEnd: "2025-05-10T09:30:00.000Z",
-//     trainee: {
-//       _id: "user123",
-//       username: "alice_w",
-//       profilePicture: "https://i.pravatar.cc/40?img=1",
-//     },
-//   },
-//   {
-//     _id: "bkg2",
-//     slotStart: "2025-05-11T14:00:00.000Z",
-//     slotEnd: "2025-05-11T14:30:00.000Z",
-//     trainee: {
-//       _id: "user456",
-//       username: "bob_smith",
-//       profilePicture: "https://i.pravatar.cc/40?img=2",
-//     },
-//   },
-//   {
-//     _id: "bkg3",
-//     slotStart: "2025-05-12T16:30:00.000Z",
-//     slotEnd: "2025-05-12T17:00:00.000Z",
-//     trainee: {
-//       _id: "user789",
-//       username: "charlie_k",
-//       profilePicture: "https://i.pravatar.cc/40?img=3",
-//     },
-//   },
-// ];

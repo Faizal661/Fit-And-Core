@@ -10,5 +10,6 @@ export enum REDIRECT_MESSAGES {
 
     LOGIN="Back to Login",
     HOME="Return Home",
+    BACK="Go Back",
     ARTICLES="Browse other articles"
 ,};

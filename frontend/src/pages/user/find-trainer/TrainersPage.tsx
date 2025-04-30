@@ -4,7 +4,7 @@ import { Trainer } from "../../../types/trainer.type";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
 import { motion } from "framer-motion";
-import { Users, MessageCircle, Calendar, ChevronRight, UserPlus } from "lucide-react";
+import { Users, MessageCircle, Calendar, ChevronRight, UserPlus, Clock } from "lucide-react";
 import Footer from "../../../components/shared/Footer";
 import { getSubscribedTrainers } from "../../../services/trainer/trainerService";
 
@@ -52,12 +52,19 @@ const TrainersPage = () => {
     navigate(`/trainer/${trainerId}`);
   };
 
-  const handleStartChat = (trainerId: string) => {
+  const handleStartChat = (trainerId: string,e: React.MouseEvent) => {
+    e.stopPropagation();
     navigate(`/trainer/chat/${trainerId}`);
   };
 
-  const handleBookSession = (trainerId: string) => {
-    navigate(`/trainer/book-time/${trainerId}`);
+  const handleBookSession = (trainerId: string,e: React.MouseEvent) => {
+    e.stopPropagation();
+    navigate(`/book-time/${trainerId}`);
+  };
+
+  const handleViewSessionDetails = (trainerId: string,e: React.MouseEvent) => {
+    e.stopPropagation();
+    navigate(`/session-details/${trainerId}`);
   };
 
   return (
@@ -173,7 +180,7 @@ const TrainersPage = () => {
                         <motion.button
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
-                          onClick={() => handleStartChat(trainer._id)}
+                          onClick={(e) => handleStartChat(trainer._id,e)}
                           className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 transition-all duration-300"
                         >
                           <MessageCircle size={18} />
@@ -183,11 +190,20 @@ const TrainersPage = () => {
                         <motion.button
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
-                          onClick={() => handleBookSession(trainer._id)}
+                          onClick={(e) => handleBookSession(trainer._id,e)}
                           className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg shadow-lg hover:shadow-blue-500/25 transition-all duration-300"
                         >
                           <Calendar size={18} />
                           <span>Book Session</span>
+                        </motion.button>
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={(e) => handleViewSessionDetails(trainer._id,e)}
+                          className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg shadow-lg hover:shadow-blue-500/25 transition-all duration-300"
+                        >
+                          <Clock size={18} />
+                          <span>Session Details</span>
                         </motion.button>
                       </div>
                     </div>

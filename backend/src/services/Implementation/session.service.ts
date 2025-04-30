@@ -4,7 +4,7 @@ import { inject, injectable } from "tsyringe";
 import { IAvailabilityRepository } from "../../repositories/Interface/IAvailabilityRepository";
 import { ISlotRepository } from "../../repositories/Interface/ISlotRepository";
 import { ISessionService } from "../Interface/ISessionService";
-import { CreateAvailabilityParams } from "../../types/session.types";
+import { CreateAvailabilityParams, ISlot } from "../../types/session.types";
 import { IAvailabilityModel } from "../../models/session.model/availability.models";
 import { ISlotModel } from "../../models/session.model/slot.models";
 import { CustomError } from "../../errors/CustomError";
@@ -13,6 +13,9 @@ import {
   HttpResMsg,
 } from "../../constants/http-response.constants";
 import { ITrainerRepository } from "../../repositories/Interface/ITrainerRepository";
+import { IUserRepository } from "../../repositories/Interface/IUserRepository";
+import { IBookingRepository } from "../../repositories/Interface/IBookingRepository";
+import { IBookingModel } from "../../models/session.model/booking.models";
 type GroupedAvailabilities = Record<string, IAvailabilityModel[]>;
 
 @injectable()
@@ -23,11 +26,17 @@ export default class SessionService implements ISessionService {
     @inject("SlotRepository")
     private slotRepository: ISlotRepository,
     @inject("TrainerRepository")
-    private trainerRepository: ITrainerRepository
+    private trainerRepository: ITrainerRepository,
+    @inject("UserRepository")
+    private userRepository: IUserRepository,
+    @inject("BookingRepository")
+    private bookingRepository: IBookingRepository
   ) {
     this.availabilityRepository = availabilityRepository;
     this.slotRepository = slotRepository;
     this.trainerRepository = trainerRepository;
+    this.userRepository = userRepository;
+    this.bookingRepository = bookingRepository;
   }
 
   async createAvailability(
@@ -101,7 +110,10 @@ export default class SessionService implements ISessionService {
       const selectedDate = new Date(dateString);
 
       if (isNaN(selectedDate.getTime())) {
-        throw new CustomError("Invalid date format.", HttpResCode.BAD_REQUEST);
+        throw new CustomError(
+          HttpResMsg.INVALID_DATE_FORMAT,
+          HttpResCode.BAD_REQUEST
+        );
       }
 
       const availabilities =
@@ -140,7 +152,7 @@ export default class SessionService implements ISessionService {
 
       if (isNaN(startDate.getTime())) {
         throw new CustomError(
-          "Invalid start date format.",
+          HttpResMsg.INVALID_DATE_FORMAT,
           HttpResCode.BAD_REQUEST
         );
       }
@@ -173,47 +185,306 @@ export default class SessionService implements ISessionService {
     }
   }
 
-  // async getTrainerAvailability(
-  //   trainerId: string
-  // ): Promise<IAvailabilityModel[]> {
-  //   try {
-  //     return this.availabilityRepository
-  //       .find({
-  //         trainerId: new Types.ObjectId(trainerId),
-  //       })
-  //       .exec();
-  //   } catch (error) {
-  //     throw new CustomError(
-  //       HttpResMsg.FAILED_TO_GET_AVAILABILITY,
-  //       HttpResCode.INTERNAL_SERVER_ERROR
-  //     );
-  //   }
-  // }
+  // slots
 
-  // async deleteAvailability(availabilityId: string): Promise<boolean> {
-  //   try {
-  //     // Delete the availability
-  //     const deletedAvailability = await this.availabilityRepository.delete(
-  //       new Types.ObjectId(availabilityId)
-  //     );
+  async getSlotsByTrainerAndDate(
+    trainerId: string,
+    dateString: string
+  ): Promise<ISlotModel[]> {
+    try {
+      const selectedDate = new Date(dateString);
 
-  //     if (!deletedAvailability) {
-  //       return false;
-  //     }
+      if (isNaN(selectedDate.getTime())) {
+        throw new CustomError(
+          HttpResMsg.INVALID_DATE_FORMAT,
+          HttpResCode.BAD_REQUEST
+        );
+      }
 
-  //     // Delete all associated slots
-  //     await this.slotRepository.deleteOne({
-  //       availabilityId: new Types.ObjectId(availabilityId),
-  //     });
+      const trainer = await this.trainerRepository.findOne({
+        _id: new Types.ObjectId(trainerId),
+      });
+      if (!trainer) {
+        throw new CustomError(
+          HttpResMsg.TRAINER_NOT_FOUND,
+          HttpResCode.NOT_FOUND
+        );
+      }
 
-  //     return true;
-  //   } catch (error) {
-  //     throw new CustomError(
-  //       HttpResMsg.FAILED_TO_DELETE_AVAILABILITY,
-  //       HttpResCode.INTERNAL_SERVER_ERROR
-  //     );
-  //   }
-  // }
+      const availabilitiesForDate: IAvailabilityModel[] =
+        await this.availabilityRepository.findAvailabilitiesByTrainerAndDate(
+          new Types.ObjectId(trainerId),
+          selectedDate
+        );
+
+      const availabilityIds = availabilitiesForDate.map((avail) => avail._id);
+
+      const slots = await this.slotRepository.findSlotsByAvailabilityIds(
+        availabilityIds
+      );
+
+      return slots;
+    } catch (error) {
+      if (error instanceof CustomError) {
+        throw error;
+      }
+      throw new CustomError(
+        HttpResMsg.FAILED_TO_GET_SLOTS,
+        HttpResCode.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
+  async bookSlot(slotId: string, userId: string): Promise<ISlotModel | null> {
+    try {
+      const slot = await this.slotRepository.findById(
+        new Types.ObjectId(slotId)
+      );
+
+      if (!slot) {
+        throw new CustomError(HttpResMsg.SLOT_NOT_FOUND, HttpResCode.NOT_FOUND);
+      }
+
+      if (slot.status !== "available") {
+        throw new CustomError(
+          HttpResMsg.SLOT_UNAVAILABLE,
+          HttpResCode.BAD_REQUEST
+        );
+      }
+      const userExists = await this.userRepository.findById(
+        new Types.ObjectId(userId)
+      );
+
+      if (!userExists) {
+        throw new CustomError(HttpResMsg.USER_NOT_FOUND, HttpResCode.NOT_FOUND);
+      }
+
+      const newBooking = await this.bookingRepository.create({
+        slotId: slot.id,
+        trainerId: slot.trainerId,
+        userId: new Types.ObjectId(userId),
+      });
+
+      slot.status = "booked";
+      slot.bookingId = newBooking._id;
+
+      const updatedSlot = await this.slotRepository.update(
+        new Types.ObjectId(slotId),
+        slot
+      );
+
+      return updatedSlot;
+    } catch (error) {
+      if (error instanceof CustomError) {
+        throw error;
+      }
+      throw new CustomError(
+        HttpResMsg.FAILED_TO_BOOK_SLOT,
+        HttpResCode.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
+  // bookings
+
+  async getUpcomingTrainerBookings(userId: string): Promise<IBookingModel[]> {
+    try {
+      const trainer = await this.trainerRepository.findOne({ userId: userId });
+      if (!trainer) {
+        throw new CustomError(
+          HttpResMsg.TRAINER_NOT_FOUND,
+          HttpResCode.FORBIDDEN
+        );
+      }
+      const trainerId = trainer._id;
+
+      const currentDate = new Date();
+
+      const upcomingBookings =
+        await this.bookingRepository.findUpcomingBookingsByTrainer(
+          trainerId as Types.ObjectId,
+          currentDate
+        );
+      console.log(
+        "🚀 ~ SessionService ~ getUpcomingTrainerBookings ~ upcomingBookings:",
+        upcomingBookings
+      );
+
+      return upcomingBookings;
+    } catch (error) {
+      if (error instanceof CustomError) {
+        throw error;
+      }
+      throw new CustomError(
+        "Failed to fetch upcoming trainer bookings.",
+        HttpResCode.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
+  async trainerancelBooking(
+    bookingIdString: string,
+    reason: string,
+    userId: string
+  ): Promise<IBookingModel | null> {
+    try {
+      let bookingId: Types.ObjectId;
+      try {
+        bookingId = new Types.ObjectId(bookingIdString);
+      } catch (error) {
+        throw new CustomError(
+          "Invalid booking ID format.",
+          HttpResCode.BAD_REQUEST
+        );
+      }
+
+      const booking = await this.bookingRepository.findById(bookingId);
+      if (!booking) {
+        throw new CustomError("Booking not found.", HttpResCode.NOT_FOUND);
+      }
+
+      const trainer = await this.trainerRepository.findOne({ userId: userId });
+      if (!trainer) {
+        throw new CustomError(
+          HttpResMsg.TRAINER_NOT_FOUND,
+          HttpResCode.FORBIDDEN
+        );
+      }
+      const trainerId = trainer._id as Types.ObjectId;
+
+      if (!booking.trainerId.equals(trainerId)) {
+        throw new CustomError(
+          "You do not have permission to cancel this booking.",
+          HttpResCode.FORBIDDEN
+        );
+      }
+
+      if (booking.status === "canceled" || booking.status === "completed") {
+        throw new CustomError(
+          `Booking is already ${booking.status}.`,
+          HttpResCode.CONFLICT
+        );
+      }
+
+      reason=`Trainer Cancellation Reason : ${reason}`
+
+      const updatedBooking = await this.bookingRepository.update(bookingId, {
+        status: "canceled",
+        notes: reason,
+      });
+
+      return updatedBooking;
+    } catch (error) {
+      if (error instanceof CustomError) {
+        throw error;
+      }
+      throw new CustomError(
+        "Failed to cancel booking due to an unexpected error.",
+        HttpResCode.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
+  async getAllUserBookingsWithTrainer(
+    userIdString: string,  
+    trainerIdString: string 
+  ): Promise<any[]> { 
+    try {
+      let userId: Types.ObjectId;
+       try {
+        userId = new Types.ObjectId(userIdString);
+      } catch (error) {
+        throw new CustomError("Invalid user ID format.", HttpResCode.UNAUTHORIZED); // Should be handled by auth middleware, but defensive check
+      }
+
+      let trainerId: Types.ObjectId;
+       try {
+        trainerId = new Types.ObjectId(trainerIdString);
+      } catch (error) {
+        throw new CustomError("Invalid trainer ID format.", HttpResCode.BAD_REQUEST);
+      }
+
+      const trainerExists = await this.trainerRepository.findById(trainerId);
+       if (!trainerExists) {
+           throw new CustomError("Trainer not found.", HttpResCode.NOT_FOUND);
+       }
+
+      const allUserBookings = await this.bookingRepository.findAllBookingsByUserAndTrainer(
+        userId,
+        trainerId
+      );
+
+      return allUserBookings;
+
+    } catch (error) {
+       if (error instanceof CustomError) {
+            throw error;
+       }
+       // Log other unexpected errors
+       console.error("Error fetching user bookings with trainer:", error);
+       throw new CustomError(
+         "Failed to fetch user bookings.",
+         HttpResCode.INTERNAL_SERVER_ERROR
+       );
+    }
+  }
+
+
+  async userCancelBooking(
+    bookingIdString: string,
+    reason: string,
+    userId: string
+  ): Promise<IBookingModel | null> {
+    try {
+      let bookingId: Types.ObjectId;
+      try {
+        bookingId = new Types.ObjectId(bookingIdString);
+      } catch (error) {
+        throw new CustomError(
+          "Invalid booking ID format.",
+          HttpResCode.BAD_REQUEST
+        );
+      }
+
+      const booking = await this.bookingRepository.findById(bookingId);
+      if (!booking) {
+        throw new CustomError("Booking not found.", HttpResCode.NOT_FOUND);
+      }
+
+      if (!booking.userId.equals(userId)) {
+        throw new CustomError(
+          "You do not have permission to cancel this booking.",
+          HttpResCode.FORBIDDEN
+        );
+      }
+
+      if (booking.status === "canceled" || booking.status === "completed") {
+        throw new CustomError(
+          `Booking is already ${booking.status}.`,
+          HttpResCode.CONFLICT
+        );
+      }
+
+      reason=`Trainee Cancellation Reason :  ${reason}`
+
+      const updatedBooking = await this.bookingRepository.update(bookingId, {
+        status: "canceled",
+        notes: reason,
+      });
+
+      return updatedBooking;
+    } catch (error) {
+      if (error instanceof CustomError) {
+        throw error;
+      }
+      throw new CustomError(
+        "Failed to cancel booking due to an unexpected error.",
+        HttpResCode.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
+  // - ------------------
 
   private generateSlots(
     availability: IAvailabilityModel

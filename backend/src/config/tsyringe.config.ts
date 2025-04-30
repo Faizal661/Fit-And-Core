@@ -53,6 +53,8 @@ import { ISlotRepository } from "../repositories/Interface/ISlotRepository";
 import { SlotRepository } from "../repositories/Implementation/slot.repository";
 import SessionService from "../services/Implementation/session.service";
 import { ISessionService } from "../services/Interface/ISessionService";
+import { BookingRepository } from "../repositories/Implementation/booking.repository";
+import { IBookingRepository } from "../repositories/Interface/IBookingRepository";
 
 container.registerInstance('RedisClient', redisClient);
 
@@ -84,4 +86,4 @@ container.register<ISessionController>("SessionController", { useClass: SessionC
 container.register<ISessionService>("SessionService", { useClass: SessionService,});
 container.register<IAvailabilityRepository>("AvailabilityRepository", { useClass: AvailabilityRepository,});
 container.register<ISlotRepository>("SlotRepository", { useClass: SlotRepository,});
-// container.register<IBookingRepository>("BookingRepository", { useClass: BookingRepository,});
+container.register<IBookingRepository>("BookingRepository", { useClass: BookingRepository,});
