@@ -9,4 +9,5 @@ export interface ITrainerService {
   getTrainerApplications(isApproved?: boolean): Promise<ITrainerModel[]>;
   getApprovedTrainers(): Promise<ITrainerModel[]>;
   getOneTrainerDetails(trainerId: string): Promise<ITrainerModel>;
+  getSubscribedTrainersDetails(userId:string):Promise<ITrainerModel[]>;
 }

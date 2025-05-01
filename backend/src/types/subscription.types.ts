@@ -1,9 +1,9 @@
 import { Types } from "mongoose";
 
-export interface ISubscripton {
+export interface ISubscription {
     _id: Types.ObjectId;
     userId:  Types.ObjectId ;
-    trianerId:  Types.ObjectId ;
+    trainerId:  Types.ObjectId ;
     planDuration: String ;
     amount: Number;
     status: 'pending' | 'active' | 'cancelled' | 'expired';
@@ -21,4 +21,15 @@ export interface ISubscripton {
     planDuration: string;
     amountInPaise: number;
     planName: string;
+  }
+
+  export interface SubscriptionStatus {
+    isSubscribed: boolean;
+    subscription: {
+      _id: string;
+      planDuration: String;
+      status: string;
+      startDate: Date| null;
+      expiryDate: Date| null;
+    } | null;
   }

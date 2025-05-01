@@ -1,11 +1,11 @@
-import axios from "../../config/axios.config";
-import { SubscriptionData } from "../../types/subscription.type";
+import api from "../../config/axios.config";
+import { SubscriptionData, SubscriptionStatus } from "../../types/subscription.type";
 import { loadStripe } from "@stripe/stripe-js";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PK);
 
 export const createCheckoutSession = async (subscriptionData: SubscriptionData) => {
-    const response = await axios.post(
+    const response = await api.post(
       "/subscription/create-checkout-session",
       subscriptionData
     );
@@ -28,6 +28,12 @@ export const redirectToCheckout = async (sessionId:string) => {
 };
 
 export const verifyPayment = async (sessionId:string | null) => {
-    const response = await axios.get(`/subscription/verify-payment?session_id=${sessionId}`);
+    const response = await api.get(`/subscription/verify-payment?session_id=${sessionId}`);
     return response.data;
+};
+
+
+export const checkSubscriptionStatus = async (trainerId: string): Promise<SubscriptionStatus> => {
+  const { data } = await api.get(`/subscription/check?trainerId=${trainerId}`);
+  return data;
 };

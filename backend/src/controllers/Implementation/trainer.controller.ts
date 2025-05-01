@@ -248,11 +248,14 @@ export default class TrainerController implements ITrainerController {
     res: Response,
     next: NextFunction
   ): Promise<void> {
-    const { userId } = req.params;
     try {
-      // const trainerData = await this.trainerService.getOneTrainerDetails(trainerId);
-
-      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, { userId });
+      const { userId } = req.params;
+      if (!userId) {
+        sendResponse(res, HttpResCode.BAD_REQUEST, HttpResMsg.BAD_REQUEST);
+        return;
+      }
+      const subscribedTrainers = await this.trainerService.getSubscribedTrainersDetails(userId);
+      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, { subscribedTrainers });
     } catch (error) {
       next(error);
     }

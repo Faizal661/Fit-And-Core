@@ -1,16 +1,44 @@
 import { useState, FormEvent } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getAllArticles } from "../../services/article/articleService";
-import { Skeleton } from "@mui/material";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { ArticlesResponse } from "../../types/article.type";
-import { ArticleCard } from "../../components/article/ArticleCard";
+import { ArticleCard } from "../../components/shared/article/ArticleCard";
 import Footer from "../../components/shared/Footer";
-import { ChangeEventHandler } from "react";
+import { motion } from "framer-motion";
+import { useInView } from "react-intersection-observer";
+import { Search, SortAsc, ChevronLeft, ChevronRight } from "lucide-react";
+
+// Animation variants
+const fadeIn = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.6,
+      ease: [0.25, 0.1, 0.25, 1],
+    },
+  },
+};
+
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
 
 const UserArticles = () => {
   const userId = useSelector((state: RootState) => state.auth.user?.id || "");
+  const [ref, inView] = useInView({
+    triggerOnce: true,
+    threshold: 0.1,
+  });
 
   const [activePage, setActivePage] = useState<number>(1);
   const [recordsPerPage] = useState<number>(4);
@@ -34,116 +62,168 @@ const UserArticles = () => {
     setActivePage(1);
   };
 
-  const handleSortChange: ChangeEventHandler<HTMLSelectElement> = (event) => {
-    setSortBy(event.target.value as "createdAt" | "upvotes" | "");
+  const handleSortChange = (value: "createdAt" | "upvotes" | "") => {
+    setSortBy(value);
     setActivePage(1);
   };
 
   const totalPages = data ? Math.ceil(data.total / recordsPerPage) : 1;
 
   return (
-    <div>
-      <div className="min-h-screen bg-slate-200 px-8 py-10 pt-16">
-        <div className="max-w-3xl mx-auto">
-          <div className="flex flex-col md:flex-row justify-between items-center mb-12 gap-4">
-            <h2 className="text-2xl text-gray-800">Articles</h2>
+    <div className="min-h-screen bg-gray-50 text-gray-800 overflow-hidden">
+      {/* Hero Section */}
+      <div className="relative py-24 bg-gradient-to-r from-blue-600/90 to-purple-600/90">
+        <div className="absolute inset-0 bg-black/10 z-0 opacity-30"
+          style={{
+            backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.15'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
+          }}
+        ></div>
+        
+        <motion.div 
+          ref={ref}
+          initial="hidden"
+          animate={inView ? "visible" : "hidden"}
+          variants={staggerContainer}
+          className="relative z-10 max-w-6xl mx-auto px-6 text-center"
+        >
+          <motion.h1 variants={fadeIn} className="text-4xl md:text-5xl font-bold text-white mb-6">
+            Fitness Articles
+          </motion.h1>
+          <motion.div variants={fadeIn} className="w-20 h-1 bg-white/30 mx-auto mb-6 rounded-full"></motion.div>
+          <motion.p variants={fadeIn} className="text-white/80 max-w-2xl mx-auto">
+            Discover expert insights and tips to enhance your fitness journey
+          </motion.p>
+        </motion.div>
+      </div>
 
-            <div className="flex items-center gap-4">
-              <form
-                onSubmit={handleSearch}
-                className="flex items-center border border-gray-900"
-              >
+      {/* Main Content */}
+      <div className="max-w-4xl mx-auto px-6 -mt-16 relative z-10">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white rounded-xl shadow-xl border border-gray-100 p-6 mb-16"
+        >
+          <div className="flex flex-col md:flex-row gap-4 justify-between items-center mb-8">
+            <form
+              onSubmit={handleSearch}
+              className="w-full md:w-auto flex items-center gap-2"
+            >
+              <div className="relative flex-grow">
                 <input
                   type="text"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="Search articles"
-                  className="px-4 py-2 text-gray-800 focus:outline-none text-sm w-64"
+                  placeholder="Search articles..."
+                  className="w-full px-4 py-2 pr-10 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
                 />
-                <button
-                  type="submit"
-                  className="px-4 py-2 border-l border-gray-200 text-gray-200 bg-black hover:bg-gray-50 text-sm transition-colors hover:cursor-pointer hover:text-black"
-                >
-                  Search
-                </button>
-              </form>
-
-              <div className="flex items-center border border-gray-900 ">
-                <span className="px-3 text-sm text-gray-600">Sort By:</span>
+                <Search className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+              </div>
+              <div className="relative">
                 <select
-                  id="sort-by"
                   value={sortBy}
-                  onChange={handleSortChange}
-                  className="appearance-none bg-transparent border-l border-gray-900 px-3 py-2 text-sm text-gray-800 focus:outline-none hover:cursor-pointer"
+                  onChange={(e) => handleSortChange(e.target.value as "createdAt" | "upvotes" | "")}
+                  className="appearance-none px-4 py-2 pr-10 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
                 >
-                  <option value="">None</option>
+                  <option value="">Sort by</option>
                   <option value="createdAt">Newest</option>
                   <option value="upvotes">Most Upvotes</option>
                 </select>
+                <SortAsc className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
               </div>
-            </div>
-          </div>
+            </form>
 
-          <p className="text-xs text-gray-800 mb-6 text-right">
-            {data?.total} articles
-          </p>
+            {data?.total && (
+              <p className="text-sm text-gray-500">
+                {data.total} articles found
+              </p>
+            )}
+          </div>
 
           {isLoading ? (
             <div className="space-y-6">
-              <Skeleton height={120} animation="wave" />
-              <Skeleton height={120} animation="wave" />
-              <Skeleton height={120} animation="wave" />
-            </div>
-          ) : (
-            <div className="flex flex-col gap-y-6">
-              {data?.articles.length === 0 && (
-                <p className="text-sm text-gray-800 py-12 text-center">
-                  No articles found.
-                </p>
-              )}
-              {data?.articles.map((article) => (
-                <ArticleCard
-                  key={article._id}
-                  article={article}
-                  userId={userId}
-                  articles={data.articles}
-                />
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="animate-pulse">
+                  <div className="h-48 bg-gray-200 rounded-lg mb-4"></div>
+                  <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                </div>
               ))}
             </div>
+          ) : error ? (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-center py-12"
+            >
+              <p className="text-red-500 text-xl">Error loading articles</p>
+            </motion.div>
+          ) : data?.articles.length === 0 ? (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-center py-12"
+            >
+              <p className="text-gray-500 text-xl">No articles found</p>
+            </motion.div>
+          ) : (
+            <motion.div
+              variants={staggerContainer}
+              initial="hidden"
+              animate="visible"
+              className="space-y-6"
+            >
+              {data?.articles.map((article) => (
+                <motion.div
+                  key={article._id}
+                  variants={fadeIn}
+                  whileHover={{ y: -5 }}
+                  className="transition-all duration-300"
+                >
+                  <ArticleCard
+                    article={article}
+                    userId={userId}
+                    articles={data.articles}
+                  />
+                </motion.div>
+              ))}
+            </motion.div>
           )}
 
-          {error && (
-            <p className="text-gray-500 text-sm py-12 text-center">
-              Error loading articles.
-            </p>
-          )}
-
-          {/* Pagination */}
           {data && data.total > recordsPerPage && (
-            <div className="flex justify-between items-center mt-12 border-t border-gray-500 pt-6 text-sm">
-              <button
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="flex items-center justify-between mt-8 pt-6 border-t border-gray-100"
+            >
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 onClick={() => setActivePage((prev) => Math.max(prev - 1, 1))}
                 disabled={activePage === 1}
-                className="text-gray-600 hover:text-gray-800 disabled:text-gray-300 transition-colors"
+                className="flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
               >
+                <ChevronLeft size={18} />
                 Previous
-              </button>
-              <span className="text-xs text-gray-600">
+              </motion.button>
+              
+              <span className="text-sm text-gray-600">
                 Page {activePage} of {totalPages}
               </span>
-              <button
-                onClick={() =>
-                  setActivePage((prev) => Math.min(prev + 1, totalPages))
-                }
+              
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setActivePage((prev) => Math.min(prev + 1, totalPages))}
                 disabled={activePage === totalPages}
-                className="text-gray-600 hover:text-gray-800 disabled:text-gray-300 transition-colors"
+                className="flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
               >
                 Next
-              </button>
-            </div>
+                <ChevronRight size={18} />
+              </motion.button>
+            </motion.div>
           )}
-        </div>
+        </motion.div>
       </div>
+
       <Footer />
     </div>
   );

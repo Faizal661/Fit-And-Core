@@ -21,3 +21,20 @@ export const formatDate = (dateString: string) => {
     day: "numeric",
   });
 };
+
+
+export const formatDateForQuery = (date: Date): string => {
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1; 
+  const day = date.getDate();
+
+  const paddedMonth = month < 10 ? `0${month}` : `${month}`;
+  const paddedDay = day < 10 ? `0${day}` : `${day}`;
+
+  const formattedDate = `${year}-${paddedMonth}-${paddedDay}`;
+
+  console.log("🚀 ~ formatDateForQuery (Local) ~ original date object:", date);
+  console.log("🚀 ~ formatDateForQuery (Local) ~ formatted string:", formattedDate);
+
+  return formattedDate;
+};

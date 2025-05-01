@@ -1,10 +1,15 @@
 import styled from "styled-components";
 
-const Loader = () => {
+const Loader = ({ message = "" }) => {
   return (
     <div className="fixed inset-0  bg-black/0 backdrop-blur-xs z-60">
-      <StyledWrapper className="loader fixed left-1/2 top-1/2 ">
-        <div className="loader" />
+      <StyledWrapper className="loader flex justify-center items-center h-screen ">
+        <div className="text-center">
+          <h2 className="text-xl font-semibold mb-10 capitalize animate-pulse">
+            {message}
+          </h2>
+          <div className="loader mx-auto" />
+        </div>
       </StyledWrapper>
     </div>
   );
@@ -18,7 +23,7 @@ const StyledWrapper = styled.div`
     background: conic-gradient(
       from 120deg at 50% 64%,
       #0000,
-      #666666 1deg 120deg,
+      #12f 1deg 120deg,
       #0000 121deg
     );
     animation: l27-0 1.5s infinite cubic-bezier(0.3, 1, 0, 1);

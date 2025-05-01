@@ -3,10 +3,11 @@ import { FilterQuery } from "mongoose";
 import Stripe from "stripe";
 import { inject, injectable } from "tsyringe";
 import {
-  ISubscripton,
+  ISubscription,
   CheckoutSubscriptionParams,
+  SubscriptionStatus,
 } from "../../types/subscription.types";
-import { ISubscriptonModel } from "../../models/subscription.models";
+import { ISubscriptionModel } from "../../models/subscription.models";
 import { ISubscriptionRepository } from "../../repositories/Interface/ISubscriptionRepository";
 import { ISubscriptionService } from "../Interface/ISubscriptionService";
 import { IUserRepository } from "../../repositories/Interface/IUserRepository";
@@ -47,7 +48,7 @@ export default class SubscriptionService implements ISubscriptionService {
 
       const pendingSubscription = await this.subscriptionRepository.create({
         userId: new Types.ObjectId(userId),
-        trianerId: new Types.ObjectId(trainerId),
+        trainerId: new Types.ObjectId(trainerId),
         planDuration,
         amount: amountInPaise / 100,
         status: "pending",
@@ -123,7 +124,7 @@ export default class SubscriptionService implements ISubscriptionService {
       }
 
       const trainer = await this.trainerRepository.findById(
-        subscription.trianerId
+        subscription.trainerId
       );
 
       // Return subscription details with trainer info
@@ -204,5 +205,36 @@ export default class SubscriptionService implements ISubscriptionService {
     }
 
     return new Date(today.setMonth(today.getMonth() + 1));
+  }
+
+  async checkSubscription(
+    userId: string,
+    trainerId: string
+  ): Promise<SubscriptionStatus> {
+    if (!Types.ObjectId.isValid(trainerId)) {
+      throw new CustomError("Invalid trainerId", 400);
+    }
+
+    const activeSub = await this.subscriptionRepository.findOne({
+      userId,
+      trainerId,
+      status: "active",
+      expiryDate: { $gt: new Date() },
+    });
+
+    if (!activeSub) {
+      return { isSubscribed: false, subscription: null };
+    }
+
+    return {
+      isSubscribed: true,
+      subscription: {
+        _id: activeSub._id.toString(),
+        planDuration: activeSub.planDuration,
+        status: activeSub.status,
+        startDate: activeSub.startDate,
+        expiryDate: activeSub.expiryDate,
+      },
+    };
   }
 }

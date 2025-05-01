@@ -1,4 +1,4 @@
-import axios from "../../config/axios.config";
+import api from "../../config/axios.config";
 
 
 export interface User {
@@ -24,7 +24,7 @@ export const fetchUsers = async ({
   limit: number;
   search: string;
 }): Promise<UsersResponse> => {
-  const response = await axios.get<UsersResponse>("/user/users", {
+  const response = await api.get<UsersResponse>("/user/users", {
     params: { page, limit, search },
   });
   return response.data;
@@ -37,7 +37,7 @@ export const toggleBlockStatus = async ({
   userId: string;
   isBlocked: boolean;
 }): Promise<User> => {
-  const response = await axios.patch<User>(`/user/${userId}/block`, {
+  const response = await api.patch<User>(`/user/${userId}/block`, {
     isBlocked: isBlocked,
   });
   return response.data;

@@ -26,4 +26,5 @@ export enum AUTH_MESSAGES {
 
     SERVER_ERROR="Server error, please try again",
     SESSION_EXPIRED="Session expired, please login again",
+    UNEXPECTED_ERROR='something went wrong'
 };

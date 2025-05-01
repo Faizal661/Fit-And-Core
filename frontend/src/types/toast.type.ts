@@ -5,6 +5,7 @@ export interface ToastItemProps {
   id: string;
   type: ToastType;
   message: string;
+  duration: number;
   onClose: () => void;
 }
 
@@ -12,7 +13,7 @@ export interface ToastMessage {
   id: string;
   type: ToastType;
   message: string;
-  duration?: number;
+  duration: number;
 }
 
 export interface ToastContextType {

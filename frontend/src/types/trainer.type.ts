@@ -4,7 +4,7 @@ export interface Trainer {
   username: string;
   email: string;
   phone: string;
-  profilePicture?:string;
+  profilePicture:string;
   specialization: string;
   yearsOfExperience: string;
   about: string;

@@ -1,17 +1,17 @@
 import { FilterQuery } from "mongoose";
 import { injectable } from "tsyringe";
 import { BaseRepository } from "./base.repository";
-import { ISubscripton} from "../../types/subscription.types";
-import { SubscriptonModel ,ISubscriptonModel } from "../../models/subscription.models";
+import { ISubscription} from "../../types/subscription.types";
+import { SubscriptionModel ,ISubscriptionModel } from "../../models/subscription.models";
 import { ISubscriptionRepository } from "../../repositories/Interface/ISubscriptionRepository";
 
 @injectable()
 export class SubscriptionRepository
-  extends BaseRepository<ISubscriptonModel>
+  extends BaseRepository<ISubscriptionModel>
   implements ISubscriptionRepository
 {
   constructor() {
-    super(SubscriptonModel);
+    super(SubscriptionModel);
   }
  
 }
