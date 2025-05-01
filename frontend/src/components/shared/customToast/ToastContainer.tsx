@@ -15,6 +15,7 @@ const ToastContainer: React.FC = () => {
           id={toast.id}
           type={toast.type}
           message={toast.message}
+          duration={toast.duration}
           onClose={() => hideToast(toast.id)}
         />
       ))}

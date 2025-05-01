@@ -10,6 +10,30 @@ import { z } from "zod";
 import Footer from "../../components/shared/Footer";
 import { rejectReasonSchema } from "../../schemas/trainerSchema";
 import { STATUS } from "../../constants/status.messges";
+import { motion } from "framer-motion";
+import { useInView } from "react-intersection-observer";
+
+const fadeIn = {
+  hidden: { opacity: 0, y: 10 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.4,
+      ease: [0.25, 0.1, 0.25, 1],
+    },
+  },
+};
+
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.05,
+    },
+  },
+};
 
 const TrainerManage: React.FC = () => {
   const queryClient = useQueryClient();
@@ -104,72 +128,118 @@ const TrainerManage: React.FC = () => {
     setCurrentImageUrl(url);
   };
 
+  const [ref, inView] = useInView({
+    triggerOnce: true,
+    threshold: 0.1,
+  });
+
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-100">
-        <div className="text-2xl font-semibold text-gray-700">
+      <motion.div
+        className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-600 to-purple-600"
+        initial="hidden"
+        animate="visible"
+        variants={fadeIn}
+      >
+        <div className="text-2xl font-semibold text-white">
           Loading trainer data...
         </div>
-      </div>
+      </motion.div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-100">
-        <div className="text-2xl font-semibold text-red-600">
+      <motion.div
+        className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-600 to-purple-600"
+        initial="hidden"
+        animate="visible"
+        variants={fadeIn}
+      >
+        <div className="text-2xl font-semibold text-white">
           Error loading trainer data
         </div>
-      </div>
+      </motion.div>
     );
   }
 
   return (
-    <div>
-      <div className="min-h-screen bg-gray-400 ">
-        <h1 className="text-2xl font-bold text-gray-800 pl-20 px-6 py-4">
+    <motion.div
+      className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-600"
+      initial="hidden"
+      animate="visible"
+      variants={fadeIn}
+    >
+      <div
+        className="absolute inset-0 bg-black/10 z-0 opacity-30"
+        style={{
+          backgroundImage:
+            "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.15'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
+        }}
+      ></div>
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-16 lg:px-8">
+        <motion.h1
+          className="text-3xl font-bold text-white mb-6 ps-4"
+          variants={fadeIn}
+          transition={{ delay: 0.1 }}
+        >
           Trainer Management
-        </h1>
-        <div className="border-b-1 pt-2 mb-5"></div>
+        </motion.h1>
 
-        <div className="flex mb-6 bg-white  shadow overflow-hidden m-6">
-          <button
-            className={`px-6 py-3 font-medium text-sm flex-1 ${
-              activeTab === "pending"
-                ? "bg-blue-600 text-white"
-                : "bg-white text-gray-700 hover:bg-gray-100"
-            }`}
-            onClick={() => setActiveTab(STATUS.PENDING)}
-          >
-            Pending Requests ({pendingTrainers.length})
-          </button>
-          <button
-            className={`px-6 py-3 font-medium text-sm flex-1 ${
-              activeTab === "approved"
-                ? "bg-green-600 text-white"
-                : "bg-white text-gray-700 hover:bg-gray-100"
-            }`}
-            onClick={() => setActiveTab(STATUS.APPROVED)}
-          >
-            Approved Trainers ({approvedTrainers.length})
-          </button>
-          <button
-            className={`px-6 py-3 font-medium text-sm flex-1 ${
-              activeTab === "rejected"
-                ? "bg-red-600 text-white"
-                : "bg-white text-gray-700 hover:bg-gray-100"
-            }`}
-            onClick={() => setActiveTab(STATUS.REJECTED)}
-          >
-            Rejected Applications ({rejectedTrainers.length})
-          </button>
-        </div>
+        <motion.div
+          ref={ref}
+          initial="hidden"
+          animate={inView ? "visible" : "hidden"}
+          variants={staggerContainer}
+          className="flex justify-between mb-6 bg-white rounded-lg shadow-md p-4"
+        >
+          <div className="flex w-full space-x-1">
+            <motion.button
+              className={`px-6 py-3 font-medium text-sm flex-1 rounded-md transition-all duration-200 ${
+                activeTab === STATUS.PENDING
+                  ? "bg-purple-600 text-white shadow-md"
+                  : "bg-white text-gray-700 hover:bg-gray-100"
+              }`}
+              onClick={() => setActiveTab(STATUS.PENDING)}
+              variants={fadeIn}
+            >
+              Pending Requests ({pendingTrainers.length})
+            </motion.button>
+            <motion.button
+              className={`px-6 py-3 font-medium text-sm flex-1 rounded-md transition-all duration-200 ${
+                activeTab === STATUS.APPROVED
+                  ? "bg-purple-600 text-white shadow-md"
+                  : "bg-white text-gray-700 hover:bg-gray-100"
+              }`}
+              onClick={() => setActiveTab(STATUS.APPROVED)}
+              variants={fadeIn}
+              transition={{ delay: 0.1 }}
+            >
+              Approved Trainers ({approvedTrainers.length})
+            </motion.button>
+            <motion.button
+              className={`px-6 py-3 font-medium text-sm flex-1 rounded-md transition-all duration-200 ${
+                activeTab === STATUS.REJECTED
+                  ? "bg-purple-600 text-white shadow-md"
+                  : "bg-white text-gray-700 hover:bg-gray-100"
+              }`}
+              onClick={() => setActiveTab(STATUS.REJECTED)}
+              variants={fadeIn}
+              transition={{ delay: 0.2 }}
+            >
+              Rejected Applications ({rejectedTrainers.length})
+            </motion.button>
+          </div>
+        </motion.div>
 
         {/* Main Content */}
-        <div className="bg-white shadow p-6 mb-6 m-6">
-          {activeTab === "pending" && (
+        <motion.div
+          variants={fadeIn}
+          className="bg-white shadow rounded-lg overflow-x-auto"
+        >
+          {activeTab === STATUS.PENDING && (
             <>
-              <h2 className="text-xl font-semibold text-gray-800 mb-4">
+              <h2 className="text-xl font-semibold text-gray-800 p-6">
                 Pending Trainer Requests
               </h2>
               {pendingTrainers.length === 0 ? (
@@ -177,210 +247,213 @@ const TrainerManage: React.FC = () => {
                   No pending requests at this moment
                 </div>
               ) : (
-                <div className="overflow-x-auto">
-                  <table className="min-w-full bg-white">
-                    <thead>
-                      <tr className="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
-                        <th className="py-3 px-6 text-left">Name</th>
-                        <th className="py-3 px-6 text-left">Email</th>
-                        <th className="py-3 px-6 text-left">Phone</th>
-                        <th className="py-3 px-6 text-left">Specialization</th>
-                        <th className="py-3 px-6 text-left">Experience</th>
-                        <th className="py-3 px-6 text-center">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody className="text-gray-600 text-sm">
-                      {pendingTrainers.map((trainer) => (
-                        <tr
-                          key={trainer._id}
-                          className="border-b border-gray-200 hover:bg-gray-50"
-                        >
-                          <td className="py-3 px-6 text-left whitespace-nowrap font-medium">
-                            {trainer.username}
-                          </td>
-                          <td className="py-3 px-6 text-left">
-                            {trainer.email}
-                          </td>
-                          <td className="py-3 px-6 text-left">
-                            {trainer.phone}
-                          </td>
-                          <td className="py-3 px-6 text-left">
-                            {trainer.specialization}
-                          </td>
-                          <td className="py-3 px-6 text-left">
-                            {trainer.yearsOfExperience}
-                          </td>
-                          <td className="py-3 px-6 text-center">
-                            <div className="flex item-center justify-center">
-                              <button
-                                onClick={() => handleSelectTrainer(trainer)}
-                                className="px-2 py-1 rounded text-blue-600 hover:text-blue-900 mx-1 bg-blue-100"
-                              >
-                                View Details
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                <table className="min-w-full bg-white mb-10">
+                  <thead className="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
+                    <tr>
+                      <th className="py-3 px-6 text-left">Name</th>
+                      <th className="py-3 px-6 text-left">Email</th>
+                      <th className="py-3 px-6 text-left">Phone</th>
+                      <th className="py-3 px-6 text-left">Specialization</th>
+                      <th className="py-3 px-6 text-left">Experience</th>
+                      <th className="py-3 px-6 text-center">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="text-gray-600 text-sm">
+                    {pendingTrainers.map((trainer, index) => (
+                      <motion.tr
+                        key={trainer._id}
+                        className="border-b border-gray-200 hover:bg-gray-50"
+                        variants={fadeIn}
+                        transition={{ delay: 0.1 + index * 0.02 }}
+                      >
+                        <td className="py-3 px-6 text-left whitespace-nowrap font-medium">
+                          {trainer.username}
+                        </td>
+                        <td className="py-3 px-6 text-left">{trainer.email}</td>
+                        <td className="py-3 px-6 text-left">{trainer.phone}</td>
+                        <td className="py-3 px-6 text-left">
+                          {trainer.specialization}
+                        </td>
+                        <td className="py-3 px-6 text-left">
+                          {trainer.yearsOfExperience}
+                        </td>
+                        <td className="py-3 px-6 text-center">
+                          <div className="flex item-center justify-center">
+                            <button
+                              onClick={() => handleSelectTrainer(trainer)}
+                              className="bg-blue-500 text-white hover:bg-blue-600 rounded-md px-3 py-1 text-xs font-semibold mx-1"
+                            >
+                              View Details
+                            </button>
+                          </div>
+                        </td>
+                      </motion.tr>
+                    ))}
+                  </tbody>
+                </table>
               )}
             </>
           )}
 
-          {activeTab === "approved" && (
+          {activeTab === STATUS.APPROVED && (
             <>
-              <h2 className="text-xl font-semibold text-gray-800 mb-4">
+              <h2 className="text-xl font-semibold text-gray-800 p-6">
                 Approved Trainers
               </h2>
               {approvedTrainers.length === 0 ? (
-                <div className="text-center text-gray-500 py-8">
+                <div className="text-center text-lg text-gray-500 py-8">
                   No approved trainers yet
                 </div>
               ) : (
-                <div className="overflow-x-auto">
-                  <table className="min-w-full bg-white">
-                    <thead>
-                      <tr className="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
-                        <th className="py-3 px-6 text-left">Name</th>
-                        <th className="py-3 px-6 text-left">Email</th>
-                        <th className="py-3 px-6 text-left">Phone</th>
-                        <th className="py-3 px-6 text-left">Specialization</th>
-                        <th className="py-3 px-6 text-left">Experience</th>
-                        <th className="py-3 px-6 text-center">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody className="text-gray-600 text-sm">
-                      {approvedTrainers.map((trainer) => (
-                        <tr
-                          key={trainer._id}
-                          className="border-b border-gray-200 hover:bg-gray-50"
-                        >
-                          <td className="py-3 px-6 text-left whitespace-nowrap font-medium">
-                            {trainer.username}
-                          </td>
-                          <td className="py-3 px-6 text-left">
-                            {trainer.email}
-                          </td>
-                          <td className="py-3 px-6 text-left">
-                            {trainer.phone}
-                          </td>
-                          <td className="py-3 px-6 text-left">
-                            {trainer.specialization}
-                          </td>
-                          <td className="py-3 px-6 text-left">
-                            {trainer.yearsOfExperience}
-                          </td>
-                          <td className="py-3 px-6 text-center">
-                            <div className="flex item-center justify-center">
-                              <button
-                                onClick={() => handleSelectTrainer(trainer)}
-                                className="px-2 py-1 rounded text-blue-600 hover:text-blue-900 mx-1 bg-blue-100"
-                              >
-                                Details
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                <table className="min-w-full bg-white mb-10">
+                  <thead className="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
+                    <tr>
+                      <th className="py-3 px-6 text-left">Name</th>
+                      <th className="py-3 px-6 text-left">Email</th>
+                      <th className="py-3 px-6 text-left">Phone</th>
+                      <th className="py-3 px-6 text-left">Specialization</th>
+                      <th className="py-3 px-6 text-left">Experience</th>
+                      <th className="py-3 px-6 text-center">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="text-gray-600 text-sm">
+                    {approvedTrainers.map((trainer, index) => (
+                      <motion.tr
+                        key={trainer._id}
+                        className="border-b border-gray-200 hover:bg-gray-50"
+                        variants={fadeIn}
+                        transition={{ delay: 0.1 + index * 0.02 }}
+                      >
+                        <td className="py-3 px-6 text-left whitespace-nowrap font-medium">
+                          {trainer.username}
+                        </td>
+                        <td className="py-3 px-6 text-left">{trainer.email}</td>
+                        <td className="py-3 px-6 text-left">{trainer.phone}</td>
+                        <td className="py-3 px-6 text-left">
+                          {trainer.specialization}
+                        </td>
+                        <td className="py-3 px-6 text-left">
+                          {trainer.yearsOfExperience}
+                        </td>
+                        <td className="py-3 px-6 text-center">
+                          <div className="flex item-center justify-center">
+                            <button
+                              onClick={() => handleSelectTrainer(trainer)}
+                              className="bg-blue-500 text-white hover:bg-blue-600 rounded-md px-3 py-1 text-xs font-semibold mx-1"
+                            >
+                              Details
+                            </button>
+                          </div>
+                        </td>
+                      </motion.tr>
+                    ))}
+                  </tbody>
+                </table>
               )}
             </>
           )}
 
-          {activeTab === "rejected" && (
+          {activeTab === STATUS.REJECTED && (
             <>
-              <h2 className="text-xl font-semibold text-gray-800 mb-4">
+              <h2 className="text-xl font-semibold text-gray-800 p-6">
                 Rejected Applications
               </h2>
               {rejectedTrainers.length === 0 ? (
-                <div className="text-center text-gray-500 py-8">
+                <div className="text-center text-lg text-gray-500 py-8">
                   No rejected applications
                 </div>
               ) : (
-                <div className="overflow-x-auto">
-                  <table className="min-w-full bg-white">
-                    <thead>
-                      <tr className="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
-                        <th className="py-3 px-6 text-left">Name</th>
-                        <th className="py-3 px-6 text-left">Email</th>
-                        <th className="py-3 px-6 text-left">Phone</th>
-                        <th className="py-3 px-6 text-left">Specialization</th>
-                        <th className="py-3 px-6 text-center">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody className="text-gray-600 text-sm">
-                      {rejectedTrainers.map((trainer) => (
-                        <tr
-                          key={trainer._id}
-                          className="border-b border-gray-200 hover:bg-gray-50"
-                        >
-                          <td className="py-3 px-6 text-left whitespace-nowrap font-medium">
-                            {trainer.username}
-                          </td>
-                          <td className="py-3 px-6 text-left">
-                            {trainer.email}
-                          </td>
-                          <td className="py-3 px-6 text-left">
-                            {trainer.phone}
-                          </td>
-                          <td className="py-3 px-6 text-left">
-                            {trainer.specialization}
-                          </td>
-                          <td className="py-3 px-6 text-center">
-                            <div className="flex item-center justify-center">
-                              <button
-                                onClick={() => handleSelectTrainer(trainer)}
-                                className="px-2 py-1 rounded text-blue-600 hover:text-blue-900 mx-1 bg-blue-100"
-                              >
-                                Details
-                              </button>
-                              {/* <button
-                              onClick={() => handleApprove(trainer._id)}
-                              className="text-green-600 hover:text-green-900 mx-1"
+                <table className="min-w-full bg-white mb-10">
+                  <thead className="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
+                    <tr>
+                      <th className="py-3 px-6 text-left">Name</th>
+                      <th className="py-3 px-6 text-left">Email</th>
+                      <th className="py-3 px-6 text-left">Phone</th>
+                      <th className="py-3 px-6 text-left">Specialization</th>
+                      <th className="py-3 px-6 text-center">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="text-gray-600 text-sm">
+                    {rejectedTrainers.map((trainer, index) => (
+                      <motion.tr
+                        key={trainer._id}
+                        className="border-b border-gray-200 hover:bg-gray-50"
+                        variants={fadeIn}
+                        transition={{ delay: 0.1 + index * 0.02 }}
+                      >
+                        <td className="py-3 px-6 text-left whitespace-nowrap font-medium">
+                          {trainer.username}
+                        </td>
+                        <td className="py-3 px-6 text-left">{trainer.email}</td>
+                        <td className="py-3 px-6 text-left">{trainer.phone}</td>
+                        <td className="py-3 px-6 text-left">
+                          {trainer.specialization}
+                        </td>
+                        <td className="py-3 px-6 text-center">
+                          <div className="flex item-center justify-center">
+                            <button
+                              onClick={() => handleSelectTrainer(trainer)}
+                              className="bg-blue-500 text-white hover:bg-blue-600 rounded-md px-3 py-1 text-xs font-semibold mx-1"
                             >
-                              Reconsider
-                            </button> */}
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                              Details
+                            </button>
+                          </div>
+                        </td>
+                      </motion.tr>
+                    ))}
+                  </tbody>
+                </table>
               )}
             </>
           )}
-        </div>
+        </motion.div>
 
         {/* Trainer Details Modal */}
         {selectedTrainer && viewMode === "details" && (
-          <div className="fixed inset-0 bg-black/10 backdrop-blur-xs flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg w-full max-w-3xl overflow-hidden">
-              <div className="flex justify-between items-center px-6 py-4 bg-blue-600 text-white">
+          <motion.div
+            className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className="bg-white rounded-lg w-full max-w-3xl overflow-hidden shadow-lg"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            >
+              <div className="flex justify-between items-center px-6 py-4 bg-purple-600 text-white">
                 <h2 className="text-xl font-semibold">Trainer Details</h2>
                 <button
                   onClick={closeModal}
-                  className="text-white text-2xl hover:text-gray-200 hover:cursor-pointer"
+                  className="text-white hover:cursor-pointer focus:outline-none "
                 >
                   ✕
                 </button>
               </div>
               <div className="p-6 max-h-[70vh] overflow-y-auto">
-                {selectedTrainer.status === "rejected" &&
+                {selectedTrainer.status === STATUS.REJECTED &&
                   selectedTrainer.reason && (
-                    <div className="pb-10 max-h-[70vh] overflow-y-auto">
+                    <div className="pb-6 max-h-[70vh] overflow-y-auto">
                       <h3 className="text-lg font-semibold text-red-700 mb-2">
                         Rejection Reason
                       </h3>
-                      <p className="text-red-400">{selectedTrainer.reason}</p>
+                      <p className="text-red-600 bg-red-50 p-3 rounded-md">
+                        {selectedTrainer.reason}
+                      </p>
                     </div>
                   )}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
+                    <div className="pl-4 pb-5">
+                      {selectedTrainer.profilePicture && (
+                        <img
+                          src={selectedTrainer.profilePicture}
+                          alt={selectedTrainer.username}
+                          className="w-20 h-20 rounded-full object-cover"
+                        />
+                      )}
+                    </div>
                     <h3 className="text-lg font-semibold text-gray-800 mb-4">
                       Personal Information
                     </h3>
@@ -431,9 +504,9 @@ const TrainerManage: React.FC = () => {
                       <span className="text-gray-600 font-medium">Status:</span>
                       <span
                         className={`ml-2 px-2 py-1 rounded text-xs font-medium ${
-                          selectedTrainer.status === "pending"
+                          selectedTrainer.status === STATUS.PENDING
                             ? "bg-yellow-100 text-yellow-800"
-                            : selectedTrainer.status === "approved"
+                            : selectedTrainer.status === STATUS.APPROVED
                             ? "bg-green-100 text-green-800"
                             : "bg-red-100 text-red-800"
                         }`}
@@ -448,10 +521,17 @@ const TrainerManage: React.FC = () => {
                   <h3 className="text-lg font-semibold text-gray-800 mb-2">
                     About
                   </h3>
-                  <p className="text-gray-700">{selectedTrainer.about}</p>
+                  <p className="text-gray-700 bg-gray-50 p-3 rounded-md">
+                    {selectedTrainer.about}
+                  </p>
                 </div>
 
-                <div className="mt-6">
+                <motion.div
+                  className="mt-6"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 }}
+                >
                   <h3 className="text-lg font-semibold text-gray-800 mb-2">
                     Document Proofs
                   </h3>
@@ -459,9 +539,15 @@ const TrainerManage: React.FC = () => {
                     <div className="mb-6">
                       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                         {selectedTrainer.documentProofs.map((doc, index) => (
-                          <div
+                          <motion.div
                             key={index}
-                            className="border rounded-lg overflow-hidden group relative"
+                            className="border rounded-lg overflow-hidden group relative shadow-sm hover:shadow-md transition-all"
+                            whileHover={{ scale: 1.03 }}
+                            transition={{
+                              type: "spring",
+                              stiffness: 400,
+                              damping: 10,
+                            }}
                           >
                             <img
                               src={doc}
@@ -472,19 +558,24 @@ const TrainerManage: React.FC = () => {
                             <div className="absolute inset-0 bg-opacity-0 group-hover:bg-opacity-40 flex items-center justify-center transition-all">
                               <button
                                 onClick={() => handleViewImage(doc)}
-                                className="px-4 py-2 bg-blue-600 text-white rounded opacity-0 group-hover:opacity-100 transition-opacity"
+                                className="px-4 py-2 bg-purple-600 text-white rounded opacity-0 group-hover:opacity-100 transition-opacity"
                               >
                                 View Full
                               </button>
                             </div>
-                          </div>
+                          </motion.div>
                         ))}
                       </div>
                     </div>
                   </div>
-                </div>
+                </motion.div>
 
-                <div className="mt-2">
+                <motion.div
+                  className="mt-6"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
+                >
                   <h3 className="text-lg font-semibold text-gray-800 mb-2">
                     Achievements
                   </h3>
@@ -492,32 +583,43 @@ const TrainerManage: React.FC = () => {
                     <div className="mb-6">
                       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                         {selectedTrainer.achievements.map((doc, index) => (
-                          <div
+                          <motion.div
                             key={index}
-                            className="border rounded-lg overflow-hidden group relative"
+                            className="border rounded-lg overflow-hidden group relative shadow-sm hover:shadow-md transition-all"
+                            whileHover={{ scale: 1.03 }}
+                            transition={{
+                              type: "spring",
+                              stiffness: 400,
+                              damping: 10,
+                            }}
                           >
                             <img
                               src={doc}
-                              alt={`Document ${index + 1}`}
+                              alt={`Achievement ${index + 1}`}
                               className="w-full h-48 object-cover cursor-pointer"
                               onClick={() => handleViewImage(doc)}
                             />
-                            <div className="absolute inset-0 bg-opacity-0 group-hover:bg-opacity-40 flex items-center justify-center transition-all">
+                            <div className="absolute inset-0  bg-opacity-0 group-hover:bg-opacity-40 flex items-center justify-center transition-all">
                               <button
                                 onClick={() => handleViewImage(doc)}
-                                className="px-4 py-2 bg-blue-600 text-white rounded opacity-0 group-hover:opacity-100 transition-opacity"
+                                className="px-4 py-2 bg-purple-600 text-white rounded opacity-0 group-hover:opacity-100 transition-opacity"
                               >
                                 View Full
                               </button>
                             </div>
-                          </div>
+                          </motion.div>
                         ))}
                       </div>
                     </div>
                   </div>
-                </div>
+                </motion.div>
 
-                <div className="mt-6">
+                <motion.div
+                  className="mt-6"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 }}
+                >
                   <h3 className="text-lg font-semibold text-gray-800 mb-2">
                     Certifications
                   </h3>
@@ -525,52 +627,63 @@ const TrainerManage: React.FC = () => {
                     <div className="mb-6">
                       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                         {selectedTrainer.certifications.map((doc, index) => (
-                          <div
+                          <motion.div
                             key={index}
-                            className="border rounded-lg overflow-hidden group relative"
+                            className="border rounded-lg overflow-hidden group relative shadow-sm hover:shadow-md transition-all"
+                            whileHover={{ scale: 1.03 }}
+                            transition={{
+                              type: "spring",
+                              stiffness: 400,
+                              damping: 10,
+                            }}
                           >
                             <img
                               src={doc}
-                              alt={`Document ${index + 1}`}
+                              alt={`Certification ${index + 1}`}
                               className="w-full h-48 object-cover cursor-pointer"
                               onClick={() => handleViewImage(doc)}
                             />
-                            <div className="absolute inset-0 bg-opacity-0 group-hover:bg-opacity-40 flex items-center justify-center transition-all">
+                            <div className="absolute inset-0  bg-opacity-0 group-hover:bg-opacity-40 flex items-center justify-center transition-all">
                               <button
                                 onClick={() => handleViewImage(doc)}
-                                className="px-4 py-2 bg-blue-600 text-white rounded opacity-0 group-hover:opacity-100 transition-opacity"
+                                className="px-4 py-2 bg-purple-600 text-white rounded opacity-0 group-hover:opacity-100 transition-opacity"
                               >
                                 View Full
                               </button>
                             </div>
-                          </div>
+                          </motion.div>
                         ))}
                       </div>
                     </div>
                   </div>
-                </div>
+                </motion.div>
 
-                {selectedTrainer.status === "pending" && (
-                  <div className="mt-8 flex justify-end space-x-4">
+                {selectedTrainer.status === STATUS.PENDING && (
+                  <motion.div
+                    className="mt-8 flex justify-end space-x-4"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.5 }}
+                  >
                     <button
                       onClick={handleReject}
-                      className="px-6 py-2 bg-red-600 text-white rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 hover:cursor-pointer"
+                      className="px-6 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 transition-colors"
                       disabled={rejectMutation.isPending}
                     >
                       {rejectMutation.isPending ? "Rejecting..." : "Reject"}
                     </button>
                     <button
                       onClick={() => handleApprove(selectedTrainer._id)}
-                      className="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 hover:cursor-pointer"
+                      className="px-6 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors"
                       disabled={approveMutation.isPending}
                     >
                       {approveMutation.isPending ? "Approving..." : "Approve"}
                     </button>
-                  </div>
+                  </motion.div>
                 )}
               </div>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         )}
 
         {/* Rejection Reason Modal */}
@@ -610,25 +723,31 @@ const TrainerManage: React.FC = () => {
         )}
 
         {currentImageUrl && (
-          <div className="fixed inset-0 bg-black/10 backdrop-blur-xs flex items-center justify-center z-50">
-            <div className="relative max-w-4xl max-h-[90vh]">
+          <motion.div
+            className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50"
+            initial="hidden"
+            animate="visible"
+            exit="hidden" // You can adjust exit animation as needed
+            variants={fadeIn}
+          >
+            <motion.div className="relative max-w-4xl max-h-[90vh]">
               <button
                 onClick={() => setCurrentImageUrl(null)}
-                className="absolute top-2 right-2 bg-black bg-opacity-50 text-white w-8 h-8 rounded-full flex items-center justify-center"
+                className="absolute -top-6 -right-8 bg-black bg-opacity-50 text-white w-8 h-8 rounded-full flex items-center justify-center hover:cursor-pointer focus:outline-none hover:ring-2 hover:ring-white"
               >
                 ✕
               </button>
               <img
                 src={currentImageUrl}
                 alt="Document"
-                className="max-w-full max-h-[90vh] object-contain"
+                className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-md" // Added rounded-lg and shadow-md for consistency
               />
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         )}
       </div>
       <Footer />
-    </div>
+    </motion.div>
   );
 };
 

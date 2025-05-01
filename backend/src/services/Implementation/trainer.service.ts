@@ -3,6 +3,7 @@ import { Types } from "mongoose";
 import { ITrainerService } from "../Interface/ITrainerService";
 import { ITrainerRepository } from "../../repositories/Interface/ITrainerRepository";
 import { IUserRepository } from "../../repositories/Interface/IUserRepository";
+import { ISubscriptionRepository } from "../../repositories/Interface/ISubscriptionRepository";
 import { TrainerApplicationData } from "../../types/trainer.types";
 import {
   HttpResCode,
@@ -15,15 +16,19 @@ import { ITrainerModel } from "../../models/trainer.models";
 export default class TrainerService implements ITrainerService {
   private trainerRepository: ITrainerRepository;
   private userRepository: IUserRepository;
+  private subscriptionRepository: ISubscriptionRepository;
 
   constructor(
     @inject("TrainerRepository")
     trainerRepository: ITrainerRepository,
     @inject("UserRepository")
-    userRepository: IUserRepository
+    userRepository: IUserRepository,
+    @inject("SubscriptionRepository")
+    subscriptionRepository: ISubscriptionRepository
   ) {
     this.trainerRepository = trainerRepository;
     this.userRepository = userRepository;
+    this.subscriptionRepository = subscriptionRepository;
   }
 
   async applyTrainer(data: TrainerApplicationData): Promise<ITrainerModel> {
@@ -142,5 +147,32 @@ export default class TrainerService implements ITrainerService {
       throw new CustomError(HttpResMsg.NOT_FOUND, HttpResCode.NOT_FOUND);
     }
     return trainer;
+  }
+
+  async getSubscribedTrainersDetails(userId: string): Promise<ITrainerModel[]>{
+    try {
+      const activeSubscriptions = await this.subscriptionRepository.find({
+        userId: new Types.ObjectId(userId),
+        status: 'active',
+        expiryDate: { $gt: new Date() }, 
+      });
+
+      const subscribedTrainerIds = activeSubscriptions.map(
+        (sub) => sub.trainerId
+      );
+
+      if (subscribedTrainerIds.length === 0) {
+        return [];
+      }
+
+      const subscribedTrainers = await this.trainerRepository.find({
+        _id: { $in: subscribedTrainerIds },
+      });
+
+      return subscribedTrainers;
+    } catch (error) {
+      // console.error('Error fetching subscribed trainers:', error);
+      throw error;
+    }
   }
 }

@@ -1,5 +1,14 @@
+import { LucideIcon } from "lucide-react";
+
 export interface SidebarProps {
-    username: string | undefined;
-    onClose: () => void;
-    onLogout: () => void;
-  }
+  role: "user" | "trainer" | "admin" | undefined;
+  username: string | undefined;
+  onClose: () => void;
+  onLogout: () => void;
+}
+
+export interface SidebarItem {
+  to: string;
+  label: string;
+  icon: LucideIcon;
+}

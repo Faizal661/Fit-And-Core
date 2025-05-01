@@ -104,4 +104,18 @@ export class SubscriptionController implements ISubscriptionController {
       }
     }
   }
+
+  async checkStatus(req: Request, res: Response, next: NextFunction) {
+    const userId = req.decoded?.id!;
+    const trainerId = req.query.trainerId as string;
+
+    try {
+      const result = await this.subscriptionService.checkSubscription(userId, trainerId);
+      // result: { isSubscribed: boolean, subscription: SubscriptionDoc | null }
+
+      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, result);
+    } catch (err) {
+      next(err);
+    }
+  }
 }

@@ -27,6 +27,7 @@ import adminRoutes from "./routes/admin.routes";
 import userRoutes from "./routes/user.routes.ts";
 import trainerRoutes from "./routes/trainer.routes.ts";
 import articleRoutes from "./routes/article.routes.ts";
+import sessionRoutes from "./routes/session.routes.ts";
 import {
   subscriptionRoutes,
   webhookRoutes,
@@ -58,12 +59,15 @@ app.use("/api/user", userRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/trainer", trainerRoutes);
 app.use("/api/article", articleRoutes);
+app.use("/api/session", sessionRoutes);
 app.use("/api/subscription", subscriptionRoutes);
 
-// Error handling middlewares
+// throw error for unknown routes
 app.use((req, res, next) => {
   next(new CustomError(HttpResMsg.ROUTE_NOT_FOUND, HttpResCode.NOT_FOUND));
 });
+
+// Error handling 
 app.use(errorHandler);
 
 connectDB().then(() => {

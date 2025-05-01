@@ -1,14 +1,14 @@
 import mongoose, { Schema, Document, ObjectId, Types } from "mongoose";
-import { ISubscripton } from "../types/subscription.types";
+import { ISubscription } from "../types/subscription.types";
 
-export interface ISubscriptonModel extends Document, ISubscripton {
+export interface ISubscriptionModel extends Document, ISubscription {
   _id: Types.ObjectId;
 }
 
-const SubscriptonSchema: Schema = new Schema(
+const SubscriptionSchema: Schema = new Schema(
   {
     userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    trianerId: { type: Schema.Types.ObjectId, ref: "Trainer", required: true },
+    trainerId: { type: Schema.Types.ObjectId, ref: "Trainer", required: true },
     planDuration: { type: String },
     amount: { type: Number },
     status: {
@@ -24,12 +24,12 @@ const SubscriptonSchema: Schema = new Schema(
   { timestamps: true }
 );
 
-SubscriptonSchema.index({ userId: 1, status: 1 });
-SubscriptonSchema.index({ trianerId: 1, status: 1 });
+SubscriptionSchema.index({ userId: 1, status: 1 });
+SubscriptionSchema.index({ trainerId: 1, status: 1 });
 
-export const SubscriptonModel = mongoose.model<ISubscriptonModel>(
+export const SubscriptionModel = mongoose.model<ISubscriptionModel>(
   "Subscription",
-  SubscriptonSchema
+  SubscriptionSchema
 );
 
-export default SubscriptonModel;
+export default SubscriptionModel;

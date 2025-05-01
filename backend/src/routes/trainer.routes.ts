@@ -11,6 +11,7 @@ const router = express.Router();
 const trainerController =
   container.resolve<ITrainerController>("TrainerController");
 
+// trainer apply
 router.post(
   "/apply-trainer",
   verifyAccessToken,
@@ -54,6 +55,8 @@ router.put(
   (req, res, next) => trainerController.rejectTrainer(req, res, next)
 );
 
+
+// 
 router.get(
   "/trainer-approved",
   verifyAccessToken,
@@ -64,16 +67,16 @@ router.get(
 router.get(
   "/:trainerId",
   verifyAccessToken,
-  authorizeRoles(["admin","user"]),
+  authorizeRoles(["admin", "user"]),
   (req, res, next) => trainerController.getOneTrainerDetails(req, res, next)
 );
-
 
 router.get(
   "/subscribed/:userId",
   verifyAccessToken,
-  authorizeRoles(["admin","user"]),
-  (req, res, next) => trainerController.subscribedTrainersDetails(req, res, next)
+  authorizeRoles(["admin", "user"]),
+  (req, res, next) =>
+    trainerController.subscribedTrainersDetails(req, res, next)
 );
 
 export default router;

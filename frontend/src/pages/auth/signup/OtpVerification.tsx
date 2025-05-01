@@ -20,10 +20,11 @@ import { STATUS } from "../../../constants/status.messges";
 
 const SignUpOtpVerification = () => {
   const navigate = useNavigate();
+  const processedRef = useRef(false);
   const [timeLeft, setTimeLeft] = useState<number>(60);
   const [isResendDisabled, setIsResendDisabled] = useState<boolean>(true);
   const otpInputRef = useRef<HTMLInputElement>(null);
-  const [activeIndex, setActiveIndex] = useState(0); // Track the active OTP box
+  const [activeIndex, setActiveIndex] = useState(0);
 
   const [serverError, setServerError] = useState("");
   const { showToast } = useToast();
@@ -33,8 +34,12 @@ const SignUpOtpVerification = () => {
   );
 
   useEffect(() => {
+    if (processedRef.current) return;
+
     if (!registrationData.email) {
+      processedRef.current=true
       navigate("/signup");
+      showToast(STATUS.ERROR, AUTH_MESSAGES.UNEXPECTED_ERROR);
     }
   }, []);
 

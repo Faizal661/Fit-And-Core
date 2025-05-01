@@ -39,5 +39,13 @@ webhookRouter.post(
   (req, res, next) => subscriptionController.handleStripeWebhook(req, res, next)
 );
 
+router.get(
+  "/check",
+  verifyAccessToken,
+  authorizeRoles(["user"]),
+  (req, res, next) => subscriptionController.checkStatus(req, res, next)
+);
+
+
 export { router as subscriptionRoutes, webhookRouter as webhookRoutes };
 

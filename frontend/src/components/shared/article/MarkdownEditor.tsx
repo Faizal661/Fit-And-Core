@@ -48,8 +48,8 @@ export const MarkdownEditor: React.FC<Props> = ({ value, onChange }) => {
 
 
   return (
-    <div className="mt-4 w-80 md:w-full overflow-hidden">
-      <div className="flex justify-between p-2 bg-slate-900 border-1 border-black">
+    <div className="mt-4 w-80 md:w-full overflow-hidden border-1">
+      <div className="flex justify-between p-2 bg-slate-900 border-1 border-black  ">
         {!preview && (
           <div className="space-y-2 md:space-y-0 md:flex space-x-2 ">
             {toolbarButtons.map((button) => (
@@ -57,7 +57,7 @@ export const MarkdownEditor: React.FC<Props> = ({ value, onChange }) => {
                 key={button.name}
                 type="button"
                 onClick={button.action}
-                className="px-2 py-1 text-sm bg-slate-800 hover:bg-slate-700 text-white "
+                className="px-2 py-1 text-sm bg-slate-800 hover:bg-slate-700 text-white hover:cursor-pointer"
                 title={button.name}
               >
                 {button.icon}
@@ -69,7 +69,7 @@ export const MarkdownEditor: React.FC<Props> = ({ value, onChange }) => {
           <button
             onClick={() => setPreview(!preview)}
             type="button"
-            className="text-black bg-white px-3 py-1 text-sm"
+            className="text-black bg-white px-3 py-1 text-sm hover:cursor-pointer hover:bg-slate-300"
           >
             {preview ? "Edit" : "Preview"}
           </button>
@@ -77,7 +77,7 @@ export const MarkdownEditor: React.FC<Props> = ({ value, onChange }) => {
       </div>
 
       {preview ? (
-        <div className="bg-slate-100 p-4 overflow-auto max-h-[500px] min-h-[300px] max-w-md sm:max-w-xl md:max-w-2xl lg:max-w-4xl">
+        <div className="bg-slate-100 p-4 overflow-auto max-h-[500px] min-h-[300px] max-w-md sm:max-w-xl md:max-w-2xl lg:max-w-4xl ">
           <ReactMarkdown 
             remarkPlugins={[remarkGfm]} 
             components={components}
