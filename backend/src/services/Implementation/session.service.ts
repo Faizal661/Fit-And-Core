@@ -527,6 +527,8 @@ export default class SessionService implements ISessionService {
         notes: reason,
       });
 
+      await this.slotRepository.update(booking.slotId,{status:'available'})
+
       return updatedBooking;
     } catch (error) {
       if (error instanceof CustomError) {
