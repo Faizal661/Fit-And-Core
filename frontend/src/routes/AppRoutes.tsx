@@ -19,11 +19,11 @@ const NewPassword = lazy(() => import("../pages/auth/forgetPassword/NewPassword"
 
 // user
 import LandingPage from "../pages/user/LandingPage"
-import SessionManagementPage from "../pages/session/SessionManagement";
-import AvailabilitySetupPage from "../pages/session/AvailabilitySetup";
-import BookTime from "../pages/session/BookTime";
-import UserSessionManagementPage from "../pages/session/user/UserSessionManagement";
-import SlotManagementPage from "../pages/session/trainer/SlotManagementPage";
+const SessionManagementPage = lazy(() => import('../pages/session/trainer/SessionManagement'));
+const AvailabilitySetupPage = lazy(() => import('../pages/session/trainer/AvailabilitySetup'));
+const SlotManagementPage = lazy(() => import('../pages/session/trainer/SlotManagementPage'));
+const BookTime = lazy(() => import('../pages/session/user/BookTime'));
+const UserSessionManagementPage = lazy(() => import('../pages/session/user/UserSessionManagement'));
 const UserProfile = lazy(() => import("../pages/user/UserProfile"));
 const TrainersPage = lazy(() => import("../pages/user/find-trainer/TrainersPage"));
 const FindTrainersPage = lazy(() => import("../pages/user/find-trainer/FindTrainersPage"));

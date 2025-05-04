@@ -4,9 +4,9 @@ import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import {
   getTrainerSlotsByDate,
   bookTrainerSlot,
-} from "../../services/session/sessionService";
-import Footer from "../../components/shared/Footer";
-import { motion } from "framer-motion";
+} from "../../../services/session/sessionService";
+import Footer from "../../../components/shared/Footer";
+import { motion, AnimatePresence } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import {
   Calendar as CalendarIcon,
@@ -15,13 +15,14 @@ import {
   AlertCircle,
   X,
 } from "lucide-react";
-import { SUCCESS_MESSAGES } from "../../constants/success.messages";
-import { STATUS } from "../../constants/status.messges";
-import { useToast } from "../../context/ToastContext";
+import { SUCCESS_MESSAGES } from "../../../constants/success.messages";
+import { STATUS } from "../../../constants/status.messges";
+import { useToast } from "../../../context/ToastContext";
 import axios from "axios";
-import { ERR_MESSAGES } from "../../constants/error.messages";
-import PageNotFound from "../../components/shared/PageNotFound";
-import { REDIRECT_MESSAGES } from "../../constants/redirect.messges";
+import { ERR_MESSAGES } from "../../../constants/error.messages";
+import PageNotFound from "../../../components/shared/PageNotFound";
+import { REDIRECT_MESSAGES } from "../../../constants/redirect.messges";
+import { ISlot } from "../../../types/session.type";
 
 const fadeIn = {
   hidden: { opacity: 0, y: 20 },
@@ -45,6 +46,7 @@ const staggerContainer = {
   },
 };
 
+
 const BookTime = () => {
   const { trainerId } = useParams();
   const queryClient = useQueryClient();
@@ -57,7 +59,10 @@ const BookTime = () => {
   const initialDate = new Date();
   initialDate.setDate(initialDate.getDate());
   const [selectedDate, setSelectedDate] = useState<Date>(initialDate);
-  const [bookingSlotId, setBookingSlotId] = useState<string>("");
+
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [slotToBookDetails, setSlotToBookDetails] =
+    useState<ISlot | null>(null);
 
   const getNextSevenDays = () => {
     const today = new Date();
@@ -108,8 +113,12 @@ const BookTime = () => {
   const bookSlotMutation = useMutation({
     mutationFn: bookTrainerSlot,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["trainerSlots", trainerId] });
+      queryClient.invalidateQueries({
+        queryKey: ["trainerSlots", trainerId, formatDateForQuery(selectedDate)],
+      });
       showToast(STATUS.SUCCESS, SUCCESS_MESSAGES.SLOT_BOOKED);
+      setShowConfirmModal(false);
+      setSlotToBookDetails(null);
     },
     onError: (error) => {
       if (axios.isAxiosError(error)) {
@@ -117,12 +126,23 @@ const BookTime = () => {
       } else {
         showToast(STATUS.ERROR, ERR_MESSAGES.SOMETHING_WENT_WRONG);
       }
+      setShowConfirmModal(false);
+      setSlotToBookDetails(null);
     },
   });
 
-  const handleBookSlot = (slotId: string) => {
-    setBookingSlotId(slotId);
-    bookSlotMutation.mutate({slotId:slotId});
+  const requestBookingConfirmation = (slot: ISlot) => {
+    setSlotToBookDetails(slot);
+    setShowConfirmModal(true);
+  };
+  const confirmBooking = () => {
+    if (slotToBookDetails) {
+      bookSlotMutation.mutate({ slotId: slotToBookDetails._id });
+    }
+  };
+  const cancelBooking = () => {
+    setShowConfirmModal(false);
+    setSlotToBookDetails(null);
   };
 
   return (
@@ -319,12 +339,12 @@ const BookTime = () => {
                             <motion.button
                               whileHover={{ scale: 1.05 }}
                               whileTap={{ scale: 0.95 }}
-                              onClick={() => handleBookSlot(slot._id)}
+                              onClick={() => requestBookingConfirmation(slot)}
                               disabled={bookSlotMutation.isPending}
-                              className="w-full px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 rounded-lg text-white font-medium shadow-sm hover:shadow-md transition-all duration-300"
+                              className="w-full px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 rounded-lg text-white font-medium shadow-sm hover:shadow-md transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                               {bookSlotMutation.isPending &&
-                              bookingSlotId === slot._id ? (
+                              slotToBookDetails?._id === slot._id ? (
                                 <div className="flex items-center justify-center space-x-2">
                                   <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
                                   <span>Booking...</span>
@@ -349,6 +369,94 @@ const BookTime = () => {
           </div>
         </motion.div>
       </div>
+
+      <AnimatePresence>
+        {showConfirmModal && slotToBookDetails && (
+          <motion.div
+            className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className="bg-white rounded-xl p-6 w-full max-w-md shadow-xl"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.2 }}
+            >
+              <div className="flex justify-between items-center mb-5">
+                <h2 className="text-xl font-bold text-gray-800">
+                  Confirm Booking
+                </h2>
+                <button
+                  onClick={cancelBooking}
+                  className="p-2 rounded-full hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-200"
+                  aria-label="Close"
+                >
+                  <X size={18} className="text-gray-500" />
+                </button>
+              </div>
+
+              <div className="bg-blue-50 rounded-lg p-4 mb-5">
+                <p className="text-gray-700">
+                  You're booking a slot from{" "}
+                  <span className="font-semibold text-blue-700">
+                    {slotToBookDetails.startTime}
+                  </span>{" "}
+                  to{" "}
+                  <span className="font-semibold text-blue-700">
+                    {slotToBookDetails.endTime}
+                  </span>
+                </p>
+              </div>
+
+              <div className="flex justify-end space-x-3">
+                <button
+                  onClick={cancelBooking}
+                  className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg border border-gray-300 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-colors"
+                  disabled={bookSlotMutation.isPending}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmBooking}
+                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-70 transition-colors flex items-center justify-center min-w-24"
+                  disabled={bookSlotMutation.isPending}
+                >
+                  {bookSlotMutation.isPending ? (
+                    <>
+                      <svg
+                        className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
+                      </svg>
+                      Booking...
+                    </>
+                  ) : (
+                    "Confirm"
+                  )}
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <Footer />
     </div>

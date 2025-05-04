@@ -201,7 +201,7 @@ export class SessionController implements ISessionController {
         );
       }
       if (!slotId) {
-        throw new CustomError("Slot ID is required.", HttpResCode.BAD_REQUEST);
+        throw new CustomError(HttpResMsg.SLOT_ID_REQUIRED, HttpResCode.BAD_REQUEST);
       }
 
       const canceledSlot = await this.sessionService.cancelAvailableSlot(
@@ -259,20 +259,14 @@ export class SessionController implements ISessionController {
       }
       if (!bookingId) {
         throw new CustomError(
-          "Booking ID is required in request body.",
+          HttpResMsg.BOOKING_ID_REQUIRED,
           HttpResCode.BAD_REQUEST
         );
       }
 
-      if (reason !== undefined && typeof reason !== "string") {
-        throw new CustomError(
-          "Reason must be a string.",
-          HttpResCode.BAD_REQUEST
-        );
-      }
       if (!reason) {
         throw new CustomError(
-          "Cancellation reason is required in request body.",
+          HttpResMsg.CANCELLATION_REASON_REQUIRED,
           HttpResCode.BAD_REQUEST
         );
       }
@@ -306,7 +300,7 @@ export class SessionController implements ISessionController {
       }
       if (!trainerId) {
         throw new CustomError(
-          "Trainer ID query parameter 'trainerId' is required.",
+          HttpResMsg.TRAINER_ID_REQUIRED,
           HttpResCode.BAD_REQUEST
         );
       }
@@ -316,7 +310,6 @@ export class SessionController implements ISessionController {
           userId,
           trainerId
         );
-      console.log("🚀 ~ SessionController ~ allUserBookings:", allUserBookings);
 
       sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, {
         data: allUserBookings,
@@ -343,20 +336,15 @@ export class SessionController implements ISessionController {
       }
       if (!bookingId) {
         throw new CustomError(
-          "Booking ID is required in request body.",
+          HttpResMsg.BOOKING_ID_REQUIRED,
           HttpResCode.BAD_REQUEST
         );
       }
 
-      if (reason !== undefined && typeof reason !== "string") {
-        throw new CustomError(
-          "Reason must be a string.",
-          HttpResCode.BAD_REQUEST
-        );
-      }
+      
       if (!reason) {
         throw new CustomError(
-          "Cancellation reason is required in request body.",
+          HttpResMsg.CANCELLATION_REASON_REQUIRED,
           HttpResCode.BAD_REQUEST
         );
       }
@@ -373,58 +361,5 @@ export class SessionController implements ISessionController {
     }
   }
 
-  // async getTrainerAvailability(
-  //   req: Request,
-  //   res: Response,
-  //   next: NextFunction
-  // ): Promise<void> {
-  //   try {
-  //     const trainerId = req.params.trainerId || req.decoded?.id;
 
-  //     if (!trainerId) {
-  //       throw new CustomError(HttpResMsg.BAD_REQUEST, HttpResCode.BAD_REQUEST);
-  //     }
-
-  //     const availabilities = await this.sessionService.getTrainerAvailability(trainerId);
-
-  //     sendResponse(
-  //       res,
-  //       HttpResCode.OK,
-  //       HttpResMsg.SUCCESS,
-  //       availabilities
-  //     );
-  //   } catch (error) {
-  //     next(error);
-  //   }
-  // }
-
-  // async deleteAvailability(
-  //   req: Request,
-  //   res: Response,
-  //   next: NextFunction
-  // ): Promise<void> {
-  //   try {
-  //     const { availabilityId } = req.params;
-  //     const trainerId = req.decoded?.id;
-
-  //     if (!availabilityId || !trainerId) {
-  //       throw new CustomError(HttpResMsg.BAD_REQUEST, HttpResCode.BAD_REQUEST);
-  //     }
-
-  //     const result = await this.sessionService.deleteAvailability(availabilityId);
-
-  //     if (!result) {
-  //       throw new CustomError(HttpResMsg.NOT_FOUND, HttpResCode.NOT_FOUND);
-  //     }
-
-  //     sendResponse(
-  //       res,
-  //       HttpResCode.OK,
-  //       HttpResMsg.SUCCESS,
-  //       { message: "Availability deleted successfully" }
-  //     );
-  //   } catch (error) {
-  //     next(error);
-  //   }
-  // }
 }
