@@ -45,7 +45,7 @@ const TrainerArticles = () => {
   const [activePage, setActivePage] = useState<number>(1);
   const [recordsPerPage] = useState<number>(4);
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [sortBy, setSortBy] = useState<"createdAt" | "upvotes" | "">("");
+  const [sortBy, setSortBy] = useState<"createdAt" | "upvotes" | "">("createdAt");
 
   const { data, isLoading, error } = useQuery<ArticlesResponse>({
     queryKey: ["articles", activePage, recordsPerPage, searchTerm, sortBy],

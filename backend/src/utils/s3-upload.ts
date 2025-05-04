@@ -53,7 +53,7 @@ export const uploadToCloudinary = async (
     if (error instanceof Error) {
       throw new CustomError(error.message, HttpResCode.INTERNAL_SERVER_ERROR);
     } else {
-      logger.error(HttpResMsg.FAILED_UPLOAD_FILE);
+      logger.error(error);
       throw new CustomError(
         HttpResMsg.FAILED_UPLOAD_FILE,
         HttpResCode.INTERNAL_SERVER_ERROR
