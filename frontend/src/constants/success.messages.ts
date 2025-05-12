@@ -10,6 +10,7 @@ export enum SUCCESS_MESSAGES {
   TRAINER_APPLICATION_APPROVED = "Your trainer application has been approved! Please log out and log in to access trainer functionalities.",
 
   ARTICLE_CREATED="Article created successfully!",
+  ARTICLE_UPDATED="Article updated successfully!",
 
   AVAILABILITY_SAVED ="New Availability saved!",
   SLOT_BOOKED="Slot booked Successfully!",

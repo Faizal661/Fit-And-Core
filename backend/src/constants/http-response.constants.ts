@@ -190,6 +190,8 @@ export enum HttpResMsg {
   FAILED_UPDATE_USER_STATUS = "Failed to update user status",
   FAILED_DELETE_OLD_PROFILE = "Failed to delete old profile picture:",
 
+  ARTICLE_NOT_FOUND="Article not found",
+
   FAILED_TO_CREATE_AVAILABILITY="Failed to create availability",
   FAILED_TO_GET_AVAILABILITY="Failed to fetch availability ",
   FAILED_TO_CHECK_AVAILABILITY="Failed to check availability existence.",
@@ -198,14 +200,22 @@ export enum HttpResMsg {
 
   FAILED_TO_BOOK_SLOT="Failed to book slot",
   FAILED_TO_GET_SLOTS="Failed to fetch trainer slots",
+  FAILED_TO_CANCEL_SLOT="Failed to cancel slot due to an unexpected error.",
   SLOT_NOT_FOUND="Slot not found",
   SLOT_UNAVAILABLE="Slot is not available",
   SLOT_ID_REQUIRED="Slot ID is required",
   INVALID_SLOT_ID_FORMAT="Invalid slot ID format",
+  NO_PERMISSION_TO_CANCEL_SLOT="You do not have permission to cancel this slot.",
+  SLOT_CURRENT_STATUS="Slot is not available for cancellation. Current status:",
 
   INVALID_DATE_FORMAT="Invalid date format",
   DATE_REQUIRED="Date is required.",
 
+  BOOKING_ID_REQUIRED="Booking ID is required in request body.",
+  BOOKING_NOT_FOUND="Booking not found.",
+  CANCELLATION_REASON_REQUIRED="Cancellation reason is required in request body.",
+  NO_PERMISSION_TO_CANCEL_BOOKING="You do not have permission to cancel this booking.",
+  FAILED_TO_CANCEL_BOOKING="Failed to cancel booking due to an unexpected error.",
 
   
 }

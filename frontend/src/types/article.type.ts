@@ -15,6 +15,7 @@ export interface ArticleCardProps {
   article: Article;
   articles: Article[];
   userId: string;
+  showEditButton?:boolean;
 }
 
 export interface ArticlesResponse {

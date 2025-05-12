@@ -1,12 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
-import { getMyArticles } from "../../services/article/articleService";
+import { getMyArticles } from "../../../services/article/articleService";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { RootState } from "../../redux/store";
-import { ArticlesResponse } from "../../types/article.type";
-import { ArticleCard } from "../../components/shared/article/ArticleCard";
+import { RootState } from "../../../redux/store";
+import { ArticlesResponse } from "../../../types/article.type";
+import { ArticleCard } from "../../../components/shared/article/ArticleCard";
 import { useState, FormEvent } from "react";
-import Footer from "../../components/shared/Footer";
+import Footer from "../../../components/shared/Footer";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { Search, SortAsc, Plus, ChevronLeft, ChevronRight } from "lucide-react";
@@ -45,7 +45,9 @@ const TrainerArticles = () => {
   const [activePage, setActivePage] = useState<number>(1);
   const [recordsPerPage] = useState<number>(4);
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [sortBy, setSortBy] = useState<"createdAt" | "upvotes" | "">("");
+  const [sortBy, setSortBy] = useState<"createdAt" | "upvotes" | "">(
+    "createdAt"
+  );
 
   const { data, isLoading, error } = useQuery<ArticlesResponse>({
     queryKey: ["articles", activePage, recordsPerPage, searchTerm, sortBy],
@@ -75,24 +77,35 @@ const TrainerArticles = () => {
     <div className="min-h-screen bg-gray-50 text-gray-800 overflow-hidden">
       {/* Hero Section */}
       <div className="relative py-24 bg-gradient-to-r from-blue-600/90 to-purple-600/90">
-        <div className="absolute inset-0 bg-black/10 z-0 opacity-30"
+        <div
+          className="absolute inset-0 bg-black/10 z-0 opacity-30"
           style={{
-            backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.15'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
+            backgroundImage:
+              "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.15'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
           }}
         ></div>
-        
-        <motion.div 
+
+        <motion.div
           ref={ref}
           initial="hidden"
           animate={inView ? "visible" : "hidden"}
           variants={staggerContainer}
           className="relative z-10 max-w-6xl mx-auto px-6 text-center"
         >
-          <motion.h1 variants={fadeIn} className="text-4xl md:text-5xl font-bold text-white mb-6">
+          <motion.h1
+            variants={fadeIn}
+            className="text-4xl md:text-5xl font-bold text-white mb-6"
+          >
             My Articles
           </motion.h1>
-          <motion.div variants={fadeIn} className="w-20 h-1 bg-white/30 mx-auto mb-6 rounded-full"></motion.div>
-          <motion.p variants={fadeIn} className="text-white/80 max-w-2xl mx-auto">
+          <motion.div
+            variants={fadeIn}
+            className="w-20 h-1 bg-white/30 mx-auto mb-6 rounded-full"
+          ></motion.div>
+          <motion.p
+            variants={fadeIn}
+            className="text-white/80 max-w-2xl mx-auto"
+          >
             Share your fitness knowledge and inspire others with your expertise
           </motion.p>
         </motion.div>
@@ -118,19 +131,29 @@ const TrainerArticles = () => {
                   placeholder="Search articles..."
                   className="w-full px-4 py-2 pr-10 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
                 />
-                <Search className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                <Search
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
+                  size={18}
+                />
               </div>
               <div className="relative">
                 <select
                   value={sortBy}
-                  onChange={(e) => handleSortChange(e.target.value as "createdAt" | "upvotes" | "")}
+                  onChange={(e) =>
+                    handleSortChange(
+                      e.target.value as "createdAt" | "upvotes" | ""
+                    )
+                  }
                   className="appearance-none px-4 py-2 pr-10 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
                 >
                   <option value="">Sort by</option>
                   <option value="createdAt">Newest</option>
                   <option value="upvotes">Most Upvotes</option>
                 </select>
-                <SortAsc className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                <SortAsc
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
+                  size={18}
+                />
               </div>
             </form>
 
@@ -188,6 +211,7 @@ const TrainerArticles = () => {
                     article={article}
                     userId={userId}
                     articles={data.articles}
+                    showEditButton={true}
                   />
                 </motion.div>
               ))}
@@ -210,15 +234,17 @@ const TrainerArticles = () => {
                 <ChevronLeft size={18} />
                 Previous
               </motion.button>
-              
+
               <span className="text-sm text-gray-600">
                 Page {activePage} of {totalPages}
               </span>
-              
+
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => setActivePage((prev) => Math.min(prev + 1, totalPages))}
+                onClick={() =>
+                  setActivePage((prev) => Math.min(prev + 1, totalPages))
+                }
                 disabled={activePage === totalPages}
                 className="flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
               >

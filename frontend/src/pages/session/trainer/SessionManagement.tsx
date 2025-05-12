@@ -18,12 +18,12 @@ import {
   getTrainerBookings,
   getTrainerAvailabilities,
   trainerCancelBooking,
-} from "../../services/session/sessionService";
-import Footer from "../../components/shared/Footer";
+} from "../../../services/session/sessionService";
+import Footer from "../../../components/shared/Footer";
 import { useInView } from "react-intersection-observer";
-import { IAvailability } from "../../types/session.type";
-import { useToast } from "../../context/ToastContext";
-import { STATUS } from "../../constants/status.messges";
+import { IAvailability } from "../../../types/session.type";
+import { useToast } from "../../../context/ToastContext";
+import { STATUS } from "../../../constants/status.messges";
 import axios from "axios";
 
 const fadeIn = {

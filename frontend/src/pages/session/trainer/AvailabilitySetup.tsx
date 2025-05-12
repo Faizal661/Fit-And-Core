@@ -3,8 +3,8 @@ import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import {
   createAvailability,
   getTrainerAvailabilityByDate,
-} from "../../services/session/sessionService";
-import Footer from "../../components/shared/Footer";
+} from "../../../services/session/sessionService";
+import Footer from "../../../components/shared/Footer";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import {
@@ -14,18 +14,18 @@ import {
   AlertCircle,
   CheckCircle,
 } from "lucide-react";
-import { SUCCESS_MESSAGES } from "../../constants/success.messages";
-import { STATUS } from "../../constants/status.messges";
-import { useToast } from "../../context/ToastContext";
+import { SUCCESS_MESSAGES } from "../../../constants/success.messages";
+import { STATUS } from "../../../constants/status.messges";
+import { useToast } from "../../../context/ToastContext";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   availabilityFormData,
   availabilitySchema,
-} from "../../schemas/sessionSchema";
+} from "../../../schemas/sessionSchema";
 import axios from "axios";
-import { ERR_MESSAGES } from "../../constants/error.messages";
-import { IAvailability } from "../../types/session.type";
+import { ERR_MESSAGES } from "../../../constants/error.messages";
+import { IAvailability } from "../../../types/session.type";
 
 const fadeIn = {
   hidden: { opacity: 0, y: 20 },
