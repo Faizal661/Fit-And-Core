@@ -137,16 +137,54 @@ export class ArticleController implements IArticleController {
     }
   }
 
-  // async getArticleById(req: Request, res: Response, next: NextFunction) {
-  //   try {
-  //     const article = await this.articleService!.getArticleById(req.params.id);
-  //     if (!article) {
-  //       sendResponse(res, HttpResCode.NOT_FOUND, HttpResMsg.NOT_FOUND);
-  //       return;
-  //     }
-  //     sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, article);
-  //   } catch (error) {
-  //     next(error);
-  //   }
-  // }
+  async updateArticle(req: Request, res: Response, next: NextFunction) {
+    const { articleId } = req.params;
+    const { title, content, tags } = req.body;
+    let thumbnailURL = req.body.thumbnail;
+
+    if (req.file) {
+      const thumbnailFile = req.file;
+      const uploadResult = await uploadToCloudinary(
+        thumbnailFile,
+        "thumbnails"
+      );
+      thumbnailURL = uploadResult.Location;
+    }
+
+    const updatedBy = req.decoded?.id;
+    if (!updatedBy) {
+      sendResponse(res, HttpResCode.UNAUTHORIZED, HttpResMsg.UNAUTHORIZED);
+      return;
+    }
+
+    const article = await this.articleService!.updateArticle(articleId, {
+      title,
+      content,
+      tags,
+      thumbnail: thumbnailURL,
+    });
+
+    if (!article) {
+      sendResponse(res, HttpResCode.NOT_FOUND, HttpResMsg.ARTICLE_NOT_FOUND);
+      return;
+    }
+
+    sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, { article });
+  }
+
+  async getArticleById(req: Request, res: Response, next: NextFunction) {
+    try {
+      const article = await this.articleService!.getArticleById(
+        req.params.articleId
+      );
+      if (!article) {
+        sendResponse(res, HttpResCode.NOT_FOUND, HttpResMsg.NOT_FOUND);
+        return;
+      }
+      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, { article });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
+  

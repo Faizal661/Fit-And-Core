@@ -31,6 +31,12 @@ export default class ArticleService implements IArticleService {
     return await this.articleRepository.create({ ...articleData, authorName });
   }
 
+  async updateArticle(id: string, articleData: Partial<IArticle>): Promise<IArticleModel | null> {
+    return await this.articleRepository.update(new Types.ObjectId(id), {
+      ...articleData
+    });
+  }
+
   async getMyArticles(
     trainerId: string | Types.ObjectId,
     page: number,

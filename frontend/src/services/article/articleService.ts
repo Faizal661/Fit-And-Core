@@ -45,3 +45,19 @@ export const upvoteArticle = async (articleId: string) => {
   const response = await api.post(`/article/${articleId}/upvote`);
   return response.data;
 };
+
+export const fetchArticleById = async (articleId: string) => {
+  const res = await api.get(`/article/${articleId}`);
+  return res.data.article;
+};
+
+export const updateTrainerArticle = async (
+  data: ArticleFormData & { id: string }
+) => {
+  const res = await api.patch(`/article/update-article/${data.id}`,data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return res.data;
+};

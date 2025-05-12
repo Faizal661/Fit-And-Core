@@ -190,6 +190,8 @@ export enum HttpResMsg {
   FAILED_UPDATE_USER_STATUS = "Failed to update user status",
   FAILED_DELETE_OLD_PROFILE = "Failed to delete old profile picture:",
 
+  ARTICLE_NOT_FOUND="Article not found",
+
   FAILED_TO_CREATE_AVAILABILITY="Failed to create availability",
   FAILED_TO_GET_AVAILABILITY="Failed to fetch availability ",
   FAILED_TO_CHECK_AVAILABILITY="Failed to check availability existence.",

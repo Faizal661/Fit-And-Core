@@ -19,6 +19,7 @@ const NewPassword = lazy(() => import("../pages/auth/forgetPassword/NewPassword"
 
 // user
 import LandingPage from "../pages/user/LandingPage"
+import EditArticle from "../pages/article/trainer/EditArticle";
 const SessionManagementPage = lazy(() => import('../pages/session/trainer/SessionManagement'));
 const AvailabilitySetupPage = lazy(() => import('../pages/session/trainer/AvailabilitySetup'));
 const SlotManagementPage = lazy(() => import('../pages/session/trainer/SlotManagementPage'));
@@ -29,12 +30,12 @@ const TrainersPage = lazy(() => import("../pages/user/find-trainer/TrainersPage"
 const FindTrainersPage = lazy(() => import("../pages/user/find-trainer/FindTrainersPage"));
 const TrainerDetailsPage = lazy(() => import("../pages/user/find-trainer/TrainerDetailsPage"));
 const TrainerApply = lazy(() => import("../pages/trainer/TrainerApply"));
-const UserArticles = lazy(() => import("../pages/article/UserArticles"));
+const UserArticles = lazy(() => import("../pages/article/user/UserArticles"));
 
 // trainer
 const HomeTrainer = lazy(() => import("../pages/trainer/HomeTrainer"));
-const TrainerArticles = lazy(() => import("../pages/article/TrainerArticles"));
-const CreateArticle = lazy(() => import("../pages/article/CreateArticle"));
+const TrainerArticles = lazy(() => import("../pages/article/trainer/TrainerArticles"));
+const CreateArticle = lazy(() => import("../pages/article/trainer/CreateArticle"));
 
 // admin
 const HomeAdmin = lazy(() => import("../pages/admin/HomeAdmin"));
@@ -76,6 +77,7 @@ const AppRoutes = () => {
         <Route path="/trainer" element={<HomeTrainer />} />
         <Route path="/trainer/articles" element={<TrainerArticles />} />
         <Route path="/trainer/articles/create" element={<CreateArticle />} />
+        <Route path="/trainer/articles/edit/:articleId" element={<EditArticle />} />
         <Route path="/trainer/sessions" element={<SessionManagementPage />} />
         <Route path="/trainer/slot-management" element={<SlotManagementPage />} />
         <Route path="/trainer/availability-setup" element={<AvailabilitySetupPage />} />

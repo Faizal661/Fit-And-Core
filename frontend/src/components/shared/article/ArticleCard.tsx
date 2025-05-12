@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { ThumbsUp, ThumbsUpIcon } from "lucide-react";
+import { Edit, ThumbsUp, ThumbsUpIcon } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -13,6 +13,7 @@ export const ArticleCard = ({
   article,
   userId,
   articles,
+  showEditButton=false
 }: ArticleCardProps) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -46,11 +47,24 @@ export const ArticleCard = ({
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2 }}
-      whileHover={{ scale: 1.02, transition: { duration: 0.1 } }} // Subtle scale on hover
+      whileHover={{ scale: 1.02, transition: { duration: 0.1 } }}
     >
       <div className="flex-3 pr-6">
         <div className="mb-3">
           <span className="text-xs text-gray-500">{article.authorName}</span>
+          {showEditButton && (
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={(e) => {
+                e.stopPropagation(); // Prevent card click
+                navigate(`/trainer/articles/edit/${article._id}`);
+              }}
+              className="float-end p-1 text-blue-900 hover:text-black hover:bg-gray-300 rounded-full"
+            >
+              <Edit size={18}/>
+            </motion.button>
+          )}
         </div>
         <h2 className="text-lg font-normal text-gray-800 mb-3">
           {article.title}

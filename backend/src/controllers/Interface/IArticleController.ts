@@ -5,5 +5,6 @@ export interface IArticleController {
   getAllArticles(req: Request, res: Response, next: NextFunction): Promise<void>
   getMyArticles(req: Request, res: Response, next: NextFunction): Promise<void>
   upvoteArticle(req: Request, res: Response, next: NextFunction): Promise<void>
-  // getArticleById(req: Request, res: Response, next: NextFunction): Promise<void>
+  updateArticle(req: Request, res: Response, next: NextFunction): Promise<void>
+  getArticleById(req: Request, res: Response, next: NextFunction): Promise<void>
 }
