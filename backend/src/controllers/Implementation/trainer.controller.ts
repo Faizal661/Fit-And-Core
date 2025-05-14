@@ -260,4 +260,30 @@ export default class TrainerController implements ITrainerController {
       next(error);
     }
   }
+
+  async getMyTrainees(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+
+      const userId = req.decoded?.id;
+      if (!userId) {
+        sendResponse(res, HttpResCode.UNAUTHORIZED, HttpResMsg.UNAUTHORIZED);
+        return;
+      }
+
+      const { page = "1", limit = "10", search = "" } = req.query;
+      const pageNum = parseInt(page as string, 10);
+      const limitNum = parseInt(limit as string, 10);
+
+      if (isNaN(pageNum) || isNaN(limitNum) || pageNum < 1 || limitNum < 1) {
+        throw new CustomError("Invalid pagination parameters", HttpResCode.BAD_REQUEST);
+      }
+
+      const result = await this.trainerService.getMyTrainees(pageNum, limitNum, search as string , userId);
+      console.log("🚀 ~ TrainerController ~ getMyTrainees ~ result:", result)
+      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, result);
+    } catch (error) {
+      next(error);
+    }
+  }
+
 }

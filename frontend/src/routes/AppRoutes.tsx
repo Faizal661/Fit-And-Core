@@ -20,6 +20,7 @@ const NewPassword = lazy(() => import("../pages/auth/forgetPassword/NewPassword"
 // user
 import LandingPage from "../pages/user/LandingPage"
 import EditArticle from "../pages/article/trainer/EditArticle";
+import TraineeManagementPage from "../pages/trainer/trainee-management/TraineeManagementPage";
 const SessionManagementPage = lazy(() => import('../pages/session/trainer/SessionManagement'));
 const AvailabilitySetupPage = lazy(() => import('../pages/session/trainer/AvailabilitySetup'));
 const SlotManagementPage = lazy(() => import('../pages/session/trainer/SlotManagementPage'));
@@ -81,7 +82,7 @@ const AppRoutes = () => {
         <Route path="/trainer/sessions" element={<SessionManagementPage />} />
         <Route path="/trainer/slot-management" element={<SlotManagementPage />} />
         <Route path="/trainer/availability-setup" element={<AvailabilitySetupPage />} />
-
+        <Route path="/trainer/trainees-management" element={<TraineeManagementPage />} />
       </Route>
 
       <Route element={<ProtectedRoutes allowedRoles={["user", "trainer"]} />}>

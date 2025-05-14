@@ -15,7 +15,7 @@ export const UserSidebarItems = [
 
 export const TrainerSidebarItems = [
   { to: "/trainer", label: SIDEBAR_MESSAGES.DASHBOARD, icon: Home },
-  { to: "/trainer/trainees", label: SIDEBAR_MESSAGES.TRAINEE_MANAGEMENT, icon: Users },
+  { to: "/trainer/trainees-management", label: SIDEBAR_MESSAGES.TRAINEE_MANAGEMENT, icon: Users },
   { to: "/trainer/articles", label: SIDEBAR_MESSAGES.ARTICLE_MANAGEMENT, icon: FileText },
   { to: "/trainer/sessions", label: SIDEBAR_MESSAGES.SESSION_MANAGEMENT, icon: Calendar },
   { to: "/trainer/upcoming", label: SIDEBAR_MESSAGES.UPCOMING_SESSIONS, icon: Calendar },

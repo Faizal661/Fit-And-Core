@@ -1,4 +1,5 @@
 import { ITrainerModel } from "../../models/trainer.models";
+import { PaginatedTraineesResult } from "../../types/trainee.types";
 import { TrainerApplicationData } from "../../types/trainer.types";
 
 export interface ITrainerService {
@@ -10,4 +11,10 @@ export interface ITrainerService {
   getApprovedTrainers(): Promise<ITrainerModel[]>;
   getOneTrainerDetails(trainerId: string): Promise<ITrainerModel>;
   getSubscribedTrainersDetails(userId:string):Promise<ITrainerModel[]>;
+  getMyTrainees(
+    page: number,
+    limit: number,
+    search: string,
+    trainerUserId: string
+  ): Promise<PaginatedTraineesResult>
 }
