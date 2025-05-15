@@ -780,7 +780,7 @@ const TraineeManagementPage = () => {
                   Back
                 </button>
                 <button
-                  onClick={() => navigateToFullProfile(selectedTrainee._id)}
+                  onClick={() => navigateToFullProfile(selectedTrainee.traineeId)}
                   className="px-6 py-2.5 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 flex items-center justify-center shadow-sm hover:shadow-md"
                 >
                   <svg

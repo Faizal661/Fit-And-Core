@@ -279,7 +279,6 @@ export default class TrainerController implements ITrainerController {
       }
 
       const result = await this.trainerService.getMyTrainees(pageNum, limitNum, search as string , userId);
-      console.log("🚀 ~ TrainerController ~ getMyTrainees ~ result:", result)
       sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, result);
     } catch (error) {
       next(error);

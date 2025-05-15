@@ -56,6 +56,13 @@ import { ISessionService } from "../services/Interface/ISessionService";
 import { BookingRepository } from "../repositories/Implementation/booking.repository";
 import { IBookingRepository } from "../repositories/Interface/IBookingRepository";
 
+import { ProgressController } from "../controllers/Implementation/progress.controller";
+import ProgressService from "../services/Implementation/progress.service";
+import { ProgressRepository } from "../repositories/Implementation/progress.repository";
+import { IProgressController } from "../controllers/Interface/IProgressController";
+import { IProgressService } from "../services/Interface/IProgressService";
+import { IProgressRepository } from "../repositories/Interface/IProgressRepository";
+
 container.registerInstance('RedisClient', redisClient);
 
 container.register<IAuthController>('AuthController', { useClass: AuthController });
@@ -87,3 +94,7 @@ container.register<ISessionService>("SessionService", { useClass: SessionService
 container.register<IAvailabilityRepository>("AvailabilityRepository", { useClass: AvailabilityRepository,});
 container.register<ISlotRepository>("SlotRepository", { useClass: SlotRepository,});
 container.register<IBookingRepository>("BookingRepository", { useClass: BookingRepository,});
+
+container.register<IProgressController>("ProgressController", { useClass: ProgressController });
+container.register<IProgressService>("ProgressService", { useClass: ProgressService });
+container.register<IProgressRepository>("ProgressRepository", { useClass: ProgressRepository });

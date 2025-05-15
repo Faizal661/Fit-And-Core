@@ -32,6 +32,7 @@ import {
   subscriptionRoutes,
   webhookRoutes,
 } from "./routes/subscription.routes.ts";
+import progressRoutes from "./routes/progress.routes.ts"
 
 const app = express();
 
@@ -61,6 +62,7 @@ app.use("/api/trainer", trainerRoutes);
 app.use("/api/article", articleRoutes);
 app.use("/api/session", sessionRoutes);
 app.use("/api/subscription", subscriptionRoutes);
+app.use("/api/progress", progressRoutes);
 
 // throw error for unknown routes
 app.use((req, res, next) => {

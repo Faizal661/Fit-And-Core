@@ -45,7 +45,7 @@ export interface SubscriptionHistoryItem {
 }
 
 export interface TraineeResponse {
-  _id: string;
+  traineeId: string;
   username: string;
   profilePicture?: string;
   email: string;

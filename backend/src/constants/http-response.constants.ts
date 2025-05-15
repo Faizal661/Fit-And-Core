@@ -127,13 +127,12 @@ export enum HttpResMsg {
 
   //Other responses
 
-  SERVER_CONNECTION=`Server connection   ✅`,
+  SERVER_CONNECTION = `Server connection   ✅`,
   DATABASE_CONNECTION = "Database connection ✅",
   DATABASE_ERROR = "Error connecting to the database: ",
   REDIS_CONNECTION = "Redis Connection    ✅",
   REDIS_CLIENT_ERROR = "Redis Client Error:❌",
-  ROUTE_NOT_FOUND=`Route not found `,
-
+  ROUTE_NOT_FOUND = `Route not found `,
 
   INVALID_CREDENTIALS = "Invalid email or password",
   USERNAME_CONFLICT = "Username already taken",
@@ -150,8 +149,8 @@ export enum HttpResMsg {
   OTP_VERIFIED = "OTP verified successfully",
 
   FAILED_UPLOAD_FILE = `Failed to upload file`,
-  FAILED_DELETE_FROM_CLOUDINARY=`Failed to delete existing file.`,
-  FAILED_EXTRACT_PUBLIC_ID="Failed to extract public_id from URL:",
+  FAILED_DELETE_FROM_CLOUDINARY = `Failed to delete existing file.`,
+  FAILED_EXTRACT_PUBLIC_ID = "Failed to extract public_id from URL:",
 
   NO_FILE_UPLOADED = "No file uploaded",
   INVALID_PAGINATION = "Invalid pagination parameters",
@@ -172,8 +171,8 @@ export enum HttpResMsg {
   TRAINER_APPLICATION_CONFLICT = "You already have a trainer application pending",
   TRAINER_APPLICATION_NOT_FOUND = "Trainer application not found",
   TRAINER_NOT_FOUND = "Trainer not found",
-  TRAINER_ID_REQUIRED="Trainer ID is required",
-  
+  TRAINER_ID_REQUIRED = "Trainer ID is required",
+
   ACCOUNT_BLOCKED = "Your account is blocked. Please contact support.",
   USER_NOT_FOUND = "User not found",
   SOMETHING_WENT_WRONG = "Something went wrong.",
@@ -190,32 +189,33 @@ export enum HttpResMsg {
   FAILED_UPDATE_USER_STATUS = "Failed to update user status",
   FAILED_DELETE_OLD_PROFILE = "Failed to delete old profile picture:",
 
-  ARTICLE_NOT_FOUND="Article not found",
+  ARTICLE_NOT_FOUND = "Article not found",
 
-  FAILED_TO_CREATE_AVAILABILITY="Failed to create availability",
-  FAILED_TO_GET_AVAILABILITY="Failed to fetch availability ",
-  FAILED_TO_CHECK_AVAILABILITY="Failed to check availability existence.",
-  FAILED_TO_DELETE_AVAILABILITY="Failed to delete availability",
+  FAILED_TO_CREATE_AVAILABILITY = "Failed to create availability",
+  FAILED_TO_GET_AVAILABILITY = "Failed to fetch availability ",
+  FAILED_TO_CHECK_AVAILABILITY = "Failed to check availability existence.",
+  FAILED_TO_DELETE_AVAILABILITY = "Failed to delete availability",
   AVAILABILITY_OVERLAP_ERROR = "Time slot overlaps with existing availability.",
 
-  FAILED_TO_BOOK_SLOT="Failed to book slot",
-  FAILED_TO_GET_SLOTS="Failed to fetch trainer slots",
-  FAILED_TO_CANCEL_SLOT="Failed to cancel slot due to an unexpected error.",
-  SLOT_NOT_FOUND="Slot not found",
-  SLOT_UNAVAILABLE="Slot is not available",
-  SLOT_ID_REQUIRED="Slot ID is required",
-  INVALID_SLOT_ID_FORMAT="Invalid slot ID format",
-  NO_PERMISSION_TO_CANCEL_SLOT="You do not have permission to cancel this slot.",
-  SLOT_CURRENT_STATUS="Slot is not available for cancellation. Current status:",
+  FAILED_TO_BOOK_SLOT = "Failed to book slot",
+  FAILED_TO_GET_SLOTS = "Failed to fetch trainer slots",
+  FAILED_TO_CANCEL_SLOT = "Failed to cancel slot due to an unexpected error.",
+  SLOT_NOT_FOUND = "Slot not found",
+  SLOT_UNAVAILABLE = "Slot is not available",
+  SLOT_ID_REQUIRED = "Slot ID is required",
+  INVALID_SLOT_ID_FORMAT = "Invalid slot ID format",
+  NO_PERMISSION_TO_CANCEL_SLOT = "You do not have permission to cancel this slot.",
+  SLOT_CURRENT_STATUS = "Slot is not available for cancellation. Current status:",
 
-  INVALID_DATE_FORMAT="Invalid date format",
-  DATE_REQUIRED="Date is required.",
+  INVALID_DATE_FORMAT = "Invalid date format",
+  DATE_REQUIRED = "Date is required.",
 
-  BOOKING_ID_REQUIRED="Booking ID is required in request body.",
-  BOOKING_NOT_FOUND="Booking not found.",
-  CANCELLATION_REASON_REQUIRED="Cancellation reason is required in request body.",
-  NO_PERMISSION_TO_CANCEL_BOOKING="You do not have permission to cancel this booking.",
-  FAILED_TO_CANCEL_BOOKING="Failed to cancel booking due to an unexpected error.",
+  BOOKING_ID_REQUIRED = "Booking ID is required in request body.",
+  BOOKING_NOT_FOUND = "Booking not found.",
+  CANCELLATION_REASON_REQUIRED = "Cancellation reason is required in request body.",
+  NO_PERMISSION_TO_CANCEL_BOOKING = "You do not have permission to cancel this booking.",
+  FAILED_TO_CANCEL_BOOKING = "Failed to cancel booking due to an unexpected error.",
 
-  
+  FAILED_TO_FETCH_USER_PROGRESS = "Failed to fetch trainee progressions",
+  FAILED_TO_ADD_NEW_PROGRESS = "Failed to add new progression",
 }
