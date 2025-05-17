@@ -18,7 +18,7 @@ export class ProgressRepository
   ): Promise<IProgressModel[]> {
     return await this.model
       .find({ userId: traineeId })
-      .sort({ date: 1 })
+      .sort({ createdAt: 1 })
       .exec();
   }
 

@@ -9,11 +9,11 @@ import {
   passwordSchema,
 } from "../../../schemas/authSchema";
 import { useToast } from "../../../context/ToastContext";
-import { AUTH_MESSAGES } from "../../../constants/auth.messages";
+import { AUTH_MESSAGES } from "../../../constants/messages/auth.messages";
 import LoginBody from "../../../components/auth/LoginBody";
 import setPasswordImage from "../../../assets/images/calisthenics1.jpg";
 import Footer from "../../../components/shared/Footer";
-import { STATUS } from "../../../constants/status.messges";
+import { STATUS } from "../../../constants/messages/status.messages";
 
 const NewPassword = () => {
   const location = useLocation();

@@ -1,12 +1,12 @@
 export interface Progress {
   _id: string;
   userId:string,
-  weight: string;
-  height: string;
-  bmi: string;
+  weight: number;
+  height: number;
+  bmi: number;
   bmiClass: string;
-  createdAt: string;
-  createdBy: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export interface progressResponse{

@@ -10,8 +10,18 @@ export const fetchTrainees = async ({
   limit: number;
   search: string;
 }): Promise<PaginatedTraineesResult> => {
-  const response = await api.get<PaginatedTraineesResult>("/trainer/my-trainees", {
-    params: { page, limit, search },
-  });
+  const response = await api.get<PaginatedTraineesResult>(
+    "/trainer/my-trainees",
+    {
+      params: { page, limit, search },
+    }
+  );
   return response.data;
+};
+
+export const getTraineeData = async (traineeId: string): Promise<any> => {
+  const response = await api.get(
+    `/trainer/trainee/${traineeId}`
+  );
+  return response.data.result;
 };

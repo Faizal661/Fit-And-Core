@@ -23,7 +23,7 @@ import Footer from "../../../components/shared/Footer";
 import { useInView } from "react-intersection-observer";
 import { IAvailability } from "../../../types/session.type";
 import { useToast } from "../../../context/ToastContext";
-import { STATUS } from "../../../constants/status.messges";
+import { STATUS } from "../../../constants/messages/status.messages";
 import axios from "axios";
 
 const fadeIn = {

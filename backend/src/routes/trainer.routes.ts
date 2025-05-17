@@ -78,6 +78,13 @@ router.get(
 );
 
 router.get(
+  "/trainee/:traineeId",
+  verifyAccessToken,
+  authorizeRoles(["trainer"]),
+  (req, res, next) => trainerController.getTraineeDetails(req, res, next)
+);
+
+router.get(
   "/:trainerId",
   verifyAccessToken,
   authorizeRoles(["admin", "user"]),

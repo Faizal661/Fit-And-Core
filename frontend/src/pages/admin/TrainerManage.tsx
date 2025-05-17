@@ -9,7 +9,7 @@ import { Trainer } from "../../types/trainer.type";
 import { z } from "zod";
 import Footer from "../../components/shared/Footer";
 import { rejectReasonSchema } from "../../schemas/trainerSchema";
-import { STATUS } from "../../constants/status.messges";
+import { STATUS } from "../../constants/messages/status.messages";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 

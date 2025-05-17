@@ -34,9 +34,9 @@ import {
 import { useToast } from "../../context/ToastContext";
 import Footer from "../../components/shared/Footer";
 import { Progress } from "../../types/progress.type";
-import { BMI_CATEGORY_COLORS } from "../../constants/bmi-category.colors";
+import { BMI_CATEGORY_COLORS } from "../../constants/colors/bmi-category.colors";
+import { calculateWeightToNormalBmi } from "../../utils/calculateWeightToNormalBmi";
 
-// Animation variants
 const fadeIn = {
   hidden: { opacity: 0, y: 20 },
   visible: {
@@ -59,6 +59,20 @@ const staggerContainer = {
   },
 };
 
+const getBMIClass = (bmi: number) => {
+  if (bmi < 18.5)
+    return { class: "Underweight", color: "text-blue-600", range: "< 18.5" };
+  if (bmi < 25)
+    return { class: "Normal", color: "text-green-600", range: "18.5 - 24.9" };
+  if (bmi < 30)
+    return {
+      class: "Overweight",
+      color: "text-yellow-600",
+      range: "25 - 29.9",
+    };
+  return { class: "Obese", color: "text-red-600", range: "≥ 30" };
+};
+
 const UserProgressionPage = () => {
   const queryClient = useQueryClient();
   const [ref, inView] = useInView({
@@ -79,9 +93,10 @@ const UserProgressionPage = () => {
   });
 
   // Fetch progression data
-  const { data: progressions, isLoading } = useQuery({
+  const { data: progressions, isLoading } = useQuery<Progress[]>({
     queryKey: ["progressions"],
     queryFn: getMyProgressionData,
+    staleTime: 10000,
   });
 
   const mutation = useMutation({
@@ -100,82 +115,14 @@ const UserProgressionPage = () => {
     mutation.mutate(data);
   };
 
-  const getBMIClass = (bmi: number) => {
-    if (bmi < 18.5)
-      return { class: "Underweight", color: "text-blue-600", range: "< 18.5" };
-    if (bmi < 25)
-      return { class: "Normal", color: "text-green-600", range: "18.5 - 24.9" };
-    if (bmi < 30)
-      return {
-        class: "Overweight",
-        color: "text-yellow-600",
-        range: "25 - 29.9",
-      };
-    return { class: "Obese", color: "text-red-600", range: "≥ 30" };
-  };
-
-  const calculateWeightToNormalBmi = (latestProgression: Progress) => {
-    if (
-      !latestProgression ||
-      !latestProgression.height ||
-      !latestProgression.bmi
-    ) {
-      return "";
-    }
-
-    const currentWeight = parseFloat(latestProgression.weight);
-    const currentHeightCm = parseFloat(latestProgression.height);
-    const currentBmi = parseFloat(latestProgression.bmi);
-    const heightM = currentHeightCm / 100;
-
-    const NORMAL_BMI_LOWER = 18.5;
-    const NORMAL_BMI_UPPER = 24.9;
-
-    let guidance = "";
-
-    if (currentBmi < NORMAL_BMI_LOWER) {
-      const targetWeightMin = NORMAL_BMI_LOWER * (heightM * heightM);
-      const weightToGain = targetWeightMin - currentWeight;
-      if (weightToGain > 0.1) {
-        guidance = `To reach a normal BMI (target ${NORMAL_BMI_LOWER}), you could aim to gain approximately ${weightToGain.toFixed(
-          1
-        )} kg.`;
-      } else if (weightToGain < -0.1) {
-        guidance =
-          "Your weight seems higher than expected for your BMI. Please check your entries.";
-      } else {
-        guidance =
-          "You are very close to the normal BMI range. Maintain a healthy lifestyle.";
-      }
-    } else if (currentBmi > NORMAL_BMI_UPPER) {
-      const targetWeightMax = NORMAL_BMI_UPPER * (heightM * heightM);
-      const weightToLose = currentWeight - targetWeightMax;
-      if (weightToLose > 0.1) {
-        guidance = `To reach a normal BMI (target ${NORMAL_BMI_UPPER}), you could aim to lose approximately ${weightToLose.toFixed(
-          1
-        )} kg.`;
-      } else if (weightToLose < -0.1) {
-        guidance =
-          "Your weight seems lower than expected for your BMI. Please check your entries.";
-      } else {
-        guidance =
-          "You are very close to the normal BMI range. Maintain a healthy lifestyle.";
-      }
+  useEffect(() => {
+    if (progressions && progressions.length > 0) {
+      const latestProgression = progressions[progressions.length - 1];
+      setBmiGuidance(calculateWeightToNormalBmi(latestProgression));
     } else {
-      guidance = "You are in the normal BMI range. Well done!";
+      setBmiGuidance("");
     }
-    return guidance;
-  };
-
-    useEffect(() => { 
-      if (progressions && progressions.length > 0) {
-        const latestProgression = progressions[progressions.length - 1];
-        setBmiGuidance(calculateWeightToNormalBmi(latestProgression));
-      } else {
-        setBmiGuidance("");
-      }
-    }, [progressions]); 
-  
+  }, [progressions]);
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 overflow-hidden">
@@ -336,7 +283,7 @@ const UserProgressionPage = () => {
                     </p>
                   </div>
                 </div>
-                {bmiGuidance && ( 
+                {bmiGuidance && (
                   <motion.div
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: "auto" }}
@@ -364,115 +311,137 @@ const UserProgressionPage = () => {
               </div>
             ) : progressions && progressions.length > 0 ? (
               <div className="h-[400px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <LineChart
-                      data={progressions}
-                      margin={{ top: 5, right: 30, left: 20, bottom: 20 }} // Increased bottom margin for labels if any
-                    >
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="date" />
-                      <YAxis yAxisId="left" domain={['dataMin - 5', 'dataMax + 5']} /> {/* Domain for Weight */}
-                      <YAxis
-                        yAxisId="right"
-                        orientation="right"
-                        domain={[10, 45]} // Adjusted domain for BMI to show all categories
-                        label={{ // Optional: Label for BMI axis
-                            value: 'BMI',
-                            angle: 0,
-                            position: 'insideRight',
-                            dy: 70, // Adjust dy to position label correctly
-                            style: { textAnchor: 'middle', fill: '#666' },
-                        }}
-                      />
-                      <Tooltip />
-                      <Legend verticalAlign="top" height={36}/>
-
-                      {/* BMI Category Reference Areas */}
-                      <ReferenceArea
-                        yAxisId="right"
-                        y1={10} // Start from the bottom of the defined domain or a low BMI value
-                        y2={18.5}
-                        fill={BMI_CATEGORY_COLORS.Underweight}
-                        stroke={BMI_CATEGORY_COLORS.Underweight} // Optional: border for the area
-                        strokeOpacity={0.5}
-                        label={{ // Optional: Label for the area
-                          position: 'insideTopRight',
-                          value: 'Underweight',
-                          fill: '#555', // Darker text for readability
-                          fontSize: 10,
-                          offset: 5, //
-                        }}
-                      />
-                      <ReferenceArea
-                        yAxisId="right"
-                        y1={18.5}
-                        y2={25}
-                        fill={BMI_CATEGORY_COLORS.Normal}
-                        stroke={BMI_CATEGORY_COLORS.Normal}
-                        strokeOpacity={0.5}
-                        label={{
-                          position: 'insideTopRight',
-                          value: 'Normal',
-                          fill: '#555',
-                          fontSize: 10,
-                          offset: 5,
-                        }}
-                      />
-                      <ReferenceArea
-                        yAxisId="right"
-                        y1={25}
-                        y2={30}
-                        fill={BMI_CATEGORY_COLORS.Overweight}
-                        stroke={BMI_CATEGORY_COLORS.Overweight}
-                        strokeOpacity={0.5}
-                        label={{
-                          position: 'insideTopRight',
-                          value: 'Overweight',
-                          fill: '#555',
-                          fontSize: 10,
-                          offset: 5,
-                        }}
-                      />
-                      <ReferenceArea
-                        yAxisId="right"
-                        y1={30}
-                        y2={45} // Extend to the top of the defined domain or a high BMI value
-                        fill={BMI_CATEGORY_COLORS.Obese}
-                        stroke={BMI_CATEGORY_COLORS.Obese}
-                        strokeOpacity={0.5}
-                        label={{
-                          position: 'insideTopRight',
-                          value: 'Obese',
-                          fill: '#555',
-                          fontSize: 10,
-                          offset: 5,
-                        }}
-                      />
-
-                      {/* Lines should be drawn on top of ReferenceAreas */}
-                      <Line
-                        yAxisId="left"
-                        type="monotone"
-                        dataKey="weight"
-                        stroke="#3b82f6" // Blue
-                        name="Weight (kg)"
-                        strokeWidth={2.5} // Slightly thicker line
-                        dot={{ r: 3, strokeWidth: 1, fill: "#3b82f6" }}
-                        activeDot={{ r: 5, strokeWidth: 1 }}
-                      />
-                      <Line
-                        yAxisId="right"
-                        type="monotone"
-                        dataKey="bmi"
-                        stroke="#8b5cf6" // Purple
-                        name="BMI"
-                        strokeWidth={2.5} // Slightly thicker line
-                        dot={{ r: 3, strokeWidth: 1, fill: "#8b5cf6" }}
-                        activeDot={{ r: 5, strokeWidth: 1 }}
-                      />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </div>
+                <ResponsiveContainer width="100%" height={400}>
+                  <LineChart
+                    data={progressions}
+                    margin={{ top: 20, right: 30, left: 0, bottom: 20 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
+                    <XAxis
+                      dataKey="createdAt"
+                      tickFormatter={(tick) =>
+                        new Date(tick).toLocaleDateString(undefined, {
+                          month: "short",
+                          day: "numeric",
+                        })
+                      }
+                      angle={270}
+                      dy={20}
+                      dx={-5}
+                      fontSize={14}
+                      fontStyle={"italic"}
+                      stroke="#000"
+                    />
+                    <YAxis
+                      yAxisId="bmiAxis"
+                      domain={[10,45]}
+                      allowDataOverflow={true}
+                      stroke="#000"
+                      fontSize={14}
+                      fontStyle={"italic"}
+                      ticks={[0, 18.5, 25, 30, 45]}
+                      label={{
+                        value: "BMI",
+                        angle: -90,
+                        position: "insideLeft",
+                        dx: 0,
+                        style: {
+                          textAnchor: "middle",
+                          fill: "#666",
+                          fontSize: "0.9em",
+                        },
+                      }}
+                    />
+                    <Tooltip
+                      content={<CustomTooltip />}
+                      cursor={{
+                        stroke: "rgba(150,150,150,0.5)",
+                        strokeWidth: 1,
+                      }}
+                    />
+                    <Legend
+                      verticalAlign="top"
+                      height={36}
+                      wrapperStyle={{ paddingBottom: "10px" }}
+                    />
+                    {/* BMI Category Reference Areas - ensure yAxisId matches the YAxis for BMI */}
+                    <ReferenceArea
+                      yAxisId="bmiAxis"
+                      y1={10}
+                      y2={18.5}
+                      fill={BMI_CATEGORY_COLORS.Underweight}
+                      label={{
+                        position: "insideTopLeft",
+                        value: "Underweight",
+                        fill: "rgba(0,0,0,1)",
+                        fontSize: 10,
+                      }}
+                      stroke="none"
+                    />
+                    <ReferenceArea
+                      yAxisId="bmiAxis"
+                      y1={18.5}
+                      y2={25}
+                      label={{
+                        position: "insideTopLeft",
+                        value: "Normal",
+                        fill: "rgba(0,0,0,1)",
+                        fontSize: 10,
+                      }}
+                      fill={BMI_CATEGORY_COLORS.Normal}
+                      stroke="none"
+                    />
+                    <ReferenceArea
+                      yAxisId="bmiAxis"
+                      y1={25}
+                      y2={30}
+                      fill={BMI_CATEGORY_COLORS.Overweight}
+                      label={{
+                        position: "insideTopLeft",
+                        value: "Overweight",
+                        fill: "rgba(0,0,0,1)",
+                        fontSize: 10,
+                      }}
+                      stroke="none"
+                    />
+                    <ReferenceArea
+                      yAxisId="bmiAxis"
+                      y1={30}
+                      y2={45}
+                      fill={BMI_CATEGORY_COLORS.Obese}
+                      label={{
+                        position: "insideTopLeft",
+                        value: "Obese",
+                        fill: "rgba(0,0,0,1)",
+                        fontSize: 10,
+                      }}
+                      stroke="none"
+                    />
+                    {/* Single Line for BMI */}
+                    <Line
+                      yAxisId="bmiAxis" // Ensure this matches the YAxis for BMI
+                      type="monotone"
+                      dataKey="bmi"
+                      stroke="#8b5cf6" // Purple (or choose another color for BMI)
+                      strokeWidth={2.5}
+                      name="Body Mass Index (BMI)" 
+                      dot={{
+                        r: 4,
+                        strokeWidth: 1,
+                        fill: "#8b5cf6",
+                        stroke: "#fff",
+                      }}
+                      activeDot={{
+                        r: 6,
+                        strokeWidth: 2,
+                        fill: "#8b5cf6",
+                        stroke: "#fff",
+                      }}
+                      connectNulls={true} 
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
             ) : (
               <div className="flex flex-col items-center justify-center h-[400px] text-gray-500">
                 <Activity size={48} className="mb-4" />
@@ -486,14 +455,13 @@ const UserProgressionPage = () => {
         </div>
       </div>
 
-      
-      {showBmiChart && ( 
+      {showBmiChart && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
-          onClick={() => setShowBmiChart(false)} 
+          onClick={() => setShowBmiChart(false)}
         >
           <motion.div
             initial={{ scale: 0.9, opacity: 0, y: 20 }}
@@ -501,7 +469,7 @@ const UserProgressionPage = () => {
             exit={{ scale: 0.9, opacity: 0, y: 20 }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
             className="bg-white p-6 sm:p-8 rounded-xl shadow-2xl max-w-md w-full"
-            onClick={(e) => e.stopPropagation()} 
+            onClick={(e) => e.stopPropagation()}
           >
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-2xl font-bold text-gray-800">
@@ -575,3 +543,29 @@ const UserProgressionPage = () => {
 };
 
 export default UserProgressionPage;
+
+const CustomTooltip = ({ active, payload, label }: any) => {
+  if (active && payload && payload.length) {
+    const data = payload[0].payload; // Access the full data point
+    const bmiDetails = getBMIClass(data.bmi);
+
+    // Format date for display if 'label' (XAxis dataKey value) is a timestamp
+    const displayDate = new Date(label).toLocaleDateString(undefined, {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+
+    return (
+      <div className="bg-white p-3 shadow-lg rounded-md border border-gray-200">
+        <p className="text-sm text-gray-500">{`Date: ${displayDate}`}</p>
+        <p className="font-semibold" style={{ color: bmiDetails.color }}>
+          {`BMI: ${data.bmi.toFixed(2)} (${bmiDetails.class})`}
+        </p>
+        <p className="text-sm text-gray-700">{`Weight: ${data.weight} kg`}</p>
+        <p className="text-sm text-gray-700">{`Height: ${data.height} cm`}</p>
+      </div>
+    );
+  }
+  return null;
+};

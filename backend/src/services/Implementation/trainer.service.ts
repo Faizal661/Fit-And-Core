@@ -11,7 +11,10 @@ import {
 } from "../../constants/http-response.constants";
 import { CustomError } from "../../errors/CustomError";
 import { ITrainerModel } from "../../models/trainer.models";
-import { PaginatedTraineesResult } from "../../types/trainee.types";
+import {
+  PaginatedTraineesResult,
+  TraineeData,
+} from "../../types/trainee.types";
 import { IUserModel } from "../../models/user.models";
 
 @injectable()
@@ -256,11 +259,66 @@ export default class TrainerService implements ITrainerService {
           expiryDate: sub.expiryDate,
           planDuration: sub.planDuration as string,
           amount: sub.amount as number,
-          status:sub.status
+          status: sub.status,
         })),
       };
     });
 
     return { trainees: formattedTrainees, total };
+  }
+
+  async getTraineeDetails(
+    traineeId: string,
+    trainerUserId: string
+  ): Promise<TraineeData> {
+    const trainer = await this.trainerRepository.findOne({
+      userId: trainerUserId,
+    });
+    if (!trainer) {
+      throw new CustomError(
+        HttpResMsg.TRAINER_NOT_FOUND,
+        HttpResCode.NOT_FOUND
+      );
+    }
+    const actualTrainerDbId = trainer._id;
+
+    const traineeUserDoc = await this.userRepository.findById(
+      new Types.ObjectId(traineeId)
+    );
+    if (!traineeUserDoc) {
+      throw new CustomError(
+        HttpResMsg.TRAINEE_NOT_FOUND,
+        HttpResCode.NOT_FOUND
+      );
+    }
+
+    const relevantSubscriptions = await this.subscriptionRepository
+      .find({
+        trainerId: actualTrainerDbId,
+        userId: traineeUserDoc._id,
+      })
+      .sort({ createdAt: -1 })
+      .exec();
+
+    const formattedSubscriptionHistory = relevantSubscriptions.map((sub) => ({
+      _id: sub._id.toString(), 
+      startDate: sub.startDate,
+      expiryDate: sub.expiryDate,
+      planDuration: sub.planDuration as string,
+      amount: sub.amount as number,
+      status: sub.status,
+    }));
+
+    const result: TraineeData = {
+      traineeId: traineeUserDoc.id.toString(), 
+      username: traineeUserDoc.username,
+      profilePicture: traineeUserDoc.profilePicture || "", 
+      email: traineeUserDoc.email,
+      isBlocked: traineeUserDoc.isBlocked,
+      createdAt: traineeUserDoc.createdAt, 
+      subscriptionHistory: formattedSubscriptionHistory,
+    };
+
+    return result;
   }
 }

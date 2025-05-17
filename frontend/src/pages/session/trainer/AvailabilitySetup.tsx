@@ -14,8 +14,8 @@ import {
   AlertCircle,
   CheckCircle,
 } from "lucide-react";
-import { SUCCESS_MESSAGES } from "../../../constants/success.messages";
-import { STATUS } from "../../../constants/status.messges";
+import { SUCCESS_MESSAGES } from "../../../constants/messages/success.messages";
+import { STATUS } from "../../../constants/messages/status.messages";
 import { useToast } from "../../../context/ToastContext";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -24,7 +24,7 @@ import {
   availabilitySchema,
 } from "../../../schemas/sessionSchema";
 import axios from "axios";
-import { ERR_MESSAGES } from "../../../constants/error.messages";
+import { ERR_MESSAGES } from "../../../constants/messages/error.messages";
 import { IAvailability } from "../../../types/session.type";
 
 const fadeIn = {

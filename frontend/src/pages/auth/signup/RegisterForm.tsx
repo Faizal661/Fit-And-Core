@@ -9,12 +9,12 @@ import LoginBody from "../../../components/auth/LoginBody";
 import Google from "../../../assets/icons/Google";
 import userSignUpImage from "../../../assets/images/img4.jpg";
 import { checkEmailUsername } from "../../../services/authService";
-import { AUTH_MESSAGES } from "../../../constants/auth.messages";
+import { AUTH_MESSAGES } from "../../../constants/messages/auth.messages";
 import { type SignUpFormData, SignUpSchema } from "../../../schemas/authSchema";
 import { useToast } from "../../../context/ToastContext";
 import { useGoogleAuth } from "../../../hooks/useGoogleAuth";
 import Footer from "../../../components/shared/Footer";
-import { STATUS } from "../../../constants/status.messges";
+import { STATUS } from "../../../constants/messages/status.messages";
 
 const RegisterForm = () => {
   const navigate = useNavigate();

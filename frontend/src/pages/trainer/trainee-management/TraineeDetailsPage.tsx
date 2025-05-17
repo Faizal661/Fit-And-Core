@@ -1,8 +1,8 @@
-import { useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { useInView } from 'react-intersection-observer';
-import { 
+import { useState } from "react";
+import { useParams } from "react-router-dom";
+import { motion } from "framer-motion";
+import { useInView } from "react-intersection-observer";
+import {
   User,
   Mail,
   Phone,
@@ -15,8 +15,11 @@ import {
   TrendingUp,
   Scale,
   Dumbbell,
-  Timer
-} from 'lucide-react';
+  Timer,
+  AlertCircle,
+} from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { getTraineeData } from "../../../services/trainer/traineeManageService";
 
 // Animation variants
 const fadeIn = {
@@ -41,69 +44,102 @@ const staggerContainer = {
   },
 };
 
-type Tab = 'info' | 'progress' | 'nutrition' | 'history';
+type Tab = "info" | "progress" | "nutrition" | "history";
+
+// Define the types based on the API response
+interface SubscriptionHistory {
+  _id: string;
+  startDate: string;
+  expiryDate: string;
+  planDuration: string;
+  amount: number;
+  status: string;
+}
+
+interface TraineeData {
+  traineeId: string;
+  username: string;
+  profilePicture: string;
+  email: string;
+  isBlocked: boolean;
+  createdAt: string;
+  subscriptionHistory: SubscriptionHistory[];
+  phone?: string; // Optional fields
+  age?: number;
+  height?: string;
+  weight?: string;
+  goals?: string[];
+}
 
 const TraineeDetailsPage = () => {
   const { traineeId } = useParams<{ traineeId: string }>();
-  const [activeTab, setActiveTab] = useState<Tab>('info');
+  const [activeTab, setActiveTab] = useState<Tab>("info");
   const [ref, inView] = useInView({
     triggerOnce: true,
     threshold: 0.1,
   });
 
-  // Dummy data - replace with actual data from your backend
-  const trainee = {
-    id: traineeId,
-    name: "Sarah Johnson",
-    email: "sarah.j@example.com",
-    phone: "+1 234 567 8900",
-    joinedDate: "2024-01-15",
-    profilePicture: "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=600",
-    age: 28,
-    height: "165 cm",
-    weight: "58 kg",
-    goals: ["Weight Loss", "Muscle Gain", "Better Endurance"],
-    subscriptionHistory: [
-      {
-        id: 1,
-        plan: "6 Months Plan",
-        startDate: "2024-01-15",
-        endDate: "2024-07-15",
-        status: "Active",
-        amount: "₹7,500"
-      }
-    ],
-    sessionHistory: [
-      {
-        id: 1,
-        date: "2024-03-10",
-        time: "09:00 AM",
-        duration: "30 minutes",
-        type: "Personal Training",
-        status: "Completed"
-      },
-      {
-        id: 2,
-        date: "2024-03-15",
-        time: "10:00 AM",
-        duration: "30 minutes",
-        type: "Personal Training",
-        status: "Upcoming"
-      }
-    ]
+  const {
+    data: traineeData,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["traineeData", traineeId],
+    queryFn: () => getTraineeData(traineeId!),
+  });
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading trainee data...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !traineeData) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center p-6 bg-white rounded-xl shadow max-w-md">
+          <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
+          <h3 className="text-xl font-semibold mb-2">
+            Failed to load trainee data
+          </h3>
+          <p className="text-gray-600 mb-4">
+            There was an error fetching the trainee information. Please try
+            again later.
+          </p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Format date for display
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString();
   };
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 overflow-hidden">
       {/* Hero Section */}
       <div className="relative py-24 bg-gradient-to-r from-blue-600/90 to-purple-600/90">
-        <div className="absolute inset-0 bg-black/10 z-0 opacity-30"
+        <div
+          className="absolute inset-0 bg-black/10 z-0 opacity-30"
           style={{
-            backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.15'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
+            backgroundImage:
+              "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.15'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
           }}
         ></div>
-        
-        <motion.div 
+
+        <motion.div
           ref={ref}
           initial="hidden"
           animate={inView ? "visible" : "hidden"}
@@ -114,31 +150,41 @@ const TraineeDetailsPage = () => {
             <motion.div variants={fadeIn} className="relative">
               <div className="w-32 h-32 rounded-xl overflow-hidden border-4 border-white/20 shadow-xl">
                 <img
-                  src={trainee.profilePicture}
-                  alt={trainee.name}
+                  src={traineeData.profilePicture || "/default-profile.png"}
+                  alt={traineeData.username}
                   className="w-full h-full object-cover"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = "/default-profile.png";
+                  }}
                 />
               </div>
             </motion.div>
 
             <motion.div variants={fadeIn} className="flex-grow">
-              <h1 className="text-4xl font-bold text-white mb-4">{trainee.name}</h1>
+              <h1 className="text-4xl font-bold text-white mb-4">
+                {traineeData.username}
+              </h1>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-white/80">
                 <div className="flex items-center gap-2">
                   <Mail size={18} />
-                  <span>{trainee.email}</span>
+                  <span>{traineeData.email}</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Phone size={18} />
-                  <span>{trainee.phone}</span>
-                </div>
+                {traineeData.phone && (
+                  <div className="flex items-center gap-2">
+                    <Phone size={18} />
+                    <span>{traineeData.phone}</span>
+                  </div>
+                )}
                 <div className="flex items-center gap-2">
                   <Calendar size={18} />
-                  <span>Joined: {new Date(trainee.joinedDate).toLocaleDateString()}</span>
+                  <span>Joined: {formatDate(traineeData.createdAt)}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Award size={18} />
-                  <span>Active Member</span>
+                  <span>
+                    {traineeData.isBlocked ? "Blocked Member" : "Active Member"}
+                  </span>
                 </div>
               </div>
             </motion.div>
@@ -154,11 +200,11 @@ const TraineeDetailsPage = () => {
           className="bg-white rounded-xl shadow-xl overflow-hidden"
         >
           {/* Navigation Tabs */}
-          <div className="flex border-b border-gray-100">
+          <div className="flex border-b border-gray-100 overflow-x-auto">
             <button
-              onClick={() => setActiveTab('info')}
+              onClick={() => setActiveTab("info")}
               className={`flex items-center gap-2 py-4 px-6 transition-colors duration-300 ${
-                activeTab === 'info'
+                activeTab === "info"
                   ? "bg-gradient-to-r from-blue-500 to-purple-500 text-white"
                   : "text-gray-600 hover:bg-gray-50"
               }`}
@@ -167,9 +213,9 @@ const TraineeDetailsPage = () => {
               Basic Information
             </button>
             <button
-              onClick={() => setActiveTab('progress')}
+              onClick={() => setActiveTab("progress")}
               className={`flex items-center gap-2 py-4 px-6 transition-colors duration-300 ${
-                activeTab === 'progress'
+                activeTab === "progress"
                   ? "bg-gradient-to-r from-blue-500 to-purple-500 text-white"
                   : "text-gray-600 hover:bg-gray-50"
               }`}
@@ -178,9 +224,9 @@ const TraineeDetailsPage = () => {
               Progress Tracking
             </button>
             <button
-              onClick={() => setActiveTab('nutrition')}
+              onClick={() => setActiveTab("nutrition")}
               className={`flex items-center gap-2 py-4 px-6 transition-colors duration-300 ${
-                activeTab === 'nutrition'
+                activeTab === "nutrition"
                   ? "bg-gradient-to-r from-blue-500 to-purple-500 text-white"
                   : "text-gray-600 hover:bg-gray-50"
               }`}
@@ -189,9 +235,9 @@ const TraineeDetailsPage = () => {
               Nutrition
             </button>
             <button
-              onClick={() => setActiveTab('history')}
+              onClick={() => setActiveTab("history")}
               className={`flex items-center gap-2 py-4 px-6 transition-colors duration-300 ${
-                activeTab === 'history'
+                activeTab === "history"
                   ? "bg-gradient-to-r from-blue-500 to-purple-500 text-white"
                   : "text-gray-600 hover:bg-gray-50"
               }`}
@@ -202,7 +248,7 @@ const TraineeDetailsPage = () => {
           </div>
 
           <div className="p-8">
-            {activeTab === 'info' && (
+            {activeTab === "info" && (
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -217,7 +263,11 @@ const TraineeDetailsPage = () => {
                       </div>
                       <div>
                         <p className="text-sm text-gray-500">Age</p>
-                        <p className="font-semibold">{trainee.age} years</p>
+                        <p className="font-semibold">
+                          {traineeData.age
+                            ? `${traineeData.age} years`
+                            : "Not provided"}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -229,7 +279,9 @@ const TraineeDetailsPage = () => {
                       </div>
                       <div>
                         <p className="text-sm text-gray-500">Weight</p>
-                        <p className="font-semibold">{trainee.weight}</p>
+                        <p className="font-semibold">
+                          {traineeData.weight || "Not provided"}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -241,58 +293,97 @@ const TraineeDetailsPage = () => {
                       </div>
                       <div>
                         <p className="text-sm text-gray-500">Height</p>
-                        <p className="font-semibold">{trainee.height}</p>
+                        <p className="font-semibold">
+                          {traineeData.height || "Not provided"}
+                        </p>
                       </div>
                     </div>
                   </div>
                 </div>
 
                 {/* Fitness Goals */}
-                <div>
+                {/* <div>
                   <h3 className="text-lg font-semibold mb-4">Fitness Goals</h3>
-                  <div className="flex flex-wrap gap-2">
-                    {trainee.goals.map((goal, index) => (
-                      <span
-                        key={index}
-                        className="px-4 py-2 bg-blue-50 text-blue-600 rounded-full text-sm font-medium"
-                      >
-                        {goal}
-                      </span>
-                    ))}
+                  {traineeData.goals && traineeData.goals.length > 0 ? (
+                    <div className="flex flex-wrap gap-2">
+                      {traineeData.goals.map((goal, index) => (
+                        <span
+                          key={index}
+                          className="px-4 py-2 bg-blue-50 text-blue-600 rounded-full text-sm font-medium"
+                        >
+                          {goal}
+                        </span>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-gray-500">
+                      No fitness goals have been set yet.
+                    </p>
+                  )}
+                </div> */}
+
+                {/* Member Status */}
+                <div>
+                  <h3 className="text-lg font-semibold mb-4">Member Status</h3>
+                  <div
+                    className={`p-4 rounded-lg flex items-center gap-3 ${
+                      traineeData.isBlocked ? "bg-red-50" : "bg-green-50"
+                    }`}
+                  >
+                    <div
+                      className={`w-3 h-3 rounded-full ${
+                        traineeData.isBlocked ? "bg-red-500" : "bg-green-500"
+                      }`}
+                    ></div>
+                    <span
+                      className={`font-medium ${
+                        traineeData.isBlocked
+                          ? "text-red-700"
+                          : "text-green-700"
+                      }`}
+                    >
+                      {traineeData.isBlocked ? "Blocked" : "Active"}
+                    </span>
                   </div>
                 </div>
               </motion.div>
             )}
 
-            {activeTab === 'progress' && (
+            {activeTab === "progress" && (
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 className="text-center py-12"
               >
                 <Dumbbell className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">Progress Tracking Coming Soon</h3>
+                <h3 className="text-lg font-semibold mb-2">
+                  Progress Tracking Coming Soon
+                </h3>
                 <p className="text-gray-500">
-                  We're working on bringing you detailed progress tracking features.
+                  We're working on bringing you detailed progress tracking
+                  features for {traineeData.username}.
                 </p>
               </motion.div>
             )}
 
-            {activeTab === 'nutrition' && (
+            {activeTab === "nutrition" && (
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 className="text-center py-12"
               >
                 <Apple className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">Nutrition Tracking Coming Soon</h3>
+                <h3 className="text-lg font-semibold mb-2">
+                  Nutrition Tracking Coming Soon
+                </h3>
                 <p className="text-gray-500">
-                  Detailed nutrition tracking and meal planning features are on the way.
+                  Detailed nutrition tracking and meal planning features for{" "}
+                  {traineeData.username} are on the way.
                 </p>
               </motion.div>
             )}
 
-            {activeTab === 'history' && (
+            {activeTab === "history" && (
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -300,81 +391,81 @@ const TraineeDetailsPage = () => {
               >
                 {/* Subscription History */}
                 <div>
-                  <h3 className="text-lg font-semibold mb-4">Subscription History</h3>
-                  <div className="space-y-4">
-                    {trainee.subscriptionHistory.map((subscription) => (
-                      <div
-                        key={subscription.id}
-                        className="p-6 bg-gray-50 rounded-xl border border-gray-100"
-                      >
-                        <div className="flex items-center justify-between mb-4">
-                          <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
-                              <Award className="text-green-600" size={20} />
+                  <h3 className="text-lg font-semibold mb-4">
+                    Subscription History
+                  </h3>
+                  {traineeData.subscriptionHistory &&
+                  traineeData.subscriptionHistory.length > 0 ? (
+                    <div className="space-y-4">
+                      {traineeData.subscriptionHistory.map((subscription:SubscriptionHistory) => (
+                        <div
+                          key={subscription._id}
+                          className="p-6 bg-gray-50 rounded-xl border border-gray-100"
+                        >
+                          <div className="flex items-center justify-between mb-4">
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+                                <Award className="text-green-600" size={20} />
+                              </div>
+                              <div>
+                                <h4 className="font-medium">
+                                  {subscription.planDuration} Plan
+                                </h4>
+                                <p className="text-sm text-gray-500">
+                                  ₹{subscription.amount.toLocaleString()}
+                                </p>
+                              </div>
                             </div>
-                            <div>
-                              <h4 className="font-medium">{subscription.plan}</h4>
-                              <p className="text-sm text-gray-500">{subscription.amount}</p>
+                            <span
+                              className={`px-3 py-1 rounded-full text-sm font-medium ${
+                                subscription.status === "active"
+                                  ? "bg-green-100 text-green-600"
+                                  : subscription.status === "expired"
+                                  ? "bg-red-100 text-red-600"
+                                  : "bg-yellow-100 text-yellow-600"
+                              }`}
+                            >
+                              {subscription.status.charAt(0).toUpperCase() +
+                                subscription.status.slice(1)}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-4 text-sm text-gray-600">
+                            <div className="flex items-center gap-1">
+                              <Calendar size={16} />
+                              <span>
+                                Start: {formatDate(subscription.startDate)}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <Calendar size={16} />
+                              <span>
+                                End: {formatDate(subscription.expiryDate)}
+                              </span>
                             </div>
                           </div>
-                          <span className="px-3 py-1 bg-green-100 text-green-600 rounded-full text-sm font-medium">
-                            {subscription.status}
-                          </span>
                         </div>
-                        <div className="flex items-center gap-4 text-sm text-gray-600">
-                          <div className="flex items-center gap-1">
-                            <Calendar size={16} />
-                            <span>Start: {new Date(subscription.startDate).toLocaleDateString()}</span>
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <Calendar size={16} />
-                            <span>End: {new Date(subscription.endDate).toLocaleDateString()}</span>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="p-6 bg-gray-50 rounded-xl text-center">
+                      <Clock className="w-12 h-12 text-gray-400 mx-auto mb-2" />
+                      <p className="text-gray-600">
+                        No subscription history available
+                      </p>
+                    </div>
+                  )}
                 </div>
 
-                {/* Session History */}
+                {/* Session History - This section remains with placeholder for now */}
                 <div>
-                  <h3 className="text-lg font-semibold mb-4">Session History</h3>
-                  <div className="space-y-4">
-                    {trainee.sessionHistory.map((session) => (
-                      <div
-                        key={session.id}
-                        className="p-6 bg-gray-50 rounded-xl border border-gray-100"
-                      >
-                        <div className="flex items-center justify-between mb-4">
-                          <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-                              <Timer className="text-blue-600" size={20} />
-                            </div>
-                            <div>
-                              <h4 className="font-medium">{session.type}</h4>
-                              <p className="text-sm text-gray-500">{session.duration}</p>
-                            </div>
-                          </div>
-                          <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                            session.status === 'Completed'
-                              ? 'bg-green-100 text-green-600'
-                              : 'bg-blue-100 text-blue-600'
-                          }`}>
-                            {session.status}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-4 text-sm text-gray-600">
-                          <div className="flex items-center gap-1">
-                            <Calendar size={16} />
-                            <span>{session.date}</span>
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <Clock size={16} />
-                            <span>{session.time}</span>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
+                  <h3 className="text-lg font-semibold mb-4">
+                    Session History
+                  </h3>
+                  <div className="p-6 bg-gray-50 rounded-xl text-center">
+                    <Timer className="w-12 h-12 text-gray-400 mx-auto mb-2" />
+                    <p className="text-gray-600">
+                      Session history feature coming soon
+                    </p>
                   </div>
                 </div>
               </motion.div>

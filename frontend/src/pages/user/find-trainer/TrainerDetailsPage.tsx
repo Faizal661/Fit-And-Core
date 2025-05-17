@@ -14,10 +14,10 @@ import {
   checkSubscriptionStatus,
   createCheckoutSession,
 } from "../../../services/stripe/subscriptionService";
-import { STATUS } from "../../../constants/status.messges";
-import { REDIRECT_MESSAGES } from "../../../constants/redirect.messges";
+import { STATUS } from "../../../constants/messages/status.messages";
+import { REDIRECT_MESSAGES } from "../../../constants/messages/redirect.messages";
 import { getTrainerData } from "../../../services/trainer/trainerService";
-import { ERR_MESSAGES } from "../../../constants/error.messages";
+import { ERR_MESSAGES } from "../../../constants/messages/error.messages";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import {

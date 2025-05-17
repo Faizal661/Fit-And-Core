@@ -27,10 +27,10 @@ import {
   ChangePasswordFormData,
   changePasswordSchema,
 } from "../../schemas/authSchema";
-import { STATUS } from "../../constants/status.messges";
-import { ERR_MESSAGES } from "../../constants/error.messages";
-import { AUTH_MESSAGES } from "../../constants/auth.messages";
-import { SUCCESS_MESSAGES } from "../../constants/success.messages";
+import { STATUS } from "../../constants/messages/status.messages";
+import { ERR_MESSAGES } from "../../constants/messages/error.messages";
+import { AUTH_MESSAGES } from "../../constants/messages/auth.messages";
+import { SUCCESS_MESSAGES } from "../../constants/messages/success.messages";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";

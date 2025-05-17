@@ -1,5 +1,5 @@
 import { Home, User, Users, Globe, TrendingUp, Utensils, Bell, History, Award, Calendar, FileText, Dumbbell, DollarSign, BarChart, MessageSquare } from "lucide-react";
-import { SIDEBAR_MESSAGES } from "../../../constants/sidebar.messages";
+import { SIDEBAR_MESSAGES } from "../../../constants/messages/sidebar.messages";
 
 export const UserSidebarItems = [
   { to: "/", label: SIDEBAR_MESSAGES.HOME, icon: Home },

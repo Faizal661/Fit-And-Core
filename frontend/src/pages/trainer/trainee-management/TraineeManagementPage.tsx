@@ -117,7 +117,7 @@ const TraineeManagementPage = () => {
           transition={{ delay: 0.1 }}
         >
           <h1 className="text-4xl font-bold text-white">Trainee Management</h1>
-          <div className="ml-4 h-1 w-12 bg-purple-300 rounded-full"></div>
+          {/* <div className="ml-4 h-1 w-12 bg-purple-300 rounded-full"></div> */}
         </motion.div>
 
         {/* Search and filter controls */}

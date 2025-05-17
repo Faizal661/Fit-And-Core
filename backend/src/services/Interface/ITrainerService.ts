@@ -1,5 +1,5 @@
 import { ITrainerModel } from "../../models/trainer.models";
-import { PaginatedTraineesResult } from "../../types/trainee.types";
+import { PaginatedTraineesResult,TraineeData } from "../../types/trainee.types";
 import { TrainerApplicationData } from "../../types/trainer.types";
 
 export interface ITrainerService {
@@ -17,4 +17,5 @@ export interface ITrainerService {
     search: string,
     trainerUserId: string
   ): Promise<PaginatedTraineesResult>
+  getTraineeDetails(traineeId:string,trainerUserId:string): Promise<TraineeData>
 }
