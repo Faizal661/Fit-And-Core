@@ -2,9 +2,9 @@ import axios from "axios";
 import { store } from "../redux/store";
 import { startLoading, stopLoading } from "../redux/slices/loadingSlice";
 import { updateToken, clearAuth } from "../redux/slices/authSlice";
-import { AUTH_MESSAGES } from "../constants/auth.messages";
-import { ERR_MESSAGES } from "../constants/error.messages";
-import { SUCCESS_MESSAGES } from "../constants/success.messages";
+import { AUTH_MESSAGES } from "../constants/messages/auth.messages";
+import { ERR_MESSAGES } from "../constants/messages/error.messages";
+import { SUCCESS_MESSAGES } from "../constants/messages/success.messages";
 
 const api = axios.create({
   baseURL: `${import.meta.env.VITE_API_URL}`,

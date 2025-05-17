@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { AUTH_MESSAGES } from "../../../constants/auth.messages";
+import { AUTH_MESSAGES } from "../../../constants/messages/auth.messages";
 import userLoginImage from "../../../assets/images/image1.jpg";
 import LoginBody from "../../../components/auth/LoginBody";
 
@@ -16,7 +16,7 @@ import {
 } from "../../../services/authService";
 import { useToast } from "../../../context/ToastContext";
 import Footer from "../../../components/shared/Footer";
-import { STATUS } from "../../../constants/status.messges";
+import { STATUS } from "../../../constants/messages/status.messages";
 
 const SignUpOtpVerification = () => {
   const navigate = useNavigate();

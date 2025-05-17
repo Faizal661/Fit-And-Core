@@ -6,7 +6,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { upvoteArticle } from "../../../services/article/articleService";
 import { ArticleCardProps } from "../../../types/article.type";
 import { formatDate } from "../../../utils/dateFormat";
-import { ERR_MESSAGES } from "../../../constants/error.messages";
+import { ERR_MESSAGES } from "../../../constants/messages/error.messages";
 import { motion } from "framer-motion";
 
 export const ArticleCard = ({

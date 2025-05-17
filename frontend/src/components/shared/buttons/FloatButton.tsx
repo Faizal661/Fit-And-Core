@@ -6,12 +6,12 @@ import { CircleUserRound, Settings, UserCog } from "lucide-react";
 import { RootState } from "../../../redux/store";
 import { logoutUser } from "../../../services/authService";
 import { useToast } from "../../../context/ToastContext";
-import { AUTH_MESSAGES } from "../../../constants/auth.messages";
+import { AUTH_MESSAGES } from "../../../constants/messages/auth.messages";
 import { clearAuth } from "../../../redux/slices/authSlice";
 import { persistor } from "../../../redux/store";
 import axios from "axios";
 import Sidebar from "../sideBar/SideBar";
-import { STATUS } from "../../../constants/status.messges";
+import { STATUS } from "../../../constants/messages/status.messages";
 
 // Animation variants
 const buttonVariants = {

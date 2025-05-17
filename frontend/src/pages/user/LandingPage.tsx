@@ -549,7 +549,7 @@ const LandingPage = () => {
           variants={staggerContainer}
           className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6"
         >
-          {workoutConcepts.map((concept, index) => (
+          {workoutConcepts.map((concept, _index) => (
             <motion.div
               key={concept.name}
               variants={scaleIn}

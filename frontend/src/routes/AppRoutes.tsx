@@ -20,6 +20,9 @@ const NewPassword = lazy(() => import("../pages/auth/forgetPassword/NewPassword"
 // user
 import LandingPage from "../pages/user/LandingPage"
 import EditArticle from "../pages/article/trainer/EditArticle";
+import TraineeManagementPage from "../pages/trainer/trainee-management/TraineeManagementPage";
+import TraineeDetailsPage from "../pages/trainer/trainee-management/TraineeDetailsPage";
+import UserProgressionPage from "../pages/progress/UserProgressionPage";
 const SessionManagementPage = lazy(() => import('../pages/session/trainer/SessionManagement'));
 const AvailabilitySetupPage = lazy(() => import('../pages/session/trainer/AvailabilitySetup'));
 const SlotManagementPage = lazy(() => import('../pages/session/trainer/SlotManagementPage'));
@@ -71,6 +74,7 @@ const AppRoutes = () => {
         <Route path="/book-time/:trainerId" element={<BookTime />} />
         <Route path="/session-details/:trainerId" element={<UserSessionManagementPage />} />
         <Route path="/articles" element={<UserArticles />} />
+        <Route path="/progress" element={<UserProgressionPage />} />
       </Route>
 
       <Route element={<ProtectedRoutes allowedRoles={["trainer"]} />}>
@@ -81,7 +85,8 @@ const AppRoutes = () => {
         <Route path="/trainer/sessions" element={<SessionManagementPage />} />
         <Route path="/trainer/slot-management" element={<SlotManagementPage />} />
         <Route path="/trainer/availability-setup" element={<AvailabilitySetupPage />} />
-
+        <Route path="/trainer/trainees-management" element={<TraineeManagementPage />} />
+        <Route path="/trainer/trainees/:traineeId" element={<TraineeDetailsPage />} />
       </Route>
 
       <Route element={<ProtectedRoutes allowedRoles={["user", "trainer"]} />}>

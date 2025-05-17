@@ -8,9 +8,9 @@ import { MarkdownEditor } from "../../../components/shared/article/MarkdownEdito
 import { fetchArticleById, updateTrainerArticle } from "../../../services/article/articleService";
 import { useToast } from "../../../context/ToastContext";
 import Footer from "../../../components/shared/Footer";
-import { STATUS } from "../../../constants/status.messges";
-import { SUCCESS_MESSAGES } from "../../../constants/success.messages";
-import { WARNING_MESSAGES } from "../../../constants/warning.messages";
+import { STATUS } from "../../../constants/messages/status.messages";
+import { SUCCESS_MESSAGES } from "../../../constants/messages/success.messages";
+import { WARNING_MESSAGES } from "../../../constants/messages/warning.messages";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { Image, Tag, X, Plus } from "lucide-react";

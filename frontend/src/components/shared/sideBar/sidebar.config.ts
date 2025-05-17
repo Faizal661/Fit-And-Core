@@ -1,5 +1,5 @@
 import { Home, User, Users, Globe, TrendingUp, Utensils, Bell, History, Award, Calendar, FileText, Dumbbell, DollarSign, BarChart, MessageSquare } from "lucide-react";
-import { SIDEBAR_MESSAGES } from "../../../constants/sidebar.messages";
+import { SIDEBAR_MESSAGES } from "../../../constants/messages/sidebar.messages";
 
 export const UserSidebarItems = [
   { to: "/", label: SIDEBAR_MESSAGES.HOME, icon: Home },
@@ -15,7 +15,7 @@ export const UserSidebarItems = [
 
 export const TrainerSidebarItems = [
   { to: "/trainer", label: SIDEBAR_MESSAGES.DASHBOARD, icon: Home },
-  { to: "/trainer/trainees", label: SIDEBAR_MESSAGES.TRAINEE_MANAGEMENT, icon: Users },
+  { to: "/trainer/trainees-management", label: SIDEBAR_MESSAGES.TRAINEE_MANAGEMENT, icon: Users },
   { to: "/trainer/articles", label: SIDEBAR_MESSAGES.ARTICLE_MANAGEMENT, icon: FileText },
   { to: "/trainer/sessions", label: SIDEBAR_MESSAGES.SESSION_MANAGEMENT, icon: Calendar },
   { to: "/trainer/upcoming", label: SIDEBAR_MESSAGES.UPCOMING_SESSIONS, icon: Calendar },

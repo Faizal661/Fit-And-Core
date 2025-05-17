@@ -11,7 +11,7 @@ import { components } from "../../components/shared/article/MarkdownComponents";
 import { formatDate } from "../../utils/dateFormat";
 import PageNotFound from "../../components/shared/PageNotFound";
 import Footer from "../../components/shared/Footer";
-import { REDIRECT_MESSAGES } from "../../constants/redirect.messges";
+import { REDIRECT_MESSAGES } from "../../constants/messages/redirect.messages";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { AUTH_MESSAGES } from "../../../constants/auth.messages";
+import { AUTH_MESSAGES } from "../../../constants/messages/auth.messages";
 import userLoginImage from "../../../assets/images/image1.jpg";
 import LoginBody from "../../../components/auth/LoginBody";
 import { useMutation } from "@tanstack/react-query";
@@ -10,7 +10,7 @@ import { type OtpFormData, otpSchema } from "../../../schemas/authSchema";
 import { verifyOtp, ResendOtp } from "../../../services/authService";
 import { useToast } from "../../../context/ToastContext";
 import Footer from "../../../components/shared/Footer";
-import { STATUS } from "../../../constants/status.messges";
+import { STATUS } from "../../../constants/messages/status.messages";
 
 const OtpVerification: React.FC = () => {
   const location = useLocation();

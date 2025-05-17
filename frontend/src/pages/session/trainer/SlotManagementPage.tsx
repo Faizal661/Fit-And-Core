@@ -14,11 +14,11 @@ import {
   AlertCircle,
   X,
 } from "lucide-react";
-import { SUCCESS_MESSAGES } from "../../../constants/success.messages";
-import { STATUS } from "../../../constants/status.messges";
+import { SUCCESS_MESSAGES } from "../../../constants/messages/success.messages";
+import { STATUS } from "../../../constants/messages/status.messages";
 import { useToast } from "../../../context/ToastContext";
 import axios from "axios";
-import { ERR_MESSAGES } from "../../../constants/error.messages";
+import { ERR_MESSAGES } from "../../../constants/messages/error.messages";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
 import { ISlot } from "../../../types/session.type";
