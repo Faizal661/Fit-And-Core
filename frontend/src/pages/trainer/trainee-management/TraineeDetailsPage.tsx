@@ -4,22 +4,18 @@ import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import {
   User,
-  Mail,
-  Phone,
-  Calendar,
   Activity,
   Apple,
   History,
-  Clock,
-  Award,
-  TrendingUp,
-  Scale,
-  Dumbbell,
-  Timer,
   AlertCircle,
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { getTraineeData } from "../../../services/trainer/traineeManageService";
+import TraineeProfileHeader from "../../../components/trainer/trainee-management/TraineeProfileHeader";
+import TraineeInfoTab from "../../../components/trainer/trainee-management/tabs/TraineeInfoTab";
+import TraineeProgressTab from "../../../components/trainer/trainee-management/tabs/TraineeProgressTab";
+import TraineeNutritionTab from "../../../components/trainer/trainee-management/tabs/TraineeNutritionTab";
+import TraineeHistoryTab from "../../../components/trainer/trainee-management/tabs/TraineeHistoryTab";
 
 // Animation variants
 const fadeIn = {
@@ -46,30 +42,11 @@ const staggerContainer = {
 
 type Tab = "info" | "progress" | "nutrition" | "history";
 
-// Define the types based on the API response
-interface SubscriptionHistory {
-  _id: string;
-  startDate: string;
-  expiryDate: string;
-  planDuration: string;
-  amount: number;
-  status: string;
-}
 
-interface TraineeData {
-  traineeId: string;
-  username: string;
-  profilePicture: string;
-  email: string;
-  isBlocked: boolean;
-  createdAt: string;
-  subscriptionHistory: SubscriptionHistory[];
-  phone?: string; // Optional fields
-  age?: number;
-  height?: string;
-  weight?: string;
-  goals?: string[];
-}
+// Utility function for formatting dates
+export const formatDate = (dateString: string) => {
+  return new Date(dateString).toLocaleDateString();
+};
 
 const TraineeDetailsPage = () => {
   const { traineeId } = useParams<{ traineeId: string }>();
@@ -122,11 +99,6 @@ const TraineeDetailsPage = () => {
     );
   }
 
-  // Format date for display
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString();
-  };
-
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 overflow-hidden">
       {/* Hero Section */}
@@ -139,57 +111,14 @@ const TraineeDetailsPage = () => {
           }}
         ></div>
 
-        <motion.div
+        <TraineeProfileHeader
+          traineeData={traineeData}
           ref={ref}
-          initial="hidden"
-          animate={inView ? "visible" : "hidden"}
-          variants={staggerContainer}
-          className="relative z-10 max-w-6xl mx-auto px-6"
-        >
-          <div className="flex items-start gap-8">
-            <motion.div variants={fadeIn} className="relative">
-              <div className="w-32 h-32 rounded-xl overflow-hidden border-4 border-white/20 shadow-xl">
-                <img
-                  src={traineeData.profilePicture || "/default-profile.png"}
-                  alt={traineeData.username}
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.src = "/default-profile.png";
-                  }}
-                />
-              </div>
-            </motion.div>
-
-            <motion.div variants={fadeIn} className="flex-grow">
-              <h1 className="text-4xl font-bold text-white mb-4">
-                {traineeData.username}
-              </h1>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-white/80">
-                <div className="flex items-center gap-2">
-                  <Mail size={18} />
-                  <span>{traineeData.email}</span>
-                </div>
-                {traineeData.phone && (
-                  <div className="flex items-center gap-2">
-                    <Phone size={18} />
-                    <span>{traineeData.phone}</span>
-                  </div>
-                )}
-                <div className="flex items-center gap-2">
-                  <Calendar size={18} />
-                  <span>Joined: {formatDate(traineeData.createdAt)}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Award size={18} />
-                  <span>
-                    {traineeData.isBlocked ? "Blocked Member" : "Active Member"}
-                  </span>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        </motion.div>
+          inView={inView}
+          staggerContainer={staggerContainer}
+          fadeIn={fadeIn}
+          formatDate={formatDate}
+        />
       </div>
 
       {/* Main Content */}
@@ -201,279 +130,87 @@ const TraineeDetailsPage = () => {
         >
           {/* Navigation Tabs */}
           <div className="flex border-b border-gray-100 overflow-x-auto">
-            <button
-              onClick={() => setActiveTab("info")}
-              className={`flex items-center gap-2 py-4 px-6 transition-colors duration-300 ${
-                activeTab === "info"
-                  ? "bg-gradient-to-r from-blue-500 to-purple-500 text-white"
-                  : "text-gray-600 hover:bg-gray-50"
-              }`}
-            >
-              <User size={18} />
-              Basic Information
-            </button>
-            <button
-              onClick={() => setActiveTab("progress")}
-              className={`flex items-center gap-2 py-4 px-6 transition-colors duration-300 ${
-                activeTab === "progress"
-                  ? "bg-gradient-to-r from-blue-500 to-purple-500 text-white"
-                  : "text-gray-600 hover:bg-gray-50"
-              }`}
-            >
-              <Activity size={18} />
-              Progress Tracking
-            </button>
-            <button
-              onClick={() => setActiveTab("nutrition")}
-              className={`flex items-center gap-2 py-4 px-6 transition-colors duration-300 ${
-                activeTab === "nutrition"
-                  ? "bg-gradient-to-r from-blue-500 to-purple-500 text-white"
-                  : "text-gray-600 hover:bg-gray-50"
-              }`}
-            >
-              <Apple size={18} />
-              Nutrition
-            </button>
-            <button
-              onClick={() => setActiveTab("history")}
-              className={`flex items-center gap-2 py-4 px-6 transition-colors duration-300 ${
-                activeTab === "history"
-                  ? "bg-gradient-to-r from-blue-500 to-purple-500 text-white"
-                  : "text-gray-600 hover:bg-gray-50"
-              }`}
-            >
-              <History size={18} />
-              History
-            </button>
+            <TabButton
+              icon={<User size={18} />}
+              label="Basic Information"
+              tabName="info"
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
+            />
+            <TabButton
+              icon={<Activity size={18} />}
+              label="Progress Tracking"
+              tabName="progress"
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
+            />
+            <TabButton
+              icon={<Apple size={18} />}
+              label="Nutrition"
+              tabName="nutrition"
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
+            />
+            <TabButton
+              icon={<History size={18} />}
+              label="History"
+              tabName="history"
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
+            />
           </div>
 
           <div className="p-8">
             {activeTab === "info" && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="space-y-8"
-              >
-                {/* Physical Stats */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="p-6 bg-gray-50 rounded-xl">
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-                        <User className="text-blue-600" size={20} />
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-500">Age</p>
-                        <p className="font-semibold">
-                          {traineeData.age
-                            ? `${traineeData.age} years`
-                            : "Not provided"}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="p-6 bg-gray-50 rounded-xl">
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center">
-                        <Scale className="text-purple-600" size={20} />
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-500">Weight</p>
-                        <p className="font-semibold">
-                          {traineeData.weight || "Not provided"}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="p-6 bg-gray-50 rounded-xl">
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center">
-                        <TrendingUp className="text-emerald-600" size={20} />
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-500">Height</p>
-                        <p className="font-semibold">
-                          {traineeData.height || "Not provided"}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Fitness Goals */}
-                {/* <div>
-                  <h3 className="text-lg font-semibold mb-4">Fitness Goals</h3>
-                  {traineeData.goals && traineeData.goals.length > 0 ? (
-                    <div className="flex flex-wrap gap-2">
-                      {traineeData.goals.map((goal, index) => (
-                        <span
-                          key={index}
-                          className="px-4 py-2 bg-blue-50 text-blue-600 rounded-full text-sm font-medium"
-                        >
-                          {goal}
-                        </span>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="text-gray-500">
-                      No fitness goals have been set yet.
-                    </p>
-                  )}
-                </div> */}
-
-                {/* Member Status */}
-                <div>
-                  <h3 className="text-lg font-semibold mb-4">Member Status</h3>
-                  <div
-                    className={`p-4 rounded-lg flex items-center gap-3 ${
-                      traineeData.isBlocked ? "bg-red-50" : "bg-green-50"
-                    }`}
-                  >
-                    <div
-                      className={`w-3 h-3 rounded-full ${
-                        traineeData.isBlocked ? "bg-red-500" : "bg-green-500"
-                      }`}
-                    ></div>
-                    <span
-                      className={`font-medium ${
-                        traineeData.isBlocked
-                          ? "text-red-700"
-                          : "text-green-700"
-                      }`}
-                    >
-                      {traineeData.isBlocked ? "Blocked" : "Active"}
-                    </span>
-                  </div>
-                </div>
-              </motion.div>
+              <TraineeInfoTab traineeData={traineeData} />
             )}
-
             {activeTab === "progress" && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="text-center py-12"
-              >
-                <Dumbbell className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">
-                  Progress Tracking Coming Soon
-                </h3>
-                <p className="text-gray-500">
-                  We're working on bringing you detailed progress tracking
-                  features for {traineeData.username}.
-                </p>
-              </motion.div>
+              <TraineeProgressTab traineeData={traineeData} />
             )}
-
             {activeTab === "nutrition" && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="text-center py-12"
-              >
-                <Apple className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">
-                  Nutrition Tracking Coming Soon
-                </h3>
-                <p className="text-gray-500">
-                  Detailed nutrition tracking and meal planning features for{" "}
-                  {traineeData.username} are on the way.
-                </p>
-              </motion.div>
+              <TraineeNutritionTab traineeData={traineeData} />
             )}
-
             {activeTab === "history" && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="space-y-8"
-              >
-                {/* Subscription History */}
-                <div>
-                  <h3 className="text-lg font-semibold mb-4">
-                    Subscription History
-                  </h3>
-                  {traineeData.subscriptionHistory &&
-                  traineeData.subscriptionHistory.length > 0 ? (
-                    <div className="space-y-4">
-                      {traineeData.subscriptionHistory.map((subscription:SubscriptionHistory) => (
-                        <div
-                          key={subscription._id}
-                          className="p-6 bg-gray-50 rounded-xl border border-gray-100"
-                        >
-                          <div className="flex items-center justify-between mb-4">
-                            <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
-                                <Award className="text-green-600" size={20} />
-                              </div>
-                              <div>
-                                <h4 className="font-medium">
-                                  {subscription.planDuration} Plan
-                                </h4>
-                                <p className="text-sm text-gray-500">
-                                  ₹{subscription.amount.toLocaleString()}
-                                </p>
-                              </div>
-                            </div>
-                            <span
-                              className={`px-3 py-1 rounded-full text-sm font-medium ${
-                                subscription.status === "active"
-                                  ? "bg-green-100 text-green-600"
-                                  : subscription.status === "expired"
-                                  ? "bg-red-100 text-red-600"
-                                  : "bg-yellow-100 text-yellow-600"
-                              }`}
-                            >
-                              {subscription.status.charAt(0).toUpperCase() +
-                                subscription.status.slice(1)}
-                            </span>
-                          </div>
-                          <div className="flex items-center gap-4 text-sm text-gray-600">
-                            <div className="flex items-center gap-1">
-                              <Calendar size={16} />
-                              <span>
-                                Start: {formatDate(subscription.startDate)}
-                              </span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <Calendar size={16} />
-                              <span>
-                                End: {formatDate(subscription.expiryDate)}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="p-6 bg-gray-50 rounded-xl text-center">
-                      <Clock className="w-12 h-12 text-gray-400 mx-auto mb-2" />
-                      <p className="text-gray-600">
-                        No subscription history available
-                      </p>
-                    </div>
-                  )}
-                </div>
-
-                {/* Session History - This section remains with placeholder for now */}
-                <div>
-                  <h3 className="text-lg font-semibold mb-4">
-                    Session History
-                  </h3>
-                  <div className="p-6 bg-gray-50 rounded-xl text-center">
-                    <Timer className="w-12 h-12 text-gray-400 mx-auto mb-2" />
-                    <p className="text-gray-600">
-                      Session history feature coming soon
-                    </p>
-                  </div>
-                </div>
-              </motion.div>
+              <TraineeHistoryTab
+                traineeData={traineeData}
+                formatDate={formatDate}
+              />
             )}
           </div>
         </motion.div>
       </div>
     </div>
+  );
+};
+
+// Tab Button Component
+interface TabButtonProps {
+  icon: React.ReactNode;
+  label: string;
+  tabName: Tab;
+  activeTab: Tab;
+  setActiveTab: (tab: Tab) => void;
+}
+
+const TabButton = ({
+  icon,
+  label,
+  tabName,
+  activeTab,
+  setActiveTab,
+}: TabButtonProps) => {
+  return (
+    <button
+      onClick={() => setActiveTab(tabName as Tab)}
+      className={`flex items-center gap-2 py-4 px-6 transition-colors duration-300 ${
+        activeTab === tabName
+          ? "bg-gradient-to-r from-blue-500 to-purple-500 text-white"
+          : "text-gray-600 hover:bg-gray-50"
+      }`}
+    >
+      {icon}
+      {label}
+    </button>
   );
 };
 

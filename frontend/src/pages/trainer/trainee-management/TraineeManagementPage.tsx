@@ -5,10 +5,7 @@ import Footer from "../../../components/shared/Footer";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { useNavigate } from "react-router-dom";
-import {
-  TraineeResponse,
-  PaginatedTraineesResult,
-} from "../../../types/user.type";
+import { PaginatedTraineesResult, TraineeData } from "../../../types/trainee.type";
 
 // Animation variants
 const fadeIn = {
@@ -35,7 +32,7 @@ const TraineeManagementPage = () => {
   const [recordsPerPage, setRecordsPerPage] = useState<number>(10);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [selectedTrainee, setSelectedTrainee] =
-    useState<TraineeResponse | null>(null);
+    useState<TraineeData | null>(null);
 
   // Fetch trainees data
   const { data, isLoading, error } = useQuery<PaginatedTraineesResult, Error>({
@@ -54,7 +51,7 @@ const TraineeManagementPage = () => {
     setActivePage(1);
   };
 
-  const openDetailsModal = (trainee: TraineeResponse) =>
+  const openDetailsModal = (trainee: TraineeData) =>
     setSelectedTrainee(trainee);
   const closeModal = () => setSelectedTrainee(null);
 

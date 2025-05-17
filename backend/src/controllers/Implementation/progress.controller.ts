@@ -27,13 +27,13 @@ export class ProgressController implements IProgressController {
     next: NextFunction
   ): Promise<void> {
     try {
-      const userId = req.decoded?.id; 
+      const { traineeId } = req.params;
       const progressions = await this.progressService.getTraineeProgressions(
-        userId as unknown as Types.ObjectId
+        new Types.ObjectId(traineeId)
       );
-      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, {progressions});
+      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, { progressions });
     } catch (error) {
-      next(error); 
+      next(error);
     }
   }
 
@@ -44,7 +44,7 @@ export class ProgressController implements IProgressController {
   ): Promise<void> {
     try {
       const userId = req.decoded?.id;
-      console.log("🚀 ~ ProgressController ~ userId:", userId)
+      console.log("🚀 ~ ProgressController ~ userId:", userId);
       if (!userId) {
         throw new CustomError(
           HttpResMsg.UNAUTHORIZED,
@@ -54,11 +54,11 @@ export class ProgressController implements IProgressController {
 
       const { height, weight } = req.body;
       const newProgression = await this.progressService.addNewProgress(
-        userId as unknown as Types.ObjectId,
+        new Types.ObjectId(userId) ,
         height,
         weight
       );
-      console.log("🚀 ~ ProgressController ~ newProgression:", newProgression)
+      console.log("🚀 ~ ProgressController ~ newProgression:", newProgression);
       sendResponse(
         res,
         HttpResCode.CREATED,

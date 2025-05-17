@@ -218,6 +218,7 @@ export enum HttpResMsg {
 
   FAILED_TO_FETCH_USER_PROGRESS = "Failed to fetch trainee progressions",
   FAILED_TO_ADD_NEW_PROGRESS = "Failed to add new progression",
+  FAILED_ADD_PROGRESS_ADJACENT_ENTRY="You've already submitted your progress this week. Please try again after a few days.",
 
   TRAINEE_NOT_FOUND="Trainee details not found",
 }

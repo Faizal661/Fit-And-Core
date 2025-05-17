@@ -5,8 +5,8 @@ export interface Progress {
   height: number;
   bmi: number;
   bmiClass: string;
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt: Date | string;
+  updatedAt: Date| string;
 }
 
 export interface progressResponse{

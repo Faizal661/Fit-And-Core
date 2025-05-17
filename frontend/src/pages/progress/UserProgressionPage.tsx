@@ -24,7 +24,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import {
-  getMyProgressionData,
+  getProgressionData,
   newProgression,
 } from "../../services/progress/progressService";
 import {
@@ -36,6 +36,11 @@ import Footer from "../../components/shared/Footer";
 import { Progress } from "../../types/progress.type";
 import { BMI_CATEGORY_COLORS } from "../../constants/colors/bmi-category.colors";
 import { calculateWeightToNormalBmi } from "../../utils/calculateWeightToNormalBmi";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
+import axios from "axios";
+import { getBMIClass } from "../../utils/getBmiClass";
+import { BmiCustomTooltip } from "../../components/shared/graph/BmiCustomToolTip";
 
 const fadeIn = {
   hidden: { opacity: 0, y: 20 },
@@ -59,21 +64,10 @@ const staggerContainer = {
   },
 };
 
-const getBMIClass = (bmi: number) => {
-  if (bmi < 18.5)
-    return { class: "Underweight", color: "text-blue-600", range: "< 18.5" };
-  if (bmi < 25)
-    return { class: "Normal", color: "text-green-600", range: "18.5 - 24.9" };
-  if (bmi < 30)
-    return {
-      class: "Overweight",
-      color: "text-yellow-600",
-      range: "25 - 29.9",
-    };
-  return { class: "Obese", color: "text-red-600", range: "≥ 30" };
-};
+
 
 const UserProgressionPage = () => {
+  const userId = useSelector((state: RootState) => state.auth.user?.id || "");
   const queryClient = useQueryClient();
   const [ref, inView] = useInView({
     triggerOnce: true,
@@ -82,6 +76,7 @@ const UserProgressionPage = () => {
   const { showToast } = useToast();
   const [showBmiChart, setShowBmiChart] = useState(false);
   const [bmiGuidance, setBmiGuidance] = useState("");
+  const [serverError, setServerError] = useState("");
 
   const {
     register,
@@ -95,7 +90,7 @@ const UserProgressionPage = () => {
   // Fetch progression data
   const { data: progressions, isLoading } = useQuery<Progress[]>({
     queryKey: ["progressions"],
-    queryFn: getMyProgressionData,
+    queryFn: () => getProgressionData(userId),
     staleTime: 10000,
   });
 
@@ -106,12 +101,19 @@ const UserProgressionPage = () => {
       reset();
       showToast("success", "Progression added !");
     },
-    onError: () => {
-      showToast("error", "Failed to add progression !");
+    onError: (error) => {
+      if (axios.isAxiosError(error)) {
+        setServerError(
+          error.response?.data.message || "Failed to add progression !"
+        );
+      } else {
+        setServerError("Failed to add progression !");
+      }
     },
   });
 
   const onSubmit = (data: ProgressionFormData) => {
+    setServerError("");
     mutation.mutate(data);
   };
 
@@ -207,6 +209,9 @@ const UserProgressionPage = () => {
                   <p className="text-red-500 text-sm mt-1">
                     {errors.weight.message}
                   </p>
+                )}
+                {serverError && (
+                  <p className="text-red-500 text-sm mt-1">{serverError}</p>
                 )}
               </div>
 
@@ -334,7 +339,7 @@ const UserProgressionPage = () => {
                     />
                     <YAxis
                       yAxisId="bmiAxis"
-                      domain={[10,45]}
+                      domain={[10, 45]}
                       allowDataOverflow={true}
                       stroke="#000"
                       fontSize={14}
@@ -353,7 +358,7 @@ const UserProgressionPage = () => {
                       }}
                     />
                     <Tooltip
-                      content={<CustomTooltip />}
+                      content={<BmiCustomTooltip />}
                       cursor={{
                         stroke: "rgba(150,150,150,0.5)",
                         strokeWidth: 1,
@@ -424,7 +429,7 @@ const UserProgressionPage = () => {
                       dataKey="bmi"
                       stroke="#8b5cf6" // Purple (or choose another color for BMI)
                       strokeWidth={2.5}
-                      name="Body Mass Index (BMI)" 
+                      name="Body Mass Index (BMI)"
                       dot={{
                         r: 4,
                         strokeWidth: 1,
@@ -437,7 +442,7 @@ const UserProgressionPage = () => {
                         fill: "#8b5cf6",
                         stroke: "#fff",
                       }}
-                      connectNulls={true} 
+                      connectNulls={true}
                     />
                   </LineChart>
                 </ResponsiveContainer>
@@ -544,28 +549,3 @@ const UserProgressionPage = () => {
 
 export default UserProgressionPage;
 
-const CustomTooltip = ({ active, payload, label }: any) => {
-  if (active && payload && payload.length) {
-    const data = payload[0].payload; // Access the full data point
-    const bmiDetails = getBMIClass(data.bmi);
-
-    // Format date for display if 'label' (XAxis dataKey value) is a timestamp
-    const displayDate = new Date(label).toLocaleDateString(undefined, {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-
-    return (
-      <div className="bg-white p-3 shadow-lg rounded-md border border-gray-200">
-        <p className="text-sm text-gray-500">{`Date: ${displayDate}`}</p>
-        <p className="font-semibold" style={{ color: bmiDetails.color }}>
-          {`BMI: ${data.bmi.toFixed(2)} (${bmiDetails.class})`}
-        </p>
-        <p className="text-sm text-gray-700">{`Weight: ${data.weight} kg`}</p>
-        <p className="text-sm text-gray-700">{`Height: ${data.height} cm`}</p>
-      </div>
-    );
-  }
-  return null;
-};

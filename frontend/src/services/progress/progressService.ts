@@ -1,9 +1,9 @@
 import api from "../../config/axios.config";
+
 import { ProgressionFormData } from "../../schemas/progressSchema";
 
-export const getMyProgressionData = async () => {
-  const response = await api.get(`/progress/my-progressions`);
-  response.data.progressions.map((p)=>console.log(p.createdAt))
+export const getProgressionData = async (traineeId:string) => {
+  const response = await api.get(`/progress/${traineeId}`);
   return response.data.progressions;
 };
 

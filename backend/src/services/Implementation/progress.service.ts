@@ -65,6 +65,25 @@ export default class ProgressService implements IProgressService {
     weight: number
   ): Promise<IProgressModel> {
     try {
+      const latestProgress = await this.progressRepository.findOne({
+        userId: traineeId,
+      });
+      if (latestProgress) {
+        const lastEntryDate = latestProgress.createdAt;
+        const now = new Date();
+
+        const differenceInDays = Math.floor(
+          (now.getTime() - lastEntryDate.getTime()) / (1000 * 60 * 60 * 24)
+        );
+
+        if (differenceInDays < 7) {
+          throw new CustomError(
+            HttpResMsg.FAILED_ADD_PROGRESS_ADJACENT_ENTRY,
+            HttpResCode.BAD_REQUEST
+          );
+        }
+      }
+      
       const { bmi, class: calculatedClass } = this.calculateBmiAndClass(
         height,
         weight
@@ -75,11 +94,13 @@ export default class ProgressService implements IProgressService {
         height,
         weight,
         bmi,
-        calculatedClass,
+        calculatedClass
       );
-      console.log("🚀 ~ ProgressService ~ newProgression:", newProgression);
       return newProgression;
     } catch (error) {
+      if (error instanceof CustomError) {
+        throw error;
+      }
       throw new CustomError(
         HttpResMsg.FAILED_TO_ADD_NEW_PROGRESS,
         HttpResCode.INTERNAL_SERVER_ERROR

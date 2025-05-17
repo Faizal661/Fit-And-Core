@@ -13,10 +13,10 @@ const progressController =
   container.resolve<IProgressController>("ProgressController");
 
 router.get(
-  "/my-progressions",
+  "/:traineeId",
   verifyAccessToken,
   checkBlockedUser,
-  authorizeRoles(["user"]),
+  authorizeRoles(["user","trainer"]),
   (req, res, next) => progressController.getMyProgressions(req, res, next)
 );
 

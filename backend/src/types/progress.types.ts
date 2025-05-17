@@ -7,6 +7,6 @@ export interface IProgress{
     weight:number;
     bmi:number;
     bmiClass: "underweight" | "normal" | "overweight" | "obese";
-    createdAt?: Date;
-    updatedAt?: Date;
+    createdAt: Date;
+    updatedAt: Date;
 }

@@ -1,5 +1,5 @@
 import api from "../../config/axios.config";
-import { PaginatedTraineesResult } from "../../types/user.type"; //  users: UserResponse[]; total: number;
+import { PaginatedTraineesResult } from "../../types/trainee.type"; //  users: UserResponse[]; total: number;
 
 export const fetchTrainees = async ({
   page,

@@ -35,26 +35,3 @@ export interface UsersResponse {
   total: number;
 }
 
-export interface SubscriptionHistoryItem {
-  _id: string;
-  startDate: string;
-  expiryDate?: string;
-  status: string;
-  amount: number;
-  planDuration: string;
-}
-
-export interface TraineeResponse {
-  traineeId: string;
-  username: string;
-  profilePicture?: string;
-  email: string;
-  isBlocked: boolean;
-  createdAt: string;
-  subscriptionHistory: SubscriptionHistoryItem[];
-}
-
-export interface PaginatedTraineesResult {
-  trainees: TraineeResponse[];
-  total: number;
-}
