@@ -4,8 +4,8 @@ import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { initiateGoogleLogin, verifyGoogleToken } from '../services/authService';
 import { setAuth } from '../redux/slices/authSlice';
-import { STATUS } from '../constants/status.messges';
-import { AUTH_MESSAGES } from '../constants/auth.messages';
+import { STATUS } from '../constants/messages/status.messages';
+import { AUTH_MESSAGES } from '../constants/messages/auth.messages';
 import { useToast } from '../context/ToastContext';
 
 export const useGoogleAuth = () => {

@@ -1,11 +1,11 @@
 import { useState, FormEvent } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getAllArticles } from "../../services/article/articleService";
+import { getAllArticles } from "../../../services/article/articleService";
 import { useSelector } from "react-redux";
-import { RootState } from "../../redux/store";
-import { ArticlesResponse } from "../../types/article.type";
-import { ArticleCard } from "../../components/shared/article/ArticleCard";
-import Footer from "../../components/shared/Footer";
+import { RootState } from "../../../redux/store";
+import { ArticlesResponse } from "../../../types/article.type";
+import { ArticleCard } from "../../../components/shared/article/ArticleCard";
+import Footer from "../../../components/shared/Footer";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { Search, SortAsc, ChevronLeft, ChevronRight } from "lucide-react";

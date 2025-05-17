@@ -19,22 +19,26 @@ const NewPassword = lazy(() => import("../pages/auth/forgetPassword/NewPassword"
 
 // user
 import LandingPage from "../pages/user/LandingPage"
-import SessionManagementPage from "../pages/session/SessionManagement";
-import AvailabilitySetupPage from "../pages/session/AvailabilitySetup";
-import BookTime from "../pages/session/BookTime";
-import UserSessionManagementPage from "../pages/session/user/UserSessionManagement";
-import SlotManagementPage from "../pages/session/trainer/SlotManagementPage";
+import EditArticle from "../pages/article/trainer/EditArticle";
+import TraineeManagementPage from "../pages/trainer/trainee-management/TraineeManagementPage";
+import TraineeDetailsPage from "../pages/trainer/trainee-management/TraineeDetailsPage";
+import UserProgressionPage from "../pages/progress/UserProgressionPage";
+const SessionManagementPage = lazy(() => import('../pages/session/trainer/SessionManagement'));
+const AvailabilitySetupPage = lazy(() => import('../pages/session/trainer/AvailabilitySetup'));
+const SlotManagementPage = lazy(() => import('../pages/session/trainer/SlotManagementPage'));
+const BookTime = lazy(() => import('../pages/session/user/BookTime'));
+const UserSessionManagementPage = lazy(() => import('../pages/session/user/UserSessionManagement'));
 const UserProfile = lazy(() => import("../pages/user/UserProfile"));
 const TrainersPage = lazy(() => import("../pages/user/find-trainer/TrainersPage"));
 const FindTrainersPage = lazy(() => import("../pages/user/find-trainer/FindTrainersPage"));
 const TrainerDetailsPage = lazy(() => import("../pages/user/find-trainer/TrainerDetailsPage"));
 const TrainerApply = lazy(() => import("../pages/trainer/TrainerApply"));
-const UserArticles = lazy(() => import("../pages/article/UserArticles"));
+const UserArticles = lazy(() => import("../pages/article/user/UserArticles"));
 
 // trainer
 const HomeTrainer = lazy(() => import("../pages/trainer/HomeTrainer"));
-const TrainerArticles = lazy(() => import("../pages/article/TrainerArticles"));
-const CreateArticle = lazy(() => import("../pages/article/CreateArticle"));
+const TrainerArticles = lazy(() => import("../pages/article/trainer/TrainerArticles"));
+const CreateArticle = lazy(() => import("../pages/article/trainer/CreateArticle"));
 
 // admin
 const HomeAdmin = lazy(() => import("../pages/admin/HomeAdmin"));
@@ -70,16 +74,19 @@ const AppRoutes = () => {
         <Route path="/book-time/:trainerId" element={<BookTime />} />
         <Route path="/session-details/:trainerId" element={<UserSessionManagementPage />} />
         <Route path="/articles" element={<UserArticles />} />
+        <Route path="/progress" element={<UserProgressionPage />} />
       </Route>
 
       <Route element={<ProtectedRoutes allowedRoles={["trainer"]} />}>
         <Route path="/trainer" element={<HomeTrainer />} />
         <Route path="/trainer/articles" element={<TrainerArticles />} />
         <Route path="/trainer/articles/create" element={<CreateArticle />} />
+        <Route path="/trainer/articles/edit/:articleId" element={<EditArticle />} />
         <Route path="/trainer/sessions" element={<SessionManagementPage />} />
         <Route path="/trainer/slot-management" element={<SlotManagementPage />} />
         <Route path="/trainer/availability-setup" element={<AvailabilitySetupPage />} />
-
+        <Route path="/trainer/trainees-management" element={<TraineeManagementPage />} />
+        <Route path="/trainer/trainees/:traineeId" element={<TraineeDetailsPage />} />
       </Route>
 
       <Route element={<ProtectedRoutes allowedRoles={["user", "trainer"]} />}>

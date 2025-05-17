@@ -5,7 +5,7 @@ import {
   cancelTrainerSlot,
 } from "../../../services/session/sessionService";
 import Footer from "../../../components/shared/Footer";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import {
   Calendar as CalendarIcon,
@@ -14,13 +14,14 @@ import {
   AlertCircle,
   X,
 } from "lucide-react";
-import { SUCCESS_MESSAGES } from "../../../constants/success.messages";
-import { STATUS } from "../../../constants/status.messges";
+import { SUCCESS_MESSAGES } from "../../../constants/messages/success.messages";
+import { STATUS } from "../../../constants/messages/status.messages";
 import { useToast } from "../../../context/ToastContext";
 import axios from "axios";
-import { ERR_MESSAGES } from "../../../constants/error.messages";
+import { ERR_MESSAGES } from "../../../constants/messages/error.messages";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
+import { ISlot } from "../../../types/session.type";
 
 const fadeIn = {
   hidden: { opacity: 0, y: 20 },
@@ -58,7 +59,11 @@ const SlotManagementPage = () => {
   const initialDate = new Date();
   initialDate.setDate(initialDate.getDate());
   const [selectedDate, setSelectedDate] = useState<Date>(initialDate);
-  const [cancellingSlotId, setCancellingSlotId] = useState<string>("");
+
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [slotToCancelDetails, setSlotToCancelDetails] = useState<ISlot | null>(
+    null
+  );
 
   const getNextSevenDays = () => {
     const today = new Date();
@@ -100,8 +105,12 @@ const SlotManagementPage = () => {
   const cancelSlotMutation = useMutation({
     mutationFn: cancelTrainerSlot,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["trainerSlots", trainerId] });
+      queryClient.invalidateQueries({
+        queryKey: ["trainerSlots", trainerId, formatDateForQuery(selectedDate)],
+      });
       showToast(STATUS.SUCCESS, SUCCESS_MESSAGES.SLOT_CANCELLED);
+      setShowCancelModal(false);
+      setSlotToCancelDetails(null);
     },
     onError: (error) => {
       if (axios.isAxiosError(error)) {
@@ -109,12 +118,23 @@ const SlotManagementPage = () => {
       } else {
         showToast(STATUS.ERROR, ERR_MESSAGES.SOMETHING_WENT_WRONG);
       }
+      setShowCancelModal(false);
+      setSlotToCancelDetails(null);
     },
   });
 
-  const handlecancelSlot = (slotId: string) => {
-    setCancellingSlotId(slotId);
-    cancelSlotMutation.mutate({ slotId: slotId });
+  const confirmCancellation = () => {
+    if (slotToCancelDetails) {
+      cancelSlotMutation.mutate({ slotId: slotToCancelDetails._id });
+    }
+  };
+  const closeCancelModal = () => {
+    setShowCancelModal(false);
+    setSlotToCancelDetails(null);
+  };
+  const requestCancellationConfirmation = (slot: ISlot) => {
+    setSlotToCancelDetails(slot);
+    setShowCancelModal(true);
   };
 
   return (
@@ -140,7 +160,7 @@ const SlotManagementPage = () => {
             variants={fadeIn}
             className="text-4xl md:text-5xl font-bold text-white mb-4"
           >
-            Manage Slots 
+            Manage Slots
           </motion.h1>
           <motion.div
             variants={fadeIn}
@@ -313,12 +333,14 @@ const SlotManagementPage = () => {
                             <motion.button
                               whileHover={{ scale: 1.05 }}
                               whileTap={{ scale: 0.95 }}
-                              onClick={() => handlecancelSlot(slot._id)}
+                              onClick={() =>
+                                requestCancellationConfirmation(slot)
+                              }
                               disabled={cancelSlotMutation.isPending}
-                              className="w-full px-4 py-2 bg-gradient-to-r from-red-400/90 to-red-600/90 rounded-lg text-white font-medium shadow-sm hover:shadow-md transition-all duration-300"
+                              className="w-full px-4 py-2 bg-gradient-to-r from-red-400/90 to-red-600/90 rounded-lg text-white font-medium shadow-sm hover:shadow-md transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                               {cancelSlotMutation.isPending &&
-                              cancellingSlotId === slot._id ? (
+                              slotToCancelDetails?._id === slot._id ? (
                                 <div className="flex items-center justify-center space-x-2">
                                   <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
                                   <span>Cancelling...</span>
@@ -330,7 +352,11 @@ const SlotManagementPage = () => {
                           ) : (
                             <div className="w-full px-4 py-2 bg-gray-200 rounded-lg text-gray-500 font-medium flex items-center justify-center space-x-1">
                               <X size={14} />
-                              <span>Unavailable</span>
+                              <span>
+                                {slot.status === "canceled"
+                                  ? "Canceled"
+                                  : "Unavailable"}
+                              </span>
                             </div>
                           )}
                         </div>
@@ -343,6 +369,94 @@ const SlotManagementPage = () => {
           </div>
         </motion.div>
       </div>
+
+      <AnimatePresence>
+        {showCancelModal && slotToCancelDetails && (
+          <motion.div
+            className="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center z-50 p-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className="bg-white rounded-xl p-6 w-full max-w-md shadow-xl"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.2 }}
+            >
+              <div className="flex justify-between items-center mb-5">
+                <h2 className="text-xl font-bold text-gray-800">
+                  Confirm Cancellation
+                </h2>
+                <button
+                  onClick={closeCancelModal}
+                  className="p-2 rounded-full hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-200"
+                  aria-label="Close"
+                >
+                  <X size={18} className="text-gray-500" />
+                </button>
+              </div>
+
+              <div className="bg-red-50 rounded-lg p-4 mb-5">
+                <p className="text-gray-700">
+                  You are about to cancel the slot from{" "}
+                  <span className="font-semibold text-red-700">
+                    {slotToCancelDetails.startTime}
+                  </span>{" "}
+                  to{" "}
+                  <span className="font-semibold text-red-700">
+                    {slotToCancelDetails.endTime}
+                  </span>
+                </p>
+              </div>
+
+              <div className="flex justify-end space-x-3">
+                <button
+                  onClick={closeCancelModal}
+                  className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg border border-gray-300 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-colors"
+                  disabled={cancelSlotMutation.isPending}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmCancellation}
+                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 disabled:opacity-70 transition-colors flex items-center justify-center min-w-28" // Red button for cancellation
+                  disabled={cancelSlotMutation.isPending}
+                >
+                  {cancelSlotMutation.isPending ? (
+                    <>
+                      <svg
+                        className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
+                      </svg>
+                      Cancelling...
+                    </>
+                  ) : (
+                    "Confirm Cancellation"
+                  )}
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <Footer />
     </div>

@@ -4,6 +4,7 @@ import { IArticle, articleResponse } from "../../types/article.types";
 
 export interface IArticleService {
   createArticle(articleData: IArticle): Promise<IArticleModel>;
+  updateArticle(id: string, articleData: Partial<IArticle>): Promise<IArticleModel | null>;
   getMyArticles(
     trainerId: string | Types.ObjectId,
     page: number,

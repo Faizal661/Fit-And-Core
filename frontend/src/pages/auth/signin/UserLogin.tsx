@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import LoginBody from "../../../components/auth/LoginBody";
 import userLoginImage from "../../../assets/images/image1.jpg";
 import { Link, useNavigate } from "react-router-dom";
-import { AUTH_MESSAGES } from "../../../constants/auth.messages";
+import { AUTH_MESSAGES } from "../../../constants/messages/auth.messages";
 import Google from "../../../assets/icons/Google";
 
 import { loginSchema, type LoginFormData } from "../../../schemas/authSchema";
@@ -16,7 +16,7 @@ import { useToast } from "../../../context/ToastContext";
 import { useGoogleAuth } from "../../../hooks/useGoogleAuth";
 import axios from "axios";
 import Footer from "../../../components/shared/Footer";
-import { STATUS } from "../../../constants/status.messges";
+import { STATUS } from "../../../constants/messages/status.messages";
 
 const UserLogin = () => {
   const navigate = useNavigate();

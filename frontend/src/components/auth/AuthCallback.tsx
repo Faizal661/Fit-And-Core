@@ -2,11 +2,9 @@
 import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useGoogleAuth } from "../../hooks/useGoogleAuth";
-import { AUTH_MESSAGES } from "../../constants/auth.messages";
-import { REDIRECT_MESSAGES } from "../../constants/redirect.messges";
+import { AUTH_MESSAGES } from "../../constants/messages/auth.messages";
 import ErrorPage from "../shared/ErrorPage";
 import Loader from "../shared/Loader";
-import Footer from "../shared/Footer";
 
 const AuthCallback = () => {
   const navigate = useNavigate();

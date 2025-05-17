@@ -16,11 +16,11 @@ import { submitTrainerApplication } from "../../services/authService";
 import { checkTrainerApplicationStatus } from "../../services/trainer/trainerService";
 import Footer from "../../components/shared/Footer";
 import { ApplicationStatus } from "../../types/trainer.type";
-import { STATUS } from "../../constants/status.messges";
-import { INFO_MESSAGES } from "../../constants/info.messages";
-import { SUCCESS_MESSAGES } from "../../constants/success.messages";
-import { WARNING_MESSAGES } from "../../constants/warning.messages";
-import { ERR_MESSAGES } from "../../constants/error.messages";
+import { STATUS } from "../../constants/messages/status.messages";
+import { INFO_MESSAGES } from "../../constants/messages/info.messages";
+import { SUCCESS_MESSAGES } from "../../constants/messages/success.messages";
+import { WARNING_MESSAGES } from "../../constants/messages/warning.messages";
+import { ERR_MESSAGES } from "../../constants/messages/error.messages";
 import Loader from "../../components/shared/Loader";
 
 // Animation variants

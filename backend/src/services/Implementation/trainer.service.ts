@@ -11,6 +11,11 @@ import {
 } from "../../constants/http-response.constants";
 import { CustomError } from "../../errors/CustomError";
 import { ITrainerModel } from "../../models/trainer.models";
+import {
+  PaginatedTraineesResult,
+  TraineeData,
+} from "../../types/trainee.types";
+import { IUserModel } from "../../models/user.models";
 
 @injectable()
 export default class TrainerService implements ITrainerService {
@@ -149,12 +154,12 @@ export default class TrainerService implements ITrainerService {
     return trainer;
   }
 
-  async getSubscribedTrainersDetails(userId: string): Promise<ITrainerModel[]>{
+  async getSubscribedTrainersDetails(userId: string): Promise<ITrainerModel[]> {
     try {
       const activeSubscriptions = await this.subscriptionRepository.find({
         userId: new Types.ObjectId(userId),
-        status: 'active',
-        expiryDate: { $gt: new Date() }, 
+        status: "active",
+        expiryDate: { $gt: new Date() },
       });
 
       const subscribedTrainerIds = activeSubscriptions.map(
@@ -174,5 +179,146 @@ export default class TrainerService implements ITrainerService {
       // console.error('Error fetching subscribed trainers:', error);
       throw error;
     }
+  }
+
+  async getMyTrainees(
+    page: number,
+    limit: number,
+    search: string,
+    trainerUserId: string
+  ): Promise<PaginatedTraineesResult> {
+    const skip = (page - 1) * limit;
+
+    const trainer = await this.trainerRepository.findOne({
+      userId: trainerUserId,
+    });
+    if (!trainer) {
+      throw new CustomError(
+        HttpResMsg.TRAINER_NOT_FOUND,
+        HttpResCode.NOT_FOUND
+      );
+    }
+
+    const trainerId = trainer._id;
+
+    const subscriptions = await this.subscriptionRepository
+      .find({ trainerId })
+      .populate({
+        path: "userId",
+        select: "_id username profilePicture email isBlocked  createdAt",
+        match: search
+          ? {
+              $or: [
+                { username: { $regex: search, $options: "i" } },
+                { email: { $regex: search, $options: "i" } },
+              ],
+            }
+          : {},
+      });
+
+    const validSubscriptions = subscriptions.filter(
+      (sub) => sub.userId !== null
+    );
+
+    const uniqueTraineeIds = [
+      ...new Set(validSubscriptions.map((sub) => sub.userId._id.toString())),
+    ];
+
+    const [trainees, total] = await Promise.all([
+      this.userRepository
+        .find({ _id: { $in: uniqueTraineeIds } })
+        .skip(skip)
+        .limit(limit)
+        .exec(),
+      this.userRepository.countDocuments({ _id: { $in: uniqueTraineeIds } }),
+    ]);
+
+    const allTraineeSubscriptions = await this.subscriptionRepository
+      .find({
+        trainerId: trainerId,
+        userId: { $in: uniqueTraineeIds },
+      })
+      .sort({ createdAt: -1 });
+
+    const formattedTrainees = trainees.map((trainee) => {
+      const traineeSubscriptions = allTraineeSubscriptions.filter(
+        (sub) =>
+          (sub.userId as Types.ObjectId).toString() === trainee.id.toString()
+      );
+
+      return {
+        traineeId: trainee.id.toString(),
+        username: trainee.username,
+        profilePicture: trainee.profilePicture || "",
+        email: trainee.email,
+        isBlocked: trainee.isBlocked,
+        createdAt: trainee.createdAt,
+        subscriptionHistory: traineeSubscriptions.map((sub) => ({
+          _id: sub._id.toString(),
+          startDate: sub.startDate,
+          expiryDate: sub.expiryDate,
+          planDuration: sub.planDuration as string,
+          amount: sub.amount as number,
+          status: sub.status,
+        })),
+      };
+    });
+
+    return { trainees: formattedTrainees, total };
+  }
+
+  async getTraineeDetails(
+    traineeId: string,
+    trainerUserId: string
+  ): Promise<TraineeData> {
+    const trainer = await this.trainerRepository.findOne({
+      userId: trainerUserId,
+    });
+    if (!trainer) {
+      throw new CustomError(
+        HttpResMsg.TRAINER_NOT_FOUND,
+        HttpResCode.NOT_FOUND
+      );
+    }
+    const actualTrainerDbId = trainer._id;
+
+    const traineeUserDoc = await this.userRepository.findById(
+      new Types.ObjectId(traineeId)
+    );
+    if (!traineeUserDoc) {
+      throw new CustomError(
+        HttpResMsg.TRAINEE_NOT_FOUND,
+        HttpResCode.NOT_FOUND
+      );
+    }
+
+    const relevantSubscriptions = await this.subscriptionRepository
+      .find({
+        trainerId: actualTrainerDbId,
+        userId: traineeUserDoc._id,
+      })
+      .sort({ createdAt: -1 })
+      .exec();
+
+    const formattedSubscriptionHistory = relevantSubscriptions.map((sub) => ({
+      _id: sub._id.toString(), 
+      startDate: sub.startDate,
+      expiryDate: sub.expiryDate,
+      planDuration: sub.planDuration as string,
+      amount: sub.amount as number,
+      status: sub.status,
+    }));
+
+    const result: TraineeData = {
+      traineeId: traineeUserDoc.id.toString(), 
+      username: traineeUserDoc.username,
+      profilePicture: traineeUserDoc.profilePicture || "", 
+      email: traineeUserDoc.email,
+      isBlocked: traineeUserDoc.isBlocked,
+      createdAt: traineeUserDoc.createdAt, 
+      subscriptionHistory: formattedSubscriptionHistory,
+    };
+
+    return result;
   }
 }

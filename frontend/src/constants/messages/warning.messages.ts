@@ -10,4 +10,5 @@ export enum WARNING_MESSAGES {
   MIN_ACHIEVEMENTS="Please upload at least one achievement",
 
   ARTICLE_CREATION_FAILED="Failed to create article.",
+  ARTICLE_UPDATE_FAILED="Failed to udpate article.",
 }

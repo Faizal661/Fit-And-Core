@@ -1,19 +1,5 @@
 import api from "../../config/axios.config";
-
-
-export interface User {
-  _id: string;
-  username: string;
-  profilePicture?: string;
-  email: string;
-  isBlocked: boolean;
-  createdAt: string;
-}
-
-export interface UsersResponse {
-  users: User[];
-  total: number;
-}
+import { UserResponse, UsersResponse } from "../../types/user.type";
 
 export const fetchUsers = async ({
   page,
@@ -36,8 +22,8 @@ export const toggleBlockStatus = async ({
 }: {
   userId: string;
   isBlocked: boolean;
-}): Promise<User> => {
-  const response = await api.patch<User>(`/user/${userId}/block`, {
+}): Promise<UserResponse> => {
+  const response = await api.patch<UserResponse>(`/user/${userId}/block`, {
     isBlocked: isBlocked,
   });
   return response.data;

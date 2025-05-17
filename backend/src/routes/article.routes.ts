@@ -45,4 +45,21 @@ router.post(
   (req, res, next) => articleController.upvoteArticle(req, res, next)
 );
 
+router.get(
+  "/:articleId",
+  verifyAccessToken,
+  checkBlockedUser,
+  authorizeRoles(["user","trainer"]),
+  (req, res, next) => articleController.getArticleById(req, res, next)
+);
+
+router.patch(
+  "/update-article/:articleId",
+  verifyAccessToken,
+  checkBlockedUser,
+  authorizeRoles(["trainer"]),
+  upload.single("thumbnail"),
+  (req, res, next) => articleController.updateArticle(req, res, next)
+);
+
 export default router;

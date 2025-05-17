@@ -20,3 +20,18 @@ export interface UpdateProfileData {
   city: string;
   pinCode: string;
 }
+
+export interface UserResponse {
+  _id: string;
+  username: string;
+  profilePicture?: string;
+  email: string;
+  isBlocked: boolean;
+  createdAt: string;
+}
+
+export interface UsersResponse {
+  users: UserResponse[];
+  total: number;
+}
+

@@ -55,8 +55,6 @@ router.put(
   (req, res, next) => trainerController.rejectTrainer(req, res, next)
 );
 
-
-// 
 router.get(
   "/trainer-approved",
   verifyAccessToken,
@@ -65,18 +63,32 @@ router.get(
 );
 
 router.get(
-  "/:trainerId",
-  verifyAccessToken,
-  authorizeRoles(["admin", "user"]),
-  (req, res, next) => trainerController.getOneTrainerDetails(req, res, next)
-);
-
-router.get(
   "/subscribed/:userId",
   verifyAccessToken,
   authorizeRoles(["admin", "user"]),
   (req, res, next) =>
     trainerController.subscribedTrainersDetails(req, res, next)
+);
+
+router.get(
+  "/my-trainees",
+  verifyAccessToken,
+  authorizeRoles(["trainer"]),
+  (req, res, next) => trainerController.getMyTrainees(req, res, next)
+);
+
+router.get(
+  "/trainee/:traineeId",
+  verifyAccessToken,
+  authorizeRoles(["trainer"]),
+  (req, res, next) => trainerController.getTraineeDetails(req, res, next)
+);
+
+router.get(
+  "/:trainerId",
+  verifyAccessToken,
+  authorizeRoles(["admin", "user"]),
+  (req, res, next) => trainerController.getOneTrainerDetails(req, res, next)
 );
 
 export default router;

@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { X, LogOut, Calendar } from "lucide-react";
 import { SidebarItem, SidebarProps } from "../../../types/shared.type";
-import { SIDEBAR_MESSAGES } from "../../../constants/sidebar.messages";
+import { SIDEBAR_MESSAGES } from "../../../constants/messages/sidebar.messages";
 import {
   UserSidebarItems,
   TrainerSidebarItems,

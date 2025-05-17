@@ -20,9 +20,9 @@ import Footer from "../../../components/shared/Footer";
 import { useInView } from "react-intersection-observer";
 import axios from "axios";
 import { useToast } from "../../../context/ToastContext";
-import { STATUS } from "../../../constants/status.messges";
+import { STATUS } from "../../../constants/messages/status.messages";
 import PageNotFound from "../../../components/shared/PageNotFound";
-import { REDIRECT_MESSAGES } from "../../../constants/redirect.messges";
+import { REDIRECT_MESSAGES } from "../../../constants/messages/redirect.messages";
 
 const fadeIn = {
   hidden: { opacity: 0, y: 20 },

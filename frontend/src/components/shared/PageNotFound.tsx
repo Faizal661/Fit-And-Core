@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { AlertCircle } from "lucide-react";
-import { REDIRECT_MESSAGES } from "../../constants/redirect.messges";
+import { REDIRECT_MESSAGES } from "../../constants/messages/redirect.messages";
 import { GlowButton } from "../../components/shared/buttons/GlowButton";
 import Footer from "./Footer";
 
