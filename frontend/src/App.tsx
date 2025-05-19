@@ -7,7 +7,7 @@ import FloatButton from "./components/shared/buttons/FloatButton.tsx";
 import Loader from "./components/shared/Loader";
 import ToastContainer from "./components/shared/customToast/ToastContainer.tsx";
 import ScrollToTop from "./components/shared/ScrollToTop.tsx";
-import ErrorBoundary from "./components/shared/ErrorBoundary.tsx";
+import ErrorBoundary from "./components/shared/errorBoundary.tsx";
 
 function App() {
   return (

@@ -40,7 +40,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import axios from "axios";
 import { getBMIClass } from "../../utils/getBmiClass";
-import { BmiCustomTooltip } from "../../components/shared/graph/BmiCustomToolTip";
+import { BmiCustomTooltip } from "../../components/shared/graph/BmiCustomToolTip"
 
 const fadeIn = {
   hidden: { opacity: 0, y: 20 },

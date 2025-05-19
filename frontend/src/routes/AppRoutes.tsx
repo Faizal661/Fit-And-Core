@@ -23,6 +23,7 @@ import EditArticle from "../pages/article/trainer/EditArticle";
 import TraineeManagementPage from "../pages/trainer/trainee-management/TraineeManagementPage";
 import TraineeDetailsPage from "../pages/trainer/trainee-management/TraineeDetailsPage";
 import UserProgressionPage from "../pages/progress/UserProgressionPage";
+import UserNutritionTrackingPage from "../pages/nutrition/UserNutritionPage";
 const SessionManagementPage = lazy(() => import('../pages/session/trainer/SessionManagement'));
 const AvailabilitySetupPage = lazy(() => import('../pages/session/trainer/AvailabilitySetup'));
 const SlotManagementPage = lazy(() => import('../pages/session/trainer/SlotManagementPage'));
@@ -75,6 +76,7 @@ const AppRoutes = () => {
         <Route path="/session-details/:trainerId" element={<UserSessionManagementPage />} />
         <Route path="/articles" element={<UserArticles />} />
         <Route path="/progress" element={<UserProgressionPage />} />
+        <Route path="/nutrition" element={<UserNutritionTrackingPage />} />
       </Route>
 
       <Route element={<ProtectedRoutes allowedRoles={["trainer"]} />}>
