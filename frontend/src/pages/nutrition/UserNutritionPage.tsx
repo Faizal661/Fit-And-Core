@@ -15,7 +15,6 @@ import {
   Leaf,
   Beef,
   Wheat,
-  //   Timer,
 } from "lucide-react";
 import {
   createNewFoodLog,
@@ -26,7 +25,7 @@ import { FoodLogFormData, foodLogSchema } from "../../schemas/foodLogSchema";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import axios from "axios";
-import { parsedFoodsData } from "../../types/nutrition.type";
+import { IFoodLog, parsedFoodsData } from "../../types/nutrition.type";
 
 // Animation variants
 const fadeIn = {
@@ -174,7 +173,7 @@ const NutritionTrackingPage = () => {
     mutation.mutate({ ...data, selectedDate });
   };
 
-  const calculateDailyTotals = (logs: any[]) => {
+  const calculateDailyTotals = (logs: IFoodLog[]) => {
     return logs?.reduce(
       (acc, log) => ({
         calories: (acc.calories || 0) + (log.nutrition?.calories || 0),
@@ -235,8 +234,8 @@ const NutritionTrackingPage = () => {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-6 -mt-16 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="max-w-7xl mx-auto px-6 pb-16 -mt-16 relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Left Column - Calendar and Food Log Form */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -409,9 +408,9 @@ const NutritionTrackingPage = () => {
                 Nutrition Summary - {selectedDate.toLocaleDateString()}
               </h2>
               <div className="grid grid-cols-3 gap-4">
-                <div className="p-4 bg-gray-50 rounded-xl">
+                <div className="p-4 bg-yellow-100 rounded-xl">
                   <div className="flex items-center gap-2 text-sm text-gray-500 mb-1">
-                    <Utensils size={16} />
+                  <Utensils size={16} className="h-4 w-4 text-yellow-500"/>
                     <span>Calories</span>
                   </div>
                   <p className="text-xl font-bold">
@@ -419,9 +418,9 @@ const NutritionTrackingPage = () => {
                   </p>
                 </div>
 
-                <div className="p-4 bg-gray-50 rounded-xl">
+                <div className="p-4 bg-red-100 rounded-xl">
                   <div className="flex items-center gap-2 text-sm text-gray-500 mb-1">
-                    <Beef size={16} />
+                  <Beef size={16} className="h-4 w-4 text-red-500"/>
                     <span>Protein</span>
                   </div>
                   <p className="text-xl font-bold">
@@ -429,9 +428,9 @@ const NutritionTrackingPage = () => {
                   </p>
                 </div>
 
-                <div className="p-4 bg-gray-50 rounded-xl">
+                <div className="p-4 bg-amber-100 rounded-xl">
                   <div className="flex items-center gap-2 text-sm text-gray-500 mb-1">
-                    <Wheat size={16} />
+                  <Wheat size={16} className="h-4 w-4 text-amber-500"/>
                     <span>Carbs</span>
                   </div>
                   <p className="text-xl font-bold">
@@ -439,9 +438,9 @@ const NutritionTrackingPage = () => {
                   </p>
                 </div>
 
-                <div className="p-4 bg-gray-50 rounded-xl">
+                <div className="p-4 bg-orange-100 rounded-xl">
                   <div className="flex items-center gap-2 text-sm text-gray-500 mb-1">
-                    <Utensils size={16} />
+                  <Utensils size={16} className="h-4 w-4 text-orange-500"/>
                     <span>Fat</span>
                   </div>
                   <p className="text-xl font-bold">
@@ -449,9 +448,9 @@ const NutritionTrackingPage = () => {
                   </p>
                 </div>
 
-                <div className="p-4 bg-gray-50 rounded-xl">
+                <div className="p-4 bg-green-100 rounded-xl">
                   <div className="flex items-center gap-2 text-sm text-gray-500 mb-1">
-                    <Leaf size={16} />
+                  <Leaf size={16} className="h-4 w-4 text-green-500"/>
                     <span>Fiber</span>
                   </div>
                   <p className="text-xl font-bold">
@@ -462,8 +461,11 @@ const NutritionTrackingPage = () => {
             </div>
 
             {/* Food Logs List */}
-            <div className="bg-white rounded-xl shadow-xl border border-gray-100 p-8">
-              <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
+            <div
+              className="bg-white rounded-xl shadow-xl border border-gray-100 h-[41.6em] overflow-y-auto"
+              style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+            >
+              <h2 className="text-xl font-semibold mb-6 flex items-center gap-2 sticky top-0 bg-white px-8 pt-4 pb-4 shadow-md">
                 <Clock className="text-purple-600" size={24} />
                 Food Logs
               </h2>
@@ -479,7 +481,7 @@ const NutritionTrackingPage = () => {
                   <p className="text-gray-600">No food logs for this date</p>
                 </div>
               ) : (
-                <div className="space-y-4">
+                <div className="space-y-4 px-8 pb-8">
                   {foodLogs?.map((log: any) => (
                     <motion.div
                       key={log._id}
@@ -519,7 +521,7 @@ const NutritionTrackingPage = () => {
                       </div>
 
                       {/* Nutrition Information */}
-                      <div className="flex flex-wrap gap-3 text-sm text-gray-600">
+                      <div className="flex  justify-evenly text-sm text-gray-600">
                         <div className="flex flex-col items-center gap-1">
                           <Utensils className="h-4 w-4 text-orange-500" />
                           <span>
