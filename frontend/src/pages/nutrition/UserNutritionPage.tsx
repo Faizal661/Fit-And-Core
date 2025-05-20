@@ -19,13 +19,14 @@ import {
 } from "lucide-react";
 import {
   createNewFoodLog,
+  getFoodLogDatesByMonth,
   getFoodLogsByDate,
-  getmonthlyFoodLogs,
 } from "../../services/nutrition/nutritionService";
 import { FoodLogFormData, foodLogSchema } from "../../schemas/foodLogSchema";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import axios from "axios";
+import { parsedFoodsData } from "../../types/nutrition.type";
 
 // Animation variants
 const fadeIn = {
@@ -94,19 +95,13 @@ const NutritionTrackingPage = () => {
     const month = date.getMonth();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     const firstDayOfMonth = new Date(year, month, 1).getDay();
-
     const days = [];
-
-    // Add empty slots for days before the first day of the month
     for (let i = 0; i < firstDayOfMonth; i++) {
       days.push(null);
     }
-
-    // Add the days of the month
     for (let i = 1; i <= daysInMonth; i++) {
       days.push(new Date(year, month, i));
     }
-
     return days;
   };
 
@@ -133,7 +128,6 @@ const NutritionTrackingPage = () => {
       new Date(selectedMonth.getFullYear(), selectedMonth.getMonth() - 1)
     );
   };
-
   const nextMonth = () => {
     setSelectedMonth(
       new Date(selectedMonth.getFullYear(), selectedMonth.getMonth() + 1)
@@ -145,13 +139,9 @@ const NutritionTrackingPage = () => {
     queryFn: () => getFoodLogsByDate(selectedDate, userId),
   });
 
-  const { data: loggedDates, isLoading: loggedDateisLoading } = useQuery({
-    queryKey: ["monthlyFoodLogs", selectedMonth],
-    queryFn: async () => {
-      // Replace this with your real API call (this is just static/mock for now)
-      await new Promise((res) => setTimeout(res, 300));
-      return ["2025-05-3", "2025-05-07", "2025-05-15", "2025-05-17"];
-    },
+  const { data: foodLogDates } = useQuery({
+    queryKey: ["foodLogDates", userId, selectedMonth],
+    queryFn: () => getFoodLogDatesByMonth(selectedMonth, userId),
   });
 
   const formatDate = (d: Date) => d.toISOString().split("T")[0];
@@ -165,6 +155,7 @@ const NutritionTrackingPage = () => {
       createNewFoodLog({ foodDescription, mealType, selectedDate }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["foodLogs"] });
+      queryClient.invalidateQueries({ queryKey: ["foodLogDates"] });
       reset();
     },
     onError: (error) => {
@@ -298,7 +289,7 @@ const NutritionTrackingPage = () => {
               <div className="grid grid-cols-7 gap-2">
                 {daysInMonth.map((date, index) => {
                   const isLogged = date
-                    ? loggedDates?.includes(formatDate(date))
+                    ? foodLogDates?.includes(formatDate(date))
                     : false;
 
                   return (
@@ -371,7 +362,6 @@ const NutritionTrackingPage = () => {
                     <option value="lunch">Lunch</option>
                     <option value="dinner">Dinner</option>
                     <option value="snacks">Snacks</option>
-                    <option value="other">Other</option>
                   </select>
                   {errors.mealType && (
                     <p className="text-red-500 text-sm mt-1">
@@ -491,58 +481,78 @@ const NutritionTrackingPage = () => {
               ) : (
                 <div className="space-y-4">
                   {foodLogs?.map((log: any) => (
-                     <motion.div
-                     key={log._id}
-                     initial={{ opacity: 0, y: 10 }}
-                     animate={{ opacity: 1, y: 0 }}
-                     className="p-4 bg-gray-50 rounded-xl border border-gray-200"
-                   >
-                     <div className="flex items-center justify-between mb-3">
-                       <div className="flex items-center gap-2">
-                         {getMealTypeIcon(log.mealType)}
-                         <span className="font-medium capitalize">{log.mealType}</span>
-                       </div>
-                     </div>
-           
-                     {/* Parsed Foods List */}
-                     <div className="mb-3">
-                       {log.parsedFoods && log.parsedFoods.length > 0 ? (
-                         <ul className="space-y-1">
-                           {log.parsedFoods.map((food, index) => (
-                             <li key={index} className="text-sm text-gray-700">
-                               • {food.quantity} {food.name}
-                             </li>
-                           ))}
-                         </ul>
-                       ) : (
-                         <p className="text-sm text-gray-700">{log.foodDescription}</p>
-                       )}
-                     </div>
-           
-                     {/* Nutrition Information */}
-                     <div className="flex flex-wrap gap-3 text-sm text-gray-600">
-                       <div className="flex items-center gap-1">
-                         <Utensils className="h-4 w-4 text-orange-500" />
-                         <span>{log.nutrition?.calories?.toFixed(0) || 0} kcal</span>
-                       </div>
-                       <div className="flex items-center gap-1">
-                         <Beef className="h-4 w-4 text-red-500" />
-                         <span>{log.nutrition?.protein?.toFixed(1) || 0}g protein</span>
-                       </div>
-                       <div className="flex items-center gap-1">
-                         <Wheat className="h-4 w-4 text-amber-500" />
-                         <span>{log.nutrition?.carbohydrates?.toFixed(1) || 0}g carbs</span>
-                       </div>
-                       <div className="flex items-center gap-1">
-                         <Leaf className="h-4 w-4 text-yellow-500" />
-                         <span>{log.nutrition?.fat?.toFixed(1) || 0}g fat</span>
-                       </div>
-                       <div className="flex items-center gap-1">
-                         <Apple className="h-4 w-4 text-green-500" />
-                         <span>{log.nutrition?.fiber?.toFixed(1) || 0}g fiber</span>
-                       </div>
-                     </div>
-                   </motion.div>
+                    <motion.div
+                      key={log._id}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="p-4 bg-gray-50 rounded-xl border border-gray-200"
+                    >
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-2">
+                          {getMealTypeIcon(log.mealType)}
+                          <span className="font-medium capitalize">
+                            {log.mealType}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Parsed Foods List */}
+                      <div className="mb-3">
+                        {log.parsedFoods && log.parsedFoods.length > 0 ? (
+                          <ul className="space-y-1">
+                            {log.parsedFoods.map(
+                              (food: parsedFoodsData, index: number) => (
+                                <li
+                                  key={index}
+                                  className="text-sm text-gray-700"
+                                >
+                                  • {food.quantity} {food.name}
+                                </li>
+                              )
+                            )}
+                          </ul>
+                        ) : (
+                          <p className="text-sm text-gray-700">
+                            {log.foodDescription}
+                          </p>
+                        )}
+                      </div>
+
+                      {/* Nutrition Information */}
+                      <div className="flex flex-wrap gap-3 text-sm text-gray-600">
+                        <div className="flex flex-col items-center gap-1">
+                          <Utensils className="h-4 w-4 text-orange-500" />
+                          <span>
+                            {log.nutrition?.calories?.toFixed(0) || 0} kcal
+                          </span>
+                        </div>
+                        <div className="flex flex-col items-center gap-1">
+                          <Beef className="h-4 w-4 text-red-500" />
+                          <span>
+                            {log.nutrition?.protein?.toFixed(1) || 0}g protein
+                          </span>
+                        </div>
+                        <div className="flex flex-col items-center gap-1">
+                          <Wheat className="h-4 w-4 text-amber-500" />
+                          <span>
+                            {log.nutrition?.carbohydrates?.toFixed(1) || 0}g
+                            carbs
+                          </span>
+                        </div>
+                        <div className="flex flex-col items-center gap-1">
+                          <Leaf className="h-4 w-4 text-yellow-500" />
+                          <span>
+                            {log.nutrition?.fat?.toFixed(1) || 0}g fat
+                          </span>
+                        </div>
+                        <div className="flex flex-col items-center gap-1">
+                          <Apple className="h-4 w-4 text-green-500" />
+                          <span>
+                            {log.nutrition?.fiber?.toFixed(1) || 0}g fiber
+                          </span>
+                        </div>
+                      </div>
+                    </motion.div>
                   ))}
                 </div>
               )}

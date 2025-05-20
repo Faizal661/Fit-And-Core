@@ -33,21 +33,31 @@ export default class FoodLogService implements IFoodLogService {
     selectedDate: Date
   ): Promise<IFoodLogModel> {
     try {
-      const parsedFoods = await this.geminiService.parseFoodDescription(
-        foodDescription
-      );
+      
+      const currentDate = new Date();
+      currentDate.setHours(23, 59, 59, 999);
 
-      const nutrition = await this.geminiService.getNutrition(foodDescription);
+      if (selectedDate > currentDate) {
+        throw new CustomError(
+          "Cannot add food logs for future dates. Please select today's date or a past date.",
+          HttpResCode.BAD_REQUEST
+        );
+      }
+
+      const parsedFoods = await this.geminiService.parseFoodDescription(foodDescription);
+      const nutrition = await this.geminiService.getNutrition(parsedFoods);
 
       const validMealTypes: MealType[] = [
         "breakfast",
         "lunch",
         "dinner",
         "snacks",
-        "other",
       ];
       if (!validMealTypes.includes(mealType as MealType)) {
-        throw new Error(`Invalid meal type: ${mealType}`);
+        throw new CustomError(
+          `Invalid meal type: ${mealType}`,
+          HttpResCode.BAD_REQUEST
+        );
       }
 
       const foodLogData = {
@@ -61,8 +71,8 @@ export default class FoodLogService implements IFoodLogService {
 
       const savedLog = await this.foodLogRepository.create(foodLogData);
       return savedLog;
-    } catch (error: any) {
-      console.error(`Could not create food log: ${error.message}`);
+    } catch (error: unknown) {
+      console.error(`Could not create food log: ${error}`);
       if (error instanceof CustomError) {
         throw error;
       } else {
@@ -92,6 +102,40 @@ export default class FoodLogService implements IFoodLogService {
       } else {
         throw new CustomError(
           "Failed to fetch food logs!",
+          HttpResCode.INTERNAL_SERVER_ERROR
+        );
+      }
+    }
+  }
+
+  async getFoodLogDatesByMonth(
+    userId: string,
+    monthDate: Date,
+  ): Promise<string[]> {
+    try {
+      const year = monthDate.getFullYear();
+      const month = monthDate.getMonth();
+
+      const startDate = new Date(year, month, 1);
+      const endDate = new Date(year, month + 1, 0);
+
+      const foodLogs = await this.foodLogRepository.getByDateRange(userId, startDate, endDate);
+
+      const loggedDates = new Set<string>();
+      console.log("🚀 ~ FoodLogService ~ loggedDates:", loggedDates)
+      foodLogs.forEach(log => {
+        const dateString = log.consumedAt.toISOString().split('T')[0];
+        loggedDates.add(dateString);
+      });
+      console.log("🚀 ~ FoodLogService ~ loggedDates: final ----->", loggedDates)
+
+      return Array.from(loggedDates);
+    } catch (error: any) {
+      if (error instanceof CustomError) {
+        throw error;
+      } else {
+        throw new CustomError(
+          'Failed to retrieve food log dates',
           HttpResCode.INTERNAL_SERVER_ERROR
         );
       }

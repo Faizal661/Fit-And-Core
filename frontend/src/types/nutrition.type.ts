@@ -1,5 +1,3 @@
-import { Types } from "mongoose";
-
 export type MealType = "breakfast" | "lunch" | "dinner" | "snacks";
 
 export interface parsedFoodsData {
@@ -16,7 +14,7 @@ export interface NutritionData {
 }
 
 export interface IFoodLog {
-  userId: Types.ObjectId;
+  userId: string;
   mealType: MealType;
   foodDescription: string;
   parsedFoods: parsedFoodsData[];

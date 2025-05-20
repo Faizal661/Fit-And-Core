@@ -52,6 +52,31 @@ export class FoodLogController implements IFoodLogController {
     }
   }
 
+  async getFoodLogDatesByMonth(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const { traineeId } = req.params;
+      const monthDate = req.query.month ? new Date(req.query.month as string) : undefined;
+
+      if (!traineeId) {
+        throw new CustomError(HttpResMsg.BAD_REQUEST, HttpResCode.BAD_REQUEST);
+      }
+
+      if (!monthDate || isNaN(monthDate.getTime())) {
+        throw new CustomError('Invalid month provided.  Must be a valid date string.', HttpResCode.BAD_REQUEST);
+      }
+
+      const loggedDates = await this.foodLogService.getFoodLogDatesByMonth(traineeId, monthDate);
+      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, { loggedDates });
+    } catch (error) {
+      next(error); 
+    }
+  }
+
+
   async createFoodLog(
     req: Request,
     res: Response,
@@ -78,7 +103,7 @@ export class FoodLogController implements IFoodLogController {
         new Types.ObjectId(userId),
         foodDescription,
         mealType,
-        selectedDate
+        new Date(selectedDate)
       );
       sendResponse(
         res,

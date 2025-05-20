@@ -10,7 +10,7 @@ export const foodLogSchema = z.object({
         (val) => val.length >= 3,
         "Food description must be at least 3 characters"
       ),
-  mealType: z.enum(["breakfast", "lunch", "dinner", "snacks", "other"], {
+  mealType: z.enum(["breakfast", "lunch", "dinner", "snacks"], {
     required_error: "Please select a meal type",
   }),
 });

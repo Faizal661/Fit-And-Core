@@ -20,6 +20,14 @@ router.get(
   (req, res, next) => foodLogController.getFoodLogsByDate(req, res, next)
 );
 
+router.get(
+  "/:traineeId/dates",
+  verifyAccessToken,
+  checkBlockedUser,
+  authorizeRoles(["user","trainer"]),
+  (req, res, next) => foodLogController.getFoodLogDatesByMonth(req, res, next)
+);
+
 router.post(
   "/",
   verifyAccessToken,

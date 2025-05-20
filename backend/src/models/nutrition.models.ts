@@ -15,7 +15,7 @@ const FoodLogSchema = new Schema<IFoodLogModel>(
     },
     mealType: {
       type: String,
-      enum: ["breakfast", "lunch", "dinner", "snacks", "other"],
+      enum: ["breakfast", "lunch", "dinner", "snacks"],
       required: true,
       index: true,
     },

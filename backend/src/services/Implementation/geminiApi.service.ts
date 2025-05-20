@@ -72,6 +72,12 @@ export class GeminiService {
           );
         }
         const parsedData = JSON.parse(cleanedText.trim());
+        if (Object.keys(parsedData).length === 0) {
+          throw new CustomError(
+            "Failed to extract food list from your input, Please try again ",
+            HttpResCode.INTERNAL_SERVER_ERROR
+          );
+        }
         return parsedData;
       } catch (parseError) {
         console.error("Error parsing Gemini response:", parseError);
@@ -89,26 +95,29 @@ export class GeminiService {
     }
   }
 
-  async getNutrition(foodDescription: string): Promise<NutritionData> {
+  async getNutrition(parsedFoodsData: parsedFoodsData[]): Promise<NutritionData> {
     try {
       const prompt = `
-        Extract the food items and their quantities from the following text, and then provide the total nutritional information (calories, protein, carbohydrates, fat, and fiber) for the meal.
-        If the quantity is not explicitly mentioned, assume a reasonable quantity. Provide the nutrition as a JSON object.
+        Extract the total nutritional information (calories, protein, carbohydrates, fat, and fiber) for the following list of food items and their quantities. Provide the nutrition as a JSON object. If a specific quantity is not provided for an item in the input array, assume a reasonable quantity.
 
-        Example:
-        Text: "I had 2 slices of pizza and a salad."
+        Input: 
+        [
+          { "name": "chicken", "quantity": "100 gm" },
+          { "name": "rice", "quantity": "1 cup cooked" },
+          { "name": "broccoli", "quantity": "1 cup" }
+        ]
         Output:
         {
-          "calories": 700,
-          "protein": 25,
-          "carbohydrates": 80,
-          "fat": 40, 
-          "fiber": 6
+          "calories": 350,
+          "protein": 35,
+          "carbohydrates": 45,
+          "fat": 10,
+          "fiber": 8
         }
 
-        Text: "${foodDescription}"
+        Input: "${JSON.stringify(parsedFoodsData)}"
         Output:
-      `;
+        `;
 
       const result = await this.model.generateContent({
         contents: [{ role: "user", parts: [{ text: prompt }] }],
@@ -127,9 +136,9 @@ export class GeminiService {
           HttpResCode.BAD_REQUEST
         );
         return {};
-    }
-    
-    const responseText = response.candidates[0].content.parts[0].text;
+      }
+      
+      const responseText = response.candidates[0].content.parts[0].text;
       try {
         const cleanedText = this.parseGeminiJSON(responseText);
         if (cleanedText === null) {

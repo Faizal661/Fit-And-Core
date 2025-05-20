@@ -9,4 +9,5 @@ export interface IFoodLogService {
     selectedDate:Date
   ): Promise<IFoodLogModel>;
   getFoodLogsByDate(userId: string, date: Date): Promise<IFoodLogModel[]>;
+  getFoodLogDatesByMonth(userId: string, monthDate: Date): Promise<string[]>;
 }
