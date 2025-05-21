@@ -62,4 +62,20 @@ router.patch(
   (req, res, next) => articleController.updateArticle(req, res, next)
 );
 
+router.get(
+  "/:articleId/upvoters",
+  verifyAccessToken,
+  checkBlockedUser,
+  authorizeRoles(["user","trainer"]),
+  (req, res, next) => articleController.getUpvotersByArticle(req, res, next)
+);
+
+router.delete(
+  '/:articleId', 
+  verifyAccessToken, 
+  checkBlockedUser,
+  authorizeRoles(['trainer', 'admin']),
+  (req, res, next) => articleController.deleteArticle(req, res, next)
+);
+
 export default router;

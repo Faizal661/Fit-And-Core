@@ -16,8 +16,9 @@ export const createTrainerArticle = async (data: ArticleFormData) => {
   return res.data;
 };
 
-
-export const getMyArticles = async (params: GetMyArticlesParams): Promise<MyArticlesResponse> => {
+export const getMyArticles = async (
+  params: GetMyArticlesParams
+): Promise<MyArticlesResponse> => {
   const res = await api.get(`/article/my-articles`, {
     params,
   });
@@ -54,10 +55,26 @@ export const fetchArticleById = async (articleId: string) => {
 export const updateTrainerArticle = async (
   data: ArticleFormData & { id: string }
 ) => {
-  const res = await api.patch(`/article/update-article/${data.id}`,data, {
+  const res = await api.patch(`/article/update-article/${data.id}`, data, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
   });
   return res.data;
 };
+
+export const fetchUpvotedUsers = async (
+  articleId: string,
+  page: number,
+  limit=5
+) => {
+  const res = await api.get(`/article/${articleId}/upvoters`, {
+    params: { page, limit },
+  });
+  return res.data;
+};
+
+export const deleteArticle = async (articleId:string)=>{
+  const res = await api.delete(`/article/${articleId}`);
+  return res.data;
+}
