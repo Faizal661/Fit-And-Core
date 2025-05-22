@@ -6,7 +6,7 @@ import {
   bookTrainerSlot,
 } from "../../../services/session/sessionService";
 import Footer from "../../../components/shared/Footer";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import {
   Calendar as CalendarIcon,

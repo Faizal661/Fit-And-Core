@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -111,7 +111,7 @@ const NutritionTrackingPage = () => {
     return days;
   };
 
-  const daysInMonth = getDaysInMonth(selectedMonth);
+  const daysInMonth = useMemo(() => getDaysInMonth(selectedMonth), [selectedMonth]);
 
   const isToday = (date: Date) => {
     const today = new Date();
@@ -154,6 +154,7 @@ const NutritionTrackingPage = () => {
   const { data: foodLogDates } = useQuery({
     queryKey: ["foodLogDates", userId, selectedMonth],
     queryFn: () => getFoodLogDatesByMonth(selectedMonth, userId),
+    staleTime: 5 * 60 * 1000,
   });
 
   

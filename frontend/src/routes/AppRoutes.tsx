@@ -4,9 +4,10 @@ import { RootState } from "../redux/store";
 import { lazy } from "react";
 import ProtectedRoutes from "./ProtectedRoutes";
 
-// shared component
+// 
 import PageNotFound from "../components/shared/PageNotFound";
 import PaymentSuccessPage from "../pages/shared/PaymentSuccessPage";
+import LandingPage from "../pages/user/LandingPage"
 
 // authentication
 const UserLogin = lazy(() => import("../pages/auth/signin/UserLogin"));
@@ -18,12 +19,11 @@ const ForgetPassword = lazy(() => import("../pages/auth/forgetPassword/EmailVeri
 const NewPassword = lazy(() => import("../pages/auth/forgetPassword/NewPassword"));
 
 // user
-import LandingPage from "../pages/user/LandingPage"
-import EditArticle from "../pages/article/trainer/EditArticle";
-import TraineeManagementPage from "../pages/trainer/trainee-management/TraineeManagementPage";
-import TraineeDetailsPage from "../pages/trainer/trainee-management/TraineeDetailsPage";
-import UserProgressionPage from "../pages/progress/UserProgressionPage";
-import UserNutritionTrackingPage from "../pages/nutrition/UserNutritionPage";
+const EditArticle = lazy(() => import("../pages/article/trainer/EditArticle"));
+const TraineeManagementPage = lazy(() => import("../pages/trainer/trainee-management/TraineeManagementPage"));
+const TraineeDetailsPage = lazy(() => import("../pages/trainer/trainee-management/TraineeDetailsPage"));
+const UserProgressionPage = lazy(() => import("../pages/progress/UserProgressionPage"));
+const UserNutritionTrackingPage = lazy(() => import("../pages/nutrition/UserNutritionPage"));
 const SessionManagementPage = lazy(() => import('../pages/session/trainer/SessionManagement'));
 const AvailabilitySetupPage = lazy(() => import('../pages/session/trainer/AvailabilitySetup'));
 const SlotManagementPage = lazy(() => import('../pages/session/trainer/SlotManagementPage'));

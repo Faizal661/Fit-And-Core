@@ -65,3 +65,8 @@ export interface UserBooking {
   slotStart: Date;
   selectedDate: Date;
 }
+
+export interface CancelBookingParams {
+  bookingId: string;
+  reason: string;
+}

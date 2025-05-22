@@ -40,7 +40,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import axios from "axios";
 import { getBMIClass } from "../../utils/getBmiClass";
-import { BmiCustomTooltip } from "../../components/shared/graph/BmiCustomToolTip"
+import { BmiCustomTooltip } from "../../components/shared/graph/BmiCustomToolTip";
 
 const fadeIn = {
   hidden: { opacity: 0, y: 20 },
@@ -63,8 +63,6 @@ const staggerContainer = {
     },
   },
 };
-
-
 
 const UserProgressionPage = () => {
   const userId = useSelector((state: RootState) => state.auth.user?.id || "");
@@ -114,7 +112,7 @@ const UserProgressionPage = () => {
 
   const onSubmit = (data: ProgressionFormData) => {
     setServerError("");
-    mutation.mutate(data);
+    mutation.mutate({ data, userId });
   };
 
   useEffect(() => {
@@ -548,4 +546,3 @@ const UserProgressionPage = () => {
 };
 
 export default UserProgressionPage;
-

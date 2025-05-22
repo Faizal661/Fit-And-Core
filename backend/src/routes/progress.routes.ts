@@ -12,20 +12,19 @@ const router = express.Router();
 const progressController =
   container.resolve<IProgressController>("ProgressController");
 
-router.get(
-  "/:traineeId",
+const userTrainerAccess = [
   verifyAccessToken,
   checkBlockedUser,
-  authorizeRoles(["user","trainer"]),
-  (req, res, next) => progressController.getMyProgressions(req, res, next)
-);
+  authorizeRoles(["user", "trainer"]),
+];
 
-router.post(
-  "/new-progress",
-  verifyAccessToken,
-  authorizeRoles(["user","trainer"]),
-  (req, res, next) => progressController.addNewProgress(req, res, next)
-);
-
+router
+  .route("/:traineeId")
+  .get(...userTrainerAccess, (req, res, next) =>
+    progressController.getMyProgressions(req, res, next)
+  )
+  .post(...userTrainerAccess, (req, res, next) =>
+    progressController.addNewProgress(req, res, next)
+  );
 
 export default router;
