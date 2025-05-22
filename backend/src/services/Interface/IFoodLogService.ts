@@ -10,4 +10,5 @@ export interface IFoodLogService {
   ): Promise<IFoodLogModel>;
   getFoodLogsByDate(userId: string, date: Date): Promise<IFoodLogModel[]>;
   getFoodLogDatesByMonth(userId: string, monthDate: Date): Promise<string[]>;
+  deleteFoodLog(foodLogId: string, userId: string): Promise<void>
 }

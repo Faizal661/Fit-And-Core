@@ -15,12 +15,17 @@ export const getFoodLogsByDate = async (
   traineeId: string
 ) => {
   const response = await api.get(
-    `/food-logs/${traineeId}?date=${selectedDate.toISOString()}`
+    `/food-logs/trainee/${traineeId}?date=${selectedDate.toISOString()}`
   );
   return response.data.foodLogs;
 };
 
 export const getFoodLogDatesByMonth = async (month:Date,traineeId:string) => {
-    const response = await api.get(`/food-logs/${traineeId}/dates?month=${month}`);
+    const response = await api.get(`/food-logs/trainee/${traineeId}/dates?month=${month}`);
     return response.data.loggedDates;
 };
+
+export const deleteFoodLog = async (foodLogId:string)=>{
+  const res = await api.delete(`/food-logs/${foodLogId}`);
+  return res.data;
+}

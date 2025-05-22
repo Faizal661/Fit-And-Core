@@ -222,4 +222,7 @@ export enum HttpResMsg {
   FAILED_ADD_PROGRESS_ADJACENT_ENTRY="You've already submitted your progress this week. Please try again after a few days.",
 
   TRAINEE_NOT_FOUND="Trainee details not found",
+
+  FOOD_LOG_NOT_FOUND = "Food log not found",
+  FOOD_LOG_ID_REQUIRED="Food log ID is required.",
 }

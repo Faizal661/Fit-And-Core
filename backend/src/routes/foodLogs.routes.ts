@@ -9,32 +9,44 @@ import { authorizeRoles } from "../middlewares/role-based-access-control.middlew
 import { IFoodLogController } from "../controllers/Interface/IFoodLogController";
 
 const router = express.Router();
-const foodLogController =
-  container.resolve<IFoodLogController>("FoodLogController");
+const foodLogController = container.resolve<IFoodLogController>("FoodLogController");
 
-router.get(
-  "/:traineeId",
+const userTrainerAccess = [
   verifyAccessToken,
   checkBlockedUser,
-  authorizeRoles(["user","trainer"]),
-  (req, res, next) => foodLogController.getFoodLogsByDate(req, res, next)
-);
+  authorizeRoles(["user", "trainer"])
+];
 
-router.get(
-  "/:traineeId/dates",
+const userOnlyAccess = [
   verifyAccessToken,
   checkBlockedUser,
-  authorizeRoles(["user","trainer"]),
-  (req, res, next) => foodLogController.getFoodLogDatesByMonth(req, res, next)
-);
+  authorizeRoles(["user"])
+];
 
-router.post(
-  "/",
-  verifyAccessToken,
-  checkBlockedUser,
-  authorizeRoles(["user"]),
-  (req, res, next) => foodLogController.createFoodLog(req, res, next)
-);
+// Base path: /api/food-logs
 
+router.route('/')
+  .post(
+    ...userOnlyAccess,
+    (req, res, next) => foodLogController.createFoodLog(req, res, next)
+  );
+
+router.route('/trainee/:traineeId')
+  .get(
+    ...userTrainerAccess,
+    (req, res, next) => foodLogController.getFoodLogsByDate(req, res, next)
+  );
+
+router.route('/trainee/:traineeId/dates')
+  .get(
+    ...userTrainerAccess,
+    (req, res, next) => foodLogController.getFoodLogDatesByMonth(req, res, next)
+  );
+
+router.route('/:foodLogId')
+  .delete(
+    ...userOnlyAccess,
+    (req, res, next) => foodLogController.deleteFoodLog(req, res, next)
+  );
 
 export default router;

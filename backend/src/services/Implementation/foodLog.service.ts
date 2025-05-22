@@ -122,12 +122,10 @@ export default class FoodLogService implements IFoodLogService {
       const foodLogs = await this.foodLogRepository.getByDateRange(userId, startDate, endDate);
 
       const loggedDates = new Set<string>();
-      console.log("🚀 ~ FoodLogService ~ loggedDates:", loggedDates)
       foodLogs.forEach(log => {
         const dateString = log.consumedAt.toISOString().split('T')[0];
         loggedDates.add(dateString);
       });
-      console.log("🚀 ~ FoodLogService ~ loggedDates: final ----->", loggedDates)
 
       return Array.from(loggedDates);
     } catch (error: any) {
@@ -140,5 +138,24 @@ export default class FoodLogService implements IFoodLogService {
         );
       }
     }
+  }
+
+  async deleteFoodLog(foodLogId: string, userId: string): Promise<void> {
+    const foodLogObjectId = new Types.ObjectId(foodLogId);
+    const userObjectId = new Types.ObjectId(userId);
+
+    const foodLog = await this.foodLogRepository.findById(foodLogObjectId);
+    if (!foodLog) {
+      throw new CustomError(
+        HttpResMsg.FOOD_LOG_NOT_FOUND,
+        HttpResCode.NOT_FOUND
+      );
+    }
+
+    if (foodLog.userId.toString() !== userObjectId.toString()) {
+      throw new CustomError(HttpResMsg.FORBIDDEN, HttpResCode.FORBIDDEN);
+    }
+
+    await this.foodLogRepository.delete(foodLogObjectId);
   }
 }

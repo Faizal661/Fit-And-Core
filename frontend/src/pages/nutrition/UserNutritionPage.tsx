@@ -15,9 +15,11 @@ import {
   Leaf,
   Beef,
   Wheat,
+  Trash2,
 } from "lucide-react";
 import {
   createNewFoodLog,
+  deleteFoodLog,
   getFoodLogDatesByMonth,
   getFoodLogsByDate,
 } from "../../services/nutrition/nutritionService";
@@ -26,6 +28,8 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import axios from "axios";
 import { IFoodLog, parsedFoodsData } from "../../types/nutrition.type";
+import ConfirmModal from "../../components/shared/ConfirmModal";
+import { useToast } from "../../context/ToastContext";
 
 // Animation variants
 const fadeIn = {
@@ -52,9 +56,12 @@ const staggerContainer = {
 
 const NutritionTrackingPage = () => {
   const queryClient = useQueryClient();
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [selectedDate, setSelectedDate] = useState<Date>(
+    new Date(new Date().toLocaleDateString())
+  );
   const [selectedMonth, setSelectedMonth] = useState<Date>(new Date());
   const [serverError, setServerError] = useState("");
+  const { showToast } = useToast();
   const userId = useSelector((state: RootState) => state.auth.user?.id || "");
   const [ref, inView] = useInView({
     triggerOnce: true,
@@ -88,7 +95,7 @@ const NutritionTrackingPage = () => {
     },
   });
 
-  // Calendar functions
+  // ------------------- Calendar functions
   const getDaysInMonth = (date: Date) => {
     const year = date.getFullYear();
     const month = date.getMonth();
@@ -120,7 +127,6 @@ const NutritionTrackingPage = () => {
     today.setHours(0, 0, 0, 0);
     return date < today;
   };
-
   // Navigation functions
   const previousMonth = () => {
     setSelectedMonth(
@@ -132,19 +138,26 @@ const NutritionTrackingPage = () => {
       new Date(selectedMonth.getFullYear(), selectedMonth.getMonth() + 1)
     );
   };
+  
+  const formatDate = (d: Date) => d.toISOString().split("T")[0];
 
+  //--------------------------
+
+  
+  // ------------- food logs of selected date
   const { data: foodLogs = [], isLoading } = useQuery({
     queryKey: ["foodLogs", selectedDate.toISOString()],
     queryFn: () => getFoodLogsByDate(selectedDate, userId),
   });
-
+ 
+  // -------------- food logs uploaded dates by month
   const { data: foodLogDates } = useQuery({
     queryKey: ["foodLogDates", userId, selectedMonth],
     queryFn: () => getFoodLogDatesByMonth(selectedMonth, userId),
   });
 
-  const formatDate = (d: Date) => d.toISOString().split("T")[0];
-
+  
+  // --------------- create new food log
   const mutation = useMutation({
     mutationFn: ({
       foodDescription,
@@ -173,6 +186,39 @@ const NutritionTrackingPage = () => {
     mutation.mutate({ ...data, selectedDate });
   };
 
+  // -------------- delete food log
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [selectedFoodLogId, setSelectedFoodLogId] = useState("");
+
+  const deleteFoodLogMutation = useMutation({
+    mutationFn: deleteFoodLog,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["foodLogs"] });
+      queryClient.invalidateQueries({ queryKey: ["foodLogDates"] });
+      showToast("success", "Food log deleted successfully!");
+      setShowDeleteConfirm(false);
+    },
+    onError: (error) => {
+      console.error("Failed to delete food log", error);
+      showToast("error", "Failed to delete food log.");
+      setShowDeleteConfirm(false);
+    },
+  });
+
+  const handleDeleteFoodLog = (foodLogId: string) => {
+    setShowDeleteConfirm(true);
+    setSelectedFoodLogId(foodLogId);
+  };
+  const handleConfirmDelete = () => {
+    deleteFoodLogMutation.mutate(selectedFoodLogId);
+  };
+  const handleCancelDelete = () => {
+    setShowDeleteConfirm(false);
+  };
+
+  //--------------------------------------
+
+  //----------- calculate daily total nutrtions 
   const calculateDailyTotals = (logs: IFoodLog[]) => {
     return logs?.reduce(
       (acc, log) => ({
@@ -194,6 +240,8 @@ const NutritionTrackingPage = () => {
   };
 
   const dailyTotals = calculateDailyTotals(foodLogs || []);
+
+  //-------------------------------
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 overflow-hidden">
@@ -410,7 +458,7 @@ const NutritionTrackingPage = () => {
               <div className="grid grid-cols-3 gap-4">
                 <div className="p-4 bg-yellow-100 rounded-xl">
                   <div className="flex items-center gap-2 text-sm text-gray-500 mb-1">
-                  <Utensils size={16} className="h-4 w-4 text-yellow-500"/>
+                    <Utensils size={16} className="h-4 w-4 text-yellow-500" />
                     <span>Calories</span>
                   </div>
                   <p className="text-xl font-bold">
@@ -420,7 +468,7 @@ const NutritionTrackingPage = () => {
 
                 <div className="p-4 bg-red-100 rounded-xl">
                   <div className="flex items-center gap-2 text-sm text-gray-500 mb-1">
-                  <Beef size={16} className="h-4 w-4 text-red-500"/>
+                    <Beef size={16} className="h-4 w-4 text-red-500" />
                     <span>Protein</span>
                   </div>
                   <p className="text-xl font-bold">
@@ -430,7 +478,7 @@ const NutritionTrackingPage = () => {
 
                 <div className="p-4 bg-amber-100 rounded-xl">
                   <div className="flex items-center gap-2 text-sm text-gray-500 mb-1">
-                  <Wheat size={16} className="h-4 w-4 text-amber-500"/>
+                    <Wheat size={16} className="h-4 w-4 text-amber-500" />
                     <span>Carbs</span>
                   </div>
                   <p className="text-xl font-bold">
@@ -440,7 +488,7 @@ const NutritionTrackingPage = () => {
 
                 <div className="p-4 bg-orange-100 rounded-xl">
                   <div className="flex items-center gap-2 text-sm text-gray-500 mb-1">
-                  <Utensils size={16} className="h-4 w-4 text-orange-500"/>
+                    <Utensils size={16} className="h-4 w-4 text-orange-500" />
                     <span>Fat</span>
                   </div>
                   <p className="text-xl font-bold">
@@ -450,7 +498,7 @@ const NutritionTrackingPage = () => {
 
                 <div className="p-4 bg-green-100 rounded-xl">
                   <div className="flex items-center gap-2 text-sm text-gray-500 mb-1">
-                  <Leaf size={16} className="h-4 w-4 text-green-500"/>
+                    <Leaf size={16} className="h-4 w-4 text-green-500" />
                     <span>Fiber</span>
                   </div>
                   <p className="text-xl font-bold">
@@ -481,6 +529,7 @@ const NutritionTrackingPage = () => {
                   <p className="text-gray-600">No food logs for this date</p>
                 </div>
               ) : (
+                // food logs
                 <div className="space-y-4 px-8 pb-8">
                   {foodLogs?.map((log: any) => (
                     <motion.div
@@ -496,6 +545,18 @@ const NutritionTrackingPage = () => {
                             {log.mealType}
                           </span>
                         </div>
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={(e: React.MouseEvent) => {
+                            e.stopPropagation();
+                            handleDeleteFoodLog(log._id);
+                          }}
+                          disabled={deleteFoodLogMutation.isPending}
+                          className=" p-1 text-blue-900 hover:text-black hover:bg-gray-300 rounded-full"
+                        >
+                          <Trash2 size={15} className="h-4 w-4 text-red-500" />
+                        </motion.button>
                       </div>
 
                       {/* Parsed Foods List */}
@@ -562,6 +623,16 @@ const NutritionTrackingPage = () => {
           </motion.div>
         </div>
       </div>
+      <ConfirmModal
+        type="warning"
+        title="Confirm Deletion"
+        message={`Are you sure you want to delete this food log? This action cannot be undone.`}
+        confirmText="Delete"
+        isOpen={showDeleteConfirm}
+        onClose={handleCancelDelete}
+        onConfirm={handleConfirmDelete}
+        isConfirming={deleteFoodLogMutation.isPending}
+      />
     </div>
   );
 };

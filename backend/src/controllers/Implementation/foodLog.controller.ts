@@ -115,4 +115,31 @@ export class FoodLogController implements IFoodLogController {
       next(error);
     }
   }
+
+  async deleteFoodLog(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const { foodLogId } = req.params;
+      if (!foodLogId) {
+        throw new CustomError(
+          HttpResMsg.FOOD_LOG_ID_REQUIRED,
+          HttpResCode.BAD_REQUEST
+        );
+      }
+      
+      const userId = req.decoded?.id;
+      if (!userId) {
+        sendResponse(res, HttpResCode.UNAUTHORIZED, HttpResMsg.UNAUTHORIZED);
+        return;
+      }
+      await this.foodLogService.deleteFoodLog(foodLogId, userId);
+
+      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
