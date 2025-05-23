@@ -7,7 +7,7 @@ export const getProgressionData = async (traineeId:string) => {
   return response.data.progressions;
 };
 
-export const newProgression = async (data: ProgressionFormData) => {
-  const response = await api.post(`/progress/new-progress`, data);
+export const newProgression = async ({data,userId}:{data: ProgressionFormData,userId:string}) => {
+  const response = await api.post(`/progress/${userId}`, data);
   return response.data;
 };

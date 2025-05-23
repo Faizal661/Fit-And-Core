@@ -18,3 +18,15 @@ export interface articleResponse {
   articles: IArticleModel[];
   total: number;
 }
+
+
+export interface UpvotedUsers {
+  _id: string;
+  username: string;
+  profilePicture?: string;
+}
+
+export interface FetchUpvotedUsersData {
+  users: UpvotedUsers[];
+  hasMore: boolean;
+}

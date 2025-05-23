@@ -44,7 +44,6 @@ export class ProgressController implements IProgressController {
   ): Promise<void> {
     try {
       const userId = req.decoded?.id;
-      console.log("🚀 ~ ProgressController ~ userId:", userId);
       if (!userId) {
         throw new CustomError(
           HttpResMsg.UNAUTHORIZED,
@@ -58,7 +57,6 @@ export class ProgressController implements IProgressController {
         height,
         weight
       );
-      console.log("🚀 ~ ProgressController ~ newProgression:", newProgression);
       sendResponse(
         res,
         HttpResCode.CREATED,

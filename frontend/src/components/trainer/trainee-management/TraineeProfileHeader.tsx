@@ -26,13 +26,9 @@ const TraineeProfileHeader = React.forwardRef<HTMLDivElement, TraineeProfileHead
           <motion.div variants={fadeIn} className="relative">
             <div className="w-32 h-32 rounded-xl overflow-hidden border-4 border-white/20 shadow-xl">
               <img
-                src={traineeData.profilePicture || "/default-profile.png"}
+                src={traineeData.profilePicture}
                 alt={traineeData.username}
                 className="w-full h-full object-cover"
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  target.src = "/default-profile.png";
-                }}
               />
             </div>
           </motion.div>

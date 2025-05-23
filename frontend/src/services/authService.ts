@@ -68,21 +68,8 @@ export const verifyGoogleToken = async (
 
 // Logout user
 export const logoutUser = async (): Promise<boolean> => {
-  try {
     await api.post(`/auth/logout`, {}, { withCredentials: true });
     return true;
-  } catch (error) {
-    throw error;
-  }
 };
 
-//trainer application
-export const submitTrainerApplication = async (data: FormData) => {
-  console.log("request send ", data);
-  const response = await api.post("/trainer/apply-trainer", data, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  });
-  return response.data;
-};
+

@@ -11,7 +11,7 @@ export const fetchTrainees = async ({
   search: string;
 }): Promise<PaginatedTraineesResult> => {
   const response = await api.get<PaginatedTraineesResult>(
-    "/trainer/my-trainees",
+    "/trainer/trainees",
     {
       params: { page, limit, search },
     }
@@ -19,9 +19,9 @@ export const fetchTrainees = async ({
   return response.data;
 };
 
-export const getTraineeData = async (traineeId: string): Promise<any> => {
+export const getTraineeData = async (traineeId: string)=> {
   const response = await api.get(
-    `/trainer/trainee/${traineeId}`
+    `/trainer/trainees/${traineeId}`
   );
   return response.data.result;
 };

@@ -6,4 +6,5 @@ export interface IUserRepository
   find(filter: FilterQuery<IUserModel>): Query<IUserModel[], IUserModel>;
   // Add countDocuments method
   countDocuments(filter: FilterQuery<IUserModel>): Promise<number>;
+
 }

@@ -52,3 +52,15 @@ export interface MyArticlesResponse {
   page: number;
   limit: number;
 }
+
+
+export interface UpvotedUsers {
+  _id: string;
+  username: string;
+  profilePicture?: string;
+}
+
+export interface FetchUpvotedUsersData {
+  users: UpvotedUsers[];
+  hasMore: boolean;
+}

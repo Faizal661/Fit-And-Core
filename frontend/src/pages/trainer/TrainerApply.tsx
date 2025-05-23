@@ -12,7 +12,7 @@ import {
   trainerApplySchema,
 } from "../../schemas/trainerSchema";
 import { useToast } from "../../context/ToastContext";
-import { submitTrainerApplication } from "../../services/authService";
+import { submitTrainerApplication } from "../../services/trainer/trainerService";
 import { checkTrainerApplicationStatus } from "../../services/trainer/trainerService";
 import Footer from "../../components/shared/Footer";
 import { ApplicationStatus } from "../../types/trainer.type";

@@ -186,5 +186,71 @@ export class ArticleController implements IArticleController {
       next(error);
     }
   }
+
+  async getUpvotersByArticle(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const { articleId } = req.params;
+
+      if (!articleId) {
+        throw new CustomError(
+          HttpResMsg.ARTICLE_ID_REQUIRED,
+          HttpResCode.BAD_REQUEST
+        );
+      }
+
+      const { page = 1, limit = 5 } = req.query;
+      const pageNum = parseInt(page as string, 10);
+      const limitNum = parseInt(limit as string, 10);
+      if (isNaN(pageNum) || isNaN(limitNum) || pageNum < 1 || limitNum < 1) {
+        throw new CustomError(
+          HttpResMsg.INVALID_PAGINATION,
+          HttpResCode.BAD_REQUEST
+        );
+      }
+      const { users, hasMore } = await this.articleService.getUpvotersByArticle(
+        articleId,
+        pageNum,
+        limitNum
+      );
+      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, {
+        users,
+        hasMore,
+        page: Number(page),
+        limit: Number(limit),
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async deleteArticle(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const { articleId } = req.params;
+      if (!articleId) {
+        throw new CustomError(
+          HttpResMsg.ARTICLE_ID_REQUIRED,
+          HttpResCode.BAD_REQUEST
+        );
+      }
+      
+      const userId = req.decoded?.id;
+      if (!userId) {
+        sendResponse(res, HttpResCode.UNAUTHORIZED, HttpResMsg.UNAUTHORIZED);
+        return;
+      }
+      await this.articleService.deleteArticle(articleId, userId);
+
+      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
-  
