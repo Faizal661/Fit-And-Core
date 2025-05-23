@@ -13,7 +13,7 @@ export const updateUserProfile = async (data: UserProfileFormData) => {
 };
 
 export const updateProfilePicture = async (formData: FormData) => {
-  const response = await api.put('/user/profile-picture', formData, {
+  const response = await api.patch('/user/profile-picture', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },

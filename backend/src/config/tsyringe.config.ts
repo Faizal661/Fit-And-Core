@@ -63,6 +63,15 @@ import { IProgressController } from "../controllers/Interface/IProgressControlle
 import { IProgressService } from "../services/Interface/IProgressService";
 import { IProgressRepository } from "../repositories/Interface/IProgressRepository";
 
+import { FoodLogController } from "../controllers/Implementation/foodLog.controller";
+import FoodLogService from "../services/Implementation/foodLog.service";
+import { FoodLogRepository } from "../repositories/Implementation/foodLog.respository";
+import { IFoodLogController } from "../controllers/Interface/IFoodLogController";
+import { IFoodLogService } from "../services/Interface/IFoodLogService";
+import { IFoodLogRepository } from "../repositories/Interface/IFoodLogRepository";
+import { IGeminiService } from "../services/Interface/IGeminiApiService";
+import { GeminiService } from "../services/Implementation/geminiApi.service";
+
 container.registerInstance('RedisClient', redisClient);
 
 container.register<IAuthController>('AuthController', { useClass: AuthController });
@@ -98,3 +107,8 @@ container.register<IBookingRepository>("BookingRepository", { useClass: BookingR
 container.register<IProgressController>("ProgressController", { useClass: ProgressController });
 container.register<IProgressService>("ProgressService", { useClass: ProgressService });
 container.register<IProgressRepository>("ProgressRepository", { useClass: ProgressRepository });
+
+container.register<IFoodLogController>("FoodLogController", { useClass: FoodLogController });
+container.register<IFoodLogService>("FoodLogService", { useClass: FoodLogService });
+container.register<IFoodLogRepository>("FoodLogRepository", { useClass: FoodLogRepository });
+container.register<IGeminiService>("GeminiService", { useClass: GeminiService });

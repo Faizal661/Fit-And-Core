@@ -1,5 +1,10 @@
 import { inject, injectable } from "tsyringe";
-import { IArticle, articleResponse } from "../../types/article.types";
+import {
+  FetchUpvotedUsersData,
+  IArticle,
+  UpvotedUsers,
+  articleResponse,
+} from "../../types/article.types";
 import { IArticleRepository } from "../../repositories/Interface/IArticleRepository";
 import { IArticleService } from "../Interface/IArticleService";
 import { IArticleModel } from "../../models/article.models";
@@ -31,9 +36,12 @@ export default class ArticleService implements IArticleService {
     return await this.articleRepository.create({ ...articleData, authorName });
   }
 
-  async updateArticle(id: string, articleData: Partial<IArticle>): Promise<IArticleModel | null> {
+  async updateArticle(
+    id: string,
+    articleData: Partial<IArticle>
+  ): Promise<IArticleModel | null> {
     return await this.articleRepository.update(new Types.ObjectId(id), {
-      ...articleData
+      ...articleData,
     });
   }
 
@@ -60,7 +68,7 @@ export default class ArticleService implements IArticleService {
     if (sortBy === "createdAt") {
       sortOptions.createdAt = -1;
     } else if (sortBy === "upvotes") {
-      sortOptions["upvotes"] = -1; 
+      sortOptions["upvotes"] = -1;
     }
 
     const [articles, total] = await Promise.all([
@@ -137,7 +145,10 @@ export default class ArticleService implements IArticleService {
       new Types.ObjectId(articleId)
     );
     if (!article) {
-      throw new CustomError(HttpResMsg.NOT_FOUND, HttpResCode.NOT_FOUND);
+      throw new CustomError(
+        HttpResMsg.ARTICLE_NOT_FOUND,
+        HttpResCode.NOT_FOUND
+      );
     }
 
     const isUpvoted = article.upvotes?.includes(userId);
@@ -157,5 +168,66 @@ export default class ArticleService implements IArticleService {
       new Types.ObjectId(articleId)
     );
     return updatedArticle!;
+  }
+
+  async getUpvotersByArticle(
+    articleId: string,
+    page: number,
+    limit: number
+  ): Promise<FetchUpvotedUsersData> {
+    const article = await this.articleRepository.findById(
+      new Types.ObjectId(articleId)
+    );
+    if (!article) {
+      throw new CustomError(
+        HttpResMsg.ARTICLE_NOT_FOUND,
+        HttpResCode.NOT_FOUND
+      );
+    }
+    const allUpvoterIds = article.upvotes || [];
+    const totalUpvotes = allUpvoterIds.length;
+
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+    const paginatedUpvoterIds = allUpvoterIds.slice(startIndex, endIndex);
+
+    if (paginatedUpvoterIds.length === 0) {
+      return { users: [], hasMore: false };
+    }
+
+    const queryFilter = {
+      _id: { $in: paginatedUpvoterIds.map((id) => new Types.ObjectId(id)) },
+    };
+
+    const upvoterUserDetails = await this.userRepository.find(queryFilter);
+
+    const hasMore = totalUpvotes > endIndex;
+
+    const users: UpvotedUsers[] = upvoterUserDetails.map((user) => ({
+      _id: user.id.toString(),
+      username: user.username,
+      profilePicture: user.profilePicture,
+    }));
+
+    return { users, hasMore };
+  }
+
+  async deleteArticle(articleId: string, userId: string): Promise<void> {
+    const articleObjectId = new Types.ObjectId(articleId);
+    const userObjectId = new Types.ObjectId(userId);
+
+    const article = await this.articleRepository.findById(articleObjectId);
+    if (!article) {
+      throw new CustomError(
+        HttpResMsg.ARTICLE_NOT_FOUND,
+        HttpResCode.NOT_FOUND
+      );
+    }
+
+    if (article.createdBy.toString() !== userObjectId.toString()) {
+      throw new CustomError(HttpResMsg.FORBIDDEN, HttpResCode.FORBIDDEN);
+    }
+
+    await this.articleRepository.delete(articleObjectId);
   }
 }

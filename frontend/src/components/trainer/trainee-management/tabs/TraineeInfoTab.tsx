@@ -15,7 +15,7 @@ const TraineeInfoTab = ({ traineeData }: TraineeInfoTabProps) => {
       className="space-y-8"
     >
       {/* Physical Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="p-6 bg-gray-50 rounded-xl">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
@@ -59,7 +59,7 @@ const TraineeInfoTab = ({ traineeData }: TraineeInfoTabProps) => {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* Fitness Goals - Uncomment when needed
       <div>

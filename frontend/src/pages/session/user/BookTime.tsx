@@ -6,7 +6,7 @@ import {
   bookTrainerSlot,
 } from "../../../services/session/sessionService";
 import Footer from "../../../components/shared/Footer";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import {
   Calendar as CalendarIcon,
@@ -23,6 +23,7 @@ import { ERR_MESSAGES } from "../../../constants/messages/error.messages";
 import PageNotFound from "../../../components/shared/PageNotFound";
 import { REDIRECT_MESSAGES } from "../../../constants/messages/redirect.messages";
 import { ISlot } from "../../../types/session.type";
+import ConfirmModal from "../../../components/shared/ConfirmModal";
 
 const fadeIn = {
   hidden: { opacity: 0, y: 20 },
@@ -46,7 +47,6 @@ const staggerContainer = {
   },
 };
 
-
 const BookTime = () => {
   const { trainerId } = useParams();
   const queryClient = useQueryClient();
@@ -61,8 +61,9 @@ const BookTime = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(initialDate);
 
   const [showConfirmModal, setShowConfirmModal] = useState(false);
-  const [slotToBookDetails, setSlotToBookDetails] =
-    useState<ISlot | null>(null);
+  const [slotToBookDetails, setSlotToBookDetails] = useState<ISlot | null>(
+    null
+  );
 
   const getNextSevenDays = () => {
     const today = new Date();
@@ -370,93 +371,31 @@ const BookTime = () => {
         </motion.div>
       </div>
 
-      <AnimatePresence>
-        {showConfirmModal && slotToBookDetails && (
-          <motion.div
-            className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            <motion.div
-              className="bg-white rounded-xl p-6 w-full max-w-md shadow-xl"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.2 }}
-            >
-              <div className="flex justify-between items-center mb-5">
-                <h2 className="text-xl font-bold text-gray-800">
-                  Confirm Booking
-                </h2>
-                <button
-                  onClick={cancelBooking}
-                  className="p-2 rounded-full hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-200"
-                  aria-label="Close"
-                >
-                  <X size={18} className="text-gray-500" />
-                </button>
-              </div>
-
-              <div className="bg-blue-50 rounded-lg p-4 mb-5">
-                <p className="text-gray-700">
-                  You're booking a slot from{" "}
-                  <span className="font-semibold text-blue-700">
-                    {slotToBookDetails.startTime}
-                  </span>{" "}
-                  to{" "}
-                  <span className="font-semibold text-blue-700">
-                    {slotToBookDetails.endTime}
-                  </span>
-                </p>
-              </div>
-
-              <div className="flex justify-end space-x-3">
-                <button
-                  onClick={cancelBooking}
-                  className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg border border-gray-300 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-colors"
-                  disabled={bookSlotMutation.isPending}
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={confirmBooking}
-                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-70 transition-colors flex items-center justify-center min-w-24"
-                  disabled={bookSlotMutation.isPending}
-                >
-                  {bookSlotMutation.isPending ? (
-                    <>
-                      <svg
-                        className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        ></circle>
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
-                      </svg>
-                      Booking...
-                    </>
-                  ) : (
-                    "Confirm"
-                  )}
-                </button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <ConfirmModal
+        isOpen={showConfirmModal && !!slotToBookDetails}
+        onClose={cancelBooking}
+        title="Confirm Booking"
+        message={
+          slotToBookDetails ? (
+            <>
+              You're booking a slot from{" "}
+              <span className="font-semibold text-blue-700">
+                {slotToBookDetails.startTime}
+              </span>{" "}
+              to{" "}
+              <span className="font-semibold text-blue-700">
+                {slotToBookDetails.endTime}
+              </span>
+            </>
+          ) : (
+            "Are you sure you want to book this slot?"
+          )
+        }
+        confirmText="Confirm"
+        onConfirm={confirmBooking}
+        isConfirming={bookSlotMutation.isPending}
+        type="success"
+      />
 
       <Footer />
     </div>

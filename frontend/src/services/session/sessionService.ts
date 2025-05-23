@@ -1,5 +1,6 @@
 import api from "../../config/axios.config";
 import {
+  CancelBookingParams,
   GroupedAvailability,
   IAvailability,
   ICreateAvailabilityParams,
@@ -7,40 +8,35 @@ import {
   UserBooking,
 } from "../../types/session.type";
 
-//  ----- availabilities
+//  -----       availabilities
 
 export const createAvailability = async (data: ICreateAvailabilityParams) => {
-  const response = await api.post(`/session/create-availability`, data);
+  const response = await api.post(`/session/availabilities`, data);
   return response.data;
 };
+
+export const getTrainerAvailabilities =
+  async (): Promise<GroupedAvailability> => {
+    const response = await api.get(`/session/availabilities`);
+    return response.data.groupedAvailabilities;
+  };
 
 export const getTrainerAvailabilityByDate = async (
   date: string
 ): Promise<IAvailability[]> => {
   const response = await api.get(
-    `/session/get-availability-by-date?date=${date}`
+    `/session/availabilities/by-date?date=${date}`
   );
   return response.data.availabilities;
 };
 
-export const getTrainerAvailabilities =
-  async (): Promise<GroupedAvailability> => {
-    const response = await api.get(`/session/get-my-availabilities`);
-    return response.data.groupedAvailabilities;
-  };
-
-export const getTrainerBookings = async (): Promise<any> => {
-  const response = await api.get(`/session/bookings`);
-  return response.data.upcomingBookings;
-};
-
-// ------ slots
+// ---------------  slots
 
 export const getTrainerSlotsByDate = async (
   trainerId: string,
   date: string
 ): Promise<ISlot[]> => {
-  const response = await api.get(`/session/get-trainer-slots-by-date`, {
+  const response = await api.get(`/session/slots/by-date`, {
     params: {
       trainerId: trainerId,
       date: date,
@@ -50,19 +46,25 @@ export const getTrainerSlotsByDate = async (
 };
 
 export const bookTrainerSlot = async ({ slotId }: { slotId: string }) => {
-  const response = await api.post(`/session/book-slot`, { slotId });
+  const response = await api.post(`/session/slots/book`, { slotId });
   return response.data;
 };
 export const cancelTrainerSlot = async ({ slotId }: { slotId: string }) => {
-  const response = await api.put(`/session/cancel-slot`, { slotId });
+  const response = await api.patch(`/session/slots/cancel`, { slotId });
   return response.data;
 };
 
-// user Side
+// --------------    Bookings
+
+export const getTrainerBookings = async () => {
+  const response = await api.get(`/session/bookings`);
+  return response.data.upcomingBookings;
+};
+
 export const getUserBookings = async (
   trainerId: string
 ): Promise<UserBooking[]> => {
-  const response = await api.get(`/session/user-all-bookings`, {
+  const response = await api.get(`/session/bookings/user`, {
     params: {
       trainerId: trainerId,
     },
@@ -70,28 +72,18 @@ export const getUserBookings = async (
   return response.data.data;
 };
 
-export const userCancelBooking = async ({
-  bookingId,
-  reason,
-}: {
-  bookingId: string;
-  reason: string;
-}) => {
-  const response = await api.put("/session/user-cancel-booking", {
+export const userCancelBooking = async (params: CancelBookingParams) => {
+  const { bookingId, reason } = params;
+  const response = await api.patch("/session/bookings/user/cancel", {
     bookingId,
     reason,
   });
   return response.data;
 };
 
-export const trainerCancelBooking = async ({
-  bookingId,
-  reason,
-}: {
-  bookingId: string;
-  reason: string;
-}) => {
-  const response = await api.put("/session/trainer-cancel-booking", {
+export const trainerCancelBooking = async (params: CancelBookingParams) => {
+  const { bookingId, reason } = params;
+  const response = await api.patch("/session/bookings/trainer/cancel", {
     bookingId,
     reason,
   });

@@ -64,8 +64,6 @@ const staggerContainer = {
   },
 };
 
-
-
 const UserProgressionPage = () => {
   const userId = useSelector((state: RootState) => state.auth.user?.id || "");
   const queryClient = useQueryClient();
@@ -114,7 +112,7 @@ const UserProgressionPage = () => {
 
   const onSubmit = (data: ProgressionFormData) => {
     setServerError("");
-    mutation.mutate(data);
+    mutation.mutate({ data, userId });
   };
 
   useEffect(() => {
@@ -548,4 +546,3 @@ const UserProgressionPage = () => {
 };
 
 export default UserProgressionPage;
-

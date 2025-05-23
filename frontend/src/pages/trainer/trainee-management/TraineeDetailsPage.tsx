@@ -122,14 +122,14 @@ const TraineeDetailsPage = () => {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-6xl mx-auto px-6 -mt-16 relative z-10">
+      <div className="max-w-6xl mx-auto px-6 -mt-14 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="bg-white rounded-xl shadow-xl overflow-hidden"
         >
           {/* Navigation Tabs */}
-          <div className="flex border-b border-gray-100 overflow-x-auto">
+          <div className="flex border-b border-gray-100 overflow-x-auto ">
             <TabButton
               icon={<User size={18} />}
               label="Basic Information"
@@ -160,7 +160,7 @@ const TraineeDetailsPage = () => {
             />
           </div>
 
-          <div className="p-8">
+          <div className="p-8 bg-gradient-to-r from-blue-600/20 to-purple-600/20 ">
             {activeTab === "info" && (
               <TraineeInfoTab traineeData={traineeData} />
             )}

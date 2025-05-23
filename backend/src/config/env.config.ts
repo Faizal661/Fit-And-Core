@@ -284,4 +284,15 @@ export const env = {
     }
     return process.env.STRIPE_WEBHOOK_SECRET;
   },
+
+  get GEMINI_API_KEY(): string {
+    if (!process.env.GEMINI_API_KEY) {
+      throw new CustomError(
+        EnvErrMsg.GEMINI_API_KEY_UNDEFINED,
+        HttpResCode.INTERNAL_SERVER_ERROR
+      );
+    }
+    return process.env.GEMINI_API_KEY;
+  },
+  
 };

@@ -10,56 +10,81 @@ import { checkBlockedUser } from "../middlewares/check-blocked-user.middleware";
 import { authorizeRoles } from "../middlewares/role-based-access-control.middleware";
 
 const router = express.Router();
-const articleController =
-  container.resolve<IArticleController>("ArticleController");
+const articleController = container.resolve<IArticleController>("ArticleController");
 
-router.post(
-  "/create-article",
+const trainerAccess = [
   verifyAccessToken,
   checkBlockedUser,
-  authorizeRoles(["trainer"]),
-  upload.single("thumbnail"),
-  (req, res, next) => articleController.createArticle(req, res, next)
-);
+  authorizeRoles(["trainer"])
+];
 
-router.get(
-  "/my-articles",
+const userTrainerAccess = [
   verifyAccessToken,
   checkBlockedUser,
-  authorizeRoles(["trainer"]),
-  (req, res, next) => articleController.getMyArticles(req, res, next)
-);
+  authorizeRoles(["user", "trainer"])
+];
 
-router.get(
-  "/all-articles",
+const userAccess = [
   verifyAccessToken,
   checkBlockedUser,
-  authorizeRoles(["user"]),
-  (req, res, next) => articleController.getAllArticles(req, res, next)
-);
+  authorizeRoles(["user"])
+];
 
-router.post(
-  "/:articleId/upvote",
-  verifyAccessToken,
-  authorizeRoles(["user","trainer"]),
-  (req, res, next) => articleController.upvoteArticle(req, res, next)
-);
-
-router.get(
-  "/:articleId",
+const trainerAdminAccess = [
   verifyAccessToken,
   checkBlockedUser,
-  authorizeRoles(["user","trainer"]),
-  (req, res, next) => articleController.getArticleById(req, res, next)
-);
+  authorizeRoles(["trainer", "admin"])
+];
 
-router.patch(
-  "/update-article/:articleId",
-  verifyAccessToken,
-  checkBlockedUser,
-  authorizeRoles(["trainer"]),
-  upload.single("thumbnail"),
-  (req, res, next) => articleController.updateArticle(req, res, next)
-);
+const uploadThumbnail = upload.single("thumbnail");
+
+// Base path: /api/articles
+
+
+// Article collection routes
+router.route('/')
+  .post(
+    ...trainerAccess,
+    uploadThumbnail,
+    (req, res, next) => articleController.createArticle(req, res, next)
+  )
+  .get(
+    ...userAccess,
+    (req, res, next) => articleController.getAllArticles(req, res, next)
+  );
+
+// My articles 
+router.route('/mine')
+  .get(
+    ...trainerAccess,
+    (req, res, next) => articleController.getMyArticles(req, res, next)
+  );
+
+// Specific article routes
+router.route('/:articleId')
+  .get(
+    ...userTrainerAccess,
+    (req, res, next) => articleController.getArticleById(req, res, next)
+  )
+  .patch(
+    ...trainerAccess,
+    uploadThumbnail,
+    (req, res, next) => articleController.updateArticle(req, res, next)
+  )
+  .delete(
+    ...trainerAdminAccess,
+    (req, res, next) => articleController.deleteArticle(req, res, next)
+  );
+
+// Article interactions (upvote)
+router.route('/:articleId/upvotes')
+  .post(
+    ...userTrainerAccess,
+    (req, res, next) => articleController.upvoteArticle(req, res, next)
+  )
+  .get(
+    ...userTrainerAccess,
+    (req, res, next) => articleController.getUpvotersByArticle(req, res, next)
+  );
 
 export default router;

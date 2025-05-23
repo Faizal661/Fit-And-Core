@@ -1,14 +1,13 @@
 import { useState, FormEvent } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
-  User,
-  UsersResponse,
   fetchUsers,
   toggleBlockStatus,
 } from "../../services/admin/userManagement";
 import Footer from "../../components/shared/Footer";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
+import { UserResponse, UsersResponse } from "../../types/user.type";
 
 const fadeIn = {
   hidden: { opacity: 0, y: 10 },
@@ -36,7 +35,7 @@ const UserManagement = () => {
   const [activePage, setActivePage] = useState<number>(1);
   const [recordsPerPage, setRecordsPerPage] = useState<number>(10);
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [selectedUser, setSelectedUser] = useState<UserResponse | null>(null);
 
   const queryClient = useQueryClient();
 
@@ -52,7 +51,7 @@ const UserManagement = () => {
   });
 
   const mutation = useMutation<
-    User,
+    UserResponse,
     Error,
     { userId: string; isBlocked: boolean }
   >({
@@ -73,7 +72,7 @@ const UserManagement = () => {
     mutation.mutate({ userId, isBlocked });
   };
 
-  const openDetailsModal = (user: User) => setSelectedUser(user);
+  const openDetailsModal = (user: UserResponse) => setSelectedUser(user);
   const closeModal = () => setSelectedUser(null);
 
   const totalPages = data ? Math.ceil(data.total / recordsPerPage) : 1;
@@ -277,13 +276,11 @@ const UserManagement = () => {
         {selectedUser && (
           <motion.div
             className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50"
-            initial={{ opacity: 0}}
+            initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <motion.div
-              className="bg-white rounded-lg w-full max-w-3xl overflow-hidden shadow-lg"
-            >
+            <motion.div className="bg-white rounded-lg w-full max-w-3xl overflow-hidden shadow-lg">
               <div className="flex justify-between items-center px-6 py-4 bg-purple-600 text-white">
                 <h2 className="text-xl font-semibold">User Details</h2>
                 <button

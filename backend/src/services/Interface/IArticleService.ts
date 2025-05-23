@@ -1,6 +1,6 @@
 import { Types } from "mongoose";
 import { IArticleModel } from "../../models/article.models";
-import { IArticle, articleResponse } from "../../types/article.types";
+import { FetchUpvotedUsersData, IArticle, articleResponse } from "../../types/article.types";
 
 export interface IArticleService {
   createArticle(articleData: IArticle): Promise<IArticleModel>;
@@ -20,4 +20,10 @@ export interface IArticleService {
   ): Promise<articleResponse>;
   getArticleById(articleId: string): Promise<IArticleModel | null>;
   toggleUpvote(articleId: string, userId: string): Promise<IArticleModel>;
+  getUpvotersByArticle(
+    articleId:string,
+    page: number,
+    limit: number,
+  ): Promise<FetchUpvotedUsersData>;
+  deleteArticle(articleId: string, userId: string): Promise<void>
 }

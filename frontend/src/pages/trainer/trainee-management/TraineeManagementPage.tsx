@@ -602,9 +602,9 @@ const TraineeManagementPage = () => {
                           "/api/placeholder/150/150"
                         } // Fallback placeholder
                         alt={selectedTrainee.username}
-                        className="w-32 h-32 rounded-full object-cover ring-4 ring-purple-300 shadow-lg mb-3"
+                        className="w-32 h-32 rounded-4xl object-cover ring-4 ring-purple-300 shadow-lg mb-3"
                       />
-                      <h3 className="text-xl font-semibold text-purple-700">
+                      <h3 className="text-xl font-semibold ">
                         {selectedTrainee.username}
                       </h3>
                       <p className="text-sm text-gray-600">
@@ -613,7 +613,7 @@ const TraineeManagementPage = () => {
                     </div>
 
                     <div>
-                      <h4 className="text-lg font-semibold text-purple-700 mb-3 flex items-center">
+                      <h4 className="text-lg font-semibold mb-3 flex items-center">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           className="h-5 w-5 mr-2 text-purple-600"
@@ -666,7 +666,7 @@ const TraineeManagementPage = () => {
 
                   {/* Right Column: Subscription History */}
                   <div className="lg:col-span-2">
-                    <h4 className="text-lg font-semibold text-purple-700 mb-3 flex items-center">
+                    <h4 className="text-lg font-semibold  mb-3 flex items-center">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         className="h-5 w-5 mr-2 text-purple-600"
@@ -692,7 +692,7 @@ const TraineeManagementPage = () => {
                           >
                             <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
                               <div>
-                                <span className="font-semibold text-purple-700">
+                                <span className="font-semibold ">
                                   Plan:
                                 </span>
                                 <span className="ml-1 text-gray-700">
@@ -700,7 +700,7 @@ const TraineeManagementPage = () => {
                                 </span>
                               </div>
                               <div>
-                                <span className="font-semibold text-purple-700">
+                                <span className="font-semibold ">
                                   Amount:
                                 </span>
                                 <span className="ml-1 text-gray-700">
@@ -708,7 +708,7 @@ const TraineeManagementPage = () => {
                                 </span>
                               </div>
                               <div>
-                                <span className="font-semibold text-purple-700">
+                                <span className="font-semibold ">
                                   Status:
                                 </span>
                                 <span
@@ -722,7 +722,7 @@ const TraineeManagementPage = () => {
                               <div>
                               </div>
                               <div>
-                                <span className="font-semibold text-purple-700">
+                                <span className="font-semibold">
                                   Starts:
                                 </span>
                                 <span className="ml-1 text-gray-700">
@@ -731,7 +731,7 @@ const TraineeManagementPage = () => {
                               </div>
                               {sub.expiryDate && (
                                 <div>
-                                  <span className="font-semibold text-purple-700">
+                                  <span className="font-semibold">
                                     Expires:
                                   </span>
                                   <span className="ml-1 text-gray-700">
