@@ -21,10 +21,12 @@ import {
 } from "../../../services/session/sessionService";
 import Footer from "../../../components/shared/Footer";
 import { useInView } from "react-intersection-observer";
-import { IAvailability } from "../../../types/session.type";
+import { IAvailability, UserBooking } from "../../../types/session.type";
 import { useToast } from "../../../context/ToastContext";
 import { STATUS } from "../../../constants/messages/status.messages";
 import axios from "axios";
+import { BookingModal } from "../../../components/shared/modal/BookingModal ";
+import { CancelBookingModal } from "../../../components/shared/modal/CancelBookingModal";
 
 const fadeIn = {
   hidden: { opacity: 0, y: 20 },
@@ -50,9 +52,11 @@ const staggerContainer = {
 
 const SessionManagementPage = () => {
   const [showCancelModal, setShowCancelModal] = useState(false);
-  const [cancelReason, setCancelReason] = useState("");
-  const [reasonError, setReasonError] = useState("");
-  const [selectedBookingId, setSelectedBookingId] = useState("");
+  const [selectedBooking, setSelectedBooking] = useState<UserBooking | null>(
+    null
+  );
+  const [bookingIdToCancel, setBookingIdToCancel] = useState<string>("");
+
   const { showToast } = useToast();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -73,7 +77,6 @@ const SessionManagementPage = () => {
     data: bookings = [],
     isLoading: isLoadingBookings,
     isError: isErrorBookings,
-    // error: bookingsError,
   } = useQuery({
     queryKey: ["trainerUpcomingBookingsList"],
     queryFn: getTrainerBookings,
@@ -83,7 +86,7 @@ const SessionManagementPage = () => {
     mutationFn: trainerCancelBooking,
     onSuccess: () => {
       setShowCancelModal(false);
-      setCancelReason("");
+      setBookingIdToCancel("");
       queryClient.invalidateQueries({
         queryKey: ["trainerUpcomingBookingsList"],
       });
@@ -98,36 +101,35 @@ const SessionManagementPage = () => {
     },
   });
 
+  const handleViewBooking = (bookingId: string) => {
+    const booking = bookings.find((b) => b._id === bookingId);
+    if (booking) {
+      setSelectedBooking(booking);
+    }
+  };
+
   const handleCancelClick = (bookingId: string) => {
-    setSelectedBookingId(bookingId);
+    setBookingIdToCancel(bookingId);
     setShowCancelModal(true);
-    setReasonError("");
   };
 
   const closeModal = () => {
     setShowCancelModal(false);
-    setCancelReason("");
-    setReasonError("");
+    setSelectedBooking(null);
   };
 
-  const handleCancelSubmit = () => {
-    if (!cancelReason.trim()) {
-      setReasonError("Please provide a reason for cancellation");
-      return;
-    }
+  const handleCancelSubmit = async (reason: string) => {
+    if (!bookingIdToCancel) return;
 
     cancelBookingMutation.mutate({
-      bookingId: selectedBookingId,
-      reason: cancelReason,
+      bookingId: bookingIdToCancel,
+      reason,
     });
   };
 
   const handleAddAvailability = () => navigate("/trainer/availability-setup");
 
   const handleSlots = () => navigate("/trainer/slot-management");
-
-  const handleViewBooking = (bookingId: string) =>
-    navigate(`/trainer/session/${bookingId}`);
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 overflow-hidden">
@@ -192,7 +194,7 @@ const SessionManagementPage = () => {
               </div>
             ) : bookings && bookings.length > 0 ? (
               <div className="space-y-4">
-                {bookings.map((booking: any) => (
+                {bookings.map((booking: UserBooking) => (
                   <motion.div
                     key={booking._id}
                     whileHover={{ y: -5 }}
@@ -205,14 +207,6 @@ const SessionManagementPage = () => {
                             src={booking.trainee.profilePicture}
                             alt={`${booking.trainee.username}'s profile`}
                             className="w-full h-full object-cover"
-                            onError={(e) => {
-                              const target = e.target as HTMLImageElement;
-                              target.onerror = null;
-                              const parent = target.parentElement;
-                              if (parent) {
-                                target.style.display = "none";
-                              }
-                            }}
                           />
                         ) : (
                           <Clock className="text-blue-600" size={24} />
@@ -326,55 +320,20 @@ const SessionManagementPage = () => {
             )}
           </div>
 
-          {showCancelModal && (
-            <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 h-screen">
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="bg-white rounded-lg p-6 w-full max-w-md shadow-xl"
-              >
-                <h2 className="text-xl font-semibold mb-4">Cancel Booking</h2>
-                <p className="mb-4 text-gray-600">
-                  Please provide a reason for cancellation:
-                </p>
-                <textarea
-                  value={cancelReason}
-                  onChange={(e) => setCancelReason(e.target.value)}
-                  className="w-full p-3 border border-gray-200 rounded-lg min-h-[120px] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
-                  placeholder="Enter cancellation reason..."
-                />
-                {reasonError && (
-                  <p className="text-red-600 text-sm mt-1">{reasonError}</p>
-                )}
-                <div className="mt-6 flex justify-end space-x-3">
-                  <motion.button
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.97 }}
-                    onClick={closeModal}
-                    className="px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 font-medium text-gray-700 transition-all"
-                  >
-                    Cancel
-                  </motion.button>
-                  <motion.button
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.97 }}
-                    onClick={handleCancelSubmit}
-                    className="px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-lg font-medium shadow-sm hover:shadow-md transition-all"
-                    disabled={cancelBookingMutation.isPending}
-                  >
-                    {cancelBookingMutation.isPending ? (
-                      <div className="flex items-center space-x-2">
-                        <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
-                        <span>Submitting...</span>
-                      </div>
-                    ) : (
-                      "Confirm Cancel"
-                    )}
-                  </motion.button>
-                </div>
-              </motion.div>
-            </div>
-          )}
+          {/* view detials of booking modal */}
+          <BookingModal
+            booking={selectedBooking}
+            onClose={closeModal}
+            currentUserType="trainer"
+          />
+          
+          {/* cancel booking modal */}
+          <CancelBookingModal
+            isOpen={showCancelModal}
+            onClose={() => setShowCancelModal(false)}
+            onSubmit={handleCancelSubmit}
+            isLoading={cancelBookingMutation.isPending}
+          />
 
           {/* Availability Section */}
           <div>

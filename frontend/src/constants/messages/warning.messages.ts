@@ -1,4 +1,4 @@
-export enum WARNING_MESSAGES {
+export const enum WARNING_MESSAGES {
   USETOAST_WARNING = "useToast must be used within a ToastProvider",
 
   TRAINER_APPLICATION_REJECTED = "Previous Application Rejected , Please address the issue and apply again. ",

@@ -50,6 +50,11 @@ interface TraineeDetails {
   username: string;
   profilePicture: string;
 }
+interface TrainerDetails {
+  _id: string;
+  username: string;
+  profilePicture: string;
+}
 interface SlotDetails {
   _id: string;
   startTime: string;
@@ -62,6 +67,7 @@ export interface UserBooking {
   notes?: string;
   slotDetails: SlotDetails;
   trainee: TraineeDetails;
+  trainer:TrainerDetails,
   slotStart: Date;
   selectedDate: Date;
 }

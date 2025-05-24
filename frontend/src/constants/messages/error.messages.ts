@@ -1,4 +1,4 @@
-export enum ERR_MESSAGES {
+export const enum ERR_MESSAGES {
   CAUGHT_ERROR = "Caught an error:",
   SOMETHING_WENT_WRONG = "Oops! Something went wrong.",
   UNEXPECTED_ISSUE_TRY_AGAIN = "We've encountered an unexpected issue . Please try again later.",

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
@@ -23,7 +24,7 @@ import { ERR_MESSAGES } from "../../../constants/messages/error.messages";
 import PageNotFound from "../../../components/shared/PageNotFound";
 import { REDIRECT_MESSAGES } from "../../../constants/messages/redirect.messages";
 import { ISlot } from "../../../types/session.type";
-import ConfirmModal from "../../../components/shared/ConfirmModal";
+import ConfirmModal from "../../../components/shared/modal/ConfirmModal";
 
 const fadeIn = {
   hidden: { opacity: 0, y: 20 },

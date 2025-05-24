@@ -14,7 +14,7 @@ import { formatDate } from "../../../utils/dateFormat";
 import { ERR_MESSAGES } from "../../../constants/messages/error.messages";
 import { motion } from "framer-motion";
 import { useToast } from "../../../context/ToastContext";
-import ConfirmModal from "../ConfirmModal";
+import ConfirmModal from "../modal/ConfirmModal";
 
 export const ArticleCard = ({
   article,

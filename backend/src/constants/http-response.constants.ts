@@ -1,4 +1,4 @@
-export enum HttpResCode {
+export const enum HttpResCode {
   OK = 200,
   CREATED = 201,
   ACCEPTED = 202,
@@ -62,7 +62,7 @@ export enum HttpResCode {
   NETWORK_AUTHENTICATION_REQUIRED = 511,
 }
 
-export enum HttpResMsg {
+export const enum HttpResMsg {
   SUCCESS = "Operation successful",
   CREATED = "Resource successfully created",
   ACCEPTED = "Request accepted",

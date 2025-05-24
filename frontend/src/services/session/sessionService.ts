@@ -56,7 +56,7 @@ export const cancelTrainerSlot = async ({ slotId }: { slotId: string }) => {
 
 // --------------    Bookings
 
-export const getTrainerBookings = async () => {
+export const getTrainerBookings = async (): Promise<UserBooking[]>  => {
   const response = await api.get(`/session/bookings`);
   return response.data.upcomingBookings;
 };

@@ -1,4 +1,4 @@
-export enum SIDEBAR_MESSAGES {
+export const enum SIDEBAR_MESSAGES {
   WELCOME = "Welcome back,",
   DASHBOARD = "Dashboard",
   HOME = "Home",

@@ -156,6 +156,17 @@ export class BookingRepository
         },
         {
           $lookup: {
+            from: "trainers",
+            localField: "trainerId",
+            foreignField: "_id",
+            as: "trainerDetails",
+          },
+        },
+        {
+          $unwind: { path: "$trainerDetails", preserveNullAndEmptyArrays: false },
+        },
+        {
+          $lookup: {
             from: "availabilities",
             localField: "slotDetails.availabilityId",
             foreignField: "_id",
@@ -190,6 +201,11 @@ export class BookingRepository
               _id: "$userDetails._id",
               username: "$userDetails.username",
               profilePicture: "$userDetails.profilePicture",
+            },
+            trainer:{
+              _id: "$trainerDetails._id",
+              username: "$trainerDetails.username",
+              profilePicture: "$trainerDetails.profilePicture",
             },
             slotStart: {
               $dateFromParts: {
