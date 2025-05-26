@@ -9,7 +9,7 @@ import {
   fetchUpvotedUsers,
   deleteArticle,
 } from "../../../services/article/articleService";
-import { ArticleCardProps } from "../../../types/article.type";
+import { ArticleCardProps, UpvotedUsers } from "../../../types/article.type";
 import { formatDate } from "../../../utils/dateFormat";
 import { ERR_MESSAGES } from "../../../constants/messages/error.messages";
 import { motion } from "framer-motion";
@@ -23,7 +23,7 @@ export const ArticleCard = ({
   showEditButton = false,
 }: ArticleCardProps) => {
   const [showUpvotedUsers, setShowUpvotedUsers] = useState(false);
-  const [upvotedUsers, setUpvotedUsers] = useState<any[]>([]);
+  const [upvotedUsers, setUpvotedUsers] = useState<UpvotedUsers[]>([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -252,7 +252,7 @@ export const ArticleCard = ({
                               src={
                                 user.profilePicture || "/default-profile.png"
                               }
-                              alt={user.name}
+                              alt={user.username}
                               className="w-6 h-6 rounded-full mr-2"
                             />
                             <span className="text-xs text-gray-700">

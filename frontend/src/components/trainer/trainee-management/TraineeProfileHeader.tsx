@@ -2,18 +2,39 @@ import { motion } from "framer-motion";
 import { Mail, Calendar, Award } from "lucide-react";
 import React from "react";
 import { TraineeData } from "../../../types/trainee.type";
+import { formatDate } from "../../../utils/dateFormat";
 
 interface TraineeProfileHeaderProps {
   traineeData: TraineeData;
   inView: boolean;
   ref: (node?: Element | null | undefined) => void;
-  staggerContainer: any;
-  fadeIn: any;
-  formatDate: (dateString: string) => string;
 }
 
+const fadeIn = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.6,
+      ease: [0.25, 0.1, 0.25, 1],
+    },
+  },
+};
+
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+
 const TraineeProfileHeader = React.forwardRef<HTMLDivElement, TraineeProfileHeaderProps>(
-  ({ traineeData, inView, staggerContainer, fadeIn, formatDate }, ref) => {
+  ({ traineeData, inView }, ref) => {
     return (
       <motion.div
         ref={ref}

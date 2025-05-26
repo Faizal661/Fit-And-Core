@@ -22,6 +22,7 @@ import { ERR_MESSAGES } from "../../../constants/messages/error.messages";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
 import { ISlot } from "../../../types/session.type";
+import { formatDateForInput } from "../../../utils/dateFormat";
 
 const fadeIn = {
   hidden: { opacity: 0, y: 20 },
@@ -82,31 +83,18 @@ const SlotManagementPage = () => {
     return date.toDateString() === selectedDate.toDateString();
   };
 
-  const formatDateForQuery = (date: Date): string => {
-    const year = date.getFullYear();
-    const month = date.getMonth() + 1;
-    const day = date.getDate();
-
-    const paddedMonth = month < 10 ? `0${month}` : `${month}`;
-    const paddedDay = day < 10 ? `0${day}` : `${day}`;
-
-    const formattedDate = `${year}-${paddedMonth}-${paddedDay}`;
-
-    return formattedDate;
-  };
-
   // Query to fetch trainer's slots for the selected date
   const { data: slotsData, isLoading: isLoadingSlots } = useQuery({
-    queryKey: ["trainerSlots", trainerId, formatDateForQuery(selectedDate)],
+    queryKey: ["trainerSlots", trainerId, formatDateForInput(selectedDate)],
     queryFn: () =>
-      getTrainerSlotsByDate(trainerId, formatDateForQuery(selectedDate)),
+      getTrainerSlotsByDate(trainerId, formatDateForInput(selectedDate)),
   });
 
   const cancelSlotMutation = useMutation({
     mutationFn: cancelTrainerSlot,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["trainerSlots", trainerId, formatDateForQuery(selectedDate)],
+        queryKey: ["trainerSlots", trainerId, formatDateForInput(selectedDate)],
       });
       showToast(STATUS.SUCCESS, SUCCESS_MESSAGES.SLOT_CANCELLED);
       setShowCancelModal(false);

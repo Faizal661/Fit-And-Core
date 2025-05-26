@@ -30,6 +30,7 @@ import axios from "axios";
 import { IFoodLog, parsedFoodsData } from "../../types/nutrition.type";
 import ConfirmModal from "../../components/shared/modal/ConfirmModal";
 import { useToast } from "../../context/ToastContext";
+import { formatDateForInput } from "../../utils/dateFormat";
 
 // Animation variants
 const fadeIn = {
@@ -139,7 +140,6 @@ const NutritionTrackingPage = () => {
     );
   };
   
-  const formatDate = (d: Date) => d.toISOString().split("T")[0];
 
   //--------------------------
 
@@ -337,7 +337,7 @@ const NutritionTrackingPage = () => {
               <div className="grid grid-cols-7 gap-2">
                 {daysInMonth.map((date, index) => {
                   const isLogged = date
-                    ? foodLogDates?.includes(formatDate(date))
+                    ? foodLogDates?.includes(formatDateForInput(date))
                     : false;
 
                   return (
@@ -532,7 +532,7 @@ const NutritionTrackingPage = () => {
               ) : (
                 // food logs
                 <div className="space-y-4 px-8 pb-8">
-                  {foodLogs?.map((log: any) => (
+                  {foodLogs?.map((log: IFoodLog) => (
                     <motion.div
                       key={log._id}
                       initial={{ opacity: 0, y: 10 }}
