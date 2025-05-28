@@ -230,7 +230,7 @@ export class BookingRepository
                 },
               },
             },
-            selectedDate: "$availabilityDetails.selectedDate",
+            // selectedDate: "$availabilityDetails.selectedDate",
           },
         },
       ])

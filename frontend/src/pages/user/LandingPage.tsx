@@ -199,7 +199,7 @@ const LandingPage = () => {
           </motion.div>
           <motion.h1
             variants={fadeIn}
-            className="text-5xl md:text-7xl font-bold mb-6 tracking-tight"
+            className="text-5xl sm:text-6xl md:text-7xl font-bold mb-6 tracking-tight"
           >
             READY TO
             <TypeAnimation
@@ -220,7 +220,7 @@ const LandingPage = () => {
 
           <motion.p
             variants={fadeIn}
-            className="text-lg md:text-xl max-w-2xl mb-12 text-gray-200"
+            className="text-md sm:text-lg md:text-xl max-w-2xl mb-12 text-gray-200"
           >
             Join the community that's changing how people approach fitness.
             Expert training, supportive community, real results.
@@ -549,7 +549,7 @@ const LandingPage = () => {
           variants={staggerContainer}
           className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6"
         >
-          {workoutConcepts.map((concept, _index) => (
+          {workoutConcepts.map((concept) => (
             <motion.div
               key={concept.name}
               variants={scaleIn}

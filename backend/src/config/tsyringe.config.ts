@@ -2,6 +2,7 @@ import "reflect-metadata";
 import { container } from "tsyringe";
 
 import redisClient from "./redis.config";
+import { Server } from 'socket.io';
 
 import AuthController from "../controllers/Implementation/auth.controller";
 import AuthService from '../services/Implementation/auth.service';
@@ -72,7 +73,12 @@ import { IFoodLogRepository } from "../repositories/Interface/IFoodLogRepository
 import { IGeminiService } from "../services/Interface/IGeminiApiService";
 import { GeminiService } from "../services/Implementation/geminiApi.service";
 
+import { VideoSessionRepository } from '../repositories/Implementation/video-session.repository';
+import { VideoCallService } from '../services/Implementation/video-call.service';
+import { VideoCallController } from '../controllers/Implementation/video-call.controller';
+
 container.registerInstance('RedisClient', redisClient);
+container.registerInstance('SocketIOServer', Server);
 
 container.register<IAuthController>('AuthController', { useClass: AuthController });
 container.register<IAuthService>('AuthService', { useClass: AuthService });
@@ -112,3 +118,8 @@ container.register<IFoodLogController>("FoodLogController", { useClass: FoodLogC
 container.register<IFoodLogService>("FoodLogService", { useClass: FoodLogService });
 container.register<IFoodLogRepository>("FoodLogRepository", { useClass: FoodLogRepository });
 container.register<IGeminiService>("GeminiService", { useClass: GeminiService });
+
+
+container.register('VideoCallService', {useClass: VideoCallService});
+container.register('VideoSessionRepository', {useClass: VideoSessionRepository});
+container.register('VideoCallController', { useClass: VideoCallController });

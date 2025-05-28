@@ -546,7 +546,7 @@ export default class SessionService implements ISessionService {
   private generateSlots(
     availability: IAvailabilityModel
   ): Partial<ISlotModel>[] {
-    const { _id, trainerId, startTime, endTime, slotDuration } = availability;
+    const { _id, trainerId, selectedDate, startTime, endTime, slotDuration } = availability;
     const slots: Partial<ISlotModel>[] = [];
 
     // Convert time strings to minutes '10:00' => 600 & '10:30' =>630
@@ -569,6 +569,7 @@ export default class SessionService implements ISessionService {
       slots.push({
         availabilityId: _id,
         trainerId,
+        slotDate:selectedDate,
         startTime: slotStartTime,
         endTime: slotEndTime,
         status: "available",

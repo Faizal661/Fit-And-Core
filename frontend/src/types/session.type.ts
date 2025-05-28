@@ -69,7 +69,7 @@ export interface UserBooking {
   trainee: TraineeDetails;
   trainer:TrainerDetails,
   slotStart: Date;
-  selectedDate: Date;
+  // selectedDate: Date;
 }
 
 export interface CancelBookingParams {

@@ -16,6 +16,7 @@ dotenv.config();
 import connectDB from "./config/db.config";
 import configurePassport from "./config/passport";
 import { env } from "./config/env.config.ts";
+import { configureSocketIO } from './config/socket.io.config';
 
 // Middlewares
 import requestLogging from "./middlewares/request-logger.middleware.ts";
@@ -34,6 +35,7 @@ import {
 } from "./routes/subscription.routes.ts";
 import progressRoutes from "./routes/progress.routes.ts"
 import foodLogsRoutes from "./routes/foodLogs.routes.ts"
+import videoCallRoutes from './routes/videoCall.routes.ts'
 
 const app = express();
 
@@ -65,6 +67,7 @@ app.use("/api/session", sessionRoutes);
 app.use("/api/subscription", subscriptionRoutes);
 app.use("/api/progress", progressRoutes);
 app.use("/api/food-logs", foodLogsRoutes);
+app.use('/api/ice-servers', videoCallRoutes);
 
 // throw error for unknown routes
 app.use((req, res, next) => {
@@ -74,8 +77,11 @@ app.use((req, res, next) => {
 // Error handling 
 app.use(errorHandler);
 
+
+const httpServer = configureSocketIO(app);
+
 connectDB().then(() => {
-  app.listen(PORT, () => {
+  httpServer.listen(PORT,() => {
     console.log(HttpResMsg.SERVER_CONNECTION);
   });
 });
