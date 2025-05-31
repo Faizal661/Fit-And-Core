@@ -1,4 +1,4 @@
-import { container, inject, injectable } from "tsyringe";
+import { inject, injectable } from "tsyringe";
 import { Socket } from "socket.io";
 import { VideoSessionRepository } from "../../repositories/Implementation/video-session.repository";
 import { IVideoSession } from "../../types/session.types";
@@ -65,6 +65,54 @@ export class VideoCallService {
       }
 
       await this.videoSessionRepository.endSession(session.bookingId);
+    }
+  }
+
+  async handleUserStatus(
+    socket: Socket,
+    data: {
+      bookingId: string;
+      isMuted: boolean;
+      isVideoOn: boolean;
+      isConnected: boolean;
+    }
+  ) {
+    const session = await this.videoSessionRepository.findSessionByBookingId(
+      data.bookingId
+    );
+    if (!session) return;
+
+    const otherUserSocketId =
+      session.trainerSocketId === socket.id
+        ? session.traineeSocketId
+        : session.trainerSocketId;
+
+    if (otherUserSocketId) {
+      this.io.to(otherUserSocketId).emit("user-status", data);
+    }
+  }
+
+  async handleUserLeft(socket: Socket, bookingId: string) {
+    const session = await this.videoSessionRepository.findSessionByBookingId(
+      bookingId
+    );
+    if (!session) return;
+
+    const userType =
+      session.trainerSocketId === socket.id ? "trainer" : "trainee";
+    const otherUserSocketId =
+      userType === "trainer"
+        ? session.traineeSocketId
+        : session.trainerSocketId;
+
+    if (otherUserSocketId) {
+      this.io.to(otherUserSocketId).emit("user-left", {
+        bookingId,
+        userId:
+          userType === "trainer"
+            ? session.trainerSocketId
+            : session.traineeSocketId,
+      });
     }
   }
 }

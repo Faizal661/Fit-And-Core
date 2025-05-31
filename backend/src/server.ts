@@ -50,8 +50,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors({ origin: env.CLIENT_ORIGIN, credentials: true }));
 
 //log req & res details
-const loggers = requestLogging();
-loggers.forEach((middleware) => app.use(middleware));
+// const loggers = requestLogging();
+// loggers.forEach((middleware) => app.use(middleware));
 
 // Initialize Passport
 configurePassport();

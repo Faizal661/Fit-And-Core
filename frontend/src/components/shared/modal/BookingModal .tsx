@@ -4,6 +4,7 @@ import { UserBooking } from "../../../types/session.type";
 import { useState } from "react";
 import { VideoCallModal } from "./VideoCallModal";
 import { spinner } from "../Spinner";
+import ConfirmModal from "./ConfirmModal";
 
 interface BookingModalProps {
   booking: UserBooking | null;
@@ -18,15 +19,21 @@ export const BookingModal = ({
 }: BookingModalProps) => {
   const [isStartingCall, setIsStartingCall] = useState(false);
   const [showVideoCall, setShowVideoCall] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
 
   if (!booking) return null;
 
-  const userId =
-    currentUserType === "trainer"
-      ? booking?.trainer?._id
-      : booking?.trainee?._id;
+  const localUser =
+    currentUserType === "trainer" ? booking?.trainer : booking?.trainee;
+  const remoteUser =
+    currentUserType === "trainer" ? booking?.trainee : booking?.trainer;
 
-  const handleStartCall = async () => {
+  const userId = localUser?._id;
+  const localProfilePicture = localUser?.profilePicture;
+  const remoteProfilePicture = remoteUser?.profilePicture;
+
+  const handleConfirmCall = async () => {
+    setShowConfirmModal(false);
     setIsStartingCall(true);
     setShowVideoCall(true);
   };
@@ -162,7 +169,7 @@ export const BookingModal = ({
                 Chat
               </button>
               <button
-                onClick={handleStartCall}
+                onClick={() => setShowConfirmModal(true)}
                 disabled={isStartingCall}
                 className={`flex items-center gap-2 px-4 py-2 ${
                   isStartingCall ? "bg-blue-400" : "bg-blue-600"
@@ -176,11 +183,28 @@ export const BookingModal = ({
         </motion.div>
       </div>
 
+      <ConfirmModal
+        type="success"
+        title="Start Video Call"
+        message={`You are going to start a video call with the ${
+          currentUserType === "trainer"
+            ? `trainee - ${booking.trainee.username}`
+            : `trainer ${booking.trainer.username}`
+        }?`}
+        confirmText="Start"
+        isOpen={showConfirmModal}
+        onClose={() => setShowConfirmModal(false)}
+        onConfirm={handleConfirmCall}
+        isConfirming={isStartingCall}
+      />
+
       {showVideoCall && (
         <VideoCallModal
           bookingId={booking._id}
           userId={userId}
           userType={currentUserType}
+          remoteProfilePicture={remoteProfilePicture}
+          localProfilePicture={localProfilePicture}
           onClose={() => {
             setShowVideoCall(false);
             setIsStartingCall(false);
