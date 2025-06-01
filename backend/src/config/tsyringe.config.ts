@@ -75,7 +75,8 @@ import { GeminiService } from "../services/Implementation/geminiApi.service";
 
 import { VideoSessionRepository } from '../repositories/Implementation/video-session.repository';
 import { VideoCallService } from '../services/Implementation/video-call.service';
-import { VideoCallController } from '../controllers/Implementation/video-call.controller';
+import { IVideoCallService } from "../services/Interface/IVideoCallService";
+import { IVideoSessionRepository } from "../repositories/Interface/IVideoSessionRepository";
 
 container.registerInstance('RedisClient', redisClient);
 container.registerInstance('SocketIOServer', Server);
@@ -110,6 +111,9 @@ container.register<IAvailabilityRepository>("AvailabilityRepository", { useClass
 container.register<ISlotRepository>("SlotRepository", { useClass: SlotRepository,});
 container.register<IBookingRepository>("BookingRepository", { useClass: BookingRepository,});
 
+container.register<IVideoCallService>('VideoCallService', {useClass: VideoCallService});
+container.register<IVideoSessionRepository>('VideoSessionRepository', {useClass: VideoSessionRepository});
+
 container.register<IProgressController>("ProgressController", { useClass: ProgressController });
 container.register<IProgressService>("ProgressService", { useClass: ProgressService });
 container.register<IProgressRepository>("ProgressRepository", { useClass: ProgressRepository });
@@ -119,7 +123,3 @@ container.register<IFoodLogService>("FoodLogService", { useClass: FoodLogService
 container.register<IFoodLogRepository>("FoodLogRepository", { useClass: FoodLogRepository });
 container.register<IGeminiService>("GeminiService", { useClass: GeminiService });
 
-
-container.register('VideoCallService', {useClass: VideoCallService});
-container.register('VideoSessionRepository', {useClass: VideoSessionRepository});
-container.register('VideoCallController', { useClass: VideoCallController });

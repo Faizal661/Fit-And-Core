@@ -1,17 +1,55 @@
 import { inject, injectable } from "tsyringe";
-import { Socket } from "socket.io";
-import { VideoSessionRepository } from "../../repositories/Implementation/video-session.repository";
+import { Server, Socket } from "socket.io";
 import { IVideoSession } from "../../types/session.types";
 import { VideoSessionModel } from "../../models/session.model/video-session.models";
+import { IVideoCallService } from "../Interface/IVideoCallService";
+import { IVideoSessionRepository } from "../../repositories/Interface/IVideoSessionRepository";
 
 @injectable()
-export class VideoCallService {
+export class VideoCallService implements IVideoCallService {
   constructor(
     @inject("VideoSessionRepository")
-    private videoSessionRepository: VideoSessionRepository,
+    private videoSessionRepository: IVideoSessionRepository,
     @inject("SocketIOServer")
-    private io: Socket
+    private io: Server
   ) {}
+
+   public registerSocketEvents(socket: Socket) {
+    socket.on(
+      "joinSession",
+      async (data: { bookingId: string; userId: string; userType: string }) => {
+        await this.handleJoinSession(socket, data);
+      }
+    );
+
+    socket.on("disconnect", () => {
+      this.handleDisconnect(socket.id);
+    });
+
+    socket.on("offer", (data) => {
+      socket.to(data.bookingId).emit("offer", data);
+    });
+
+    socket.on("answer", (data) => {
+      socket.to(data.bookingId).emit("answer", data);
+    });
+
+    socket.on("ice-candidate", (data) => {
+      socket.to(data.bookingId).emit("ice-candidate", data);
+    });
+
+    socket.on("endCall", (data) => {
+      socket.to(data.bookingId).emit("callEnded", data);
+    });
+
+    socket.on("user-status", (data) => {
+      this.handleUserStatus(socket, data);
+    });
+
+    socket.on("user-left", (data) => {
+      this.handleUserLeft(socket, data.bookingId);
+    });
+  }
 
   async handleJoinSession(
     socket: Socket,
@@ -108,10 +146,6 @@ export class VideoCallService {
     if (otherUserSocketId) {
       this.io.to(otherUserSocketId).emit("user-left", {
         bookingId,
-        userId:
-          userType === "trainer"
-            ? session.trainerSocketId
-            : session.traineeSocketId,
       });
     }
   }

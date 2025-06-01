@@ -35,7 +35,6 @@ import {
 } from "./routes/subscription.routes.ts";
 import progressRoutes from "./routes/progress.routes.ts"
 import foodLogsRoutes from "./routes/foodLogs.routes.ts"
-import videoCallRoutes from './routes/videoCall.routes.ts'
 
 const app = express();
 
@@ -50,8 +49,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors({ origin: env.CLIENT_ORIGIN, credentials: true }));
 
 //log req & res details
-// const loggers = requestLogging();
-// loggers.forEach((middleware) => app.use(middleware));
+const loggers = requestLogging();
+loggers.forEach((middleware) => app.use(middleware));
 
 // Initialize Passport
 configurePassport();
@@ -67,13 +66,11 @@ app.use("/api/session", sessionRoutes);
 app.use("/api/subscription", subscriptionRoutes);
 app.use("/api/progress", progressRoutes);
 app.use("/api/food-logs", foodLogsRoutes);
-app.use('/api/ice-servers', videoCallRoutes);
 
-// throw error for unknown routes
+// handling error for unknown routes
 app.use((req, res, next) => {
   next(new CustomError(HttpResMsg.ROUTE_NOT_FOUND, HttpResCode.NOT_FOUND));
 });
-
 // Error handling 
 app.use(errorHandler);
 

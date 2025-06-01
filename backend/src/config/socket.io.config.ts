@@ -1,9 +1,9 @@
-import { Server } from "socket.io";
+import { Server, Socket } from "socket.io";
 import { createServer } from "http";
 import express from "express";
 import { container } from "tsyringe";
-import { VideoCallService } from "../services/Implementation/video-call.service";
 import { env } from "./env.config";
+import { IVideoCallService } from "../services/Interface/IVideoCallService";
 
 export const configureSocketIO = (app: express.Application) => {
   const httpServer = createServer(app);
@@ -17,45 +17,13 @@ export const configureSocketIO = (app: express.Application) => {
   });
 
   container.registerInstance("SocketIOServer", io);
-  const videoCallService = container.resolve(VideoCallService);
+  const videoCallService =
+    container.resolve<IVideoCallService>("VideoCallService");
 
-  io.on("connection", (socket) => {
+  io.on("connection", (socket: Socket) => {
     console.log(`Socket connected: ${socket.id}`);
 
-    socket.on(
-      "joinSession",
-      async (data: { bookingId: string; userId: string; userType: string }) => {
-        await videoCallService.handleJoinSession(socket, data);
-      }
-    );
-
-    socket.on("disconnect", () => {
-      videoCallService.handleDisconnect(socket.id);
-    });
-
-    socket.on("offer", (data) => {
-      socket.to(data.bookingId).emit("offer", data);
-    });
-
-    socket.on("answer", (data) => {
-      socket.to(data.bookingId).emit("answer", data);
-    });
-
-    socket.on("ice-candidate", (data) => {
-      socket.to(data.bookingId).emit("ice-candidate", data);
-    });
-
-    socket.on("endCall", (data) => {
-      socket.to(data.bookingId).emit("callEnded", data);
-    });
-
-    socket.on("user-status", (data) => {
-      videoCallService.handleUserStatus(socket, data);
-    });
-
-    socket.on("user-left", (data) => {
-      videoCallService.handleUserLeft(socket, data.bookingId);
-    }); 
+    videoCallService.registerSocketEvents(socket);
   });
 
   return httpServer;
