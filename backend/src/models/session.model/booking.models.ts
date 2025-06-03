@@ -1,6 +1,5 @@
 import mongoose, { Schema, Document, Types } from "mongoose";
-import { IBooking } from"../../types/session.types";
-
+import { IBooking } from "../../types/session.types";
 
 export interface IBookingModel extends Document, IBooking {
   _id: Types.ObjectId;
@@ -8,27 +7,31 @@ export interface IBookingModel extends Document, IBooking {
 
 const BookingSchema: Schema = new Schema(
   {
-    slotId: { 
-      type: Schema.Types.ObjectId, 
-      ref: "Slot", 
-      required: true 
+    slotId: {
+      type: Schema.Types.ObjectId,
+      ref: "Slot",
+      required: true,
     },
-    trainerId: { 
-      type: Schema.Types.ObjectId, 
-      ref: "Trainer", 
-      required: true 
+    trainerId: {
+      type: Schema.Types.ObjectId,
+      ref: "Trainer",
+      required: true,
     },
-    userId: { 
-      type: Schema.Types.ObjectId, 
-      ref: "User", 
-      required: true 
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
     },
-    status: { 
-      type: String, 
-      enum: ["confirmed", "canceled", "completed"], 
-      default: "confirmed" 
+    status: {
+      type: String,
+      enum: ["confirmed", "canceled", "completed"],
+      default: "confirmed",
     },
     notes: { type: String },
+    trainerVideoUrl: { type: String, default: null },
+    traineeVideoUrl: { type: String, default: null },
+    trainerVideoUploadedAt: { type: Date, default: null },
+    traineeVideoUploadedAt: { type: Date, default: null },
   },
   { timestamps: true }
 );

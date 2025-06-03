@@ -35,6 +35,7 @@ import {
 } from "./routes/subscription.routes.ts";
 import progressRoutes from "./routes/progress.routes.ts"
 import foodLogsRoutes from "./routes/foodLogs.routes.ts"
+import recordingRoutes from "./routes/recording.routes.ts";
 
 const app = express();
 
@@ -66,6 +67,7 @@ app.use("/api/session", sessionRoutes);
 app.use("/api/subscription", subscriptionRoutes);
 app.use("/api/progress", progressRoutes);
 app.use("/api/food-logs", foodLogsRoutes);
+app.use("/api/recording", recordingRoutes);
 
 // handling error for unknown routes
 app.use((req, res, next) => {

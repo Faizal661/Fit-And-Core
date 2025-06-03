@@ -12,7 +12,7 @@ import {
   deleteFromCloudinary,
   extractPublicIdFromUrl,
   uploadToCloudinary,
-} from "../../utils/s3-upload";
+} from "../../utils/cloud-storage";
 import bcrypt from "bcryptjs";
 import logger from "../../utils/logger.utils";
 import { CustomError } from "../../errors/CustomError";

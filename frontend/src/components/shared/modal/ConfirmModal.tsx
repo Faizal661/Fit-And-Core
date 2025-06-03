@@ -1,5 +1,3 @@
-// src/components/common/ConfirmModal.tsx
-
 import React from "react";
 import ReactDOM from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";

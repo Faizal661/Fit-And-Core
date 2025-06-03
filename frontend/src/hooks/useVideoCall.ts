@@ -1,15 +1,15 @@
 import { useState, useRef, useEffect } from "react";
 import { io, Socket } from "socket.io-client";
 import { WebRTCConfig } from "../config/webrtc.config";
+import { uploadVideo } from "../services/session/recordingService";
 
 export const useVideoCall = (
-  bookingId: string | undefined,
-  userId: string | undefined,
+  bookingId: string,
+  userId: string,
   userType: "trainer" | "trainee"
 ) => {
   const [localStream, setLocalStream] = useState<MediaStream | null>(null);
   const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
-  const [isCallActive, setIsCallActive] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [isVideoOn, setIsVideoOn] = useState(true);
   const [remoteStatus, setRemoteStatus] = useState({
@@ -22,6 +22,10 @@ export const useVideoCall = (
   const socket = useRef<Socket | null>(null);
   const audioTrackRef = useRef<MediaStreamTrack | null>(null);
   const videoTrackRef = useRef<MediaStreamTrack | null>(null);
+
+  // recording
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const recordedChunksRef = useRef<Blob[]>([]);
 
   useEffect(() => {
     if (!bookingId) return;
@@ -54,17 +58,6 @@ export const useVideoCall = (
         }
       };
 
-      // Connection state handlers
-      peerConnection.current.onconnectionstatechange = () => {
-        console.log(
-          "Connection state:",
-          peerConnection.current?.connectionState
-        );
-      };
-
-      peerConnection.current.onsignalingstatechange = () => {
-        console.log("Signaling state:", peerConnection.current?.signalingState);
-      };
 
       // Socket event handlers
       socket.current.on("connect", () => {
@@ -138,7 +131,9 @@ export const useVideoCall = (
     return () => {
       endCall();
       socket.current?.disconnect();
+      mediaRecorderRef.current?.stop();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bookingId, userId, userType]);
 
   const startCall = async () => {
@@ -147,7 +142,6 @@ export const useVideoCall = (
         WebRTCConfig.mediaConstraints
       );
       setLocalStream(stream);
-      setIsCallActive(true);
 
       // Store initial tracks
       audioTrackRef.current = stream.getAudioTracks()[0];
@@ -169,6 +163,21 @@ export const useVideoCall = (
         isVideoOn: true,
         isConnected: true,
       });
+
+      // ---------------  Start recording  -----------------------
+      recordedChunksRef.current = [];
+      mediaRecorderRef.current = new MediaRecorder(stream, {
+        mimeType: "video/webm; codecs=vp9",
+      });
+
+      mediaRecorderRef.current.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          recordedChunksRef.current.push(event.data);
+        }
+      };
+
+      mediaRecorderRef.current.start();
+      // ----------------------------------------------------
     } catch (error) {
       console.error("Error starting call:", error);
       endCall();
@@ -235,15 +244,45 @@ export const useVideoCall = (
     }
 
     setRemoteStream(null);
-    setIsCallActive(false);
     socket.current?.emit("endCall", { bookingId });
     socket.current?.emit("user-left", { bookingId });
+
+    // --------------   Stop recording and upload   --------------------
+    if (
+      mediaRecorderRef.current &&
+      mediaRecorderRef.current.state !== "inactive"
+    ) {
+      mediaRecorderRef.current.stop();
+
+      console.log("Recording stopped, preparing to upload...");
+
+      mediaRecorderRef.current.onstop = async () => {
+        const blob = new Blob(recordedChunksRef.current, {
+          type: "video/webm",
+        });
+        try {
+          const formData = new FormData();
+          formData.append(
+            "video",
+            blob,
+            `recording_${userType}_${bookingId}_${Date.now()}.webm`
+          );
+          await uploadVideo(formData);
+          console.log("Video uploaded successfully ///");
+        } catch (err) {
+          console.error("Video upload failed:", err);
+        }
+
+        recordedChunksRef.current = [];
+        
+      };
+    }
+    //------------------------------------------------------------
   };
 
   return {
     localStream,
     remoteStream,
-    isCallActive,
     isMuted,
     isVideoOn,
     remoteStatus,

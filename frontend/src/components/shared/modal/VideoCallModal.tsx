@@ -62,6 +62,16 @@ export const VideoCallModal = ({
   }, [remoteStream, remoteStatus.isVideoOn]);
 
   useEffect(() => {
+    if (remoteStatus.hasLeft) {
+      const timer = setTimeout(() => {
+        onClose();
+      }, 2000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [remoteStatus.hasLeft, onClose]);
+
+  useEffect(() => {
     startCall();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

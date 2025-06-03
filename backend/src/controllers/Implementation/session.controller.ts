@@ -15,9 +15,7 @@ export class SessionController implements ISessionController {
   constructor(
     @inject("SessionService")
     private sessionService: ISessionService
-  ) {
-    this.sessionService = sessionService;
-  }
+  ) {}
 
   async createAvailability(
     req: Request,
@@ -201,7 +199,10 @@ export class SessionController implements ISessionController {
         );
       }
       if (!slotId) {
-        throw new CustomError(HttpResMsg.SLOT_ID_REQUIRED, HttpResCode.BAD_REQUEST);
+        throw new CustomError(
+          HttpResMsg.SLOT_ID_REQUIRED,
+          HttpResCode.BAD_REQUEST
+        );
       }
 
       const canceledSlot = await this.sessionService.cancelAvailableSlot(
@@ -341,7 +342,6 @@ export class SessionController implements ISessionController {
         );
       }
 
-      
       if (!reason) {
         throw new CustomError(
           HttpResMsg.CANCELLATION_REASON_REQUIRED,
@@ -360,6 +360,4 @@ export class SessionController implements ISessionController {
       next(error);
     }
   }
-
-
 }

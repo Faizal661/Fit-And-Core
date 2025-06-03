@@ -78,6 +78,11 @@ import { VideoCallService } from '../services/Implementation/video-call.service'
 import { IVideoCallService } from "../services/Interface/IVideoCallService";
 import { IVideoSessionRepository } from "../repositories/Interface/IVideoSessionRepository";
 
+import { RecordingController } from "../controllers/Implementation/recording.controller";
+import { RecordingService } from "../services/Implementation/recording.service";
+import { IRecordingController } from "../controllers/Interface/IRecordingController";
+import { IRecordingService } from "../services/Interface/IRecordingService";
+
 container.registerInstance('RedisClient', redisClient);
 container.registerInstance('SocketIOServer', Server);
 
@@ -113,6 +118,9 @@ container.register<IBookingRepository>("BookingRepository", { useClass: BookingR
 
 container.register<IVideoCallService>('VideoCallService', {useClass: VideoCallService});
 container.register<IVideoSessionRepository>('VideoSessionRepository', {useClass: VideoSessionRepository});
+
+container.register<IRecordingController>("RecordingController",{useClass: RecordingController})
+container.register<IRecordingService>("RecordingService",{useClass: RecordingService})
 
 container.register<IProgressController>("ProgressController", { useClass: ProgressController });
 container.register<IProgressService>("ProgressService", { useClass: ProgressService });

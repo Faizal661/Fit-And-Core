@@ -28,9 +28,9 @@ export const BookingModal = ({
   const remoteUser =
     currentUserType === "trainer" ? booking?.trainee : booking?.trainer;
 
-  const userId = localUser?._id;
-  const localProfilePicture = localUser?.profilePicture;
-  const remoteProfilePicture = remoteUser?.profilePicture;
+  const userId = localUser._id;
+  const localProfilePicture = localUser.profilePicture;
+  const remoteProfilePicture = remoteUser.profilePicture;
 
   const handleConfirmCall = async () => {
     setShowConfirmModal(false);

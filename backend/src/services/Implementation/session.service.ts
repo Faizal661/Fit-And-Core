@@ -31,13 +31,7 @@ export default class SessionService implements ISessionService {
     private userRepository: IUserRepository,
     @inject("BookingRepository")
     private bookingRepository: IBookingRepository
-  ) {
-    this.availabilityRepository = availabilityRepository;
-    this.slotRepository = slotRepository;
-    this.trainerRepository = trainerRepository;
-    this.userRepository = userRepository;
-    this.bookingRepository = bookingRepository;
-  }
+  ) {}
 
   async createAvailability(
     params: CreateAvailabilityParams
@@ -208,7 +202,7 @@ export default class SessionService implements ISessionService {
         trainer = await this.trainerRepository.findOne({
           userId: new Types.ObjectId(trainerId),
         });
-        if(trainer) trainerId=trainer.id
+        if (trainer) trainerId = trainer.id;
       }
       if (!trainer) {
         throw new CustomError(
@@ -292,23 +286,28 @@ export default class SessionService implements ISessionService {
   }
 
   async cancelAvailableSlot(
-    slotIdString: string, 
-    userId: string        
+    slotIdString: string,
+    userId: string
   ): Promise<ISlotModel | null> {
     try {
       let slotId: Types.ObjectId;
       try {
         slotId = new Types.ObjectId(slotIdString);
       } catch (error) {
-        throw new CustomError(HttpResMsg.INVALID_SLOT_ID_FORMAT, HttpResCode.BAD_REQUEST);
+        throw new CustomError(
+          HttpResMsg.INVALID_SLOT_ID_FORMAT,
+          HttpResCode.BAD_REQUEST
+        );
       }
 
-      const trainer = await this.trainerRepository.findOne({ userId: userId }); 
+      const trainer = await this.trainerRepository.findOne({ userId: userId });
       if (!trainer) {
-        throw new CustomError(HttpResMsg.TRAINER_NOT_FOUND, HttpResCode.FORBIDDEN);
+        throw new CustomError(
+          HttpResMsg.TRAINER_NOT_FOUND,
+          HttpResCode.FORBIDDEN
+        );
       }
-      const trainerId = trainer._id; 
-
+      const trainerId = trainer._id;
 
       const canceledSlot = await this.slotRepository.cancelAvailableSlot(
         slotId,
@@ -316,19 +315,29 @@ export default class SessionService implements ISessionService {
       );
 
       if (!canceledSlot) {
-          const slotAfterAttempt = await this.slotRepository.findById(slotId);
+        const slotAfterAttempt = await this.slotRepository.findById(slotId);
 
-          if (!slotAfterAttempt) {
-              throw new CustomError(HttpResMsg.SLOT_NOT_FOUND, HttpResCode.NOT_FOUND);
-          } else if (!slotAfterAttempt.trainerId.equals(trainerId as Types.ObjectId)) {
-               throw new CustomError(HttpResMsg.NO_PERMISSION_TO_CANCEL_SLOT, HttpResCode.FORBIDDEN);
-          } else {
-              throw new CustomError(`${HttpResMsg.SLOT_CURRENT_STATUS} ${slotAfterAttempt.status}`, HttpResCode.CONFLICT);
-          }
+        if (!slotAfterAttempt) {
+          throw new CustomError(
+            HttpResMsg.SLOT_NOT_FOUND,
+            HttpResCode.NOT_FOUND
+          );
+        } else if (
+          !slotAfterAttempt.trainerId.equals(trainerId as Types.ObjectId)
+        ) {
+          throw new CustomError(
+            HttpResMsg.NO_PERMISSION_TO_CANCEL_SLOT,
+            HttpResCode.FORBIDDEN
+          );
+        } else {
+          throw new CustomError(
+            `${HttpResMsg.SLOT_CURRENT_STATUS} ${slotAfterAttempt.status}`,
+            HttpResCode.CONFLICT
+          );
+        }
       }
 
       return canceledSlot;
-
     } catch (error) {
       if (error instanceof CustomError) {
         throw error;
@@ -361,7 +370,6 @@ export default class SessionService implements ISessionService {
           currentDate
         );
 
-
       return upcomingBookings;
     } catch (error) {
       if (error instanceof CustomError) {
@@ -392,7 +400,10 @@ export default class SessionService implements ISessionService {
 
       const booking = await this.bookingRepository.findById(bookingId);
       if (!booking) {
-        throw new CustomError(HttpResMsg.BOOKING_NOT_FOUND, HttpResCode.NOT_FOUND);
+        throw new CustomError(
+          HttpResMsg.BOOKING_NOT_FOUND,
+          HttpResCode.NOT_FOUND
+        );
       }
 
       const trainer = await this.trainerRepository.findOne({ userId: userId });
@@ -449,7 +460,7 @@ export default class SessionService implements ISessionService {
         throw new CustomError(
           "Invalid user ID format.",
           HttpResCode.UNAUTHORIZED
-        ); 
+        );
       }
 
       let trainerId: Types.ObjectId;
@@ -464,7 +475,10 @@ export default class SessionService implements ISessionService {
 
       const trainerExists = await this.trainerRepository.findById(trainerId);
       if (!trainerExists) {
-        throw new CustomError(HttpResMsg.TRAINER_NOT_FOUND, HttpResCode.NOT_FOUND);
+        throw new CustomError(
+          HttpResMsg.TRAINER_NOT_FOUND,
+          HttpResCode.NOT_FOUND
+        );
       }
 
       const allUserBookings =
@@ -503,7 +517,10 @@ export default class SessionService implements ISessionService {
 
       const booking = await this.bookingRepository.findById(bookingId);
       if (!booking) {
-        throw new CustomError(HttpResMsg.BOOKING_NOT_FOUND, HttpResCode.NOT_FOUND);
+        throw new CustomError(
+          HttpResMsg.BOOKING_NOT_FOUND,
+          HttpResCode.NOT_FOUND
+        );
       }
 
       if (!booking.userId.equals(userId)) {
@@ -527,7 +544,7 @@ export default class SessionService implements ISessionService {
         notes: reason,
       });
 
-      await this.slotRepository.update(booking.slotId,{status:'available'})
+      await this.slotRepository.update(booking.slotId, { status: "available" });
 
       return updatedBooking;
     } catch (error) {
@@ -546,7 +563,8 @@ export default class SessionService implements ISessionService {
   private generateSlots(
     availability: IAvailabilityModel
   ): Partial<ISlotModel>[] {
-    const { _id, trainerId, selectedDate, startTime, endTime, slotDuration } = availability;
+    const { _id, trainerId, selectedDate, startTime, endTime, slotDuration } =
+      availability;
     const slots: Partial<ISlotModel>[] = [];
 
     // Convert time strings to minutes '10:00' => 600 & '10:30' =>630
@@ -569,7 +587,7 @@ export default class SessionService implements ISessionService {
       slots.push({
         availabilityId: _id,
         trainerId,
-        slotDate:selectedDate,
+        slotDate: selectedDate,
         startTime: slotStartTime,
         endTime: slotEndTime,
         status: "available",

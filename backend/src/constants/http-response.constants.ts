@@ -216,6 +216,7 @@ export const enum HttpResMsg {
   CANCELLATION_REASON_REQUIRED = "Cancellation reason is required in request body.",
   NO_PERMISSION_TO_CANCEL_BOOKING = "You do not have permission to cancel this booking.",
   FAILED_TO_CANCEL_BOOKING = "Failed to cancel booking due to an unexpected error.",
+  VIDEO_UPLOADED_SUCCESSFULLY = "Video uploaded successfully",
 
   FAILED_TO_FETCH_USER_PROGRESS = "Failed to fetch trainee progressions",
   FAILED_TO_ADD_NEW_PROGRESS = "Failed to add new progression",
