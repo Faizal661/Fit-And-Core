@@ -1,11 +1,9 @@
 import api from "../../config/axios.config";
 import {
-  CancelBookingParams,
   GroupedAvailability,
   IAvailability,
   ICreateAvailabilityParams,
   ISlot,
-  UserBooking,
 } from "../../types/session.type";
 
 //  -----       availabilities
@@ -54,38 +52,3 @@ export const cancelTrainerSlot = async ({ slotId }: { slotId: string }) => {
   return response.data;
 };
 
-// --------------    Bookings
-
-export const getTrainerBookings = async (): Promise<UserBooking[]>  => {
-  const response = await api.get(`/session/bookings`);
-  return response.data.upcomingBookings;
-};
-
-export const getUserBookings = async (
-  trainerId: string
-): Promise<UserBooking[]> => {
-  const response = await api.get(`/session/bookings/user`, {
-    params: {
-      trainerId: trainerId,
-    },
-  });
-  return response.data.data;
-};
-
-export const userCancelBooking = async (params: CancelBookingParams) => {
-  const { bookingId, reason } = params;
-  const response = await api.patch("/session/bookings/user/cancel", {
-    bookingId,
-    reason,
-  });
-  return response.data;
-};
-
-export const trainerCancelBooking = async (params: CancelBookingParams) => {
-  const { bookingId, reason } = params;
-  const response = await api.patch("/session/bookings/trainer/cancel", {
-    bookingId,
-    reason,
-  });
-  return response.data;
-};

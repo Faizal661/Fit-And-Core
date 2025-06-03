@@ -360,4 +360,46 @@ export class SessionController implements ISessionController {
       next(error);
     }
   }
+
+  async updateBookingStatus(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const { bookingId } = req.params;
+      const { status, notes } = req.body;
+      const userId = req.decoded?.id;
+
+      if (!userId) {
+        throw new CustomError(
+          HttpResMsg.UNAUTHORIZED,
+          HttpResCode.UNAUTHORIZED
+        );
+      }
+      if (!bookingId) {
+        throw new CustomError(
+          HttpResMsg.BOOKING_ID_REQUIRED,
+          HttpResCode.BAD_REQUEST
+        );
+      }
+      if (!status) {
+        throw new CustomError("Status is required", HttpResCode.BAD_REQUEST);
+      }
+      if (!notes) {
+        throw new CustomError("Feedback is required", HttpResCode.BAD_REQUEST);
+      }
+
+      const updatedBooking = await this.sessionService.updateBookingStatus(
+        userId,
+        bookingId,
+        status,
+        notes
+      );
+
+      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, updatedBooking);
+    } catch (error) {
+      next(error);
+    }
+  }
 }

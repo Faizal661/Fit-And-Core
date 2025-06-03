@@ -558,6 +558,82 @@ export default class SessionService implements ISessionService {
     }
   }
 
+  async updateBookingStatus(
+    userId: string,
+    bookingIdString: string,
+    status: "confirmed" | "canceled" | "completed",
+    notes: string
+  ): Promise<IBookingModel | null> {
+    try {
+      let bookingId: Types.ObjectId;
+      try {
+        bookingId = new Types.ObjectId(bookingIdString);
+      } catch (error) {
+        throw new CustomError(
+          "Invalid booking ID format.",
+          HttpResCode.BAD_REQUEST
+        );
+      }
+
+      const booking = await this.bookingRepository.findById(bookingId);
+      if (!booking) {
+        throw new CustomError(
+          HttpResMsg.BOOKING_NOT_FOUND,
+          HttpResCode.NOT_FOUND
+        );
+      }
+
+      const trainer = await this.trainerRepository.findOne({ userId: userId });
+      const isTrainer = trainer && booking.trainerId.equals(trainer.id);
+      const isUser = booking.userId.equals(userId);
+
+      if (!isTrainer && !isUser) {
+        throw new CustomError(
+          HttpResMsg.NO_PERMISSION_TO_UPDATE_BOOKING,
+          HttpResCode.FORBIDDEN
+        );
+      }
+
+      if (booking.status === "canceled" || booking.status === "completed") {
+        throw new CustomError(
+          `Booking is already ${booking.status}.`,
+          HttpResCode.CONFLICT
+        );
+      }
+
+      if (status === "canceled") {
+        await this.slotRepository.update(booking.slotId, {
+          status: "available",
+        });
+      }
+
+      if (
+        status === "completed" &&
+        (!booking.trainerVideoUrl || !booking.traineeVideoUrl)
+      ) {
+        throw new CustomError(
+          `Cannot mark session as completed: for uncompleted sessions!`,
+          HttpResCode.BAD_REQUEST
+        );
+      }
+
+      const updatedBooking = await this.bookingRepository.update(bookingId, {
+        status,
+        notes,
+      });
+
+      return updatedBooking;
+    } catch (error) {
+      if (error instanceof CustomError) {
+        throw error;
+      }
+      throw new CustomError(
+        "Failed to update booking status.",
+        HttpResCode.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
   // - ------------------
 
   private generateSlots(

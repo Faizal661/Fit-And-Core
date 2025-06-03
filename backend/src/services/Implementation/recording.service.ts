@@ -71,7 +71,6 @@ export class RecordingService implements IRecordingService {
         size: file.size,
       };
     } catch (error: any) {
-      console.error("❌ Error uploading video:", error);
       throw new Error(`Video upload failed: ${error.message}`);
     }
   }

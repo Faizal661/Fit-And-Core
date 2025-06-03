@@ -16,7 +16,7 @@ import {
 import {
   getUserBookings,
   userCancelBooking,
-} from "../../../services/session/sessionService";
+} from "../../../services/session/BookingService";
 import Footer from "../../../components/shared/Footer";
 import { useInView } from "react-intersection-observer";
 import axios from "axios";
@@ -292,7 +292,7 @@ const UserSessionManagementPage = () => {
 
                         {booking.notes && (
                           <div className="text-sm text-gray-500 italic mt-1">
-                            {booking.status === "canceled" ? "" : "Notes: "}
+                            {booking.status === "canceled" ? "" : "Feedback: "}
                             {booking.notes}
                           </div>
                         )}

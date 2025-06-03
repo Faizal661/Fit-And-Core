@@ -47,6 +47,12 @@ export interface ISessionService {
     reason: string,
     userId: string
   ): Promise<IBookingModel | null>;
+  updateBookingStatus(
+    userId: string,
+    bookingIdString: string,
+    status: "confirmed" | "canceled" | "completed",
+    notes:string
+  ): Promise<IBookingModel | null>;
 
   // deleteAvailability(availabilityId: string): Promise<boolean>;
   // getTrainerAvailability(trainerId: string): Promise<IAvailabilityModel[]>;

@@ -215,6 +215,7 @@ export const enum HttpResMsg {
   BOOKING_NOT_FOUND = "Booking not found.",
   CANCELLATION_REASON_REQUIRED = "Cancellation reason is required in request body.",
   NO_PERMISSION_TO_CANCEL_BOOKING = "You do not have permission to cancel this booking.",
+  NO_PERMISSION_TO_UPDATE_BOOKING = "You do not have permission to update this booking.",
   FAILED_TO_CANCEL_BOOKING = "Failed to cancel booking due to an unexpected error.",
   VIDEO_UPLOADED_SUCCESSFULLY = "Video uploaded successfully",
 

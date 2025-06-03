@@ -39,6 +39,10 @@ export interface IBooking {
   slotId: Types.ObjectId;
   status: "confirmed" | "canceled" | "completed";
   notes?: string;
+  trainerVideoUrl: string | null;
+  traineeVideoUrl: string | null;
+  trainerVideoUploadedAt: Date | null;
+  traineeVideoUploadedAt: Date | null;
   createdAt?: Date;
   updatedAt?: Date;
 }

@@ -89,4 +89,10 @@ router
     sessionController.userCancelBooking(req, res, next)
   );
 
+router
+  .route("/bookings/:bookingId/status")
+  .patch(...trainerAccess, (req, res, next) =>
+    sessionController.updateBookingStatus(req, res, next)
+  );
+
 export default router;

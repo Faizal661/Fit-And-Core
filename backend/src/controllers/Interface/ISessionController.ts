@@ -15,6 +15,7 @@ export interface ISessionController {
     trainerCancelBooking( req: Request, res: Response, next: NextFunction): Promise<void>
     getAllUserBookingsWithTrainer( req: Request, res: Response, next: NextFunction): Promise<void>
     userCancelBooking( req: Request, res: Response, next: NextFunction): Promise<void>
+    updateBookingStatus( req: Request, res: Response, next: NextFunction): Promise<void>
     // deleteAvailability(req: Request, res: Response, next: NextFunction): Promise<void>;
     // getTrainerAvailability(req: Request, res: Response, next: NextFunction): Promise<void>;
   }

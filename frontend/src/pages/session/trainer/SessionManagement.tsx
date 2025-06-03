@@ -14,11 +14,8 @@ import {
   X,
   Edit,
 } from "lucide-react";
-import {
-  getTrainerBookings,
-  getTrainerAvailabilities,
-  trainerCancelBooking,
-} from "../../../services/session/sessionService";
+import { getTrainerAvailabilities } from "../../../services/session/sessionService";
+import { getTrainerBookings, trainerCancelBooking } from "../../../services/session/BookingService";
 import Footer from "../../../components/shared/Footer";
 import { useInView } from "react-intersection-observer";
 import { IAvailability, UserBooking } from "../../../types/session.type";
@@ -326,7 +323,7 @@ const SessionManagementPage = () => {
             onClose={closeModal}
             currentUserType="trainer"
           />
-          
+
           {/* cancel booking modal */}
           <CancelBookingModal
             isOpen={showCancelModal}

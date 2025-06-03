@@ -76,3 +76,16 @@ export interface CancelBookingParams {
   bookingId: string;
   reason: string;
 }
+
+export interface UpdateBookingData {
+  bookingId: string;
+  status: string;
+  feedback?: string;
+}
+
+export interface SubmitReportData {
+  bookingId: string;
+  reportedUserId: string;
+  message: string;
+  reporterType: string;
+}
