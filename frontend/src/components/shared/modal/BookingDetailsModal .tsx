@@ -345,7 +345,7 @@ export const BookingDetailsModal = ({
                       />
                       <div className="flex justify-between text-sm text-gray-400">
                         <span>{formatTime(currentTime)}</span>
-                        <span>{formatTime(duration)}</span>
+                        {/* <span>{formatTime(duration)}</span> */}
                       </div>
                     </div>
 

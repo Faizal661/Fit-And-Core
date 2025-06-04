@@ -8,6 +8,7 @@ import ProtectedRoutes from "./ProtectedRoutes";
 import PageNotFound from "../components/shared/PageNotFound";
 import PaymentSuccessPage from "../pages/shared/PaymentSuccessPage";
 import LandingPage from "../pages/user/LandingPage"
+import ReportViewPage from "../pages/shared/ReportViewPage";
 
 // authentication
 const UserLogin = lazy(() => import("../pages/auth/signin/UserLogin"));
@@ -78,6 +79,7 @@ const AppRoutes = () => {
         <Route path="/articles" element={<UserArticles />} />
         <Route path="/progress" element={<UserProgressionPage />} />
         <Route path="/nutrition" element={<UserNutritionTrackingPage />} />
+        <Route path="/reports" element={<ReportViewPage />} />
       </Route>
 
       <Route element={<ProtectedRoutes allowedRoles={["trainer"]} />}>
@@ -90,6 +92,7 @@ const AppRoutes = () => {
         <Route path="/trainer/availability-setup" element={<AvailabilitySetupPage />} />
         <Route path="/trainer/trainees-management" element={<TraineeManagementPage />} />
         <Route path="/trainer/trainees/:traineeId" element={<TraineeDetailsPage />} />
+        <Route path="/trainer/reports" element={<ReportViewPage />} />
       </Route>
 
       <Route element={<ProtectedRoutes allowedRoles={["user", "trainer"]} />}>

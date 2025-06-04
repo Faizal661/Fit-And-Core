@@ -72,10 +72,23 @@ export class ReportService implements IReportService {
     return await this.reportRepository.getPaginatedReports(page, limit, status);
   }
 
-  async getUserReports(userId: string): Promise<IReportModel[]> {
-    return await this.reportRepository.find({
-      reporterUserId: new Types.ObjectId(userId),
-    });
+  async getUserReports(
+    userId: string,
+    page: number,
+    limit: number,
+    status?: "pending" | "in_review" | "resolved" | "rejected"
+  ): Promise<{
+    reports: any[];
+    totalReports: number;
+    totalPages: number;
+    currentPage: number;
+  }> {
+    return await this.reportRepository.getPaginatedUserReports(
+      userId,
+      page,
+      limit,
+      status
+    );
   }
 
   async updateReportStatus(

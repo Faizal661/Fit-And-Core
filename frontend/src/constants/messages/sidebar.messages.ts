@@ -32,5 +32,6 @@ export const enum SIDEBAR_MESSAGES {
   COMMUNITIES="Communities",
   PROGRESSION="Progression",
   NUTRITION="Nutrition",
-  HISTORY="History"
+  HISTORY="History",
+  REPORTS="Reports"
 }

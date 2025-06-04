@@ -13,4 +13,15 @@ export interface IReportRepository
     totalPages: number;
     currentPage: number;
   }>;
+  getPaginatedUserReports(
+    userId: string,
+    page: number,
+    limit: number,
+    status?: "pending" | "in_review" | "resolved" | "rejected"
+  ): Promise<{
+    reports: any[];
+    totalReports: number;
+    totalPages: number;
+    currentPage: number;
+  }>;
 }

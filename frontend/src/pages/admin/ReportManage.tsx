@@ -323,12 +323,13 @@ const ReportManagementPage = () => {
                           </div>
                         </div>
 
-                        <div className="flex items-start gap-2">
+                        <div className="flex items-start gap-2 bg-yellow-50 rounded-md border-1 border-yellow-500 p-2">
+                          <p className="text-gray-600 font-semibold capitalize ">Report </p>
                           <MessageSquare
                             size={18}
                             className="text-gray-400 mt-1 flex-shrink-0"
-                          />
-                          <p className="text-gray-600">{report.message}</p>
+                          />:
+                          <p className="text-gray-600 w-[25rem]">{report.message}</p>
                         </div>
 
                         <div className="flex flex-wrap gap-4">

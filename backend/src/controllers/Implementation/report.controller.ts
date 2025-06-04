@@ -78,8 +78,26 @@ export class ReportController implements IReportController {
         sendResponse(res, HttpResCode.BAD_REQUEST, "User ID is required");
         return;
       }
-      const reports = await this.reportService.getUserReports(userId);
-      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, reports);
+
+      const page = parseInt((req.query.page as string) || "1", 10);
+      const limit = parseInt((req.query.limit as string) || "10", 10);
+      const status =
+        req.query.status && req.query.status !== "all"
+          ? (req.query.status as
+              | "pending"
+              | "in_review"
+              | "resolved"
+              | "rejected")
+          : undefined;
+
+      const result = await this.reportService.getUserReports(
+        userId,
+        page,
+        limit,
+        status
+      );
+      console.log("🚀 ~ ReportController ~ result:", result)
+      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, result);
     } catch (error) {
       next(error);
     }
