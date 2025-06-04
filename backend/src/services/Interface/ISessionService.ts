@@ -28,25 +28,32 @@ export interface ISessionService {
   bookSlot(slotId: string, userId: string): Promise<ISlotModel | null>;
   cancelAvailableSlot(
     slotIdString: string,
-    userId: string       
-  ): Promise<ISlotModel | null>
-  
+    userId: string
+  ): Promise<ISlotModel | null>;
+
   //bookings
   getUpcomingTrainerBookings(userId: string): Promise<IBookingModel[]>;
+  getBookingDetailsById(bookingId: string): Promise<IBookingModel>;
   trainerancelBooking(
     bookingIdString: string,
     reason: string,
     userId: string
   ): Promise<IBookingModel | null>;
   getAllUserBookingsWithTrainer(
-    userIdString: string,   
-    trainerIdString: string 
-    ): Promise<IBookingModel[]>;
-    userCancelBooking(
-      bookingIdString: string,
-      reason: string,
-      userId: string
-    ): Promise<IBookingModel | null>;
+    userIdString: string,
+    trainerIdString: string
+  ): Promise<IBookingModel[]>;
+  userCancelBooking(
+    bookingIdString: string,
+    reason: string,
+    userId: string
+  ): Promise<IBookingModel | null>;
+  updateBookingStatus(
+    userId: string,
+    bookingIdString: string,
+    status: "confirmed" | "canceled" | "completed",
+    notes:string
+  ): Promise<IBookingModel | null>;
 
   // deleteAvailability(availabilityId: string): Promise<boolean>;
   // getTrainerAvailability(trainerId: string): Promise<IAvailabilityModel[]>;

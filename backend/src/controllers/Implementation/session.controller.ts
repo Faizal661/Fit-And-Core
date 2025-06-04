@@ -15,9 +15,7 @@ export class SessionController implements ISessionController {
   constructor(
     @inject("SessionService")
     private sessionService: ISessionService
-  ) {
-    this.sessionService = sessionService;
-  }
+  ) {}
 
   async createAvailability(
     req: Request,
@@ -201,7 +199,10 @@ export class SessionController implements ISessionController {
         );
       }
       if (!slotId) {
-        throw new CustomError(HttpResMsg.SLOT_ID_REQUIRED, HttpResCode.BAD_REQUEST);
+        throw new CustomError(
+          HttpResMsg.SLOT_ID_REQUIRED,
+          HttpResCode.BAD_REQUEST
+        );
       }
 
       const canceledSlot = await this.sessionService.cancelAvailableSlot(
@@ -236,6 +237,25 @@ export class SessionController implements ISessionController {
 
       sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, {
         upcomingBookings,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getBookingDetailsById(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const { bookingId } = req.params;
+      const bookingDetails = await this.sessionService.getBookingDetailsById(
+        bookingId
+      );
+
+      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, {
+        bookingDetails,
       });
     } catch (error) {
       next(error);
@@ -341,7 +361,6 @@ export class SessionController implements ISessionController {
         );
       }
 
-      
       if (!reason) {
         throw new CustomError(
           HttpResMsg.CANCELLATION_REASON_REQUIRED,
@@ -361,5 +380,45 @@ export class SessionController implements ISessionController {
     }
   }
 
+  async updateBookingStatus(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const { bookingId } = req.params;
+      const { status, notes } = req.body;
+      const userId = req.decoded?.id;
 
+      if (!userId) {
+        throw new CustomError(
+          HttpResMsg.UNAUTHORIZED,
+          HttpResCode.UNAUTHORIZED
+        );
+      }
+      if (!bookingId) {
+        throw new CustomError(
+          HttpResMsg.BOOKING_ID_REQUIRED,
+          HttpResCode.BAD_REQUEST
+        );
+      }
+      if (!status) {
+        throw new CustomError("Status is required", HttpResCode.BAD_REQUEST);
+      }
+      if (!notes) {
+        throw new CustomError("Feedback is required", HttpResCode.BAD_REQUEST);
+      }
+
+      const updatedBooking = await this.sessionService.updateBookingStatus(
+        userId,
+        bookingId,
+        status,
+        notes
+      );
+
+      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, updatedBooking);
+    } catch (error) {
+      next(error);
+    }
+  }
 }

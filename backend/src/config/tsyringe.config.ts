@@ -2,6 +2,7 @@ import "reflect-metadata";
 import { container } from "tsyringe";
 
 import redisClient from "./redis.config";
+import { Server } from 'socket.io';
 
 import AuthController from "../controllers/Implementation/auth.controller";
 import AuthService from '../services/Implementation/auth.service';
@@ -72,7 +73,25 @@ import { IFoodLogRepository } from "../repositories/Interface/IFoodLogRepository
 import { IGeminiService } from "../services/Interface/IGeminiApiService";
 import { GeminiService } from "../services/Implementation/geminiApi.service";
 
+import { VideoSessionRepository } from '../repositories/Implementation/video-session.repository';
+import { VideoCallService } from '../services/Implementation/video-call.service';
+import { IVideoCallService } from "../services/Interface/IVideoCallService";
+import { IVideoSessionRepository } from "../repositories/Interface/IVideoSessionRepository";
+
+import { RecordingController } from "../controllers/Implementation/recording.controller";
+import { RecordingService } from "../services/Implementation/recording.service";
+import { IRecordingController } from "../controllers/Interface/IRecordingController";
+import { IRecordingService } from "../services/Interface/IRecordingService";
+
+import { IReportController } from "../controllers/Interface/IReportController";
+import { ReportController } from "../controllers/Implementation/report.controller";
+import { ReportService } from "../services/Implementation/report.service";
+import { ReportRepository } from "../repositories/Implementation/report.repository";
+import { IReportRepository } from "../repositories/Interface/IReportRepository";
+import { IReportService } from "../services/Interface/IReportService";
+
 container.registerInstance('RedisClient', redisClient);
+container.registerInstance('SocketIOServer', Server);
 
 container.register<IAuthController>('AuthController', { useClass: AuthController });
 container.register<IAuthService>('AuthService', { useClass: AuthService });
@@ -104,6 +123,12 @@ container.register<IAvailabilityRepository>("AvailabilityRepository", { useClass
 container.register<ISlotRepository>("SlotRepository", { useClass: SlotRepository,});
 container.register<IBookingRepository>("BookingRepository", { useClass: BookingRepository,});
 
+container.register<IVideoCallService>('VideoCallService', {useClass: VideoCallService});
+container.register<IVideoSessionRepository>('VideoSessionRepository', {useClass: VideoSessionRepository});
+
+container.register<IRecordingController>("RecordingController",{useClass: RecordingController})
+container.register<IRecordingService>("RecordingService",{useClass: RecordingService})
+
 container.register<IProgressController>("ProgressController", { useClass: ProgressController });
 container.register<IProgressService>("ProgressService", { useClass: ProgressService });
 container.register<IProgressRepository>("ProgressRepository", { useClass: ProgressRepository });
@@ -112,3 +137,7 @@ container.register<IFoodLogController>("FoodLogController", { useClass: FoodLogC
 container.register<IFoodLogService>("FoodLogService", { useClass: FoodLogService });
 container.register<IFoodLogRepository>("FoodLogRepository", { useClass: FoodLogRepository });
 container.register<IGeminiService>("GeminiService", { useClass: GeminiService });
+
+container.register<IReportController>("ReportController", { useClass: ReportController });
+container.register<IReportService>("ReportService", { useClass: ReportService });
+container.register<IReportRepository>("ReportRepository", { useClass: ReportRepository });  

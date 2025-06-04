@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { useNavigate } from "react-router-dom";
 import { PaginatedTraineesResult, TraineeData } from "../../../types/trainee.type";
+import { formatDate } from "../../../utils/dateFormat";
 
 // Animation variants
 const fadeIn = {
@@ -80,15 +81,6 @@ const TraineeManagementPage = () => {
     return statusColors[lowerStatus] || defaultColor;
   };
 
-  // Format date with options
-  const formatDate = (date: Date | null) => {
-    if (!date) return "N/A";
-    return new Date(date).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-  };
 
   return (
     <motion.div
@@ -307,7 +299,7 @@ const TraineeManagementPage = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
-                  {data.trainees.map((trainee: any, index: number) => {
+                  {data.trainees.map((trainee: TraineeData, index: number) => {
                     // Get most recent subscription if available
                     const latestSubscription =
                       trainee.subscriptionHistory &&

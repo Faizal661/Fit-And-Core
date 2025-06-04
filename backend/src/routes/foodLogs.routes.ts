@@ -24,7 +24,6 @@ const userOnlyAccess = [
 ];
 
 // Base path: /api/food-logs
-
 router.route('/')
   .post(
     ...userOnlyAccess,

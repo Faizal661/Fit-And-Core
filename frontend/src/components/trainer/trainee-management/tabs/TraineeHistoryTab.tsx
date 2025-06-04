@@ -2,13 +2,13 @@
 import { motion } from "framer-motion";
 import { Calendar, Award, Clock, Timer } from "lucide-react";
 import { SubscriptionHistory, TraineeData } from "../../../../types/trainee.type";
+import { formatDate } from "../../../../utils/dateFormat";
 
 interface TraineeHistoryTabProps {
   traineeData: TraineeData;
-  formatDate: (dateString: string) => string;
 }
 
-const TraineeHistoryTab = ({ traineeData, formatDate }: TraineeHistoryTabProps) => {
+const TraineeHistoryTab = ({ traineeData }: TraineeHistoryTabProps) => {
   return (
     <motion.div
       initial={{ opacity: 0 }}

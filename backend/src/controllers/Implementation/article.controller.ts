@@ -7,7 +7,7 @@ import {
   HttpResMsg,
 } from "../../constants/http-response.constants";
 import { IArticleController } from "../Interface/IArticleController";
-import { uploadToCloudinary } from "../../utils/s3-upload";
+import { uploadToCloudinary } from "../../utils/cloud-storage";
 import { CustomError } from "../../errors/CustomError";
 
 @injectable()

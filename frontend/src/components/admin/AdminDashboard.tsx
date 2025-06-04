@@ -79,7 +79,7 @@ interface TooltipPayloadEntry {
   color: string;
   dataKey: string; 
   name: string;
-  value: any; 
+  value: number; 
 }
 interface CustomTooltipProps {
   active?: boolean; 

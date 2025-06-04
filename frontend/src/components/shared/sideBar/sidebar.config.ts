@@ -9,6 +9,7 @@ export const UserSidebarItems = [
   { to: "/communities", label: SIDEBAR_MESSAGES.COMMUNITIES, icon: Globe },
   { to: "/progress", label: SIDEBAR_MESSAGES.PROGRESSION, icon: TrendingUp },
   { to: "/nutrition", label: SIDEBAR_MESSAGES.NUTRITION, icon: Utensils },
+  { to: "/reports", label: SIDEBAR_MESSAGES.REPORTS, icon: BarChart },
   { to: "/notifications", label: SIDEBAR_MESSAGES.NOTIFICATIONS, icon: Bell },
   { to: "/history", label: SIDEBAR_MESSAGES.HISTORY, icon: History },
 ];
@@ -17,10 +18,11 @@ export const TrainerSidebarItems = [
   { to: "/trainer", label: SIDEBAR_MESSAGES.DASHBOARD, icon: Home },
   { to: "/trainer/trainees-management", label: SIDEBAR_MESSAGES.TRAINEE_MANAGEMENT, icon: Users },
   { to: "/trainer/articles", label: SIDEBAR_MESSAGES.ARTICLE_MANAGEMENT, icon: FileText },
-  { to: "/trainer/sessions", label: SIDEBAR_MESSAGES.SESSION_MANAGEMENT, icon: Calendar },
-  { to: "/trainer/upcoming", label: SIDEBAR_MESSAGES.UPCOMING_SESSIONS, icon: Calendar },
-  { to: "/trainer/chats", label: SIDEBAR_MESSAGES.CHATS, icon: MessageSquare },
+  { to: "/trainer/availability-setup", label: SIDEBAR_MESSAGES.SESSION_MANAGEMENT, icon: Calendar },
+  { to: "/trainer/sessions", label: SIDEBAR_MESSAGES.UPCOMING_SESSIONS, icon: Calendar },
   { to: "/trainer/finance", label: SIDEBAR_MESSAGES.FINANCE_MANAGEMENT, icon: TrendingUp },
+  { to: "/trainer/chats", label: SIDEBAR_MESSAGES.CHATS, icon: MessageSquare },
+  { to: "/trainer/reports", label: SIDEBAR_MESSAGES.REPORTS, icon: BarChart },
   { to: "/trainer/notifications", label: SIDEBAR_MESSAGES.NOTIFICATIONS, icon: Bell },
 ];
 

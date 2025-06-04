@@ -39,9 +39,6 @@ const trainerAdminAccess = [
 const uploadThumbnail = upload.single("thumbnail");
 
 // Base path: /api/articles
-
-
-// Article collection routes
 router.route('/')
   .post(
     ...trainerAccess,
@@ -53,14 +50,12 @@ router.route('/')
     (req, res, next) => articleController.getAllArticles(req, res, next)
   );
 
-// My articles 
 router.route('/mine')
   .get(
     ...trainerAccess,
     (req, res, next) => articleController.getMyArticles(req, res, next)
   );
 
-// Specific article routes
 router.route('/:articleId')
   .get(
     ...userTrainerAccess,
@@ -76,7 +71,6 @@ router.route('/:articleId')
     (req, res, next) => articleController.deleteArticle(req, res, next)
   );
 
-// Article interactions (upvote)
 router.route('/:articleId/upvotes')
   .post(
     ...userTrainerAccess,
