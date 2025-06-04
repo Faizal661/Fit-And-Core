@@ -382,6 +382,23 @@ export default class SessionService implements ISessionService {
     }
   }
 
+  async getBookingDetailsById(bookingId: string): Promise<IBookingModel> {
+    try {
+      const bookingDetails =
+        await this.bookingRepository.getBookingDetailsById(new Types.ObjectId(bookingId));
+
+      return bookingDetails;
+    } catch (error) {
+      if (error instanceof CustomError) {
+        throw error;
+      }
+      throw new CustomError(
+        "Failed to fetch bookings details.",
+        HttpResCode.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
   async trainerancelBooking(
     bookingIdString: string,
     reason: string,

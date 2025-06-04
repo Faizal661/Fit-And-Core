@@ -33,6 +33,7 @@ export interface ISessionService {
 
   //bookings
   getUpcomingTrainerBookings(userId: string): Promise<IBookingModel[]>;
+  getBookingDetailsById(bookingId: string): Promise<IBookingModel>;
   trainerancelBooking(
     bookingIdString: string,
     reason: string,

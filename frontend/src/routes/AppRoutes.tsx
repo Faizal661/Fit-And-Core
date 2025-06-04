@@ -45,6 +45,7 @@ const CreateArticle = lazy(() => import("../pages/article/trainer/CreateArticle"
 const HomeAdmin = lazy(() => import("../pages/admin/HomeAdmin"));
 const UserManage = lazy(() => import("../pages/admin/UserManage"));
 const TrainerManage = lazy(() => import("../pages/admin/TrainerManage"));
+const ReportManage = lazy(() => import("../pages/admin/ReportManage"));
 
 // public
 const ArticleFullView = lazy(() => import("../pages/article/ArticleFullView"));
@@ -99,6 +100,7 @@ const AppRoutes = () => {
         <Route path="/admin" element={<HomeAdmin />} />
         <Route path="/admin/user-management" element={<UserManage />} />
         <Route path="/admin/trainer-management" element={<TrainerManage />} />
+        <Route path="/admin/report-management" element={<ReportManage />} />
       </Route>
     </Routes>
   );

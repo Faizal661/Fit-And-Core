@@ -83,6 +83,13 @@ import { RecordingService } from "../services/Implementation/recording.service";
 import { IRecordingController } from "../controllers/Interface/IRecordingController";
 import { IRecordingService } from "../services/Interface/IRecordingService";
 
+import { IReportController } from "../controllers/Interface/IReportController";
+import { ReportController } from "../controllers/Implementation/report.controller";
+import { ReportService } from "../services/Implementation/report.service";
+import { ReportRepository } from "../repositories/Implementation/report.repository";
+import { IReportRepository } from "../repositories/Interface/IReportRepository";
+import { IReportService } from "../services/Interface/IReportService";
+
 container.registerInstance('RedisClient', redisClient);
 container.registerInstance('SocketIOServer', Server);
 
@@ -131,3 +138,6 @@ container.register<IFoodLogService>("FoodLogService", { useClass: FoodLogService
 container.register<IFoodLogRepository>("FoodLogRepository", { useClass: FoodLogRepository });
 container.register<IGeminiService>("GeminiService", { useClass: GeminiService });
 
+container.register<IReportController>("ReportController", { useClass: ReportController });
+container.register<IReportService>("ReportService", { useClass: ReportService });
+container.register<IReportRepository>("ReportRepository", { useClass: ReportRepository });  

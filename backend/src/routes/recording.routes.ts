@@ -1,16 +1,13 @@
 import multer from "multer";
 import { Router } from "express";
 import { container } from "tsyringe";
-import { RecordingController } from "../controllers/Implementation/recording.controller";
 import { verifyAccessToken } from "../middlewares/verify-token.middleware";
 import { checkBlockedUser } from "../middlewares/check-blocked-user.middleware";
 import { authorizeRoles } from "../middlewares/role-based-access-control.middleware";
-import { uploadToCloudinary } from "../utils/cloud-storage";
-import { sendResponse } from "../utils/send-response";
-import { HttpResCode, HttpResMsg } from "../constants/http-response.constants";
+import { IRecordingController } from "../controllers/Interface/IRecordingController";
 
 const router = Router();
-const recordingController = container.resolve(RecordingController);
+const recordingController = container.resolve<IRecordingController>("RecordingController");
 
 const upload = multer({ storage: multer.memoryStorage() });
 

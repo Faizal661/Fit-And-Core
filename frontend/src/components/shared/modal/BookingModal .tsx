@@ -46,9 +46,15 @@ export const BookingModal = ({
     },
     onError: (error) => {
       if (axios.isAxiosError(error)) {
-        showToast("error", error.response?.data.message || "Failed to update booking status");
-      }else{
-        showToast("error", "An unexpected error occurred while updating booking status");
+        showToast(
+          "error",
+          error.response?.data.message || "Failed to update booking status"
+        );
+      } else {
+        showToast(
+          "error",
+          "An unexpected error occurred while updating booking status"
+        );
       }
     },
   });
@@ -330,7 +336,9 @@ export const BookingModal = ({
         onClose={() => setShowFeedbackModal(false)}
         onSubmit={handleCompleteWithFeedback}
         isSubmitting={updateStatusMutation.isPending}
-        traineeName={booking.trainee.username}
+        description="Please provide your feedback about the session."
+        label="Feedback"
+        placeholder="Share your thoughts about the session, areas of improvement, or positive feedback..."
       />
 
       {/* Report Modal */}

@@ -243,6 +243,25 @@ export class SessionController implements ISessionController {
     }
   }
 
+  async getBookingDetailsById(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const { bookingId } = req.params;
+      const bookingDetails = await this.sessionService.getBookingDetailsById(
+        bookingId
+      );
+
+      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, {
+        bookingDetails,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async trainerCancelBooking(
     req: Request,
     res: Response,

@@ -15,4 +15,8 @@ export interface IBookingRepository
     userId: Types.ObjectId,
     trainerId: Types.ObjectId
   ): Promise<any[]>;
+
+  getBookingDetailsById(
+    bookingId: Types.ObjectId,
+  ): Promise<IBookingModel>;
 }

@@ -258,4 +258,139 @@ export class BookingRepository
       ])
       .exec();
   }
+
+  async getBookingDetailsById(
+    bookingId: Types.ObjectId
+  ): Promise<IBookingModel > {
+    const result = await this.model
+      .aggregate([
+        { $match: { _id: bookingId } },
+        {
+          $lookup: {
+            from: "slots",
+            localField: "slotId",
+            foreignField: "_id",
+            as: "slotDetails",
+          },
+        },
+        {
+          $unwind: { path: "$slotDetails", preserveNullAndEmptyArrays: false },
+        },
+        {
+          $lookup: {
+            from: "availabilities",
+            localField: "slotDetails.availabilityId",
+            foreignField: "_id",
+            as: "availabilityDetails",
+          },
+        },
+        {
+          $unwind: {
+            path: "$availabilityDetails",
+            preserveNullAndEmptyArrays: false,
+          },
+        },
+        {
+          $lookup: {
+            from: "users",
+            localField: "userId",
+            foreignField: "_id",
+            as: "traineeDetails",
+          },
+        },
+        {
+          $unwind: {
+            path: "$traineeDetails",
+            preserveNullAndEmptyArrays: false,
+          },
+        },
+        {
+          $lookup: {
+            from: "trainers",
+            localField: "trainerId",
+            foreignField: "_id",
+            as: "trainerDetails",
+          },
+        },
+        {
+          $unwind: {
+            path: "$trainerDetails",
+            preserveNullAndEmptyArrays: false,
+          },
+        },
+        {
+          $lookup: {
+            from: "users",
+            localField: "trainerDetails.userId",
+            foreignField: "_id",
+            as: "trainerUserDetails",
+          },
+        },
+        {
+          $unwind: {
+            path: "$trainerUserDetails",
+            preserveNullAndEmptyArrays: false,
+          },
+        },
+        {
+          $addFields: {
+            slotStart: {
+              $dateFromParts: {
+                year: { $year: "$availabilityDetails.selectedDate" },
+                month: { $month: "$availabilityDetails.selectedDate" },
+                day: { $dayOfMonth: "$availabilityDetails.selectedDate" },
+                hour: {
+                  $toInt: {
+                    $arrayElemAt: [
+                      { $split: ["$slotDetails.startTime", ":"] },
+                      0,
+                    ],
+                  },
+                },
+                minute: {
+                  $toInt: {
+                    $arrayElemAt: [
+                      { $split: ["$slotDetails.startTime", ":"] },
+                      1,
+                    ],
+                  },
+                },
+              },
+            },
+          },
+        },
+        {
+          $project: {
+            _id: 1,
+            status: 1,
+            notes: 1,
+            createdAt: 1,
+            slotDetails: {
+              _id: "$slotDetails._id",
+              startTime: "$slotDetails.startTime",
+              endTime: "$slotDetails.endTime",
+              slotDuration: "$slotDetails.slotDuration",
+            },
+            trainee: {
+              _id: "$traineeDetails._id",
+              username: "$traineeDetails.username",
+              profilePicture: "$traineeDetails.profilePicture",
+            },
+            trainer: {
+              _id: "$trainerDetails._id",
+              username: "$trainerUserDetails.username",
+              profilePicture: "$trainerUserDetails.profilePicture",
+            },
+            slotStart: 1,
+            trainerVideoUrl: 1,
+            traineeVideoUrl: 1,
+            trainerVideoUploadedAt: 1,
+            traineeVideoUploadedAt: 1,
+          },
+        },
+      ])
+      .exec();
+
+    return result[0] ?? null;
+  }
 }

@@ -8,7 +8,11 @@ interface FeedbackModalProps {
   onClose: () => void;
   onSubmit: (feedback: string) => void;
   isSubmitting: boolean;
-  traineeName: string;
+  title?: string;
+  description?: string;
+  label?: string;
+  placeholder?: string;
+  submitButtonText?: string;
 }
 
 export const FeedbackModal = ({
@@ -16,9 +20,12 @@ export const FeedbackModal = ({
   onClose,
   onSubmit,
   isSubmitting,
-  traineeName,
+  title = "Add Feedback",
+  description = "Please provide your comments.",
+  label= "Your Comments",
+  placeholder = "Share your thoughts...",
+  submitButtonText = "Submit Feedback",
 }: FeedbackModalProps) => {
-    
   const [feedback, setFeedback] = useState("");
 
   if (!isOpen) return null;
@@ -28,6 +35,7 @@ export const FeedbackModal = ({
     if (feedback.trim()) {
       onSubmit(feedback.trim());
     }
+    setFeedback(""); 
   };
 
   return (
@@ -41,9 +49,7 @@ export const FeedbackModal = ({
           <div className="flex justify-between items-start mb-4">
             <div className="flex items-center gap-2">
               <MessageSquare className="text-blue-600" size={20} />
-              <h2 className="text-xl font-bold text-gray-800">
-                Add Feedback
-              </h2>
+              <h2 className="text-xl font-bold text-gray-800">{title}</h2>
             </div>
             <button
               onClick={onClose}
@@ -54,20 +60,21 @@ export const FeedbackModal = ({
             </button>
           </div>
 
-          <p className="text-gray-600 mb-4">
-            Provide feedback for <span className="font-medium">{traineeName}</span> about this training session.
-          </p>
+          <p className="text-gray-600 mb-4">{description}</p>
 
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
-              <label htmlFor="feedback" className="block text-sm font-medium text-gray-700 mb-2">
-                Your Feedback
+              <label
+                htmlFor="feedback"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
+                {label}
               </label>
               <textarea
                 id="feedback"
                 value={feedback}
                 onChange={(e) => setFeedback(e.target.value)}
-                placeholder="Share your thoughts about the session, areas of improvement, or positive feedback..."
+                placeholder={placeholder}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
                 rows={4}
                 disabled={isSubmitting}
@@ -97,7 +104,7 @@ export const FeedbackModal = ({
                 ) : (
                   <>
                     <Send size={16} />
-                    Submit Feedback
+                    {submitButtonText}
                   </>
                 )}
               </button>

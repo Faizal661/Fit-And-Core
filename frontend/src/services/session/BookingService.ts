@@ -3,6 +3,7 @@ import {
   CancelBookingParams,
   UserBooking,
   UpdateBookingData,
+  BookingDetails,
 } from "../../types/session.type";
 
 
@@ -11,6 +12,13 @@ export const getTrainerBookings = async (): Promise<UserBooking[]>  => {
   const response = await api.get(`/session/bookings`);
   return response.data.upcomingBookings;
 };
+
+
+export const fetchBookingDetails= async (bookingId:string): Promise<BookingDetails>  => {
+  const response = await api.get(`/session/bookings/${bookingId}`);
+  return response.data.bookingDetails;
+};
+
 
 export const getUserBookings = async (
   trainerId: string
