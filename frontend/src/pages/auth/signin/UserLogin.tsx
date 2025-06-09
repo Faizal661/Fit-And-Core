@@ -33,6 +33,7 @@ const UserLogin = () => {
       showToast(STATUS.WARNING, AUTH_MESSAGES.ACCOUNT_BLOCKED);
       localStorage.removeItem("blocked");
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const {

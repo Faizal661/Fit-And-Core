@@ -1,4 +1,4 @@
-export enum HttpResCode {
+export const enum HttpResCode {
   OK = 200,
   CREATED = 201,
   ACCEPTED = 202,
@@ -62,7 +62,7 @@ export enum HttpResCode {
   NETWORK_AUTHENTICATION_REQUIRED = 511,
 }
 
-export enum HttpResMsg {
+export const enum HttpResMsg {
   SUCCESS = "Operation successful",
   CREATED = "Resource successfully created",
   ACCEPTED = "Request accepted",
@@ -215,7 +215,9 @@ export enum HttpResMsg {
   BOOKING_NOT_FOUND = "Booking not found.",
   CANCELLATION_REASON_REQUIRED = "Cancellation reason is required in request body.",
   NO_PERMISSION_TO_CANCEL_BOOKING = "You do not have permission to cancel this booking.",
+  NO_PERMISSION_TO_UPDATE_BOOKING = "You do not have permission to update this booking.",
   FAILED_TO_CANCEL_BOOKING = "Failed to cancel booking due to an unexpected error.",
+  VIDEO_UPLOADED_SUCCESSFULLY = "Video uploaded successfully",
 
   FAILED_TO_FETCH_USER_PROGRESS = "Failed to fetch trainee progressions",
   FAILED_TO_ADD_NEW_PROGRESS = "Failed to add new progression",

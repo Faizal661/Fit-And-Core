@@ -1,5 +1,7 @@
 // Date 2025-04-08T05:12:27.915Z => 2025-04-08
-export const formatDateForInput = (dateString: string | undefined): string => {
+export const formatDateForInput = (
+  dateString: string | undefined | Date
+): string => {
   if (!dateString) return "";
 
   try {
@@ -14,7 +16,7 @@ export const formatDateForInput = (dateString: string | undefined): string => {
 };
 
 // Date 2025-04-08T05:12:27.915Z => Apr 8,2025
-export const formatDate = (dateString: string) => {
+export const formatDate = (dateString: string | Date) => {
   return new Date(dateString).toLocaleDateString("en-US", {
     year: "numeric",
     month: "short",
@@ -22,19 +24,27 @@ export const formatDate = (dateString: string) => {
   });
 };
 
+// Date 2025-04-08T05:12:27.915Z => Apr 8,2025 , 02:16 PM
+export const formatDateAndTime = (dateString: string | Date) => {
+  return new Date(dateString).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+};
 
-export const formatDateForQuery = (date: Date): string => {
-  const year = date.getFullYear();
-  const month = date.getMonth() + 1; 
-  const day = date.getDate();
+export const formatTimeAgo = (dateString: string) => {
+  const now = new Date();
+  const date = new Date(dateString);
+  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
 
-  const paddedMonth = month < 10 ? `0${month}` : `${month}`;
-  const paddedDay = day < 10 ? `0${day}` : `${day}`;
+  if (diffInSeconds < 60) return "Just now";
+  if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
+  if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
+  if (diffInSeconds < 604800)
+    return `${Math.floor(diffInSeconds / 86400)}d ago`;
 
-  const formattedDate = `${year}-${paddedMonth}-${paddedDay}`;
-
-  console.log("🚀 ~ formatDateForQuery (Local) ~ original date object:", date);
-  console.log("🚀 ~ formatDateForQuery (Local) ~ formatted string:", formattedDate);
-
-  return formattedDate;
+  return date.toLocaleDateString();
 };

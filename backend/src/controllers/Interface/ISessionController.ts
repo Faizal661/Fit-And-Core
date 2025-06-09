@@ -12,9 +12,11 @@ export interface ISessionController {
     
     //boookiing
     getUpcomingTrainerBookings( req: Request, res: Response, next: NextFunction): Promise<void>
+    getBookingDetailsById( req: Request, res: Response, next: NextFunction): Promise<void>
     trainerCancelBooking( req: Request, res: Response, next: NextFunction): Promise<void>
     getAllUserBookingsWithTrainer( req: Request, res: Response, next: NextFunction): Promise<void>
     userCancelBooking( req: Request, res: Response, next: NextFunction): Promise<void>
+    updateBookingStatus( req: Request, res: Response, next: NextFunction): Promise<void>
     // deleteAvailability(req: Request, res: Response, next: NextFunction): Promise<void>;
     // getTrainerAvailability(req: Request, res: Response, next: NextFunction): Promise<void>;
   }

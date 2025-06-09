@@ -50,6 +50,11 @@ interface TraineeDetails {
   username: string;
   profilePicture: string;
 }
+interface TrainerDetails {
+  _id: string;
+  username: string;
+  profilePicture: string;
+}
 interface SlotDetails {
   _id: string;
   startTime: string;
@@ -62,11 +67,26 @@ export interface UserBooking {
   notes?: string;
   slotDetails: SlotDetails;
   trainee: TraineeDetails;
+  trainer:TrainerDetails,
   slotStart: Date;
-  selectedDate: Date;
+  // selectedDate: Date;
 }
 
 export interface CancelBookingParams {
   bookingId: string;
   reason: string;
+}
+
+export interface UpdateBookingData {
+  bookingId: string;
+  status: string;
+  feedback?: string;
+}
+
+export interface BookingDetails extends UserBooking {
+  trainerVideoUrl?: string;
+  traineeVideoUrl?: string;
+  trainerVideoUploadedAt?: string;
+  traineeVideoUploadedAt?: string;
+  updatedAt?: string;
 }

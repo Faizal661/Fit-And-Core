@@ -1,7 +1,7 @@
 const UNDEFINED_MSG = "environment variable is not defined.";
 const INVALID_MSG = "environment variable is not a valid number.";
 
-export enum EnvErrMsg {
+export const enum EnvErrMsg {
   PORT_UNDEFINED = `${"PORT"} ${UNDEFINED_MSG}`,
   CLIENT_ORIGIN_UNDEFINED = `${"CLIENT_ORIGIN"} ${UNDEFINED_MSG}`,
   ACCESS_TOKEN_SECRET_UNDEFINED = `${"ACCESS_TOKEN_SECRET"} ${UNDEFINED_MSG}`,

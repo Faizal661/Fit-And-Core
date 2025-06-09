@@ -14,6 +14,7 @@ export interface NutritionData {
 }
 
 export interface IFoodLog {
+  _id:string,
   userId: string;
   mealType: MealType;
   foodDescription: string;

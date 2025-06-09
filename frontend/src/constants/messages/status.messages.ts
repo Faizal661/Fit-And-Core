@@ -1,4 +1,4 @@
-export enum STATUS{
+export const enum STATUS{
     SUCCESS="success",
     ERROR="error",
     WARNING="warning",

@@ -26,6 +26,7 @@ import {
 import axios from "axios";
 import { ERR_MESSAGES } from "../../../constants/messages/error.messages";
 import { IAvailability } from "../../../types/session.type";
+import { formatDateForInput } from "../../../utils/dateFormat";
 
 const fadeIn = {
   hidden: { opacity: 0, y: 20 },
@@ -95,16 +96,13 @@ const AvailabilitySetupPage = () => {
     return date.toDateString() === selectedDate.toDateString();
   };
 
-  // Format date for API query
-  const formatDateForQuery = (date: Date) => {
-    return date.toISOString().split("T")[0]; // YYYY-MM-DD format
-  };
+
 
   const { data: availabilityData, isLoading: isLoadingAvailability } = useQuery(
     {
-      queryKey: ["trainerAvailability", formatDateForQuery(selectedDate)],
+      queryKey: ["trainerAvailability", formatDateForInput(selectedDate)],
       queryFn: () =>
-        getTrainerAvailabilityByDate(formatDateForQuery(selectedDate)),
+        getTrainerAvailabilityByDate(formatDateForInput(selectedDate)),
     }
   );
 

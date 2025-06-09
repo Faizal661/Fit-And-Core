@@ -7,7 +7,7 @@ import {
 import { ITrainerController } from "../Interface/ITrainerController";
 import { ITrainerService } from "../../services/Interface/ITrainerService";
 import { sendResponse } from "../../utils/send-response";
-import { uploadToCloudinary } from "../../utils/s3-upload";
+import { uploadToCloudinary } from "../../utils/cloud-storage";
 import { CustomRequest } from "../../types/trainer.types";
 import { CustomError } from "../../errors/CustomError";
 

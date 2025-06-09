@@ -22,6 +22,7 @@ import {
   HttpResCode,
   HttpResMsg,
 } from "../../constants/http-response.constants";
+import { BaseError } from "../../errors/BaseError";
 
 @injectable()
 export default class authService implements IAuthService {
@@ -46,7 +47,7 @@ export default class authService implements IAuthService {
     const isUsernameTaken = await this.authRepository.isUsernameTaken(username);
     const isEmailTaken = await this.authRepository.isEmailTaken(email);
     if (isUsernameTaken) {
-      return { available: false, message: HttpResMsg.USERNAME_CONFLICT};
+      return { available: false, message: HttpResMsg.USERNAME_CONFLICT };
     } else if (isEmailTaken) {
       return { available: false, message: HttpResMsg.EMAIL_CONFLICT };
     }
@@ -183,6 +184,14 @@ export default class authService implements IAuthService {
           HttpResCode.UNAUTHORIZED
         );
       }
+
+      if (user.isBlocked) {
+        throw new CustomError(
+          HttpResMsg.ACCOUNT_BLOCKED,
+          HttpResCode.FORBIDDEN
+        );
+      }
+
       const refreshToken = generateRefreshToken(user);
       return {
         user: {
@@ -194,7 +203,10 @@ export default class authService implements IAuthService {
         accessToken,
         refreshToken,
       };
-    } catch (tokenError) {
+    } catch (error) {
+      if (error instanceof CustomError) {
+        throw error;
+      }
       throw new CustomError(
         HttpResMsg.INVALID_ACCESS_TOKEN,
         HttpResCode.UNAUTHORIZED

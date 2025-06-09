@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document, Types } from "mongoose";
+import mongoose, { Schema, Document } from "mongoose";
 import { ISlot } from "../../types/session.types";
 
 export interface ISlotModel extends Document, Omit<ISlot, "_id"> {}
@@ -15,6 +15,7 @@ const SlotSchema: Schema = new Schema(
       ref: "Trainer",
       required: true,
     },
+    slotDate: { type: Date, required: true },
     startTime: { type: String, required: true },
     endTime: { type: String, required: true },
     status: {

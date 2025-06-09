@@ -19,6 +19,7 @@ import {
   getFoodLogDatesByMonth,
   getFoodLogsByDate,
 } from "../../../../services/nutrition/nutritionService";
+import { formatDateForInput } from "../../../../utils/dateFormat";
 
 // Animation variants
 const fadeIn = {
@@ -137,7 +138,6 @@ const TraineeNutritionTab = ({ traineeData }: TraineeNutritionTabProps) => {
     enabled: !!traineeData.traineeId,
   });
 
-  const formatDate = (d: Date) => d.toISOString().split("T")[0];
 
   const calculateDailyTotals = (logs: IFoodLog[]) => {
     return logs?.reduce(
@@ -254,7 +254,7 @@ const TraineeNutritionTab = ({ traineeData }: TraineeNutritionTabProps) => {
               <div className="grid grid-cols-7 gap-2">
                 {daysInMonth.map((date, index) => {
                   const isLogged = date
-                    ? foodLogDates?.includes(formatDate(date))
+                    ? foodLogDates?.includes(formatDateForInput(date))
                     : false;
 
                   return (
@@ -378,7 +378,7 @@ const TraineeNutritionTab = ({ traineeData }: TraineeNutritionTabProps) => {
                 </div>
               ) : (
                 <div className="space-y-4 px-8 pb-8">
-                  {foodLogs?.map((log: any) => (
+                  {foodLogs?.map((log: IFoodLog) => (
                     <motion.div
                       key={log._id}
                       initial={{ opacity: 0, y: 10 }}

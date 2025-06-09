@@ -74,7 +74,7 @@ const RegisterForm = () => {
         welcomeMessage={AUTH_MESSAGES.SIGNUP_MESSAGE}
       >
         <form
-          className="w-full max-w-md flex flex-col  "
+          className="w-full max-w-md flex flex-col  gap-0.25"
           onSubmit={handleSubmit(onSubmit)}
         >
           <label htmlFor="name" className="text-slate-400 mt-3">
@@ -90,7 +90,7 @@ const RegisterForm = () => {
             }`}
           />
           {errors.username && (
-            <p className="text-red-500">{errors.username.message}</p>
+            <p className="text-red-500 text-sm sm:text-md">{errors.username.message}</p>
           )}
           <label htmlFor="email" className="text-slate-400 mt-4">
             EMAIL ADDRESS
@@ -105,7 +105,7 @@ const RegisterForm = () => {
             }`}
           />
           {errors.email && (
-            <p className="text-red-500">{errors.email.message}</p>
+            <p className="text-red-500 text-sm sm:text-md">{errors.email.message}</p>
           )}
 
           <label htmlFor="password" className=" text-slate-400">
@@ -121,7 +121,7 @@ const RegisterForm = () => {
             }`}
           />
           {errors.password && (
-            <p className="text-red-500 ">{errors.password.message}</p>
+            <p className="text-red-500 text-sm sm:text-md">{errors.password.message}</p>
           )}
 
           <label htmlFor="confirmPassword" className="text-slate-400">
@@ -137,10 +137,10 @@ const RegisterForm = () => {
             }`}
           />
           {errors.confirmPassword && (
-            <p className="text-red-500 ">{errors.confirmPassword.message}</p>
+            <p className="text-red-500 text-sm sm:text-md">{errors.confirmPassword.message}</p>
           )}
 
-          {error && <p className="text-red-500">{error}</p>}
+          {error && <p className="text-red-500 text-sm sm:text-md">{error}</p>}
 
           <p className="text-light mt-10">
             Already have an account?{" "}

@@ -1,4 +1,4 @@
-export enum AUTH_MESSAGES { 
+export const enum AUTH_MESSAGES { 
     LOGIN_MESSAGE="You're back, awesome!",
     SIGNUP_MESSAGE= "Welcome to the Fit-Core, You are almost ready.",
 

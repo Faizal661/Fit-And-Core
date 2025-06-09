@@ -17,36 +17,9 @@ import TraineeProgressTab from "../../../components/trainer/trainee-management/t
 import TraineeNutritionTab from "../../../components/trainer/trainee-management/tabs/TraineeNutritionTab";
 import TraineeHistoryTab from "../../../components/trainer/trainee-management/tabs/TraineeHistoryTab";
 
-// Animation variants
-const fadeIn = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.6,
-      ease: [0.25, 0.1, 0.25, 1],
-    },
-  },
-};
-
-const staggerContainer = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-    },
-  },
-};
-
 type Tab = "info" | "progress" | "nutrition" | "history";
 
 
-// Utility function for formatting dates
-export const formatDate = (dateString: string) => {
-  return new Date(dateString).toLocaleDateString();
-};
 
 const TraineeDetailsPage = () => {
   const { traineeId } = useParams<{ traineeId: string }>();
@@ -115,9 +88,6 @@ const TraineeDetailsPage = () => {
           traineeData={traineeData}
           ref={ref}
           inView={inView}
-          staggerContainer={staggerContainer}
-          fadeIn={fadeIn}
-          formatDate={formatDate}
         />
       </div>
 
@@ -173,7 +143,6 @@ const TraineeDetailsPage = () => {
             {activeTab === "history" && (
               <TraineeHistoryTab
                 traineeData={traineeData}
-                formatDate={formatDate}
               />
             )}
           </div>
