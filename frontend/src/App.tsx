@@ -8,14 +8,16 @@ import Loader from "./components/shared/Loader";
 import ToastContainer from "./components/shared/customToast/ToastContainer.tsx";
 import ScrollToTop from "./components/shared/ScrollToTop.tsx";
 import ErrorBoundary from "./components/shared/errorBoundary.tsx";
+import Notifications from "./components/shared/Notifications.tsx";
 
 function App() {
   return (
     <div className="min-h-screen flex flex-col">
       <ScrollToTop />
-      <ToastContainer />
       <MenuButton />
       <FloatButton />
+      <ToastContainer />
+      <Notifications/>
       <Suspense fallback={<Loader />}>
         <ErrorBoundary>
           <AppRoutes />

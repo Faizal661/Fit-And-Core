@@ -237,4 +237,35 @@ export default class SubscriptionService implements ISubscriptionService {
       },
     };
   }
+
+  getUsersWithExpiringSubscriptions(days: number): Promise<any> {
+    const today = new Date();
+    const startDate = this.startOfDay(today);
+
+    const futureDate = new Date();
+    futureDate.setDate(futureDate.getDate() + days);
+    const endDate = this.endOfDay(futureDate);
+
+    const expirationDate = new Date();
+    expirationDate.setDate(expirationDate.getDate() + days);
+
+    return this.subscriptionRepository.find({
+      expiryDate: {
+        $gte: startDate,
+        $lte: endDate,
+      },
+    });
+  }
+
+  private startOfDay(date: Date): Date {
+    const d = new Date(date);
+    d.setHours(0, 0, 0, 0);
+    return d;
+  }
+
+  private endOfDay(date: Date): Date {
+    const d = new Date(date);
+    d.setHours(23, 59, 59, 999);
+    return d;
+  }
 }

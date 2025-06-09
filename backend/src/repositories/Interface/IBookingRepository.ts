@@ -3,6 +3,7 @@ import BookingModel, {
   IBookingModel,
 } from "../../models/session.model/booking.models";
 import { Types } from "mongoose";
+import { BookingDetails } from "../../types/booking.types";
 
 export interface IBookingRepository
   extends Omit<BaseRepository<IBookingModel>, "model"> {
@@ -16,7 +17,10 @@ export interface IBookingRepository
     trainerId: Types.ObjectId
   ): Promise<any[]>;
 
-  getBookingDetailsById(
-    bookingId: Types.ObjectId,
-  ): Promise<IBookingModel>;
+  getBookingDetailsById(bookingId: Types.ObjectId): Promise<IBookingModel>;
+
+  findUpcomingBookingsBetween(
+    start: Date,
+    end: Date
+  ): Promise<BookingDetails[]>;
 }

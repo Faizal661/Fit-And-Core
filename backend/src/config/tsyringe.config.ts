@@ -90,6 +90,13 @@ import { ReportRepository } from "../repositories/Implementation/report.reposito
 import { IReportRepository } from "../repositories/Interface/IReportRepository";
 import { IReportService } from "../services/Interface/IReportService";
 
+import { NotificationRepository } from '../repositories/Implementation/notification.repository';
+import { NotificationService } from '../services/Implementation/notification.service';
+import { NotificationController } from "../controllers/Implementation/notification.controller";
+import { INotificationRepository } from "../repositories/Interface/INotificationRepository";
+import { INotificationService } from "../services/Interface/INotificationService";
+import { INotificationController } from "../controllers/Interface/INotificationController";
+
 container.registerInstance('RedisClient', redisClient);
 container.registerInstance('SocketIOServer', Server);
 
@@ -141,3 +148,7 @@ container.register<IGeminiService>("GeminiService", { useClass: GeminiService })
 container.register<IReportController>("ReportController", { useClass: ReportController });
 container.register<IReportService>("ReportService", { useClass: ReportService });
 container.register<IReportRepository>("ReportRepository", { useClass: ReportRepository });  
+
+container.register<INotificationRepository>('NotificationRepository', { useClass: NotificationRepository});
+container.register<INotificationService>('NotificationService', { useClass: NotificationService });
+container.register<INotificationController>('NotificationController', { useClass: NotificationController });

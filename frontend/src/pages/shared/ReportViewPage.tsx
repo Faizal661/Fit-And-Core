@@ -44,12 +44,16 @@ const staggerContainer = {
 
 const ReportViewPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedStatus, setSelectedStatus] = useState<ReportStatus | "all">("all");
+  const [selectedStatus, setSelectedStatus] = useState<ReportStatus | "all">(
+    "all"
+  );
   const [ref, inView] = useInView({
     triggerOnce: true,
     threshold: 0.1,
   });
-  const [selectedBookingId, setSelectedBookingId] = useState<string | null>(null);
+  const [selectedBookingId, setSelectedBookingId] = useState<string | null>(
+    null
+  );
   const [isViewBookingModalOpen, setIsViewBookingModalOpen] = useState(false);
 
   const limit = 10;
@@ -230,35 +234,42 @@ const ReportViewPage = () => {
                         </div>
                       </div>
 
+                      <div className="flex items-center gap-2 pt-2 px-2">
+                        <span className="text-sm text-gray-500">Status:</span>
+                        <span
+                          className={`px-3 py-1 rounded-full text-sm font-medium flex items-center gap-1 ${getStatusColor(
+                            report.status
+                          )}`}
+                        >
+                          {getStatusIcon(report.status)}
+                          {report.status.charAt(0).toUpperCase() +
+                            report.status.slice(1).replace("_", " ")}
+                        </span>
+                      </div>
+
                       <div className="flex items-start gap-2 bg-yellow-50 rounded-md border-1 border-yellow-500 p-2">
-                        <p className="text-gray-600 font-semibold capitalize">Report</p>
+                        <p className="text-gray-600 font-semibold capitalize">
+                          Report
+                        </p>
                         <MessageSquare
                           size={18}
                           className="text-gray-400 mt-1 flex-shrink-0"
-                        />:
-                        <p className="text-gray-600 w-[25rem]">{report.message}</p>
-                      </div>
-
-                      <div className="flex flex-wrap gap-4">
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm text-gray-500">Status:</span>
-                          <span
-                            className={`px-3 py-1 rounded-full text-sm font-medium flex items-center gap-1 ${getStatusColor(
-                              report.status
-                            )}`}
-                          >
-                            {getStatusIcon(report.status)}
-                            {report.status.charAt(0).toUpperCase() +
-                              report.status.slice(1).replace("_", " ")}
-                          </span>
-                        </div>
+                        />
+                        :
+                        <p className="text-gray-600 w-[25rem]">
+                          {report.message}
+                        </p>
                       </div>
 
                       {report.resolutionDetails && (
                         <div className="flex items-start gap-2 bg-blue-50 rounded-md p-4">
                           <div>
-                            <p className="font-semibold text-gray-700 mb-1">Resolution Details:</p>
-                            <p className="text-gray-600">{report.resolutionDetails}</p>
+                            <p className="font-semibold text-gray-700 mb-1">
+                              Resolution Details:
+                            </p>
+                            <p className="text-gray-600">
+                              {report.resolutionDetails}
+                            </p>
                           </div>
                         </div>
                       )}
@@ -293,7 +304,9 @@ const ReportViewPage = () => {
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                    onClick={() =>
+                      setCurrentPage((prev) => Math.max(prev - 1, 1))
+                    }
                     disabled={currentPage === 1}
                     className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
                   >

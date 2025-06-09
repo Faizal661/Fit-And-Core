@@ -14,13 +14,18 @@ export class VideoCallService implements IVideoCallService {
     private io: Server
   ) {}
 
-   public registerSocketEvents(socket: Socket) {
+  public registerSocketEvents(socket: Socket) {
     socket.on(
       "joinSession",
       async (data: { bookingId: string; userId: string; userType: string }) => {
         await this.handleJoinSession(socket, data);
       }
     );
+
+    socket.on("registerUserSocket", (userId: string) => {
+      socket.join(userId);
+      console.log(`Socket ${socket.id} joined room for user ${userId}`);
+    });
 
     socket.on("disconnect", () => {
       this.handleDisconnect(socket.id);
