@@ -5,6 +5,7 @@ import BookingModel, {
 } from "../../models/session.model/booking.models";
 import { IBookingRepository } from "../Interface/IBookingRepository";
 import { Types } from "mongoose";
+import { BookingDetails } from "../../types/booking.types";
 
 @injectable()
 export class BookingRepository
@@ -259,9 +260,127 @@ export class BookingRepository
       .exec();
   }
 
+  findUpcomingBookingsBetween(
+    start: Date,
+    end: Date
+  ): Promise<BookingDetails[]> {
+    return this.model
+      .aggregate([
+        { $match: { status: "confirmed" } },
+        {
+          $lookup: {
+            from: "slots",
+            localField: "slotId",
+            foreignField: "_id",
+            as: "slotDetails",
+          },
+        },
+        {
+          $unwind: { path: "$slotDetails", preserveNullAndEmptyArrays: false },
+        },
+        {
+          $lookup: {
+            from: "users",
+            localField: "userId",
+            foreignField: "_id",
+            as: "userDetails",
+          },
+        },
+        {
+          $unwind: { path: "$userDetails", preserveNullAndEmptyArrays: false },
+        },
+        {
+          $lookup: {
+            from: "trainers",
+            localField: "trainerId",
+            foreignField: "_id",
+            as: "trainerDetails",
+          },
+        },
+        {
+          $unwind: {
+            path: "$trainerDetails",
+            preserveNullAndEmptyArrays: false,
+          },
+        },
+        {
+          $lookup: {
+            from: "availabilities",
+            localField: "slotDetails.availabilityId",
+            foreignField: "_id",
+            as: "availabilityDetails",
+          },
+        },
+        {
+          $unwind: {
+            path: "$availabilityDetails",
+            preserveNullAndEmptyArrays: false,
+          },
+        },
+        {
+          $addFields: {
+            slotStart: {
+              $dateFromParts: {
+                year: { $year: "$availabilityDetails.selectedDate" },
+                month: { $month: "$availabilityDetails.selectedDate" },
+                day: { $dayOfMonth: "$availabilityDetails.selectedDate" },
+                hour: {
+                  $toInt: {
+                    $arrayElemAt: [
+                      { $split: ["$slotDetails.startTime", ":"] },
+                      0,
+                    ],
+                  },
+                },
+                minute: {
+                  $toInt: {
+                    $arrayElemAt: [
+                      { $split: ["$slotDetails.startTime", ":"] },
+                      1,
+                    ],
+                  },
+                },
+              },
+            },
+          },
+        },
+        {
+          $match: {
+            slotStart: { $gte: start, $lte: end },
+          },
+        },
+        {
+          $project: {
+            _id: 1,
+            status: 1,
+            notes: 1,
+            createdAt: 1,
+            slotDetails: {
+              _id: "$slotDetails._id",
+              startTime: "$slotDetails.startTime",
+              endTime: "$slotDetails.endTime",
+              slotDuration: "$slotDetails.slotDuration",
+            },
+            trainee: {
+              _id: "$userDetails._id",
+              username: "$userDetails.username",
+              profilePicture: "$userDetails.profilePicture",
+            },
+            trainer: {
+              _id: "$trainerDetails._id",
+              username: "$trainerDetails.username",
+              profilePicture: "$trainerDetails.profilePicture",
+            },
+            slotStart: 1,
+          },
+        },
+      ])
+      .exec();
+  }
+
   async getBookingDetailsById(
     bookingId: Types.ObjectId
-  ): Promise<IBookingModel > {
+  ): Promise<IBookingModel> {
     const result = await this.model
       .aggregate([
         { $match: { _id: bookingId } },

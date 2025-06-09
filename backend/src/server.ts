@@ -16,7 +16,8 @@ dotenv.config();
 import connectDB from "./config/db.config";
 import configurePassport from "./config/passport";
 import { env } from "./config/env.config.ts";
-import { configureSocketIO } from './config/socket.io.config';
+import { configureSocketIO } from "./config/socket.io.config";
+import { setupScheduledJobs } from "./scheduler";
 
 // Middlewares
 import requestLogging from "./middlewares/request-logger.middleware.ts";
@@ -33,10 +34,11 @@ import {
   subscriptionRoutes,
   webhookRoutes,
 } from "./routes/subscription.routes.ts";
-import progressRoutes from "./routes/progress.routes.ts"
-import foodLogsRoutes from "./routes/foodLogs.routes.ts"
+import progressRoutes from "./routes/progress.routes.ts";
+import foodLogsRoutes from "./routes/foodLogs.routes.ts";
 import recordingRoutes from "./routes/recording.routes.ts";
 import reportRoutes from "./routes/report.routes.ts";
+import notificationRoutes from "./routes/notification.routes.ts";
 
 const app = express();
 
@@ -70,19 +72,22 @@ app.use("/api/progress", progressRoutes);
 app.use("/api/food-logs", foodLogsRoutes);
 app.use("/api/recording", recordingRoutes);
 app.use("/api/reports", reportRoutes);
+app.use("/api/notifications", notificationRoutes);
 
 // handling error for unknown routes
 app.use((req, res, next) => {
   next(new CustomError(HttpResMsg.ROUTE_NOT_FOUND, HttpResCode.NOT_FOUND));
 });
-// Error handling 
+// Error handling
 app.use(errorHandler);
-
 
 const httpServer = configureSocketIO(app);
 
+// Start scheduled jobs
+setupScheduledJobs();
+
 connectDB().then(() => {
-  httpServer.listen(PORT,() => {
+  httpServer.listen(PORT, () => {
     console.log(HttpResMsg.SERVER_CONNECTION);
   });
 });

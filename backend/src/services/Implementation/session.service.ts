@@ -16,6 +16,7 @@ import { ITrainerRepository } from "../../repositories/Interface/ITrainerReposit
 import { IUserRepository } from "../../repositories/Interface/IUserRepository";
 import { IBookingRepository } from "../../repositories/Interface/IBookingRepository";
 import { IBookingModel } from "../../models/session.model/booking.models";
+import { BookingDetails } from "../../types/booking.types";
 type GroupedAvailabilities = Record<string, IAvailabilityModel[]>;
 
 @injectable()
@@ -377,6 +378,30 @@ export default class SessionService implements ISessionService {
       }
       throw new CustomError(
         "Failed to fetch upcoming trainer bookings.",
+        HttpResCode.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
+  async  getUpcomingBookings(
+      now: Date,
+      fifteenMinutesLater: Date
+    ): Promise<BookingDetails[]>{
+    try {
+
+      const upcomingBookings =
+        await this.bookingRepository.findUpcomingBookingsBetween(
+          now,
+          fifteenMinutesLater
+        );
+
+      return upcomingBookings;
+    } catch (error) {
+      if (error instanceof CustomError) {
+        throw error;
+      }
+      throw new CustomError(
+        "Failed to fetch upcoming bookings.",
         HttpResCode.INTERNAL_SERVER_ERROR
       );
     }
