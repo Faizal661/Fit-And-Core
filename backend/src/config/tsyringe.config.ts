@@ -97,6 +97,13 @@ import { INotificationRepository } from "../repositories/Interface/INotification
 import { INotificationService } from "../services/Interface/INotificationService";
 import { INotificationController } from "../controllers/Interface/INotificationController";
 
+import { StreakRepository } from "../repositories/Implementation/streak.repository";
+import { StreakService } from "../services/Implementation/streak.service";
+import { StreakController } from "../controllers/Implementation/streak.controller";
+import { IStreakRepository } from "../repositories/Interface/IStreakRepository";
+import { IStreakService } from "../services/Interface/IStreakService";
+import { IStreakController } from "../controllers/Interface/IStreakController";
+
 container.registerInstance('RedisClient', redisClient);
 container.registerInstance('SocketIOServer', Server);
 
@@ -152,3 +159,7 @@ container.register<IReportRepository>("ReportRepository", { useClass: ReportRepo
 container.register<INotificationRepository>('NotificationRepository', { useClass: NotificationRepository});
 container.register<INotificationService>('NotificationService', { useClass: NotificationService });
 container.register<INotificationController>('NotificationController', { useClass: NotificationController });
+
+container.register<IStreakRepository>('StreakRepository', { useClass: StreakRepository });
+container.register<IStreakService>('StreakService', { useClass: StreakService });
+container.register<IStreakController>('StreakController', { useClass: StreakController });
