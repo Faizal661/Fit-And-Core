@@ -9,6 +9,7 @@ import PageNotFound from "../components/shared/PageNotFound";
 import PaymentSuccessPage from "../pages/shared/PaymentSuccessPage";
 import LandingPage from "../pages/user/LandingPage"
 import ReportViewPage from "../pages/shared/ReportViewPage";
+import UserStreakPage from "../pages/user/StreakPage";
 
 // authentication
 const UserLogin = lazy(() => import("../pages/auth/signin/UserLogin"));
@@ -80,6 +81,7 @@ const AppRoutes = () => {
         <Route path="/progress" element={<UserProgressionPage />} />
         <Route path="/nutrition" element={<UserNutritionTrackingPage />} />
         <Route path="/reports" element={<ReportViewPage />} />
+        <Route path="/streak" element={<UserStreakPage />} />
       </Route>
 
       <Route element={<ProtectedRoutes allowedRoles={["trainer"]} />}>

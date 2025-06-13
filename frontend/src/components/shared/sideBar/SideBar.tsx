@@ -93,8 +93,11 @@ const Sidebar: React.FC<SidebarProps> = ({
       initial="closed"
       animate="open"
       exit="closed"
-      ref={ref} 
-      style={{ opacity: inView ? 1 : 0, transition: 'opacity 0.3s ease-in-out' }}
+      ref={ref}
+      style={{
+        opacity: inView ? 1 : 0,
+        transition: "opacity 0.3s ease-in-out",
+      }}
     >
       <div className="flex justify-end mb-8">
         <button
@@ -118,11 +121,17 @@ const Sidebar: React.FC<SidebarProps> = ({
         <div className="flex gap-3 mb-6">
           {quickActions.map((action, index) => (
             <div
+              onClick={onClose}
               key={index}
-              className="flex items-center text-gray-600 text-xs cursor-pointer hover:text-gray-800 transition-colors duration-150" // Added hover effect
+              className="flex items-center text-gray-600 text-xs cursor-pointer hover:text-gray-800 transition-colors duration-150 bg-amber-100 hover:bg-amber-300 p-1 rounded-md" // Added hover effect
             >
-              <action.icon size={14} className="mr-1" />
-              <span>{action.label}</span>
+              <Link
+                to={action.to}
+                className="text-gray-600 hover:text-gray-900 flex items-center gap-3 transition-colors duration-150" // Added transition
+              >
+                <span>{action.label}</span>
+                <action.icon size={14} className="" />
+              </Link>
             </div>
           ))}
         </div>

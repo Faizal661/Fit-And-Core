@@ -9,6 +9,7 @@ import { CustomError } from "../../errors/CustomError";
 import { IFoodLogService } from "../../services/Interface/IFoodLogService";
 import { IFoodLogController } from "../Interface/IFoodLogController";
 import { Types } from "mongoose";
+import { IStreakService } from "../../services/Interface/IStreakService";
 
 @injectable()
 export class FoodLogController implements IFoodLogController {
@@ -16,7 +17,9 @@ export class FoodLogController implements IFoodLogController {
 
   constructor(
     @inject("FoodLogService")
-    foodLogService: IFoodLogService
+    foodLogService: IFoodLogService,
+    @inject("StreakService") private streakService:IStreakService
+
   ) {
     this.foodLogService = foodLogService;
   }
@@ -105,6 +108,13 @@ export class FoodLogController implements IFoodLogController {
         mealType,
         new Date(selectedDate)
       );
+
+        await this.streakService.recordActivityAndHandleStreak(
+        userId,
+        new Date(),
+        2
+      );
+
       sendResponse(
         res,
         HttpResCode.CREATED,
