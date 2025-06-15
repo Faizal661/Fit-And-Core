@@ -29,6 +29,7 @@ export const enum SIDEBAR_MESSAGES {
   PROFILE="Profile",
   ARTICLES="Articles",
   TRAINERS="Trainers",
+  MESSAGES="Messages",
   COMMUNITIES="Communities",
   PROGRESSION="Progression",
   NUTRITION="Nutrition",

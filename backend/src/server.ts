@@ -40,6 +40,7 @@ import recordingRoutes from "./routes/recording.routes.ts";
 import reportRoutes from "./routes/report.routes.ts";
 import notificationRoutes from "./routes/notification.routes.ts";
 import streakRoutes from "./routes/streak.routes.ts";
+import groupRoutes from "./routes/group.routes.ts";
 
 const app = express();
 
@@ -75,6 +76,7 @@ app.use("/api/recording", recordingRoutes);
 app.use("/api/reports", reportRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/streaks", streakRoutes);
+app.use("/api/groups", groupRoutes);
 
 // handling error for unknown routes
 app.use((req, res, next) => {

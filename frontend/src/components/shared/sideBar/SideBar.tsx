@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { X, LogOut, Calendar } from "lucide-react";
+import { X, LogOut } from "lucide-react";
 import { SidebarItem, SidebarProps } from "../../../types/shared.type";
 import { SIDEBAR_MESSAGES } from "../../../constants/messages/sidebar.messages";
 import {
@@ -35,7 +35,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   let quickActions;
   let memberInfo;
   let certificationInfo;
-  let sessionsToday;
+  // let sessionsToday;
 
   switch (role) {
     case "user":
@@ -58,15 +58,15 @@ const Sidebar: React.FC<SidebarProps> = ({
           {SIDEBAR_MESSAGES.CERTIFIED_TRAINER}
         </span>
       );
-      sessionsToday = (
-        <div className="mt-4 flex items-center text-xs text-gray-600">
-          <Calendar size={14} className="mr-2" />
-          <span>
-            <span className="font-medium">0</span>{" "}
-            {SIDEBAR_MESSAGES.SESSION_TODAY}
-          </span>
-        </div>
-      );
+      // sessionsToday = (
+      //   <div className="mt-4 flex items-center text-xs text-gray-600">
+      //     <Calendar size={14} className="mr-2" />
+      //     <span>
+      //       <span className="font-medium">0</span>{" "}
+      //       {SIDEBAR_MESSAGES.SESSION_TODAY}
+      //     </span>
+      //   </div>
+      // );
       break;
     case "admin":
       sidebarItems = AdminSidebarItems;
@@ -113,7 +113,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         <p className="text-gray-700 text-sm">{greetingMessage}</p>
         {memberInfo && <div className="mt-1">{memberInfo}</div>}
         {certificationInfo && <div className="mt-2">{certificationInfo}</div>}
-        {sessionsToday}
+        {/* {sessionsToday} */}
       </div>
 
       {/* Quick actions */}

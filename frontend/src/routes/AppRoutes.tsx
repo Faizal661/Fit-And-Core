@@ -10,6 +10,8 @@ import PaymentSuccessPage from "../pages/shared/PaymentSuccessPage";
 import LandingPage from "../pages/user/LandingPage"
 import ReportViewPage from "../pages/shared/ReportViewPage";
 import UserStreakPage from "../pages/user/StreakPage";
+import GroupManagementPage from "../pages/admin/GroupManage";
+import ChatPage from "../pages/chat/ChatPage";
 
 // authentication
 const UserLogin = lazy(() => import("../pages/auth/signin/UserLogin"));
@@ -99,6 +101,8 @@ const AppRoutes = () => {
 
       <Route element={<ProtectedRoutes allowedRoles={["user", "trainer"]} />}>
         <Route path="/article/:id" element={<ArticleFullView />} />
+        <Route path="/communities" element={<ChatPage />} />
+        <Route path="/messages" element={<ChatPage />} />
       </Route>
 
       <Route element={<ProtectedRoutes allowedRoles={["admin"]} />}>
@@ -106,6 +110,7 @@ const AppRoutes = () => {
         <Route path="/admin/user-management" element={<UserManage />} />
         <Route path="/admin/trainer-management" element={<TrainerManage />} />
         <Route path="/admin/report-management" element={<ReportManage />} />
+        <Route path="/admin/community-management" element={<GroupManagementPage />} />
       </Route>
     </Routes>
   );

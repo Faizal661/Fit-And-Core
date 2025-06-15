@@ -96,7 +96,6 @@ export class ReportController implements IReportController {
         limit,
         status
       );
-      console.log("🚀 ~ ReportController ~ result:", result)
       sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, result);
     } catch (error) {
       next(error);

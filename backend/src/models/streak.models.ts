@@ -28,7 +28,6 @@ const UserStreakSchema = new Schema<IUserStreakModel>(
   { timestamps: true }
 );
 
-UserStreakSchema.index({ userId: 1 });
 
 export const UserStreakModel = mongoose.model<IUserStreakModel>(
   "UserStreak",

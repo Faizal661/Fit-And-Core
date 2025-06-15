@@ -37,7 +37,6 @@ export class ProgressRepository
       bmiClass
     });
     try {
-      console.log("🚀 ~ newProgression:", newProgression);
       return await newProgression.save();
     } catch (error) {
       console.error(error);
