@@ -6,6 +6,7 @@ export interface ISubscription {
     trainerId:  Types.ObjectId ;
     planDuration: String ;
     amount: Number;
+    sessions: number;
     status: 'pending' | 'active' | 'cancelled' | 'expired';
     startDate: Date | null;
     expiryDate: Date | null;
@@ -20,6 +21,7 @@ export interface ISubscription {
     trainerId: string;
     planDuration: string;
     amountInPaise: number;
+    sessions?: number;
     planName: string;
   }
 

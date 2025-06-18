@@ -14,19 +14,16 @@ export class GroupRepository {
     let query: any = {};
 
     if (searchTerm) {
-      // Use $or with regex for simpler text search on name/description
       query.$or = [
         { name: { $regex: searchTerm, $options: 'i' } },
         { description: { $regex: searchTerm, $options: 'i' } },
       ];
-      // If you've created text indexes and want more advanced search:
-      // query.$text = { $search: searchTerm };
     }
 
     const groupsPromise = GroupModel.find(query)
       .skip(skip)
       .limit(limit)
-      .sort({ createdAt: -1 }) // Sort by most recent
+      .sort({ createdAt: -1 }) 
       .exec();
 
     const totalGroupsPromise = GroupModel.countDocuments(query).exec();

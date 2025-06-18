@@ -158,7 +158,6 @@ export class GroupMemberRepository extends BaseRepository<IGroupMemberModel> {
     ).exec();
   }
 
-  //=============================
 
   async checkMembershipStatusForUserInGroups(
     userId: Types.ObjectId,

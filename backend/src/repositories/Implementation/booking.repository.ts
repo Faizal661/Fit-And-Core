@@ -512,4 +512,18 @@ export class BookingRepository
 
     return result[0] ?? null;
   }
+
+  async countUserBookingsInPeriod(
+  userId: Types.ObjectId,
+  trainerId: Types.ObjectId,
+  start: Date,
+  end: Date
+): Promise<number> {
+  return this.model.countDocuments({
+    userId,
+    trainerId,  
+    createdAt: { $gte: start, $lte: end },
+    status: { $ne: "canceled" },
+  });
+}
 }

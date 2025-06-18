@@ -23,4 +23,11 @@ export interface IBookingRepository
     start: Date,
     end: Date
   ): Promise<BookingDetails[]>;
+
+  countUserBookingsInPeriod(
+    userId: Types.ObjectId,
+    trainerId: Types.ObjectId,
+    start: Date,
+    end: Date
+  ): Promise<number>;
 }

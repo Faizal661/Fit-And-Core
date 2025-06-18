@@ -20,6 +20,7 @@ const SubscriptionSchema: Schema = new Schema(
     expiryDate: { type: Date },
     // paymentId: { type: Schema.Types.ObjectId, ref: "Payment" },
     paymentId: { type: String},
+    sessions: { type: Number, default: 10 },
   },
   { timestamps: true }
 );

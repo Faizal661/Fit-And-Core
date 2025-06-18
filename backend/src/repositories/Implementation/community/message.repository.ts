@@ -53,11 +53,10 @@ export class MessageRepository {
   }
 
 
-  //================================================
 
    async getMessages(
     chatType: 'group' | 'private',
-    targetId: Types.ObjectId, // GroupId or other userId
+    targetId: Types.ObjectId,
     actorId: Types.ObjectId,
     page: number,
     limit: number
@@ -68,7 +67,7 @@ export class MessageRepository {
     if (chatType === 'group') {
       query.groupId = targetId;
       query.messageScope = 'group';
-    } else { // private chat
+    } else { 
       query.messageScope = 'private';
       query.$or = [
         { senderId: actorId, receiverId: targetId },
@@ -101,8 +100,8 @@ export class MessageRepository {
   }): Promise<IMessageModel> {
     const newMessage = new MessageModel({
       ...messageData,
-      readBy: [messageData.senderId], // Sender automatically reads their own message
-      status: 'sent', // Default to 'sent'
+      readBy: [messageData.senderId], 
+      status: 'sent', 
     });
     await newMessage.save();
     return newMessage;
@@ -114,22 +113,20 @@ export class MessageRepository {
     targetId: Types.ObjectId,
     readerId: Types.ObjectId
   ): Promise<void> {
-    let query: any = { isDeleted: false, readBy: { $ne: readerId } }; // Not deleted and not already read by this user
+    let query: any = { isDeleted: false, readBy: { $ne: readerId } }; 
 
     if (chatType === 'group') {
       query.groupId = targetId;
       query.messageScope = 'group';
-      // For group messages, mark all messages as read for the readerId
-    } else { // private chat
+    } else { 
       query.messageScope = 'private';
-      // For private messages, mark messages *sent by the other user* and *received by the reader* as read
-      query.senderId = targetId; // The other user in the private chat
-      query.receiverId = readerId; // The user currently reading
+      query.senderId = targetId; 
+      query.receiverId = readerId;
     }
 
     await MessageModel.updateMany(
       query,
-      { $addToSet: { readBy: readerId }, status: 'read' } // Add readerId to readBy, set status to 'read'
+      { $addToSet: { readBy: readerId }, status: 'read' } 
     ).exec();
   }
 }

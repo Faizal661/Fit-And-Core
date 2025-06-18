@@ -66,17 +66,16 @@ export interface GetAvailableGroupsServiceResponse {
 }
 
 export interface ChatItem {
-  id: string; // Group ID or Partner User ID
-  type: "group" | "private"; // Differentiate chat type
-  name: string; // Group name or partner username
-  avatar?: string; // Group image or partner profile picture
+  id: string; 
+  type: "group" | "private"; 
+  name: string; 
+  avatar?: string; 
   lastMessage: string;
   lastMessageTime: string | Date;
   unreadCount: number;
-  groupMemberCount?: number; // Optional: only for group chats
+  groupMemberCount?: number; 
 }
 
-//-=========================
 
 export interface MessageForFrontend {
   _id: string;
@@ -527,7 +526,6 @@ export class GroupService {
       groupChatItems.filter((item) => item !== null) as ChatItem[]
     );
 
-    // --- 2. Process Private (1-to-1) Chats ---
 
     let privateChatPartners: Types.ObjectId[] = [];
 
@@ -584,8 +582,8 @@ export class GroupService {
         return {
           id: partnerUser.id.toString(),
           type: "private",
-          name: partnerUser.username, // Partner's username
-          avatar: partnerUser.profilePicture, // Partner's profile picture
+          name: partnerUser.username, 
+          avatar: partnerUser.profilePicture, 
           lastMessage: lastMessageContent,
           lastMessageTime: lastMessageTime,
           unreadCount: unreadCount,
@@ -597,7 +595,6 @@ export class GroupService {
       privateChatItems.filter((item) => item !== null) as ChatItem[]
     );
 
-    // 3. Sort all chats by last message time (most recent first)
     allChatItems.sort(
       (a, b) =>
         new Date(b.lastMessageTime).getTime() -
@@ -607,7 +604,6 @@ export class GroupService {
     return allChatItems;
   }
 
-  // ======================================================================
 
   async getChatMessages(
     chatId: string,
@@ -635,7 +631,6 @@ export class GroupService {
         );
       }
     } else {
-      // private chat
       const targetUser = await this.userRepository.findById(
         new Types.ObjectId(chatId)
       );
@@ -663,7 +658,7 @@ export class GroupService {
         unreadMessagesForActor.map((msg) => msg._id),
         actorObjectId
       );
-      // Important: You might want to update unread counts in your frontend via websockets here
+      //  update unread counts in your frontend via websockets here
     }
 
     const messagesForFrontend: MessageForFrontend[] = rawMessages.map(
@@ -694,19 +689,22 @@ export class GroupService {
   async sendChatMessage(
     senderId: string,
     chatType: "group" | "private",
-    targetId: string, // This is groupId for group, or receiverId for private
+    targetId: string, 
     content: string,
-    type: "text" | "image" | "video" | "file" | "system" // Allow system messages for internal use if needed
+    type: "text" | "image" | "video" | "file" | "system" 
   ): Promise<MessageForFrontend> {
+
     if (
       !Types.ObjectId.isValid(senderId) ||
       !Types.ObjectId.isValid(targetId)
     ) {
       throw new CustomError("Invalid sender ID or target ID.", 400);
     }
+
     if (!content || content.trim() === "") {
       throw new CustomError("Message content cannot be empty.", 400);
     }
+
     const allowedMessageTypes: Array<typeof type> = [
       "text",
       "image",
@@ -728,9 +726,7 @@ export class GroupService {
       messageScope: chatType,
     };
 
-    // --- Authorization and Payload Construction ---
     if (chatType === "group") {
-      // Check if sender is an active member of the group
       const isMember = await this.groupMemberRepository.findMember(
         targetObjectId,
         senderObjectId
@@ -743,30 +739,24 @@ export class GroupService {
       }
       messagePayload.groupId = targetObjectId;
     } else {
-      // private chat
-      // Check if both sender and receiver exist
       const receiverUser = await this.userRepository.findById(
         new Types.ObjectId(targetId)
-      ); // targetId is receiverId here
+      ); 
       if (!receiverUser) {
         throw new CustomError("Receiver not found for private chat.", 404);
       }
-      // Optional: More stringent check, e.g., if there's an active subscription or mutual follow
-      // For now, assume if both users are valid, they can send private messages.
       messagePayload.receiverId = targetObjectId;
     }
 
-    // Create the message
     const createdMessage = await this.messageRepository.createMessage(
       messagePayload as any
-    ); // Cast for simplicity
+    ); 
 
-    // Fetch the created message with sender details for consistent frontend response
     const populatedMessage = await this.messageRepository.getMessages(
       chatType,
-      targetObjectId, // Group ID or Other User ID
-      senderObjectId, // Current User ID
-      1, // Just get the latest message
+      targetObjectId, 
+      senderObjectId, 
+      1, 
       1
     );
 
@@ -791,11 +781,9 @@ export class GroupService {
       createdAt: createdMessage.createdAt.toISOString(),
     };
 
-    // --- Optional: Integrate with WebSockets (real-time chat) ---
-    // If you have a WebSocket server, you would emit an event here
-    // e.g., `io.to(chatId).emit('newMessage', sentMessageForFrontend);`
+    //  WebSocket
+    // `io.to(chatId).emit('newMessage', sentMessageForFrontend);`
     // or `io.to(senderId).to(targetId).emit('privateMessage', sentMessageForFrontend);`
-    // This is outside the scope of this response but important for real-time.
 
     return sentMessageForFrontend;
   }

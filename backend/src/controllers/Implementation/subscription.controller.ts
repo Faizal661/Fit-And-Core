@@ -24,7 +24,7 @@ export class SubscriptionController implements ISubscriptionController {
     next: NextFunction
   ): Promise<void> {
     try {
-      const { trainerId, planDuration, amountInPaise, planName } = req.body;
+      const { trainerId, planDuration, amountInPaise, planName ,sessions } = req.body;
       const userId = req.decoded?.id;
 
       if (
@@ -43,6 +43,7 @@ export class SubscriptionController implements ISubscriptionController {
         planDuration,
         amountInPaise,
         planName,
+        sessions
       });
 
       sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, session);

@@ -315,7 +315,6 @@ export class GroupController {
     }
   }
 
-  // ==================================
 
   async getChatMessages(
     req: Request,
@@ -376,11 +375,10 @@ export class GroupController {
     next: NextFunction
   ): Promise<void> {
     try {
-      const chatId = req.params.chatId; // This is groupId or receiverId
-      const senderId = req.decoded?.id; // Authenticated user's ID
-      const { chatType, content, type } = req.body; // chatType, content, type from request body
+      const chatId = req.params.chatId; 
+      const senderId = req.decoded?.id;
+      const { chatType, content, type } = req.body; 
 
-      // Basic validation (service will do more granular validation)
       if (!chatId || !Types.ObjectId.isValid(chatId)) {
         throw new CustomError(
           "Invalid chat ID provided.",
@@ -399,7 +397,7 @@ export class GroupController {
           HttpResCode.BAD_REQUEST
         );
       }
-      const allowedSendTypes = ["text", "image", "video", "file"]; // Exclude 'system' from user-sendable types
+      const allowedSendTypes = ["text", "image", "video", "file"]; 
       if (
         !type ||
         typeof type !== "string" ||
@@ -414,7 +412,7 @@ export class GroupController {
       const createdMessage = await this.groupService.sendChatMessage(
         senderId!,
         chatType,
-        chatId, // This is receiverId for private, groupId for group
+        chatId, 
         content,
         type as "text" | "image" | "video" | "file"
       );

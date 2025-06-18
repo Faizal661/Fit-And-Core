@@ -43,7 +43,7 @@ export default class SubscriptionService implements ISubscriptionService {
     params: CheckoutSubscriptionParams
   ): Promise<{ stripeSessionId: string }> {
     try {
-      const { userId, trainerId, planDuration, amountInPaise, planName } =
+      const { userId, trainerId, planDuration, amountInPaise, planName ,sessions } =
         params;
 
       const pendingSubscription = await this.subscriptionRepository.create({
@@ -55,6 +55,7 @@ export default class SubscriptionService implements ISubscriptionService {
         startDate: null,
         expiryDate: null,
         paymentId: null,
+        sessions
       });
 
       const session = await this.stripe.checkout.sessions.create({
@@ -127,7 +128,6 @@ export default class SubscriptionService implements ISubscriptionService {
         subscription.trainerId
       );
 
-      // Return subscription details with trainer info
       return {
         _id: subscription._id,
         planDuration: subscription.planDuration,
