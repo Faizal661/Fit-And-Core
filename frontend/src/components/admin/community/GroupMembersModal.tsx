@@ -18,6 +18,7 @@ import {
   GroupMember,
   updateGroupMemberStatus,
 } from "../../../services/community/groupMemberService";
+import useDebounce from "../../../hooks/useDebounce";
 
 interface GroupMembersModalProps {
   isOpen: boolean;
@@ -34,6 +35,7 @@ export const GroupMembersModal = ({
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedStatus, setSelectedStatus] = useState<string>("all");
+  const debouncedSearchTerm = useDebounce(searchTerm, 600);
 
   const limit = 10;
 
@@ -43,7 +45,7 @@ export const GroupMembersModal = ({
       "groupMembers",
       groupId,
       currentPage,
-      searchTerm,
+      debouncedSearchTerm,
       selectedStatus,
       limit,
     ],
@@ -51,7 +53,7 @@ export const GroupMembersModal = ({
       getGroupMembers(groupId, {
         page: currentPage,
         limit: limit,
-        search: searchTerm,
+        search: debouncedSearchTerm,
         status: selectedStatus,
       }),
     enabled: isOpen && !!groupId,

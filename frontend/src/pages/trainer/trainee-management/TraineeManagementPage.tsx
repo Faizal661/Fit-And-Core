@@ -7,6 +7,7 @@ import { useInView } from "react-intersection-observer";
 import { useNavigate } from "react-router-dom";
 import { PaginatedTraineesResult, TraineeData } from "../../../types/trainee.type";
 import { formatDate } from "../../../utils/dateFormat";
+import useDebounce from "../../../hooks/useDebounce";
 
 // Animation variants
 const fadeIn = {
@@ -34,15 +35,16 @@ const TraineeManagementPage = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [selectedTrainee, setSelectedTrainee] =
     useState<TraineeData | null>(null);
+  const debouncedSearchTerm = useDebounce(searchTerm, 600);
 
   // Fetch trainees data
   const { data, isLoading, error } = useQuery<PaginatedTraineesResult, Error>({
-    queryKey: ["trainees", activePage, recordsPerPage, searchTerm],
+    queryKey: ["trainees", activePage, recordsPerPage, debouncedSearchTerm],
     queryFn: () =>
       fetchTrainees({
         page: activePage,
         limit: recordsPerPage,
-        search: searchTerm,
+        search: debouncedSearchTerm,
       }),
     staleTime: 5000,
   });

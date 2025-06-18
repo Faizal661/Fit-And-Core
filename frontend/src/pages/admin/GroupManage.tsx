@@ -19,6 +19,7 @@ import { Group } from "../../types/community.type";
 import { createGroup, getGroups } from "../../services/community/groupService";
 import { useToast } from "../../context/ToastContext";
 import axios from "axios";
+import useDebounce from "../../hooks/useDebounce";
 
 const fadeIn = {
   hidden: { opacity: 0, y: 20 },
@@ -50,6 +51,7 @@ const GroupManagementPage = () => {
   const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null);
   const [isMembersModalOpen, setIsMembersModalOpen] = useState(false);
   // const [isChatModalOpen, setIsChatModalOpen] = useState(false);
+  const debouncedSearchTerm = useDebounce(searchTerm, 600);
   const { showToast } = useToast();
 
   const [ref, inView] = useInView({
@@ -61,9 +63,9 @@ const GroupManagementPage = () => {
 
   // get group details
   const { data, isLoading, error } = useQuery({
-    queryKey: ["groups", currentPage, searchTerm, limit],
+    queryKey: ["groups", currentPage, debouncedSearchTerm, limit],
     queryFn: () =>
-      getGroups({ page: currentPage, limit: limit, search: searchTerm }),
+      getGroups({ page: currentPage, limit: limit, search: debouncedSearchTerm }),
   });
 
   // Create group mutation

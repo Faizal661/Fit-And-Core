@@ -12,6 +12,7 @@ import {
   User,
 } from "lucide-react";
 import { getAvailableGroups } from "../../services/community/groupService";
+import useDebounce from "../../hooks/useDebounce";
 
 export interface Group {
   _id: string;
@@ -36,13 +37,19 @@ export const AvailableGroupsModal = ({
 }: AvailableGroupsModalProps) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
+  const debouncedSearchTerm = useDebounce(searchTerm, 600);
 
   const limit = 6;
 
   // Fetch available groups
   const { data, isLoading, error } = useQuery({
-    queryKey: ["availableGroups", currentPage, searchTerm, limit],
-    queryFn: () => getAvailableGroups({ page: currentPage, limit: limit, search: searchTerm }),
+    queryKey: ["availableGroups", currentPage, debouncedSearchTerm, limit],
+    queryFn: () =>
+      getAvailableGroups({
+        page: currentPage,
+        limit: limit,
+        search: debouncedSearchTerm,
+      }),
     enabled: isOpen,
   });
 
@@ -51,10 +58,8 @@ export const AvailableGroupsModal = ({
     setCurrentPage(1);
   };
 
-
-
-  const displayGroups = data?.groups ;
-  const totalPages = Math.ceil((data?.totalGroups || 0 ) / limit);
+  const displayGroups = data?.groups;
+  const totalPages = Math.ceil((data?.totalGroups || 0) / limit);
 
   return (
     <AnimatePresence>
