@@ -6,6 +6,7 @@ import {
   ArrowLeft,
   Users,
   User,
+  ImageIcon,
 } from "lucide-react";
 import { ChatItem, Message } from "../../pages/chat/ChatPage";
 
@@ -16,7 +17,6 @@ interface ChatWindowProps {
   isLoading: boolean;
   isSending: boolean;
   onBack?: () => void;
-  showBackButton?: boolean;
 }
 
 export const ChatWindow = ({
@@ -26,7 +26,6 @@ export const ChatWindow = ({
   isLoading,
   isSending,
   onBack,
-  showBackButton = true,
 }: ChatWindowProps) => {
   const [messageInput, setMessageInput] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -99,14 +98,14 @@ export const ChatWindow = ({
       <div className="p-4 border-b border-gray-200 bg-white">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            {showBackButton && (
+   
               <button
                 onClick={onBack}
-                className="p-2 hover:bg-gray-100 rounded-full transition-colors md:hidden"
+                className="p-2 hover:bg-gray-100 rounded-full transition-colors "
               >
                 <ArrowLeft size={20} />
               </button>
-            )}
+         
             
             <div className="relative">
               {chat.avatar ? (
@@ -227,15 +226,13 @@ export const ChatWindow = ({
       <div className="p-4 border-t border-gray-200 bg-white">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
-            {/* <button
+            <button
               onClick={() => fileInputRef.current?.click()}
-              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+              className="p-2 mb-2 hover:bg-gray-100 bg-gray-200 rounded-full transition-colors"
             >
-              <Paperclip size={20} className="text-gray-600" />
-            </button>
-            <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+              {/* <Paperclip size={20} className="text-gray-600" /> */}
               <ImageIcon size={20} className="text-gray-600" />
-            </button> */}
+            </button>
           </div>
 
           <div className="flex-1 relative">

@@ -25,7 +25,7 @@ export const setupScheduledJobs = () => {
           userId: subscription.userId,
           type: "subscription_expiry",
           message: `Your subscription will expire on ${new Date(
-            subscription.expiryDate
+            subscription.expiryDate!
           ).toLocaleDateString()}. Renew now to continue!`,
           read: false,
           //   link: '/profile/subscription',

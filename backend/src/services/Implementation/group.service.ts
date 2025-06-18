@@ -227,7 +227,7 @@ export class GroupService {
     page: number,
     limit: number,
     searchTerm?: string,
-    status?: string
+    status?: "active" | "left" | "kicked" | "blocked" | "all" | undefined
   ): Promise<GetGroupMembersResponse> {
     const { members: rawMembers, totalMembers } =
       (await this.groupMemberRepository.findAndPaginateMembers(
@@ -417,7 +417,7 @@ export class GroupService {
     };
   }
 
-  async joinGroup(groupId: string, userId: string): Promise<GroupMember> {
+  async joinGroup(groupId: string, userId: string): Promise<IGroupMemberModel> {
     if (!Types.ObjectId.isValid(groupId)) {
       throw new CustomError("Invalid Group ID.", HttpResCode.BAD_REQUEST);
     }

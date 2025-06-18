@@ -113,7 +113,7 @@ export class GroupController {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
       const searchTerm = req.query.search as string | undefined;
-      const status = req.query.status as string | undefined;
+      const status = req.query.status as "active" | "left" | "kicked" | "blocked" | "all" | undefined
 
       if (!groupId || !Types.ObjectId.isValid(groupId)) {
         sendResponse(res, 400, "Invalid Group ID provided.2");

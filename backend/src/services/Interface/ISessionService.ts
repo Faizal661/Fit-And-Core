@@ -43,7 +43,7 @@ export interface ISessionService {
   getAllUserBookingsWithTrainer(
     userIdString: string,
     trainerIdString: string
-  ): Promise<IBookingModel[]>;
+  ): Promise<BookingDetails[]>;
   userCancelBooking(
     bookingIdString: string,
     reason: string,

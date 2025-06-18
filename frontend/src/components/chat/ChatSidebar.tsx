@@ -47,7 +47,7 @@ export const ChatSidebar = ({
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-gray-900">Messages</h2>
           <div className="flex items-center ">
-            <h3 className="text-lg font-semibold text-gray-900 mr-2">
+            <h3 className="text-lg font-semibold text-gray-900 mr-2 hidden lg:block">
               Find Groups
             </h3>
             <motion.button

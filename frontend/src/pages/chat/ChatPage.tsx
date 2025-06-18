@@ -59,11 +59,11 @@ export interface Message {
   _id: string;
   content: string;
   type: "text" | "image" | "file";
-  senderId : {
+  senderId: {
     _id: string;
     username: string;
     profilePicture?: string;
-  }
+  };
   createdAt: string;
   isOwn: boolean;
 }
@@ -85,8 +85,6 @@ const ChatPage = () => {
   const [selectedGroupToJoin, setSelectedGroupToJoin] = useState<Group | null>(
     null
   );
-  const isMobileView = false;
-  //   const [isMobileView, setIsMobileView] = useState(false);
 
   // Fetch user's chats (groups + private)
   const { data: chats, isLoading: chatsLoading } = useQuery({
@@ -187,133 +185,6 @@ const ChatPage = () => {
     }
   };
 
-// const sampleMessages: Message[] = [
-//     {
-//       id: "1",
-//       senderId: "user1",
-//       senderName: "Sarah Johnson",
-//       senderAvatar:
-//         "https://images.pexels.com/photos/5327585/pexels-photo-5327585.jpeg?auto=compress&cs=tinysrgb&w=600",
-//       content: "Hey! How's your training going?",
-//       type: "text",
-//       timestamp: "2024-01-15T10:00:00Z",
-//       isOwn: false,
-//     },
-//     {
-//       id: "2",
-//       senderId: userId || "currentUser",
-//       senderName: "You",
-//       content: "Going great! Just finished my morning run.",
-//       type: "text",
-//       timestamp: "2024-01-15T10:05:00Z",
-//       isOwn: true,
-//     },
-//     {
-//       id: "3",
-//       senderId: "user1",
-//       senderName: "Sarah Johnson",
-//       senderAvatar:
-//         "https://images.pexels.com/photos/5327585/pexels-photo-5327585.jpeg?auto=compress&cs=tinysrgb&w=600",
-//       content: "That's awesome! Keep up the good work 💪",
-//       type: "text",
-//       timestamp: "2024-01-15T10:07:00Z",
-//       isOwn: false,
-//     },
-//     {
-//       id: "4",
-//       senderId: "user1",
-//       senderName: "Sarah Johnson",
-//       senderAvatar:
-//         "https://images.pexels.com/photos/5327585/pexels-photo-5327585.jpeg?auto=compress&cs=tinysrgb&w=600",
-//       content: "Hey! How's your training going?",
-//       type: "text",
-//       timestamp: "2024-01-15T10:00:00Z",
-//       isOwn: false,
-//     },
-//     {
-//       id: "5",
-//       senderId: userId || "currentUser",
-//       senderName: "You",
-//       content: "Going great! Just finished my morning run.",
-//       type: "text",
-//       timestamp: "2024-01-15T10:05:00Z",
-//       isOwn: true,
-//     },
-//     {
-//       id: "6",
-//       senderId: "user1",
-//       senderName: "Sarah Johnson",
-//       senderAvatar:
-//         "https://images.pexels.com/photos/5327585/pexels-photo-5327585.jpeg?auto=compress&cs=tinysrgb&w=600",
-//       content: "That's awesome! Keep up the good work 💪",
-//       type: "text",
-//       timestamp: "2024-01-15T10:07:00Z",
-//       isOwn: false,
-//     },
-//     {
-//       id: "7",
-//       senderId: "user1",
-//       senderName: "Sarah Johnson",
-//       senderAvatar:
-//         "https://images.pexels.com/photos/5327585/pexels-photo-5327585.jpeg?auto=compress&cs=tinysrgb&w=600",
-//       content: "Hey! How's your training going?",
-//       type: "text",
-//       timestamp: "2024-01-15T10:00:00Z",
-//       isOwn: false,
-//     },
-//     {
-//       id: "8",
-//       senderId: userId || "currentUser",
-//       senderName: "You",
-//       content: "Going great! Just finished my morning run.",
-//       type: "text",
-//       timestamp: "2024-01-15T10:05:00Z",
-//       isOwn: true,
-//     },
-//     {
-//       id: "9",
-//       senderId: "user1",
-//       senderName: "Sarah Johnson",
-//       senderAvatar:
-//         "https://images.pexels.com/photos/5327585/pexels-photo-5327585.jpeg?auto=compress&cs=tinysrgb&w=600",
-//       content: "That's awesome! Keep up the good work 💪",
-//       type: "text",
-//       timestamp: "2024-01-15T10:07:00Z",
-//       isOwn: false,
-//     },
-//     {
-//       id: "10",
-//       senderId: "user1",
-//       senderName: "Sarah Johnson",
-//       senderAvatar:
-//         "https://images.pexels.com/photos/5327585/pexels-photo-5327585.jpeg?auto=compress&cs=tinysrgb&w=600",
-//       content: "Hey! How's your training going?",
-//       type: "text",
-//       timestamp: "2024-01-15T10:00:00Z",
-//       isOwn: false,
-//     },
-//     {
-//       id: "11",
-//       senderId: userId || "currentUser",
-//       senderName: "You",
-//       content: "Going great! Just finished my morning run.",
-//       type: "text",
-//       timestamp: "2024-01-15T10:05:00Z",
-//       isOwn: true,
-//     },
-//     {
-//       id: "12",
-//       senderId: "user1",
-//       senderName: "Sarah Johnson",
-//       senderAvatar:
-//         "https://images.pexels.com/photos/5327585/pexels-photo-5327585.jpeg?auto=compress&cs=tinysrgb&w=600",
-//       content: "That's awesome! Keep up the good work 💪",
-//       type: "text",
-//       timestamp: "2024-01-15T10:07:00Z",
-//       isOwn: false,
-//     },
-//   ];
-
   const displayChats = chats;
   const displayMessages = messagesData?.messages || [];
 
@@ -370,8 +241,8 @@ const ChatPage = () => {
             {/* Sidebar - 25% width */}
             <div
               className={`${
-                isMobileView && selectedChat ? "hidden" : "block"
-              } w-full md:w-1/4 border-r border-gray-200 flex flex-col`}
+                selectedChat ? "hidden lg:block lg:w-2/6" : ""
+              }  border-r border-gray-200 flex flex-col`}
             >
               <ChatSidebar
                 chats={displayChats}
@@ -387,22 +258,10 @@ const ChatPage = () => {
 
             {/* Chat Window - 75% width */}
             <div
-              className={`${
-                isMobileView && !selectedChat ? "hidden" : "block"
-              } w-full md:w-3/4 flex flex-col`}
+              className={`w-full  lg:w-4/6 flex flex-col`}
             >
-              {selectedChat ? (
-                <ChatWindow
-                  chat={selectedChat}
-                  messages={displayMessages}
-                  onSendMessage={handleSendMessage}
-                  isLoading={messagesLoading}
-                  isSending={sendMessageMutation.isPending}
-                  onBack={() => setSelectedChat(null)}
-                  showBackButton={true}
-                />
-              ) : (
-                <div className="flex-1 flex items-center justify-center bg-gray-50">
+              {!selectedChat ? (
+                <div className="hidden sm:flex-1 sm:flex  items-center justify-center bg-gray-50">
                   <div className="text-center">
                     <MessageCircle
                       size={64}
@@ -416,6 +275,15 @@ const ChatPage = () => {
                     </p>
                   </div>
                 </div>
+              ) : (
+                <ChatWindow
+                  chat={selectedChat}
+                  messages={displayMessages}
+                  onSendMessage={handleSendMessage}
+                  isLoading={messagesLoading}
+                  isSending={sendMessageMutation.isPending}
+                  onBack={() => setSelectedChat(null)}
+                />
               )}
             </div>
           </div>

@@ -149,7 +149,7 @@ const TrainersPage = () => {
               animate="visible"
               className="space-y-6"
             >
-              {subscribedTrainers?.map((trainer, _index) => (
+              {subscribedTrainers?.map((trainer) => (
                 <motion.div
                   key={trainer._id}
                   variants={fadeIn}
