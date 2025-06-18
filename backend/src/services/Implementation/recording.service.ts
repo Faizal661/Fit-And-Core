@@ -3,6 +3,8 @@ import { uploadToCloudinary } from "../../utils/cloud-storage";
 import { IRecordingService } from "../Interface/IRecordingService";
 import { IBookingRepository } from "../../repositories/Interface/IBookingRepository";
 import { Types } from "mongoose";
+import { CustomError } from "../../errors/CustomError";
+import { HttpResCode } from "../../constants/http-response.constants";
 
 export interface UploadResult {
   url: string;
@@ -37,8 +39,7 @@ export class RecordingService implements IRecordingService {
       const userType = match[1];
       const bookingId = match[2];
 
-
-       if (!['trainer', 'trainee'].includes(userType)) {
+      if (!["trainer", "trainee"].includes(userType)) {
         throw new Error("Invalid user type. Must be 'trainer' or 'trainee'");
       }
 
@@ -47,7 +48,7 @@ export class RecordingService implements IRecordingService {
       if (!result || !result.Location) {
         throw new Error("Failed to upload video to Cloudinary");
       }
-      
+
       const updateQuery =
         userType === "trainer"
           ? {
@@ -70,8 +71,14 @@ export class RecordingService implements IRecordingService {
         folder: result.Bucket,
         size: file.size,
       };
-    } catch (error: any) {
-      throw new Error(`Video upload failed: ${error.message}`);
+    } catch (error) {
+      if (error instanceof CustomError) {
+        throw error;
+      }
+      throw new CustomError(
+        "Video upload failed",
+        HttpResCode.INTERNAL_SERVER_ERROR
+      );
     }
   }
 }

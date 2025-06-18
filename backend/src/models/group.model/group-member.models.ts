@@ -5,9 +5,9 @@ export interface IGroupMember {
   userId: Types.ObjectId; 
   status: 'active' | 'left' | 'kicked' | 'blocked'; 
   joinedAt: Date; 
-  blockedAt?: Date; 
-  kickedAt?: Date; 
-  leaveAt?: Date; 
+  blockedAt?: Date|null; 
+  kickedAt?: Date|null; 
+  leaveAt?: Date|null; 
 }
 
 export interface IGroupMemberModel extends Document, IGroupMember {

@@ -6,6 +6,7 @@ import {
   ISubscription,
   CheckoutSubscriptionParams,
   SubscriptionStatus,
+  VerifiedPaymentResult,
 } from "../../types/subscription.types";
 import { ISubscriptionModel } from "../../models/subscription.models";
 import { ISubscriptionRepository } from "../../repositories/Interface/ISubscriptionRepository";
@@ -43,8 +44,14 @@ export default class SubscriptionService implements ISubscriptionService {
     params: CheckoutSubscriptionParams
   ): Promise<{ stripeSessionId: string }> {
     try {
-      const { userId, trainerId, planDuration, amountInPaise, planName ,sessions } =
-        params;
+      const {
+        userId,
+        trainerId,
+        planDuration,
+        amountInPaise,
+        planName,
+        sessions,
+      } = params;
 
       const pendingSubscription = await this.subscriptionRepository.create({
         userId: new Types.ObjectId(userId),
@@ -55,7 +62,7 @@ export default class SubscriptionService implements ISubscriptionService {
         startDate: null,
         expiryDate: null,
         paymentId: null,
-        sessions
+        sessions,
       });
 
       const session = await this.stripe.checkout.sessions.create({
@@ -93,7 +100,7 @@ export default class SubscriptionService implements ISubscriptionService {
     }
   }
 
-  async verifyPayment(sessionId: string): Promise<any> {
+  async verifyPayment(sessionId: string): Promise<VerifiedPaymentResult> {
     try {
       const session = await this.stripe.checkout.sessions.retrieve(sessionId);
 
@@ -145,7 +152,10 @@ export default class SubscriptionService implements ISubscriptionService {
     }
   }
 
-  async processWebhookEvent(payload: any, signature: string): Promise<void> {
+  async processWebhookEvent(
+    payload: string | Buffer,
+    signature: string
+  ): Promise<void> {
     try {
       // Verify the event came from Stripe
       const event = this.stripe.webhooks.constructEvent(
@@ -238,7 +248,9 @@ export default class SubscriptionService implements ISubscriptionService {
     };
   }
 
-  getUsersWithExpiringSubscriptions(days: number): Promise<any> {
+  getUsersWithExpiringSubscriptions(
+    days: number
+  ): Promise<ISubscriptionModel[]> {
     const today = new Date();
     const startDate = this.startOfDay(today);
 

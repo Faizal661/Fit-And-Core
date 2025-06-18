@@ -6,12 +6,16 @@ import { Types } from "mongoose";
 import { uploadToCloudinary } from "../../utils/cloud-storage";
 import { IGroupMemberModel } from "../../models/group.model/group-member.models";
 import { CustomError } from "../../errors/CustomError";
-import { HttpResCode, HttpResMsg } from "../../constants/http-response.constants";
+import {
+  HttpResCode,
+  HttpResMsg,
+} from "../../constants/http-response.constants";
 import { MessageRepository } from "../../repositories/Implementation/community/message.repository";
 import { UserRepository } from "../../repositories/Implementation/user.repository";
 import { SubscriptionRepository } from "../../repositories/Implementation/subscription.repository";
 import { IMessage } from "../../models/group.model/group-messages.models";
 import { TrainerRepository } from "../../repositories/Implementation/trainer.repository";
+import { IUser } from "../../types/user.types";
 
 interface GroupDataForFrontend {
   _id: string;
@@ -66,16 +70,15 @@ export interface GetAvailableGroupsServiceResponse {
 }
 
 export interface ChatItem {
-  id: string; 
-  type: "group" | "private"; 
-  name: string; 
-  avatar?: string; 
+  id: string;
+  type: "group" | "private";
+  name: string;
+  avatar?: string;
   lastMessage: string;
   lastMessageTime: string | Date;
   unreadCount: number;
-  groupMemberCount?: number; 
+  groupMemberCount?: number;
 }
-
 
 export interface MessageForFrontend {
   _id: string;
@@ -95,6 +98,14 @@ export interface GetMessagesServiceResponse {
   totalMessages: number;
   currentPage: number;
   totalPages: number;
+}
+
+export interface GroupMemberWithUser extends Omit<IGroupMemberModel, "userId"> {
+  userId: IUser;
+}
+
+export interface IMessageWithSender extends Omit<IMessage, "senderId"> {
+  senderId: IUser;
 }
 
 @injectable()
@@ -219,22 +230,22 @@ export class GroupService {
     status?: string
   ): Promise<GetGroupMembersResponse> {
     const { members: rawMembers, totalMembers } =
-      await this.groupMemberRepository.findAndPaginateMembers(
+      (await this.groupMemberRepository.findAndPaginateMembers(
         new Types.ObjectId(groupId),
         page,
         limit,
         searchTerm,
         status
-      );
+      )) as { members: GroupMemberWithUser[]; totalMembers: number };
 
     const membersForFrontend: GroupMember[] = rawMembers.map((member) => ({
       _id: member._id.toString(),
       userId: {
-        _id: (member.userId as Types.ObjectId).toString(),
-        username: (member.userId as any).username,
-        email: (member.userId as any).email,
-        profilePicture: (member.userId as any).profilePicture,
-        role: (member.userId as any).role,
+        _id: member.userId._id.toString(),
+        username: member.userId.username,
+        email: member.userId.email,
+        profilePicture: member.userId.profilePicture,
+        role: member.userId.role,
       },
       status: member.status,
       joinedAt: member.joinedAt.toISOString(),
@@ -526,7 +537,6 @@ export class GroupService {
       groupChatItems.filter((item) => item !== null) as ChatItem[]
     );
 
-
     let privateChatPartners: Types.ObjectId[] = [];
 
     if (userRole === "user") {
@@ -548,7 +558,6 @@ export class GroupService {
           trainerId
         );
     }
-
 
     const privateChatItems = await Promise.all(
       privateChatPartners.map(async (partnerObjectId) => {
@@ -582,8 +591,8 @@ export class GroupService {
         return {
           id: partnerUser.id.toString(),
           type: "private",
-          name: partnerUser.username, 
-          avatar: partnerUser.profilePicture, 
+          name: partnerUser.username,
+          avatar: partnerUser.profilePicture,
           lastMessage: lastMessageContent,
           lastMessageTime: lastMessageTime,
           unreadCount: unreadCount,
@@ -603,7 +612,6 @@ export class GroupService {
 
     return allChatItems;
   }
-
 
   async getChatMessages(
     chatId: string,
@@ -655,7 +663,7 @@ export class GroupService {
     );
     if (unreadMessagesForActor.length > 0) {
       await this.messageRepository.markMessagesAsRead(
-        unreadMessagesForActor.map((msg) => msg._id),
+        unreadMessagesForActor.map((msg) => msg._id!),
         actorObjectId
       );
       //  update unread counts in your frontend via websockets here
@@ -663,16 +671,16 @@ export class GroupService {
 
     const messagesForFrontend: MessageForFrontend[] = rawMessages.map(
       (msg) => ({
-        _id: msg._id.toString(),
+        _id: msg._id!.toString(),
         senderId: {
-          _id: (msg.senderId as any)._id.toString(),
-          username: (msg.senderId as any).username,
-          profilePicture: (msg.senderId as any).profilePicture,
+          _id: msg.senderId._id.toString(),
+          username: msg.senderId.username,
+          profilePicture: msg.senderId.profilePicture,
         },
         content: msg.content,
         type: msg.type,
         createdAt: msg.createdAt.toISOString(),
-        isOwn: (msg.senderId as any)._id.toString() === actorId,
+        isOwn: msg.senderId._id.toString() === actorId,
       })
     );
 
@@ -689,11 +697,10 @@ export class GroupService {
   async sendChatMessage(
     senderId: string,
     chatType: "group" | "private",
-    targetId: string, 
+    targetId: string,
     content: string,
-    type: "text" | "image" | "video" | "file" | "system" 
+    type: "text" | "image" | "video" | "file" | "system"
   ): Promise<MessageForFrontend> {
-
     if (
       !Types.ObjectId.isValid(senderId) ||
       !Types.ObjectId.isValid(targetId)
@@ -719,7 +726,14 @@ export class GroupService {
     const senderObjectId = new Types.ObjectId(senderId);
     const targetObjectId = new Types.ObjectId(targetId);
 
-    let messagePayload: Partial<IMessage> = {
+    let messagePayload: {
+      senderId: Types.ObjectId;
+      groupId?: Types.ObjectId;
+      receiverId?: Types.ObjectId;
+      content: string;
+      type: "text" | "image" | "video" | "file" | "system";
+      messageScope: "group" | "private";
+    } = {
       senderId: senderObjectId,
       content,
       type,
@@ -741,7 +755,7 @@ export class GroupService {
     } else {
       const receiverUser = await this.userRepository.findById(
         new Types.ObjectId(targetId)
-      ); 
+      );
       if (!receiverUser) {
         throw new CustomError("Receiver not found for private chat.", 404);
       }
@@ -749,32 +763,29 @@ export class GroupService {
     }
 
     const createdMessage = await this.messageRepository.createMessage(
-      messagePayload as any
-    ); 
+      messagePayload
+    );
 
     const populatedMessage = await this.messageRepository.getMessages(
       chatType,
-      targetObjectId, 
-      senderObjectId, 
-      1, 
+      targetObjectId,
+      senderObjectId,
+      1,
       1
     );
 
-    if (
-      !populatedMessage.messages ||
-      populatedMessage.messages.length === 0 ||
-      typeof populatedMessage.messages[0].senderId === "string"
-    ) {
+    const msg = populatedMessage.messages[0]; // msg is IMessageWithSender
+
+    if (!msg || typeof msg.senderId === "string") {
       throw new Error("Failed to retrieve populated sent message details.");
     }
 
     const sentMessageForFrontend: MessageForFrontend = {
       _id: createdMessage._id.toString(),
       senderId: {
-        _id: (populatedMessage.messages[0].senderId as any)._id.toString(),
-        username: (populatedMessage.messages[0].senderId as any).username,
-        profilePicture: (populatedMessage.messages[0].senderId as any)
-          .profilePicture,
+        _id: msg.senderId._id.toString(),
+        username: msg.senderId.username,
+        profilePicture: msg.senderId.profilePicture,
       },
       content: createdMessage.content,
       type: createdMessage.type,

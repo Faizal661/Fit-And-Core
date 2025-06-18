@@ -64,7 +64,7 @@ export class ReportService implements IReportService {
     limit: number,
     status?: "pending" | "in_review" | "resolved" | "rejected"
   ): Promise<{
-    reports: any[];
+    reports: IReportModel[];
     totalReports: number;
     totalPages: number;
     currentPage: number;
@@ -78,7 +78,7 @@ export class ReportService implements IReportService {
     limit: number,
     status?: "pending" | "in_review" | "resolved" | "rejected"
   ): Promise<{
-    reports: any[];
+    reports: IReportModel[];
     totalReports: number;
     totalPages: number;
     currentPage: number;

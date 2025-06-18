@@ -143,7 +143,7 @@ export class BookingRepository
   async findAllBookingsByUserAndTrainer(
     userId: Types.ObjectId,
     trainerId: Types.ObjectId
-  ): Promise<any[]> {
+  ): Promise<BookingDetails[]> {
     return this.model
       .aggregate([
         {

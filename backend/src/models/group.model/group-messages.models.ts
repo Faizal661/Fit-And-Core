@@ -1,6 +1,7 @@
 import mongoose, { Schema, Document, Types } from "mongoose";
 
 export interface IMessage {
+  _id?: Types.ObjectId;
   senderId: Types.ObjectId;
   groupId?: Types.ObjectId;
   receiverId?: Types.ObjectId;
@@ -11,12 +12,12 @@ export interface IMessage {
   status: "sent" | "delivered" | "read"; // Message status (optional, for advanced chat UI)
   isDeleted: boolean; // Soft delete for messages
   messageScope: "private" | "group";
+  createdAt: Date; 
+  updatedAt: Date;
 }
 
 export interface IMessageModel extends Document, IMessage {
   _id: Types.ObjectId;
-  createdAt: Date; // When the message was created/sent
-  updatedAt: Date; // When the message was last updated (e.g., edited)
 }
 
 const MessageSchema = new Schema<IMessageModel>(

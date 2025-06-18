@@ -1,5 +1,6 @@
 import { Types } from 'mongoose';
 import MessageModel, { IMessageModel } from '../../../models/group.model/group-messages.models';
+import { IMessageWithSender } from '../../../services/Implementation/group.service';
 
 export class MessageRepository {
 
@@ -60,7 +61,7 @@ export class MessageRepository {
     actorId: Types.ObjectId,
     page: number,
     limit: number
-  ): Promise<{ messages: IMessageModel[]; totalMessages: number }> {
+  ): Promise<{ messages: IMessageWithSender[]; totalMessages: number }> {
     const skip = (page - 1) * limit;
     let query: any = { isDeleted: false };
 
@@ -86,7 +87,7 @@ export class MessageRepository {
 
     const [messages, totalMessages] = await Promise.all([messagesPromise, totalMessagesPromise]);
 
-    return { messages, totalMessages };
+    return { messages : messages as unknown as IMessageWithSender[], totalMessages };
   }
 
 

@@ -45,24 +45,8 @@ export class GroupController {
       );
 
       sendResponse(res, 201, "Group created successfully", createdGroup);
-    } catch (error: any) {
-      if (error.code === "LIMIT_FILE_SIZE") {
-        sendResponse(res, 400, "File size too large. Max 5MB allowed.");
-      } else if (error.message === "Only image files are allowed!") {
-        sendResponse(res, 400, error.message);
-      } else if (
-        error.message &&
-        error.message.includes("duplicate key error")
-      ) {
-        sendResponse(
-          res,
-          409,
-          "A group with this name already exists. Please choose a different name."
-        );
-      } else {
-        console.error("Error creating group:", error);
-        sendResponse(res, 500, "Failed to create group", error.message);
-      }
+    } catch (error) {
+      next(error);
     }
   }
 
@@ -236,7 +220,7 @@ export class GroupController {
       sendResponse(res, 200, "Available groups retrieved successfully", {
         availableGroupsData,
       });
-    } catch (error: any) {
+    } catch (error) {
       if (error instanceof CustomError) {
         sendResponse(res, error.statusCode, error.message);
       } else {
@@ -266,22 +250,14 @@ export class GroupController {
       sendResponse(res, 200, "Successfully joined group", {
         member: joinedMember,
       });
-    } catch (error: any) {
+    } catch (error) {
       if (error instanceof CustomError) {
-        sendResponse(res, error.statusCode, error.message);
-      } else if (
-        error.message &&
-        error.message.includes("duplicate key error")
-      ) {
-        sendResponse(
-          res,
-          409,
-          "You are already an active member of this group."
-        );
-      } else {
-        console.error("Error joining group:", error);
-        sendResponse(res, 500, "Failed to join group.");
+        throw error;
       }
+      throw new CustomError(
+        "Failed to join group.",
+        HttpResCode.INTERNAL_SERVER_ERROR
+      );
     }
   }
 
@@ -305,7 +281,7 @@ export class GroupController {
       sendResponse(res, 200, "User chats retrieved successfully", {
         userChats,
       });
-    } catch (error: any) {
+    } catch (error) {
       if (error instanceof CustomError) {
         sendResponse(res, error.statusCode, error.message);
       } else {
@@ -315,19 +291,18 @@ export class GroupController {
     }
   }
 
-
   async getChatMessages(
     req: Request,
     res: Response,
     next: NextFunction
   ): Promise<void> {
     try {
-      const chatId = req.params.chatId; 
-      const chatType = req.query.type as "group" | "private"; 
-      const actorId = req.decoded?.id; 
+      const chatId = req.params.chatId;
+      const chatType = req.query.type as "group" | "private";
+      const actorId = req.decoded?.id;
 
       const page = parseInt(req.query.page as string) || 1;
-      const limit = parseInt(req.query.limit as string) || 20; 
+      const limit = parseInt(req.query.limit as string) || 20;
 
       if (!chatId || !Types.ObjectId.isValid(chatId)) {
         throw new CustomError(
@@ -359,7 +334,7 @@ export class GroupController {
       sendResponse(res, 200, "Messages retrieved successfully", {
         messagesData,
       });
-    } catch (error: any) {
+    } catch (error) {
       if (error instanceof CustomError) {
         sendResponse(res, error.statusCode, error.message);
       } else {
@@ -375,9 +350,9 @@ export class GroupController {
     next: NextFunction
   ): Promise<void> {
     try {
-      const chatId = req.params.chatId; 
+      const chatId = req.params.chatId;
       const senderId = req.decoded?.id;
-      const { chatType, content, type } = req.body; 
+      const { chatType, content, type } = req.body;
 
       if (!chatId || !Types.ObjectId.isValid(chatId)) {
         throw new CustomError(
@@ -397,7 +372,7 @@ export class GroupController {
           HttpResCode.BAD_REQUEST
         );
       }
-      const allowedSendTypes = ["text", "image", "video", "file"]; 
+      const allowedSendTypes = ["text", "image", "video", "file"];
       if (
         !type ||
         typeof type !== "string" ||
@@ -412,7 +387,7 @@ export class GroupController {
       const createdMessage = await this.groupService.sendChatMessage(
         senderId!,
         chatType,
-        chatId, 
+        chatId,
         content,
         type as "text" | "image" | "video" | "file"
       );
@@ -420,7 +395,7 @@ export class GroupController {
       sendResponse(res, 201, "Message sent successfully", {
         message: createdMessage,
       });
-    } catch (error: any) {
+    } catch (error) {
       if (error instanceof CustomError) {
         sendResponse(res, error.statusCode, error.message);
       } else {

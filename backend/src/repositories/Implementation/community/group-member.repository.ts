@@ -1,9 +1,12 @@
 import {
   GroupMemberModel,
+  IGroupMember,
   IGroupMemberModel,
 } from "../../../models/group.model/group-member.models";
 import { Types } from "mongoose";
 import { BaseRepository } from "../base.repository";
+import { GroupMemberWithUser } from "../../../services/Implementation/group.service";
+import { IMessage } from "../../../models/group.model/group-messages.models";
 
 export class GroupMemberRepository extends BaseRepository<IGroupMemberModel> {
   constructor() {
@@ -20,7 +23,7 @@ export class GroupMemberRepository extends BaseRepository<IGroupMemberModel> {
   async createMember(
     groupId: Types.ObjectId,
     userId: Types.ObjectId
-  ): Promise<any> {
+  ): Promise<IGroupMemberModel> {
     const member = new GroupMemberModel({
       groupId,
       userId,
@@ -32,7 +35,7 @@ export class GroupMemberRepository extends BaseRepository<IGroupMemberModel> {
   async findMember(
     groupId: Types.ObjectId,
     userId: Types.ObjectId
-  ): Promise<any> {
+  ): Promise<IGroupMemberModel | null> {
     return GroupMemberModel.findOne({ groupId, userId }).exec();
   }
 
@@ -53,10 +56,10 @@ export class GroupMemberRepository extends BaseRepository<IGroupMemberModel> {
     page: number,
     limit: number,
     searchTerm?: string,
-    statusFilter?: string
-  ): Promise<{ members: IGroupMemberModel[]; totalMembers: number }> {
+    statusFilter?:  "active" | "left" | "kicked" | "blocked" | "all"
+  ): Promise<{ members:  GroupMemberWithUser[]; totalMembers: number }> {
     const skip = (page - 1) * limit;
-    let matchQuery: any = { groupId: groupId };
+    let matchQuery: Partial<IGroupMember> = { groupId: groupId };
 
     if (statusFilter && statusFilter !== "all") {
       matchQuery.status = statusFilter;
@@ -130,7 +133,7 @@ export class GroupMemberRepository extends BaseRepository<IGroupMemberModel> {
     const totalMembers =
       totalCountResult.length > 0 ? totalCountResult[0].total : 0;
 
-    return { members: members as IGroupMemberModel[], totalMembers };
+    return { members: members as GroupMemberWithUser[], totalMembers };
   }
 
   async updateMemberStatus(
@@ -138,7 +141,7 @@ export class GroupMemberRepository extends BaseRepository<IGroupMemberModel> {
     userId: Types.ObjectId,
     status: "active" | "left" | "kicked" | "blocked"
   ): Promise<IGroupMemberModel | null> {
-    const update: any = { status };
+    const update: Partial<IGroupMember> = { status };
     if (status === "kicked") {
       update.kickedAt = new Date();
     } else if (status === "blocked") {

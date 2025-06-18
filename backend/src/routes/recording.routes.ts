@@ -5,6 +5,7 @@ import { verifyAccessToken } from "../middlewares/verify-token.middleware";
 import { checkBlockedUser } from "../middlewares/check-blocked-user.middleware";
 import { authorizeRoles } from "../middlewares/role-based-access-control.middleware";
 import { IRecordingController } from "../controllers/Interface/IRecordingController";
+import { NextFunction, Request, Response } from "express";
 
 const router = Router();
 const recordingController = container.resolve<IRecordingController>("RecordingController");
@@ -12,7 +13,7 @@ const recordingController = container.resolve<IRecordingController>("RecordingCo
 const upload = multer({ storage: multer.memoryStorage() });
 
 function asyncHandler(fn: any) {
-  return function (req: any, res: any, next: any) {
+  return function (req: Request, res: Response, next: NextFunction) {
     Promise.resolve(fn(req, res, next)).catch(next);
   };
 }

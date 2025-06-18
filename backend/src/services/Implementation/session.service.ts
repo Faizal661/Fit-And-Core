@@ -538,7 +538,7 @@ export default class SessionService implements ISessionService {
   async getAllUserBookingsWithTrainer(
     userIdString: string,
     trainerIdString: string
-  ): Promise<any[]> {
+  ): Promise<IBookingModel[]> {
     try {
       let userId: Types.ObjectId;
       try {

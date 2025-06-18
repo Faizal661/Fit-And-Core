@@ -3,6 +3,7 @@ import ReportModel, { IReportModel } from "../../models/report.models";
 import { IReportRepository } from "../Interface/IReportRepository";
 import { BaseRepository } from "./base.repository";
 import { Types } from "mongoose";
+import { IReport } from "../../types/report.types";
 
 @injectable()
 export class ReportRepository
@@ -18,12 +19,12 @@ export class ReportRepository
     limit: number,
     status?: "pending" | "in_review" | "resolved" | "rejected"
   ): Promise<{
-    reports: any[];
+    reports: IReportModel[];
     totalReports: number;
     totalPages: number;
     currentPage: number;
   }> {
-    const match: any = {};
+    const match: Partial<IReport> = {};
     if (status) match.status = status;
 
     const skip = (page - 1) * limit;
@@ -93,12 +94,12 @@ export class ReportRepository
     limit: number,
     status?: "pending" | "in_review" | "resolved" | "rejected"
   ): Promise<{
-    reports: any[];
+    reports: IReportModel[];
     totalReports: number;
     totalPages: number;
     currentPage: number;
   }> {
-    const match: any = { reporterUserId: new Types.ObjectId(userId) };
+    const match: Partial<IReport> = { reporterUserId: new Types.ObjectId(userId) };
     if (status) match.status = status;
 
     const skip = (page - 1) * limit;

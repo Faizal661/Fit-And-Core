@@ -15,7 +15,7 @@ export interface IBookingRepository
   findAllBookingsByUserAndTrainer(
     userId: Types.ObjectId,
     trainerId: Types.ObjectId
-  ): Promise<any[]>;
+  ): Promise<BookingDetails[]>;
 
   getBookingDetailsById(bookingId: Types.ObjectId): Promise<IBookingModel>;
 
