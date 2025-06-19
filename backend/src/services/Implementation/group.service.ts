@@ -75,6 +75,7 @@ export interface ChatItem {
   name: string;
   avatar?: string;
   lastMessage: string;
+  lastMessageType: "text" | "image" | "system";
   lastMessageTime: string | Date;
   unreadCount: number;
   groupMemberCount?: number;
@@ -88,7 +89,7 @@ export interface MessageForFrontend {
     profilePicture?: string;
   };
   content: string;
-  type: "text" | "image" | "video" | "file" | "system";
+  type: "text" | "image" | "system";
   createdAt: string;
   isOwn?: boolean;
 }
@@ -512,6 +513,9 @@ export class GroupService {
           ? lastMessageDoc.createdAt
           : group.createdAt;
 
+          const lastMessageType = lastMessageDoc
+          ? lastMessageDoc.type
+          : "text";
         const unreadCount =
           await this.messageRepository.countUnreadGroupMessages(
             group._id,
@@ -526,6 +530,7 @@ export class GroupService {
           name: group.name,
           avatar: group.groupImage,
           lastMessage: lastMessageContent,
+          lastMessageType:lastMessageType,
           lastMessageTime: lastMessageTime,
           unreadCount: unreadCount,
           groupMemberCount: groupMemberCount,
@@ -699,7 +704,8 @@ export class GroupService {
     chatType: "group" | "private",
     targetId: string,
     content: string,
-    type: "text" | "image" | "video" | "file" | "system"
+    type: "text" | "image" | "system",
+    image?: Express.Multer.File
   ): Promise<MessageForFrontend> {
     if (
       !Types.ObjectId.isValid(senderId) ||
@@ -708,19 +714,24 @@ export class GroupService {
       throw new CustomError("Invalid sender ID or target ID.", 400);
     }
 
-    if (!content || content.trim() === "") {
-      throw new CustomError("Message content cannot be empty.", 400);
+    if (!content && !image) {
+      throw new CustomError(
+        "Message content is required and cannot be empty.",
+        HttpResCode.BAD_REQUEST
+      );
     }
 
-    const allowedMessageTypes: Array<typeof type> = [
-      "text",
-      "image",
-      "video",
-      "file",
-      "system",
-    ];
+    const allowedMessageTypes: Array<typeof type> = ["text", "image", "system"];
     if (!allowedMessageTypes.includes(type)) {
       throw new CustomError("Invalid message type.", 400);
+    }
+
+    if (image) {
+      const cloudinaryResult = await uploadToCloudinary(
+        image,
+        "group-pictures"
+      );
+      content = cloudinaryResult.Location;
     }
 
     const senderObjectId = new Types.ObjectId(senderId);
@@ -731,7 +742,7 @@ export class GroupService {
       groupId?: Types.ObjectId;
       receiverId?: Types.ObjectId;
       content: string;
-      type: "text" | "image" | "video" | "file" | "system";
+      type: "text" | "image" | "system";
       messageScope: "group" | "private";
     } = {
       senderId: senderObjectId,

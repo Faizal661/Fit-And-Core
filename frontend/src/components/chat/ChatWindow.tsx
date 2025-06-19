@@ -13,7 +13,7 @@ import { ChatItem, Message } from "../../pages/chat/ChatPage";
 interface ChatWindowProps {
   chat: ChatItem;
   messages: Message[];
-  onSendMessage: (content: string, type?: string) => void;
+  onSendMessage: (content: string, type?: string, file?: File) => void;
   isLoading: boolean;
   isSending: boolean;
   onBack?: () => void;
@@ -21,7 +21,7 @@ interface ChatWindowProps {
 
 export const ChatWindow = ({
   chat,
-  messages=[],
+  messages = [],
   onSendMessage,
   isLoading,
   isSending,
@@ -56,14 +56,13 @@ export const ChatWindow = ({
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // Handle file upload logic here
-      onSendMessage(file.name, "file");
+      onSendMessage("", "image", file);
     }
   };
 
   const formatMessageTime = (timestamp: string) => {
     const date = new Date(timestamp);
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   };
 
   const formatMessageDate = (timestamp: string) => {
@@ -83,14 +82,17 @@ export const ChatWindow = ({
 
   // Group messages by date
 
-  const groupedMessages = messages.slice().reverse().reduce((groups: { [key: string]: Message[] }, message) => {
-    const date = formatMessageDate(message.createdAt);
-    if (!groups[date]) {
-      groups[date] = [];
-    }
-    groups[date].push(message);
-    return groups;
-  }, {});
+  const groupedMessages = messages
+    .slice()
+    .reverse()
+    .reduce((groups: { [key: string]: Message[] }, message) => {
+      const date = formatMessageDate(message.createdAt);
+      if (!groups[date]) {
+        groups[date] = [];
+      }
+      groups[date].push(message);
+      return groups;
+    }, {});
 
   return (
     <div className="flex flex-col h-full">
@@ -98,15 +100,13 @@ export const ChatWindow = ({
       <div className="p-4 border-b border-gray-200 bg-white">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-   
-              <button
-                onClick={onBack}
-                className="p-2 hover:bg-gray-100 rounded-full transition-colors "
-              >
-                <ArrowLeft size={20} />
-              </button>
-         
-            
+            <button
+              onClick={onBack}
+              className="p-2 hover:bg-gray-100 rounded-full transition-colors "
+            >
+              <ArrowLeft size={20} />
+            </button>
+
             <div className="relative">
               {chat.avatar ? (
                 <img
@@ -123,7 +123,7 @@ export const ChatWindow = ({
                   )}
                 </div>
               )}
-              
+
               {chat.type !== "group" && chat.isOnline && (
                 <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
               )}
@@ -132,18 +132,16 @@ export const ChatWindow = ({
             <div>
               <h3 className="font-semibold text-gray-900">{chat.name}</h3>
               <p className="text-sm text-gray-500">
-                {chat.type === "group" 
+                {chat.type === "group"
                   ? `${chat.groupMemberCount} members`
-                  : chat.isOnline 
-                  ? "Online" 
-                  : "Offline"
-                }
+                  : chat.isOnline
+                  ? "Online"
+                  : "Offline"}
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
-         
             <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
               <MoreVertical size={20} className="text-gray-600" />
             </button>
@@ -174,11 +172,15 @@ export const ChatWindow = ({
                     key={message._id}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className={`flex ${message.isOwn ? "justify-end" : "justify-start"} mb-4`}
+                    className={`flex ${
+                      message.isOwn ? "justify-end" : "justify-start"
+                    } mb-4`}
                   >
-                    <div className={`flex items-end gap-2 max-w-xs lg:max-w-md ${
-                      message.isOwn ? "flex-row-reverse" : "flex-row"
-                    }`}>
+                    <div
+                      className={`flex items-end gap-2 max-w-xs lg:max-w-md ${
+                        message.isOwn ? "flex-row-reverse" : "flex-row"
+                      }`}
+                    >
                       {!message.isOwn && (
                         <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
                           {message.senderId.profilePicture ? (
@@ -195,20 +197,37 @@ export const ChatWindow = ({
                         </div>
                       )}
 
-                      <div className={`${
-                        message.isOwn ? "bg-blue-600 text-white" : "bg-white text-gray-900"
-                      } rounded-2xl px-4 py-2 shadow-sm`}>
+                      <div
+                        className={`${
+                          message.isOwn
+                            ? "bg-blue-600 text-white"
+                            : "bg-white text-gray-900"
+                        } rounded-2xl px-4 py-2 shadow-sm`}
+                      >
                         {!message.isOwn && chat.type === "group" && (
                           <p className="text-xs font-medium mb-1 opacity-70">
                             {message.senderId.username}
                           </p>
                         )}
-                        
-                        <p className="text-sm break-words">{message.content}</p>
-                        
-                        <p className={`text-xs mt-1 ${
-                          message.isOwn ? "text-blue-100" : "text-gray-500"
-                        }`}>
+
+                        {message.type === "image" ? (
+                          <img
+                            src={message.content}
+                            alt={message.content}
+                            className="max-w-[220px] max-h-[220px] rounded-lg mb-1 object-cover"
+                            style={{ objectFit: "cover" }}
+                          />
+                        ) : (
+                          <p className="text-sm break-words">
+                            {message.content}
+                          </p>
+                        )}
+
+                        <p
+                          className={`text-xs mt-1 ${
+                            message.isOwn ? "text-blue-100" : "text-gray-500"
+                          }`}
+                        >
                           {formatMessageTime(message.createdAt)}
                         </p>
                       </div>
@@ -262,7 +281,7 @@ export const ChatWindow = ({
             }`}
           >
             {isSending ? (
-              <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+              <div className="w-5 h-5 border-2 border-black border-t-white rounded-full animate-spin"></div>
             ) : (
               <Send size={20} />
             )}
@@ -271,10 +290,10 @@ export const ChatWindow = ({
 
         <input
           ref={fileInputRef}
+          accept="image/*"
           type="file"
           onChange={handleFileUpload}
           className="hidden"
-          accept="image/*,video/*,.pdf,.doc,.docx"
         />
       </div>
     </div>

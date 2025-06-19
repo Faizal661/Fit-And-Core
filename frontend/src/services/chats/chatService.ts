@@ -5,31 +5,43 @@ export const getUserChats = async (userId: string) => {
   return response.data.userChats;
 };
 
-export const getMessagesofSelectedChat = async (selectedChatId: string,selectedChatType: string) => {
+export const getMessagesofSelectedChat = async (
+  selectedChatId: string,
+  selectedChatType: string
+) => {
   const response = await api.get(`/groups/chats/${selectedChatId}/messages`, {
     params: { type: selectedChatType },
   });
   return response.data.messagesData;
 };
 
-
 export const sendMessage = async ({
-      chatId,
-      chatType,
-      content,
-      type,
-    }: {
-      chatId: string;
-      chatType: string;
-      content: string;
-      type: string;
-    })=> {
-  const response = await api.post(`/groups/chats/${chatId}/messages`, {
-    chatType,
-    content,
-    type,
-  });
+  chatId,
+  chatType,
+  content,
+  type,
+  file,
+}: {
+  chatId: string;
+  chatType: string;
+  content: string;
+  type: string;
+  file?: File;
+}) => {
+  
+  let data;
+  if (type === "image" && file) {
+    data = new FormData();
+    data.append("chatType", chatType);
+    data.append("file", file);
+    data.append("type", type);
+  } else {
+    data = { chatType, content, type };
+  }
+
+  const response = await api.post(
+    `/groups/chats/${chatId}/messages`,
+    data 
+  );
   return response.data;
 };
-
-

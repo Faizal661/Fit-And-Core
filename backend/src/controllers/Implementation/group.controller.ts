@@ -352,7 +352,9 @@ export class GroupController {
     try {
       const chatId = req.params.chatId;
       const senderId = req.decoded?.id;
+      
       const { chatType, content, type } = req.body;
+      const file = req.file
 
       if (!chatId || !Types.ObjectId.isValid(chatId)) {
         throw new CustomError(
@@ -366,20 +368,15 @@ export class GroupController {
           HttpResCode.BAD_REQUEST
         );
       }
-      if (!content || typeof content !== "string" || content.trim() === "") {
-        throw new CustomError(
-          "Message content is required and cannot be empty.",
-          HttpResCode.BAD_REQUEST
-        );
-      }
-      const allowedSendTypes = ["text", "image", "video", "file"];
+
+      const allowedSendTypes = ["text", "image"];
       if (
         !type ||
         typeof type !== "string" ||
         !allowedSendTypes.includes(type)
       ) {
         throw new CustomError(
-          'Invalid message type for sending. Must be "text", "image", "video", or "file".',
+          'Invalid message type for sending. Must be "text", "image"',
           HttpResCode.BAD_REQUEST
         );
       }
@@ -389,7 +386,8 @@ export class GroupController {
         chatType,
         chatId,
         content,
-        type as "text" | "image" | "video" | "file"
+        type as "text" | "image" ,
+        file,
       );
 
       sendResponse(res, 201, "Message sent successfully", {
@@ -397,10 +395,10 @@ export class GroupController {
       });
     } catch (error) {
       if (error instanceof CustomError) {
-        sendResponse(res, error.statusCode, error.message);
+        next(error)
       } else {
         console.error("Error sending message:", error);
-        sendResponse(res, 500, "Failed to send message.", error);
+        sendResponse(res, 500, "Failed to send message.");
       }
     }
   }

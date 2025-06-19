@@ -7,6 +7,7 @@ import {
   Search,
   MessageCircle,
   Dumbbell,
+  ImageIcon
 } from "lucide-react";
 import { ChatItem } from "../../pages/chat/ChatPage";
 import { formatTimeAgo } from "../../utils/dateFormat";
@@ -47,7 +48,7 @@ export const ChatSidebar = ({
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-gray-900">Messages</h2>
           <div className="flex items-center ">
-            <h3 className="text-lg font-semibold text-gray-900 mr-2 hidden lg:block">
+            <h3 className="text-lg font-semibold text-gray-900 mr-2 invisible lg:visible">
               Find Groups
             </h3>
             <motion.button
@@ -173,7 +174,9 @@ export const ChatSidebar = ({
                     <div className="flex items-center justify-between mb-1">
                       <div className="flex items-center gap-2">
                         <h3 className="font-medium text-gray-900 truncate">
-                          {chat.name}
+                             {(chat.name?.length ?? 0) > 10
+                              ? `${chat.name.slice(0, 16)}...`
+                              : chat.name}
                         </h3>
                       </div>
                       {chat.lastMessageTime && (
@@ -184,8 +187,17 @@ export const ChatSidebar = ({
                     </div>
 
                     <div className="flex items-center justify-between">
-                      <p className="text-sm text-gray-600 truncate">
-                        {chat.lastMessage || "No messages yet"}
+                      <p className="text-sm text-gray-600 truncate flex items-center gap-1">
+                        {chat.lastMessageType === "image" ? (
+                            <>
+                              <span>Image</span>
+                              <ImageIcon className="w-4 h-4 text-gray-500" />
+                            </>
+                          ) : (
+                            (chat.lastMessage?.length ?? 0) > 20
+                              ? `${chat.lastMessage.slice(0, 20)}...`
+                              : chat.lastMessage || "No messages yet"
+                          )}
                       </p>
                       <div className="flex items-center gap-2">
                         {/* {chat.type === "group" && chat.groupMemberCount && (
@@ -193,7 +205,7 @@ export const ChatSidebar = ({
                             {chat.groupMemberCount}
                           </span>
                         )} */}
-                        {chat.unreadCount && chat.unreadCount > 0 && (
+                        {(chat.unreadCount ?? 0)  > 0 && (
                           <div className="w-5 h-5 bg-blue-600 text-white text-xs rounded-full flex items-center justify-center">
                             {chat.unreadCount}
                           </div>

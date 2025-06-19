@@ -96,7 +96,7 @@ export class MessageRepository {
     groupId?: Types.ObjectId;
     receiverId?: Types.ObjectId;
     content: string;
-    type: "text" | "image" | "video" | "file" | "system";
+    type: "text" | "image" | "system";
     messageScope: "private" | "group";
   }): Promise<IMessageModel> {
     const newMessage = new MessageModel({

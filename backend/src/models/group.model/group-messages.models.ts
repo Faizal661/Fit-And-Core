@@ -5,12 +5,12 @@ export interface IMessage {
   senderId: Types.ObjectId;
   groupId?: Types.ObjectId;
   receiverId?: Types.ObjectId;
-  content: string; // The message text
-  type: "text" | "image" | "video" | "file" | "system";
+  content: string; 
+  type: "text" | "image" | "system";
   replyToMessageId?: Types.ObjectId;
-  readBy: Types.ObjectId[]; // Array of User IDs who have read this message (for read receipts)
-  status: "sent" | "delivered" | "read"; // Message status (optional, for advanced chat UI)
-  isDeleted: boolean; // Soft delete for messages
+  readBy: Types.ObjectId[]; 
+  status: "sent" | "delivered" | "read";
+  isDeleted: boolean; 
   messageScope: "private" | "group";
   createdAt: Date; 
   updatedAt: Date;

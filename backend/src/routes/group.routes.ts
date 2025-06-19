@@ -64,7 +64,7 @@ router
   .get(...userAccess, (req, res, next) =>
     groupController.getChatMessages(req, res, next)
   )
-  .post(...userAccess, (req, res, next) =>
+  .post(...userAccess,upload.single("file"), (req, res, next) =>
     groupController.sendChatMessage(req, res, next)
   );
 

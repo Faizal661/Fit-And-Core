@@ -49,6 +49,7 @@ export interface ChatItem {
   name: string;
   avatar?: string;
   lastMessage?: string;
+  lastMessageType?: "text" | "image" | "system";
   lastMessageTime?: string;
   unreadCount?: number;
   isOnline?: boolean;
@@ -58,13 +59,13 @@ export interface ChatItem {
 export interface Message {
   _id: string;
   content: string;
-  type: "text" | "image" | "file";
+  type: "text" | "image" | "system";
   senderId: {
     _id: string;
     username: string;
     profilePicture?: string;
   };
-  createdAt: string;
+  createdAt: string; 
   isOwn: boolean;
 }
 
@@ -110,17 +111,20 @@ const ChatPage = () => {
       chatType,
       content,
       type,
+      file
     }: {
       chatId: string;
       chatType: string;
       content: string;
       type: string;
+      file?:File
     }) =>
       sendMessage({
         chatId,
         chatType,
         content,
         type,
+        file
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -163,14 +167,15 @@ const ChatPage = () => {
     },
   });
 
-  const handleSendMessage = (content: string, type: string = "text") => {
-    if (!selectedChat || !content.trim()) return;
+  const handleSendMessage = (content: string, type: string = "text", file?: File ) => {
+    if (!selectedChat || (!content.trim() && !file)) return;
 
     sendMessageMutation.mutate({
       chatId: selectedChat.id,
       chatType: selectedChat.type,
       content: content.trim(),
       type,
+      file
     });
   };
 
@@ -258,7 +263,9 @@ const ChatPage = () => {
 
             {/* Chat Window - 75% width */}
             <div
-              className={`w-full  lg:w-4/6 flex flex-col`}
+              className={`  ${
+                !selectedChat ? "hidden sm:flex sm:w-full" : "w-full"
+              }  lg:w-4/6 flex flex-col`}
             >
               {!selectedChat ? (
                 <div className="hidden sm:flex-1 sm:flex  items-center justify-center bg-gray-50">
