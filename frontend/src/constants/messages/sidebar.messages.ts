@@ -10,6 +10,7 @@ export const enum SIDEBAR_MESSAGES {
   USER_MANAGEMENT = "User Management",
   TRAINER_MANAGEMENT = " Trainer Management",
   FINANCE_MANAGEMENT = "Finance Management",
+  Wallet= "Wallet",
   REPORT_MANAGEMENT = "Report Management",
   COMMUNITY_MANAGEMENT = "Community Management",
 

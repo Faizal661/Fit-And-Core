@@ -13,7 +13,7 @@ const SubscriptionSchema: Schema = new Schema(
     amount: { type: Number },
     status: {
       type: String,
-      enum: ["pending", "active", "cancelled", "expired"],
+      enum: ["pending", "active", "refunded", "expired"],
       default: "pending",
     },
     startDate: { type: Date },

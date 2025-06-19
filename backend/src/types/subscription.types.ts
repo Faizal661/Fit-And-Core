@@ -7,7 +7,7 @@ export interface ISubscription {
     planDuration: string ;
     amount: number;
     sessions: number;
-    status: 'pending' | 'active' | 'cancelled' | 'expired';
+    status: 'pending' | 'active' | 'refunded' | 'expired';
     startDate: Date | null; 
     expiryDate: Date | null;
     // paymentId:  Types.ObjectId | null ;
@@ -41,7 +41,7 @@ export interface ISubscription {
     _id: Types.ObjectId;
     planDuration: string;
     amount: number;
-    status: "pending" | "active" | "cancelled" | "expired";
+    status: 'pending' | 'active' | 'refunded' | 'expired';
     startDate: Date | null;
     expiryDate: Date | null;
     trainerName?: string;

@@ -29,4 +29,11 @@ router.get(
   (req, res, next) => adminController.getMonthlySubscriptionData(req, res, next)
 );
 
+router.get(
+  "/finance/analytics",
+  verifyAccessToken,
+  authorizeRoles(["admin"]),
+  (req, res, next) => adminController.getFinanceAnalytics(req, res, next)
+);
+
 export default router;

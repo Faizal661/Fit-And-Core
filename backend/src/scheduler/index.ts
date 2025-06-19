@@ -1,8 +1,8 @@
 import cron from "node-cron";
+import { Types } from "mongoose"; 
 import { container } from "tsyringe";
 import { NotificationService } from "../services/Implementation/notification.service";
-import { ISessionService } from "../services/Interface/ISessionService"; // Assuming you have a booking service
-import { Types } from "mongoose"; // For ObjectId
+import { ISessionService } from "../services/Interface/ISessionService"; 
 import { ISubscriptionService } from "../services/Interface/ISubscriptionService";
 
 export const setupScheduledJobs = () => {

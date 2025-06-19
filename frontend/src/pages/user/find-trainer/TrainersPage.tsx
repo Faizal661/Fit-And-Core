@@ -54,7 +54,7 @@ const TrainersPage = () => {
 
   const handleStartChat = (trainerId: string,e: React.MouseEvent) => {
     e.stopPropagation();
-    navigate(`/trainer/chat/${trainerId}`);
+    navigate(`/messages`);
   };
 
   const handleBookSession = (trainerId: string,e: React.MouseEvent) => {

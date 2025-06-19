@@ -5,7 +5,6 @@ import {
   Globe,
   TrendingUp,
   Utensils,
-  History,
   Calendar,
   FileText,
   Dumbbell,
@@ -25,8 +24,11 @@ export const UserSidebarItems = [
   { to: "/communities", label: SIDEBAR_MESSAGES.COMMUNITIES, icon: Globe },
   { to: "/messages", label: SIDEBAR_MESSAGES.MESSAGES, icon: MessageSquare },
   { to: "/reports", label: SIDEBAR_MESSAGES.REPORTS, icon: BarChart },
-  // { to: "/notifications", label: SIDEBAR_MESSAGES.NOTIFICATIONS, icon: Bell },
-  { to: "/history", label: SIDEBAR_MESSAGES.HISTORY, icon: History },
+  {
+    to: "/wallet",
+    label: SIDEBAR_MESSAGES.Wallet,
+    icon: DollarSign,
+  },
 ];
 
 export const TrainerSidebarItems = [
@@ -58,7 +60,6 @@ export const TrainerSidebarItems = [
   },
   { to: "/messages", label: SIDEBAR_MESSAGES.MESSAGES, icon: MessageSquare },
   { to: "/trainer/reports", label: SIDEBAR_MESSAGES.REPORTS, icon: BarChart },
-  // { to: "/trainer/notifications", label: SIDEBAR_MESSAGES.NOTIFICATIONS, icon: Bell },
 ];
 
 export const AdminSidebarItems = [
@@ -93,7 +94,11 @@ export const AdminSidebarItems = [
 export const QuickActions = {
   user: [
     // { label: SIDEBAR_MESSAGES.CREDITS, icon: Award },
-    { to: "/upcoming-bookings", label: SIDEBAR_MESSAGES.BOOKINGS, icon: Calendar },
+    {
+      to: "/upcoming-bookings",
+      label: SIDEBAR_MESSAGES.BOOKINGS,
+      icon: Calendar,
+    },
     { to: "/streak", label: `${SIDEBAR_MESSAGES.STREAK}`, icon: TrendingUp },
   ],
 };
