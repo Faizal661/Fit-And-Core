@@ -110,6 +110,10 @@ import { GroupService } from "../services/Implementation/group.service";
 import { GroupController } from "../controllers/Implementation/group.controller";
 import { MessageRepository } from "../repositories/Implementation/community/message.repository";
 
+import { WalletRepository } from "../repositories/Implementation/wallet.repository";
+import { WalletService } from "../services/Implementation/wallet.service";
+import { WalletController } from "../controllers/Implementation/wallet.controller";
+
 container.registerInstance('RedisClient', redisClient);
 container.registerInstance('SocketIOServer', Server);
 
@@ -176,3 +180,7 @@ container.register<GroupMemberRepository>('GroupMemberRepository', { useClass: G
 container.register<GroupService>('GroupService', { useClass: GroupService });
 container.register<GroupController>('GroupController', { useClass: GroupController });
 container.register<MessageRepository>('MessageRepository', { useClass: MessageRepository });
+
+container.register<WalletRepository>('WalletRepository', { useClass: WalletRepository });
+container.register<WalletService>('WalletService', { useClass: WalletService });
+container.register<WalletController>('WalletController', { useClass: WalletController });

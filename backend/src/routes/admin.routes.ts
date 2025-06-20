@@ -32,7 +32,7 @@ router.get(
 router.get(
   "/finance/analytics",
   verifyAccessToken,
-  authorizeRoles(["admin"]),
+  authorizeRoles(["admin","trainer"]),
   (req, res, next) => adminController.getFinanceAnalytics(req, res, next)
 );
 

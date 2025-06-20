@@ -19,4 +19,5 @@ export interface ISubscriptionService {
   ): Promise<SubscriptionStatus>;
 
   getUsersWithExpiringSubscriptions(days: number): Promise<ISubscriptionModel[]>;
+  refundSubscription(subscriptionId: string): Promise<ISubscriptionModel | null> 
 }

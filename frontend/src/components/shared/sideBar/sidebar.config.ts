@@ -94,11 +94,11 @@ export const AdminSidebarItems = [
 export const QuickActions = {
   user: [
     // { label: SIDEBAR_MESSAGES.CREDITS, icon: Award },
-    {
-      to: "/upcoming-bookings",
-      label: SIDEBAR_MESSAGES.BOOKINGS,
-      icon: Calendar,
-    },
+    // {
+    //   to: "/upcoming-bookings",
+    //   label: SIDEBAR_MESSAGES.BOOKINGS,
+    //   icon: Calendar,
+    // },
     { to: "/streak", label: `${SIDEBAR_MESSAGES.STREAK}`, icon: TrendingUp },
   ],
 };

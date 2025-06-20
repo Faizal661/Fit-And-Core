@@ -43,7 +43,7 @@ const TrainerApply = lazy(() => import("../pages/trainer/TrainerApply"));
 const UserArticles = lazy(() => import("../pages/article/user/UserArticles"));
 
 // trainer
-const HomeTrainer = lazy(() => import("../pages/trainer/HomeTrainer"));
+// const HomeTrainer = lazy(() => import("../pages/trainer/HomeTrainer"));
 const TrainerArticles = lazy(() => import("../pages/article/trainer/TrainerArticles"));
 const CreateArticle = lazy(() => import("../pages/article/trainer/CreateArticle"));
 
@@ -89,7 +89,8 @@ const AppRoutes = () => {
       </Route>
 
       <Route element={<ProtectedRoutes allowedRoles={["trainer"]} />}>
-        <Route path="/trainer" element={<HomeTrainer />} />
+        <Route path="/trainer" element={<FinanceManagementPage />} />
+        {/* <Route path="/trainer" element={<HomeTrainer />} /> */}
         <Route path="/trainer/articles" element={<TrainerArticles />} />
         <Route path="/trainer/articles/create" element={<CreateArticle />} />
         <Route path="/trainer/articles/edit/:articleId" element={<EditArticle />} />

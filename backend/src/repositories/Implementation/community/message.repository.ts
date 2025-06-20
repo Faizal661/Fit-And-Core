@@ -1,24 +1,40 @@
 import { Types } from 'mongoose';
 import MessageModel, { IMessageModel } from '../../../models/group.model/group-messages.models';
 import { IMessageWithSender } from '../../../services/Implementation/group.service';
+import { CustomError } from '../../../errors/CustomError';
+import { HttpResCode } from '../../../constants/http-response.constants';
 
 export class MessageRepository {
 
 
   async findLastGroupMessage(groupId: Types.ObjectId): Promise<IMessageModel | null> {
-    return MessageModel.findOne({ groupId, messageScope: 'group', isDeleted: false })
-      .sort({ createdAt: -1 })
-      .exec();
+       try {
+         return MessageModel.findOne({ groupId, messageScope: 'group', isDeleted: false })
+           .sort({ createdAt: -1 })
+           .exec();
+    } catch (error) {
+      throw new CustomError(
+        "failed to find last group message",
+        HttpResCode.INTERNAL_SERVER_ERROR
+      );
+    }
   }
 
 
   async countUnreadGroupMessages(groupId: Types.ObjectId, userId: Types.ObjectId): Promise<number> {
-    return MessageModel.countDocuments({
-      groupId: groupId,
-      messageScope: 'group',
-      isDeleted: false,
-      readBy: { $ne: userId } 
-    }).exec();
+       try {
+         return MessageModel.countDocuments({
+           groupId: groupId,
+           messageScope: 'group',
+           isDeleted: false,
+           readBy: { $ne: userId } 
+         }).exec();
+    } catch (error) {
+      throw new CustomError(
+        "failed to count unread group messages",
+        HttpResCode.INTERNAL_SERVER_ERROR
+      );
+    }
   }
 
 

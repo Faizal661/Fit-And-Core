@@ -10,6 +10,8 @@ import { ISubscriptionRepository } from "../../repositories/Interface/ISubscript
 import { IUserModel } from "../../models/user.models";
 import { ITrainerModel } from "../../models/trainer.models";
 import { FinanceData } from "../../types/finance.types";
+import { CustomError } from "../../errors/CustomError";
+import { HttpResCode } from "../../constants/http-response.constants";
 
 @injectable()
 export class SubscriptionRepository
@@ -23,74 +25,111 @@ export class SubscriptionRepository
   async findActiveSubscribedTrainers(
     traineeId: Types.ObjectId
   ): Promise<Types.ObjectId[]> {
-    const subscriptions = await SubscriptionModel.find({
-      userId: traineeId,
-      status: "active",
-      expiryDate: { $gt: new Date() },
-    })
-      .populate({
-        path: "trainerId",
-        populate: {
-          path: "userId",
-          model: "User",
-        },
+    try {
+      const subscriptions = await SubscriptionModel.find({
+        userId: traineeId,
+        status: "active",
+        expiryDate: { $gt: new Date() },
       })
-      .exec();
+        .populate({
+          path: "trainerId",
+          populate: {
+            path: "userId",
+            model: "User",
+          },
+        })
+        .exec();
 
-    return subscriptions
-      .map((sub) => {
-        const trainer = sub.trainerId as unknown as ITrainerModel;
-        const user = trainer?.userId;
-        return user && typeof user === "object" && "_id" in user
-          ? user._id
-          : null;
-      })
-      .filter((id): id is Types.ObjectId => id !== null);
+      return subscriptions
+        .map((sub) => {
+          const trainer = sub.trainerId as unknown as ITrainerModel;
+          const user = trainer?.userId;
+          return user && typeof user === "object" && "_id" in user
+            ? user._id
+            : null;
+        })
+        .filter((id): id is Types.ObjectId => id !== null);
+    } catch (error) {
+      throw new CustomError(
+        "failed to find active subscribed trainers",
+        HttpResCode.INTERNAL_SERVER_ERROR
+      );
+    }
   }
 
   async findActiveSubscribedTrainees(
     trainerId: Types.ObjectId
   ): Promise<Types.ObjectId[]> {
-    const subscriptions = await SubscriptionModel.find({
-      trainerId: trainerId,
-      status: "active",
-      expiryDate: { $gt: new Date() },
-    });
+    try {
+      const subscriptions = await SubscriptionModel.find({
+        trainerId: trainerId,
+        status: "active",
+        expiryDate: { $gt: new Date() },
+      });
 
-    return subscriptions.map((sub) => sub.userId);
+      return subscriptions.map((sub) => sub.userId);
+    } catch (error) {
+      throw new CustomError(
+        "failed to find active subscribed trainees",
+        HttpResCode.INTERNAL_SERVER_ERROR
+      );
+    }
   }
 
-   async getFinanceAnalytics(start: Date, end: Date): Promise<FinanceData> {
-    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  async getFinanceAnalytics(start: Date, end: Date): Promise<FinanceData> {
+    const months = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
 
     const monthlyStats = await SubscriptionModel.aggregate([
       {
         $match: {
-          createdAt: { $gte: start, $lte: end }
-        }
+          createdAt: { $gte: start, $lte: end },
+        },
       },
       {
         $group: {
           _id: {
             month: { $month: "$createdAt" },
             year: { $year: "$createdAt" },
-            status: "$status"
+            status: "$status",
           },
-          revenue: { $sum: { $cond: [{ $eq: ["$status", "active"] }, "$amount", 0] } },
-          refunds: { $sum: { $cond: [{ $eq: ["$status", "refunded"] }, "$amount", 0] } }
-        }
-      }
+          revenue: {
+            $sum: { $cond: [{ $eq: ["$status", "active"] }, "$amount", 0] },
+          },
+          refunds: {
+            $sum: { $cond: [{ $eq: ["$status", "refunded"] }, "$amount", 0] },
+          },
+        },
+      },
     ]);
 
-    const monthMap: { [key: string]: { revenue: number; refunds: number } } = {};
-    monthlyStats.forEach(stat => {
+    const monthMap: { [key: string]: { revenue: number; refunds: number } } =
+      {};
+    monthlyStats.forEach((stat) => {
       const key = `${stat._id.year}-${stat._id.month}`;
       if (!monthMap[key]) monthMap[key] = { revenue: 0, refunds: 0 };
       if (stat._id.status === "active") monthMap[key].revenue += stat.revenue;
       if (stat._id.status === "refunded") monthMap[key].refunds += stat.refunds;
     });
 
-    const revenueByMonth: Array<{ month: string; revenue: number; refunds: number; netIncome: number }> = [];
+    const revenueByMonth: Array<{
+      month: string;
+      revenue: number;
+      refunds: number;
+      netIncome: number;
+    }> = [];
     let current = new Date(start);
     while (current <= end) {
       const key = `${current.getFullYear()}-${current.getMonth() + 1}`;
@@ -113,7 +152,10 @@ export class SubscriptionRepository
     const len = revenueByMonth.length;
     const prevMonthNet = len > 1 ? revenueByMonth[len - 2].netIncome : 0;
     const currMonthNet = len > 0 ? revenueByMonth[len - 1].netIncome : 0;
-    const monthlyGrowth = prevMonthNet === 0 ? 0 : ((currMonthNet - prevMonthNet) / prevMonthNet) * 100;
+    const monthlyGrowth =
+      prevMonthNet === 0
+        ? 0
+        : ((currMonthNet - prevMonthNet) / prevMonthNet) * 100;
 
     return {
       totalRevenue,
@@ -122,5 +164,15 @@ export class SubscriptionRepository
       monthlyGrowth: Number(monthlyGrowth.toFixed(2)),
       revenueByMonth,
     };
+  }
+
+  async refundSubscription(
+    subscriptionId: Types.ObjectId
+  ): Promise<ISubscriptionModel | null> {
+    return SubscriptionModel.findByIdAndUpdate(
+      subscriptionId,
+      { status: "refunded" },
+      { new: true }
+    ).exec();
   }
 }

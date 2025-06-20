@@ -7,6 +7,8 @@ import { Types } from "mongoose";
 import { BaseRepository } from "../base.repository";
 import { GroupMemberWithUser } from "../../../services/Implementation/group.service";
 import { IMessage } from "../../../models/group.model/group-messages.models";
+import { CustomError } from "../../../errors/CustomError";
+import { HttpResCode } from "../../../constants/http-response.constants";
 
 export class GroupMemberRepository extends BaseRepository<IGroupMemberModel> {
   constructor() {
@@ -14,50 +16,77 @@ export class GroupMemberRepository extends BaseRepository<IGroupMemberModel> {
   }
 
   async countActiveMembersInGroup(groupId: Types.ObjectId): Promise<number> {
-    return GroupMemberModel.countDocuments({
-      groupId: groupId,
-      status: "active",
-    }).exec();
+    try {
+      return GroupMemberModel.countDocuments({
+        groupId: groupId,
+        status: "active",
+      }).exec();
+    } catch (error) {
+      throw new CustomError(
+        "failed to count active members in group",
+        HttpResCode.INTERNAL_SERVER_ERROR
+      );
+    }
   }
 
   async createMember(
     groupId: Types.ObjectId,
     userId: Types.ObjectId
   ): Promise<IGroupMemberModel> {
-    const member = new GroupMemberModel({
-      groupId,
-      userId,
-      status: "active",
-    });
-    return member.save();
+    try {
+      const member = new GroupMemberModel({
+        groupId,
+        userId,
+        status: "active",
+      });
+      return member.save();
+    } catch (error) {
+      throw new CustomError(
+        "failed to create member",
+        HttpResCode.INTERNAL_SERVER_ERROR
+      );
+    }
   }
 
   async findMember(
     groupId: Types.ObjectId,
     userId: Types.ObjectId
   ): Promise<IGroupMemberModel | null> {
-    return GroupMemberModel.findOne({ groupId, userId }).exec();
+    try {
+      return GroupMemberModel.findOne({ groupId, userId }).exec();
+    } catch (error) {
+      throw new CustomError(
+        "failed to find member",
+        HttpResCode.INTERNAL_SERVER_ERROR
+      );
+    }
   }
 
   async findActiveGroupMembersForUser(
     userId: Types.ObjectId
   ): Promise<IGroupMemberModel[]> {
-    return GroupMemberModel.find({
-      userId: userId,
-      status: "active",
-    })
-      .populate("groupId") 
-      .exec();
+    try {
+      return GroupMemberModel.find({
+        userId: userId,
+        status: "active",
+      })
+        .populate("groupId")
+        .exec();
+    } catch (error) {
+      throw new CustomError(
+        "failed to find active group members",
+        HttpResCode.INTERNAL_SERVER_ERROR
+      );
+    }
   }
-
 
   async findAndPaginateMembers(
     groupId: Types.ObjectId,
     page: number,
     limit: number,
     searchTerm?: string,
-    statusFilter?:  "active" | "left" | "kicked" | "blocked" | "all"
-  ): Promise<{ members:  GroupMemberWithUser[]; totalMembers: number }> {
+    statusFilter?: "active" | "left" | "kicked" | "blocked" | "all"
+  ): Promise<{ members: GroupMemberWithUser[]; totalMembers: number }> {
     const skip = (page - 1) * limit;
     let matchQuery: Partial<IGroupMember> = { groupId: groupId };
 
@@ -160,7 +189,6 @@ export class GroupMemberRepository extends BaseRepository<IGroupMemberModel> {
       { new: true }
     ).exec();
   }
-
 
   async checkMembershipStatusForUserInGroups(
     userId: Types.ObjectId,

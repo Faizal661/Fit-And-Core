@@ -119,4 +119,21 @@ export class SubscriptionController implements ISubscriptionController {
       next(err);
     }
   }
+
+  async refundSubscription(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    const { subscriptionId } = req.params;
+    if (!subscriptionId) {
+      throw new CustomError("Subscription ID required", HttpResCode.BAD_REQUEST);
+    }
+    const updatedSubscription = await this.subscriptionService.refundSubscription(subscriptionId);
+    sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, updatedSubscription);
+  } catch (error) {
+    next(error);
+  }
+}
 }

@@ -2,12 +2,10 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
-import { useSelector } from 'react-redux';
 import { 
   Wallet,
   TrendingUp,
   TrendingDown,
-  Download,
   ChevronLeft,
   ChevronRight,
   CreditCard,
@@ -15,7 +13,7 @@ import {
   ArrowDownCircle,
   Eye
 } from 'lucide-react';
-import { RootState } from '../../redux/store';
+import { fetchWalletData } from '../../services/wallet/walletService';
 
 // Animation variants
 const fadeIn = {
@@ -62,8 +60,6 @@ interface WalletData {
 type TransactionFilter = 'all' | 'credit' | 'debit';
 
 const WalletPage = () => {
-  const userRole = useSelector((state: RootState) => state.auth.user?.role);
-  console.log("🚀 ~ WalletPage ~ userRole:", userRole)
   const [activeTab, setActiveTab] = useState<TransactionFilter>('all');
   const [currentPage, setCurrentPage] = useState(1);
   const [dateRange, setDateRange] = useState({
@@ -78,23 +74,11 @@ const WalletPage = () => {
   const limit = 10;
 
   // Fetch wallet data
-  const { data: walletData, isLoading, error } = useQuery<WalletData>({
+  const { data: walletData, isLoading } = useQuery<WalletData>({
     queryKey: ['walletData', activeTab, currentPage, dateRange, limit],
-    queryFn: async () => {
-      // Replace with your actual API call
-      const params = new URLSearchParams({
-        page: currentPage.toString(),
-        limit: limit.toString(),
-        type: activeTab !== 'all' ? activeTab : '',
-        startDate: dateRange.startDate,
-        endDate: dateRange.endDate,
-      });
-      
-      const response = await fetch(`/api/wallet?${params}`);
-      if (!response.ok) throw new Error('Failed to fetch wallet data');
-      return response.json();
-    }
+    queryFn:  () => fetchWalletData(currentPage,limit,activeTab,dateRange.startDate, dateRange.endDate),
   });
+      
 
   // Sample data for demonstration
   const sampleWalletData: WalletData = {
@@ -185,10 +169,6 @@ const WalletPage = () => {
     setCurrentPage(1);
   };
 
-  const exportTransactions = () => {
-    // Implement export functionality
-    console.log('Exporting transactions...');
-  };
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 overflow-hidden">
@@ -301,16 +281,7 @@ const WalletPage = () => {
                 />
               </div>
 
-              {/* Export Button */}
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={exportTransactions}
-                className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
-              >
-                <Download size={18} />
-                Export
-              </motion.button>
+             
             </div>
           </div>
 
@@ -343,11 +314,11 @@ const WalletPage = () => {
               <div className="w-12 h-12 border-4 border-t-blue-600 border-blue-200 rounded-full animate-spin mx-auto mb-4"></div>
               <p className="text-gray-600">Loading transactions...</p>
             </div>
-          ) : error ? (
-            <div className="text-center py-12 bg-red-50 rounded-xl">
-              <CreditCard size={48} className="text-red-500 mx-auto mb-4" />
-              <p className="text-red-600">Failed to load transactions</p>
-            </div>
+          // ) : error ? (
+          //   <div className="text-center py-12 bg-red-50 rounded-xl">
+          //     <CreditCard size={48} className="text-red-500 mx-auto mb-4" />
+          //     <p className="text-red-600">Failed to load transactions</p>
+          //   </div>
           ) : displayData.transactions.length === 0 ? (
             <div className="text-center py-12 bg-gray-50 rounded-xl">
               <CreditCard size={48} className="text-gray-400 mx-auto mb-4" />

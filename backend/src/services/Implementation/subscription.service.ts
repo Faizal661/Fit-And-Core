@@ -21,6 +21,8 @@ import {
 } from "../../constants/http-response.constants";
 import { ITrainerRepository } from "../../repositories/Interface/ITrainerRepository";
 import { env } from "../../config/env.config";
+import { WalletRepository } from "../../repositories/Implementation/wallet.repository";
+import { TransactionModel } from "../../models/wallet.models";
 
 @injectable()
 export default class SubscriptionService implements ISubscriptionService {
@@ -30,7 +32,8 @@ export default class SubscriptionService implements ISubscriptionService {
     @inject("SubscriptionRepository")
     private subscriptionRepository: ISubscriptionRepository,
     @inject("UserRepository") private userRepository: IUserRepository,
-    @inject("TrainerRepository") private trainerRepository: ITrainerRepository
+    @inject("TrainerRepository") private trainerRepository: ITrainerRepository,
+    @inject("WalletRepository") private walletRepository: WalletRepository,
   ) {
     this.subscriptionRepository = subscriptionRepository;
     this.userRepository = userRepository;
@@ -247,6 +250,54 @@ export default class SubscriptionService implements ISubscriptionService {
       },
     };
   }
+
+  async refundSubscription(subscriptionId: string): Promise<ISubscriptionModel | null> {
+    try {
+      const subscription = await this.subscriptionRepository.findById(new Types.ObjectId(subscriptionId));
+      if (!subscription) {
+        throw new CustomError("Subscription not found", HttpResCode.NOT_FOUND);
+      }
+      if (subscription.status === "refunded") {
+        throw new CustomError("Subscription already refunded", HttpResCode.BAD_REQUEST);
+      }
+    
+      const updatedSubscription = await this.subscriptionRepository.refundSubscription(subscription._id);
+      console.log("🚀 ~ SubscriptionService ~ refundSubscription ~ updatedSubscription:", updatedSubscription)
+    
+      const userId = subscription.userId;
+      const amount = subscription.amount;
+    
+      let wallet = await this.walletRepository.findOne({ userId });
+      console.log("🚀 ~ SubscriptionService ~ refundSubscription ~ wallet:", wallet)
+      if (!wallet) {
+        wallet = await this.walletRepository.create({userId});
+      }
+      console.log("🚀 ~ SubscriptionService ~ refundSubscription ~ wallet:", wallet)
+    
+      await TransactionModel.create({
+        userId,
+        type: "credit",
+        amount,
+        description: "Subscription refund",
+        category: "refund",
+        status: "completed",
+        referenceId: subscriptionId,
+      });
+    
+      wallet.balance += amount;
+      await wallet.save();
+    
+      return updatedSubscription;
+    } catch (error) {
+         if (error instanceof CustomError) {
+        throw error;
+      }
+      throw new CustomError(
+        "failed to refund subscription",
+        HttpResCode.INTERNAL_SERVER_ERROR
+      );
+    }
+}
 
   getUsersWithExpiringSubscriptions(
     days: number
