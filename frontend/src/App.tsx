@@ -15,9 +15,9 @@ function App() {
     <div className="min-h-screen flex flex-col">
       <ScrollToTop />
       <MenuButton />
+      <Notifications/>
       <FloatButton />
       <ToastContainer />
-      <Notifications/>
       <Suspense fallback={<Loader />}>
         <ErrorBoundary>
           <AppRoutes />

@@ -8,6 +8,8 @@ import Footer from "../../components/shared/Footer";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { UserResponse, UsersResponse } from "../../types/user.type";
+import useDebounce from "../../hooks/useDebounce";
+
 
 const fadeIn = {
   hidden: { opacity: 0, y: 10 },
@@ -36,16 +38,17 @@ const UserManagement = () => {
   const [recordsPerPage, setRecordsPerPage] = useState<number>(10);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [selectedUser, setSelectedUser] = useState<UserResponse | null>(null);
+   const debouncedSearchTerm = useDebounce(searchTerm, 600);
 
   const queryClient = useQueryClient();
 
   const { data, isLoading, error } = useQuery<UsersResponse, Error>({
-    queryKey: ["users", activePage, recordsPerPage, searchTerm],
+    queryKey: ["users", activePage, recordsPerPage, debouncedSearchTerm],
     queryFn: () =>
       fetchUsers({
         page: activePage,
         limit: recordsPerPage,
-        search: searchTerm,
+        search: debouncedSearchTerm,
       }),
     staleTime: 5000,
   });

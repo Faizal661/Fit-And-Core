@@ -384,7 +384,7 @@ const LandingPage = () => {
             </div>
             <h3 className="text-xl font-bold mb-2">Flexible Schedule</h3>
             <p className="text-gray-600">
-              Access workouts anytime, anywhere to fit your busy lifestyle
+              Access workouts annytime, annywhere to fit your busy lifestyle
             </p>
           </div>
         </motion.div>
@@ -794,7 +794,7 @@ const LandingPage = () => {
               </div>
               <h3 className="text-xl font-bold mb-2">24/7 Access</h3>
               <p className="text-white/80">
-                Workout anytime, anywhere with on-demand classes and
+                Workout an_ytime, an_ywhere with on-demand classes and
                 personalized plans
               </p>
             </div>
@@ -968,7 +968,7 @@ const LandingPage = () => {
                 </motion.button>
               </div>
               <p className="text-white/70 text-sm mt-4">
-                We respect your privacy. Unsubscribe at any time.
+                We respect your privacy. Unsubscribe at an_y time.
               </p>
             </form>
           </motion.div>

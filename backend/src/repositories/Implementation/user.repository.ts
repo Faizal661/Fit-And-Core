@@ -1,9 +1,10 @@
-
 import { injectable } from "tsyringe";
 import UserModel, { IUserModel } from "../../models/user.models";
 import { BaseRepository } from "./base.repository";
 import { IUserRepository } from "../Interface/IUserRepository";
 import { FilterQuery, Query, Types } from "mongoose";
+import { CustomError } from "../../errors/CustomError";
+import { HttpResCode } from "../../constants/http-response.constants";
 
 @injectable()
 export class UserRepository
@@ -13,14 +14,25 @@ export class UserRepository
   constructor() {
     super(UserModel);
   }
-  // Override find to return a Query object
   find(filter: FilterQuery<IUserModel>): Query<IUserModel[], IUserModel> {
-    return this.model.find(filter);
+    try {
+      return this.model.find(filter);
+    } catch (error) {
+      throw new CustomError(
+        "failed to find user",
+        HttpResCode.INTERNAL_SERVER_ERROR
+      );
+    }
   }
 
-  // Implement countDocuments
   async countDocuments(filter: FilterQuery<IUserModel>): Promise<number> {
-    return this.model.countDocuments(filter);
+    try {
+      return this.model.countDocuments(filter);
+    } catch (error) {
+      throw new CustomError(
+        "failed to fetch user counts",
+        HttpResCode.INTERNAL_SERVER_ERROR
+      );
+    }
   }
-
 }

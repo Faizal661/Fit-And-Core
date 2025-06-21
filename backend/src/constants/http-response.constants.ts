@@ -109,7 +109,7 @@ export const enum HttpResMsg {
   TOO_EARLY = "Too early",
   UPGRADE_REQUIRED = "Upgrade required",
   PRECONDITION_REQUIRED = "Precondition required",
-  TOO_MANY_REQUESTS = "Too many requests",
+  TOO_MANY_REQUESTS = "Too manny requests",
   REQUEST_HEADER_FIELDS_TOO_LARGE = "Request header fields too large",
   UNAVAILABLE_FOR_LEGAL_REASONS = "Unavailable for legal reasons",
 

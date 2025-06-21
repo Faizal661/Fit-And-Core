@@ -13,13 +13,14 @@ const SubscriptionSchema: Schema = new Schema(
     amount: { type: Number },
     status: {
       type: String,
-      enum: ["pending", "active", "cancelled", "expired"],
+      enum: ["pending", "active", "refunded", "expired"],
       default: "pending",
     },
     startDate: { type: Date },
     expiryDate: { type: Date },
     // paymentId: { type: Schema.Types.ObjectId, ref: "Payment" },
     paymentId: { type: String},
+    sessions: { type: Number, default: 10 },
   },
   { timestamps: true }
 );

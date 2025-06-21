@@ -64,7 +64,7 @@ const Footer: React.FC = () => {
             </div>
 
             <div>
-              <h4 className="text-lg font-bold mb-4">Company</h4>
+              <h4 className="text-lg font-bold mb-4">Companny</h4>
               <ul className="space-y-2">
                 {["About Us", "Careers", "Press", "Partners", "Blog"].map(
                   (item) => (

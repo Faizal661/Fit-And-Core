@@ -1,8 +1,8 @@
 import cron from "node-cron";
+import { Types } from "mongoose"; 
 import { container } from "tsyringe";
 import { NotificationService } from "../services/Implementation/notification.service";
-import { ISessionService } from "../services/Interface/ISessionService"; // Assuming you have a booking service
-import { Types } from "mongoose"; // For ObjectId
+import { ISessionService } from "../services/Interface/ISessionService"; 
 import { ISubscriptionService } from "../services/Interface/ISubscriptionService";
 
 export const setupScheduledJobs = () => {
@@ -25,7 +25,7 @@ export const setupScheduledJobs = () => {
           userId: subscription.userId,
           type: "subscription_expiry",
           message: `Your subscription will expire on ${new Date(
-            subscription.expiryDate
+            subscription.expiryDate!
           ).toLocaleDateString()}. Renew now to continue!`,
           read: false,
           //   link: '/profile/subscription',

@@ -121,18 +121,26 @@ const TrainerDetailsPage = () => {
   }
 
   const subscriptionPlans = [
-    { duration: "1 Month", amount: "₹1500", amountInPaise: 150000, savings: 0 },
+    {
+      duration: "1 Month",
+      amount: "₹1500",
+      amountInPaise: 150000,
+      savings: 0,
+      sessions: 10,
+    },
     {
       duration: "6 Months",
       amount: "₹7500",
       amountInPaise: 750000,
       savings: 1500,
+      sessions: 60,
     },
     {
       duration: "12 Months",
       amount: "₹13500",
       amountInPaise: 1350000,
       savings: 4500,
+      sessions: 120,
     },
   ];
 
@@ -150,6 +158,7 @@ const TrainerDetailsPage = () => {
       trainerId: trainer._id,
       planDuration: plan.duration,
       amountInPaise: plan.amountInPaise,
+      sessions: plan.sessions,
       planName: `${trainer.username} - ${plan.duration} Training Plan`,
     });
   };
@@ -376,6 +385,15 @@ const TrainerDetailsPage = () => {
                       </div>
 
                       <div className="space-y-3 mb-6">
+                        <div className="flex items-start gap-2">
+                          <ChevronRight
+                            size={18}
+                            className="text-green-500 flex-shrink-0 mt-0.5"
+                          />
+                          <span className="text-sm text-gray-600">
+                            Up to {plan.sessions} Video call consultations
+                          </span>
+                        </div>
                         {features.map((feature, idx) => (
                           <div key={idx} className="flex items-start gap-2">
                             <ChevronRight
@@ -398,7 +416,9 @@ const TrainerDetailsPage = () => {
                           isCurrentPlan
                             ? "bg-green-600 text-white cursor-not-allowed"
                             : "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg hover:shadow-blue-500/25"
-                        } ${checkoutMutation.isPending ? "cursor-progress":"" }`}
+                        } ${
+                          checkoutMutation.isPending ? "cursor-progress" : ""
+                        }`}
                       >
                         {isCurrentPlan
                           ? "Current Plan"

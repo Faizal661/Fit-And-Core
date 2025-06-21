@@ -54,7 +54,7 @@ const TrainersPage = () => {
 
   const handleStartChat = (trainerId: string,e: React.MouseEvent) => {
     e.stopPropagation();
-    navigate(`/trainer/chat/${trainerId}`);
+    navigate(`/messages`);
   };
 
   const handleBookSession = (trainerId: string,e: React.MouseEvent) => {
@@ -130,7 +130,7 @@ const TrainersPage = () => {
               className="text-center py-16 bg-gray-50 rounded-xl"
             >
               <Users className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-600 mb-8">You haven't subscribed to any trainers yet.</p>
+              <p className="text-gray-600 mb-8">You haven't subscribed to anny trainers yet.</p>
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
@@ -149,7 +149,7 @@ const TrainersPage = () => {
               animate="visible"
               className="space-y-6"
             >
-              {subscribedTrainers?.map((trainer, _index) => (
+              {subscribedTrainers?.map((trainer) => (
                 <motion.div
                   key={trainer._id}
                   variants={fadeIn}

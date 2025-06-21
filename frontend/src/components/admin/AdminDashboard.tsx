@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { Users, Dumbbell, CreditCard, RefreshCcw } from "lucide-react";
+import { Users, Dumbbell } from "lucide-react";
 import {
   XAxis,
   YAxis,
@@ -77,14 +77,14 @@ const trainerColors = [
 ];
 interface TooltipPayloadEntry {
   color: string;
-  dataKey: string; 
+  dataKey: string;
   name: string;
-  value: number; 
+  value: number;
 }
 interface CustomTooltipProps {
-  active?: boolean; 
-  payload?: TooltipPayloadEntry[]; 
-  label?: string | number; 
+  active?: boolean;
+  payload?: TooltipPayloadEntry[];
+  label?: string | number;
 }
 
 const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
@@ -161,7 +161,6 @@ const AdminDashboard = () => {
       animate="visible"
       variants={fadeIn}
     >
-
       {/* Hero section */}
       <div className="relative py-24 bg-gradient-to-r from-blue-600/90 to-purple-600/90">
         <div
@@ -193,72 +192,18 @@ const AdminDashboard = () => {
       </div>
 
       {/* main content */}
-      <div className="relative max-w-7xl mx-auto px-4 -mt-16 sm:px-6 lg:px-8 py-6 min-h-screen  z-10">
-        <motion.div
-          ref={ref}
-          initial="hidden"
-          animate={inView ? "visible" : "hidden"}
-          variants={staggerContainer}
-          className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8"
-        >
-          {/* Revenue Card */}
-          <motion.div
-            variants={fadeIn}
-            className="bg-white rounded-lg shadow-md overflow-hidden"
-          >
-            <MetricCard
-              title="Revenue"
-              totalValue={"₹0"}
-              currentMonthValue="₹0"
-              change={0}
-              icon={CreditCard}
-              isLoading={false}
-              isError={null}
-            />
-          </motion.div>
-
-          {/* Refund Card */}
-          <motion.div
-            variants={fadeIn}
-            className="bg-white rounded-lg shadow-md overflow-hidden"
-          >
-            <MetricCard
-              title="Refund"
-              totalValue={"₹0"}
-              currentMonthValue="₹0"
-              change={0}
-              icon={RefreshCcw}
-              isLoading={false}
-              isError={null}
-            />
-          </motion.div>
-
-          {/* Income Card */}
-          <motion.div
-            variants={fadeIn}
-            className="bg-white rounded-lg shadow-md overflow-hidden"
-          >
-            <MetricCard
-              title="Income"
-              totalValue={"₹0"}
-              currentMonthValue="₹0"
-              change={0}
-              icon={CreditCard}
-              isLoading={false}
-              isError={null}
-            />
-          </motion.div>
-        </motion.div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="relative max-w-7xl mx-auto px-4 -mt-10 sm:px-6 lg:px-8 z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 ">
           {/* Chart */}
           <motion.div
             variants={fadeIn}
             className="lg:col-span-2 bg-white rounded-lg shadow-lg border border-gray-100 hover:shadow-xl p-6"
           >
-            <h2 className="text-lg font-medium mb-4 text-gray-700">
-              New Registrations
-            </h2>
+            <div className="bg-gradient-to-br from-purple-500 w-fit p-1 px-2 to-indigo-500 rounded-xl mb-10">
+              <h2 className="text-lg font-bold text-white">
+                New Registrations
+              </h2>
+            </div>
             {isLoadingMonthly ? (
               <Skeleton height={280} variant="rectangular" animation="wave" />
             ) : (
@@ -365,6 +310,8 @@ const AdminDashboard = () => {
                 icon={Users}
                 isLoading={isLoadingUsers}
                 isError={userError}
+                iconClasses={"from-green-500 to-emerald-500"}
+                cardClasses={"from-green-500/10 to-emerald-500/10"}
               />
             </motion.div>
             <motion.div
@@ -379,22 +326,10 @@ const AdminDashboard = () => {
                 icon={Dumbbell}
                 isLoading={isLoadingTrainers}
                 isError={trainerError}
+                iconClasses={"from-red-500 to-pink-500"}
+                cardClasses={"from-red-500/10 to-pink-500/10"}
               />
             </motion.div>
-            {/* <MetricCard
-            title="Active Users"
-            totalValue={activeUserData?.totalCount || "0"} // Assuming you'll implement total active users
-            currentMonthValue={activeUserData?.currentMonthCount || "0"} // Assuming you'll implement monthly active users
-            change={activeUserData?.percentChange || 0}
-            icon={Activity}
-          />*/}
-            {/* <MetricCard
-            title="Active Users"
-            totalValue={"0"}
-            currentMonthValue={"0"}
-            change={0}
-            icon={Activity}
-          /> */}
           </div>
         </div>
       </div>

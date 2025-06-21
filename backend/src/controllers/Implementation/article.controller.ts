@@ -9,6 +9,7 @@ import {
 import { IArticleController } from "../Interface/IArticleController";
 import { uploadToCloudinary } from "../../utils/cloud-storage";
 import { CustomError } from "../../errors/CustomError";
+import { IStreakService } from "../../services/Interface/IStreakService";
 
 @injectable()
 export class ArticleController implements IArticleController {
@@ -16,7 +17,8 @@ export class ArticleController implements IArticleController {
 
   constructor(
     @inject("ArticleService")
-    articleService: IArticleService
+    articleService: IArticleService,
+    @inject("StreakService") private streakService: IStreakService
   ) {
     this.articleService = articleService;
   }
@@ -108,6 +110,13 @@ export class ArticleController implements IArticleController {
         search as string,
         sortBy as "createdAt" | "upvotes" | undefined
       );
+
+      await this.streakService.recordActivityAndHandleStreak(
+        req.decoded?.id!,
+        new Date(),
+        2
+      );
+
       sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, {
         articles,
         total,
@@ -129,6 +138,12 @@ export class ArticleController implements IArticleController {
       const article = await this.articleService!.toggleUpvote(
         req.params.articleId,
         userId
+      );
+
+      await this.streakService.recordActivityAndHandleStreak(
+        req.decoded?.id!,
+        new Date(),
+        1
       );
 
       sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, article);
@@ -240,7 +255,7 @@ export class ArticleController implements IArticleController {
           HttpResCode.BAD_REQUEST
         );
       }
-      
+
       const userId = req.decoded?.id;
       if (!userId) {
         sendResponse(res, HttpResCode.UNAUTHORIZED, HttpResMsg.UNAUTHORIZED);

@@ -9,6 +9,11 @@ import PageNotFound from "../components/shared/PageNotFound";
 import PaymentSuccessPage from "../pages/shared/PaymentSuccessPage";
 import LandingPage from "../pages/user/LandingPage"
 import ReportViewPage from "../pages/shared/ReportViewPage";
+import UserStreakPage from "../pages/user/StreakPage";
+import GroupManagementPage from "../pages/admin/GroupManage";
+import ChatPage from "../pages/chat/ChatPage";
+import FinanceManagementPage from "../pages/shared/FinanceManagementPage";
+import WalletPage from "../pages/shared/WalletPage";
 
 // authentication
 const UserLogin = lazy(() => import("../pages/auth/signin/UserLogin"));
@@ -38,7 +43,7 @@ const TrainerApply = lazy(() => import("../pages/trainer/TrainerApply"));
 const UserArticles = lazy(() => import("../pages/article/user/UserArticles"));
 
 // trainer
-const HomeTrainer = lazy(() => import("../pages/trainer/HomeTrainer"));
+// const HomeTrainer = lazy(() => import("../pages/trainer/HomeTrainer"));
 const TrainerArticles = lazy(() => import("../pages/article/trainer/TrainerArticles"));
 const CreateArticle = lazy(() => import("../pages/article/trainer/CreateArticle"));
 
@@ -80,10 +85,12 @@ const AppRoutes = () => {
         <Route path="/progress" element={<UserProgressionPage />} />
         <Route path="/nutrition" element={<UserNutritionTrackingPage />} />
         <Route path="/reports" element={<ReportViewPage />} />
+        <Route path="/streak" element={<UserStreakPage />} />
       </Route>
 
       <Route element={<ProtectedRoutes allowedRoles={["trainer"]} />}>
-        <Route path="/trainer" element={<HomeTrainer />} />
+        <Route path="/trainer" element={<FinanceManagementPage />} />
+        {/* <Route path="/trainer" element={<HomeTrainer />} /> */}
         <Route path="/trainer/articles" element={<TrainerArticles />} />
         <Route path="/trainer/articles/create" element={<CreateArticle />} />
         <Route path="/trainer/articles/edit/:articleId" element={<EditArticle />} />
@@ -97,6 +104,9 @@ const AppRoutes = () => {
 
       <Route element={<ProtectedRoutes allowedRoles={["user", "trainer"]} />}>
         <Route path="/article/:id" element={<ArticleFullView />} />
+        <Route path="/communities" element={<ChatPage />} />
+        <Route path="/messages" element={<ChatPage />} />
+        <Route path="/wallet" element={<WalletPage />} />
       </Route>
 
       <Route element={<ProtectedRoutes allowedRoles={["admin"]} />}>
@@ -104,6 +114,8 @@ const AppRoutes = () => {
         <Route path="/admin/user-management" element={<UserManage />} />
         <Route path="/admin/trainer-management" element={<TrainerManage />} />
         <Route path="/admin/report-management" element={<ReportManage />} />
+        <Route path="/admin/community-management" element={<GroupManagementPage />} />
+        <Route path="/admin/finance-management" element={<FinanceManagementPage />} />        
       </Route>
     </Routes>
   );
