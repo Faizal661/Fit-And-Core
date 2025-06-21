@@ -128,7 +128,7 @@ const FindTrainersPage = () => {
               animate="visible"
               className="grid grid-cols-1 md:grid-cols-2 gap-6"
             >
-              {trainers.map((trainer, _index) => (
+              {trainers.map((trainer) => (
                 <motion.div
                   key={trainer._id}
                   variants={fadeIn}

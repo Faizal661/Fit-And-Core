@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { getBMIClass } from "../../../utils/getBmiClass";
 
 export const BmiCustomTooltip = ({ active, payload, label }: any) => {

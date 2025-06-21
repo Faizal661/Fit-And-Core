@@ -1,4 +1,5 @@
 import { IUserModel } from "../../models/user.models";
+import { FinanceData } from "../../types/finance.types";
 
 export interface IAdminService {
   getTotalUserCount(): Promise<{
@@ -14,4 +15,5 @@ export interface IAdminService {
   getMonthlySubscriptionData(): Promise<
     { name: string; users: number; trainers: number }[]
   >;
+  getFinanceAnalytics(start: Date, end: Date): Promise<FinanceData>;
 }

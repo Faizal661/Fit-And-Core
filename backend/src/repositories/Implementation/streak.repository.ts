@@ -4,6 +4,8 @@ import { IUserStreak } from "../../types/streak.types";
 import { IStreakRepository } from "../Interface/IStreakRepository";
 import { BaseRepository } from "./base.repository";
 import { injectable } from "tsyringe";
+import { CustomError } from "../../errors/CustomError";
+import { HttpResCode } from "../../constants/http-response.constants";
 
 @injectable()
 export class StreakRepository
@@ -15,32 +17,37 @@ export class StreakRepository
   }
 
   async findOrCreate(userId: string): Promise<IUserStreakModel> {
-    let streak = await UserStreakModel.findOne({
-      userId: new Types.ObjectId(userId),
-    }).exec();
+    try {
+      let streak = await UserStreakModel.findOne({
+        userId: new Types.ObjectId(userId),
+      }).exec();
 
-    if (!streak) {
-      streak = new UserStreakModel({ userId: new Types.ObjectId(userId) });
-      await streak.save();
+      if (!streak) {
+        streak = new UserStreakModel({ userId: new Types.ObjectId(userId) });
+        await streak.save();
+      }
+
+      return streak;
+    } catch (error) {
+      throw new CustomError(
+        "failed to find streak",
+        HttpResCode.INTERNAL_SERVER_ERROR
+      );
     }
-
-    return streak;
   }
-
 
   async updateStreakAndActivityCountAndPoints(
     userId: string,
-    update: Partial<Omit<IUserStreak, "dailyActivityCounts" | "userPoints">>, 
-    dailyActivityDate: Date, 
+    update: Partial<Omit<IUserStreak, "dailyActivityCounts" | "userPoints">>,
+    dailyActivityDate: Date,
     pointsToAward: number = 0
   ): Promise<IUserStreakModel | null> {
-
     const streak = await UserStreakModel.findOne({
       userId: new Types.ObjectId(userId),
     }).exec();
 
     if (!streak) {
-      return null; 
+      return null;
     }
 
     // Apply general streak field updates

@@ -4,13 +4,14 @@ export interface ISubscription {
     _id: Types.ObjectId;
     userId:  Types.ObjectId ;
     trainerId:  Types.ObjectId ;
-    planDuration: String ;
-    amount: Number;
-    status: 'pending' | 'active' | 'cancelled' | 'expired';
-    startDate: Date | null;
+    planDuration: string ;
+    amount: number;
+    sessions: number;
+    status: 'pending' | 'active' | 'refunded' | 'expired';
+    startDate: Date | null; 
     expiryDate: Date | null;
     // paymentId:  Types.ObjectId | null ;
-    paymentId:  String | null ;
+    paymentId:  string | null ;
     createdAt?: Date;
     updatedAt?: Date;
   }
@@ -20,6 +21,7 @@ export interface ISubscription {
     trainerId: string;
     planDuration: string;
     amountInPaise: number;
+    sessions?: number;
     planName: string;
   }
 
@@ -33,3 +35,15 @@ export interface ISubscription {
       expiryDate: Date| null;
     } | null;
   }
+
+
+  export interface VerifiedPaymentResult {
+    _id: Types.ObjectId;
+    planDuration: string;
+    amount: number;
+    status: 'pending' | 'active' | 'refunded' | 'expired';
+    startDate: Date | null;
+    expiryDate: Date | null;
+    trainerName?: string;
+  }
+  

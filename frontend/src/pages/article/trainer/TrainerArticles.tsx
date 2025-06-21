@@ -10,6 +10,7 @@ import Footer from "../../../components/shared/Footer";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { Search, SortAsc, Plus, ChevronLeft, ChevronRight } from "lucide-react";
+import useDebounce from "../../../hooks/useDebounce";
 
 // Animation variants
 const fadeIn = {
@@ -48,14 +49,15 @@ const TrainerArticles = () => {
   const [sortBy, setSortBy] = useState<"createdAt" | "upvotes" | "">(
     "createdAt"
   );
+  const debouncedSearchTerm = useDebounce(searchTerm, 600);
 
   const { data, isLoading, error } = useQuery<ArticlesResponse>({
-    queryKey: ["articles", activePage, recordsPerPage, searchTerm, sortBy],
+    queryKey: ["articles", activePage, recordsPerPage, debouncedSearchTerm, sortBy],
     queryFn: () =>
       getMyArticles({
         page: activePage,
         limit: recordsPerPage,
-        search: searchTerm,
+        search: debouncedSearchTerm,
         sortBy: sortBy,
       }),
     staleTime: 5000,

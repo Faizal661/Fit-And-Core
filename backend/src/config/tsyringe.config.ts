@@ -104,6 +104,16 @@ import { IStreakRepository } from "../repositories/Interface/IStreakRepository";
 import { IStreakService } from "../services/Interface/IStreakService";
 import { IStreakController } from "../controllers/Interface/IStreakController";
 
+import { GroupRepository } from "../repositories/Implementation/community/group.repository";
+import { GroupMemberRepository } from "../repositories/Implementation/community/group-member.repository";
+import { GroupService } from "../services/Implementation/group.service";
+import { GroupController } from "../controllers/Implementation/group.controller";
+import { MessageRepository } from "../repositories/Implementation/community/message.repository";
+
+import { WalletRepository } from "../repositories/Implementation/wallet.repository";
+import { WalletService } from "../services/Implementation/wallet.service";
+import { WalletController } from "../controllers/Implementation/wallet.controller";
+
 container.registerInstance('RedisClient', redisClient);
 container.registerInstance('SocketIOServer', Server);
 
@@ -163,3 +173,14 @@ container.register<INotificationController>('NotificationController', { useClass
 container.register<IStreakRepository>('StreakRepository', { useClass: StreakRepository });
 container.register<IStreakService>('StreakService', { useClass: StreakService });
 container.register<IStreakController>('StreakController', { useClass: StreakController });
+
+
+container.register<GroupRepository>('GroupRepository', { useClass: GroupRepository });
+container.register<GroupMemberRepository>('GroupMemberRepository', { useClass: GroupMemberRepository });
+container.register<GroupService>('GroupService', { useClass: GroupService });
+container.register<GroupController>('GroupController', { useClass: GroupController });
+container.register<MessageRepository>('MessageRepository', { useClass: MessageRepository });
+
+container.register<WalletRepository>('WalletRepository', { useClass: WalletRepository });
+container.register<WalletService>('WalletService', { useClass: WalletService });
+container.register<WalletController>('WalletController', { useClass: WalletController });

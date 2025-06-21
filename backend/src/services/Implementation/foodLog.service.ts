@@ -128,7 +128,7 @@ export default class FoodLogService implements IFoodLogService {
       });
 
       return Array.from(loggedDates);
-    } catch (error: any) {
+    } catch (error) {
       if (error instanceof CustomError) {
         throw error;
       } else {

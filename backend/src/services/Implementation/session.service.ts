@@ -17,6 +17,7 @@ import { IUserRepository } from "../../repositories/Interface/IUserRepository";
 import { IBookingRepository } from "../../repositories/Interface/IBookingRepository";
 import { IBookingModel } from "../../models/session.model/booking.models";
 import { BookingDetails } from "../../types/booking.types";
+import { ISubscriptionRepository } from "../../repositories/Interface/ISubscriptionRepository";
 type GroupedAvailabilities = Record<string, IAvailabilityModel[]>;
 
 @injectable()
@@ -31,7 +32,9 @@ export default class SessionService implements ISessionService {
     @inject("UserRepository")
     private userRepository: IUserRepository,
     @inject("BookingRepository")
-    private bookingRepository: IBookingRepository
+    private bookingRepository: IBookingRepository,
+    @inject("SubscriptionRepository")
+    private subscriptionRepository: ISubscriptionRepository
   ) {}
 
   async createAvailability(
@@ -260,6 +263,48 @@ export default class SessionService implements ISessionService {
         throw new CustomError(HttpResMsg.USER_NOT_FOUND, HttpResCode.NOT_FOUND);
       }
 
+      // --- Subscription check ---
+      const subscription = await this.subscriptionRepository.findOne({
+        userId: new Types.ObjectId(userId),
+        trainerId: slot.trainerId,
+        status: "active",
+      });
+      if (!subscription) {
+        throw new CustomError(
+          "No active subscription found.",
+          HttpResCode.FORBIDDEN
+        );
+      }
+      const now = new Date();
+
+      if (
+        subscription?.startDate === null ||
+        subscription?.expiryDate === null ||
+        now < subscription?.startDate ||
+        now > subscription?.expiryDate
+      ) {
+        throw new CustomError(
+          "Subscription is not active.",
+          HttpResCode.FORBIDDEN
+        );
+      }
+
+      const bookingsCount =
+      await this.bookingRepository.countUserBookingsInPeriod(
+        new Types.ObjectId(userId),
+          slot.trainerId,
+          subscription.startDate,
+          subscription.expiryDate
+        );
+
+        if (bookingsCount >= subscription?.sessions) {
+        throw new CustomError(
+          "Session limit reached for your subscription.",
+          HttpResCode.FORBIDDEN
+        );
+      }
+      // --- End subscription check ---
+
       const newBooking = await this.bookingRepository.create({
         slotId: slot.id,
         trainerId: slot.trainerId,
@@ -383,12 +428,11 @@ export default class SessionService implements ISessionService {
     }
   }
 
-  async  getUpcomingBookings(
-      now: Date,
-      fifteenMinutesLater: Date
-    ): Promise<BookingDetails[]>{
+  async getUpcomingBookings(
+    now: Date,
+    fifteenMinutesLater: Date
+  ): Promise<BookingDetails[]> {
     try {
-
       const upcomingBookings =
         await this.bookingRepository.findUpcomingBookingsBetween(
           now,
@@ -409,8 +453,9 @@ export default class SessionService implements ISessionService {
 
   async getBookingDetailsById(bookingId: string): Promise<IBookingModel> {
     try {
-      const bookingDetails =
-        await this.bookingRepository.getBookingDetailsById(new Types.ObjectId(bookingId));
+      const bookingDetails = await this.bookingRepository.getBookingDetailsById(
+        new Types.ObjectId(bookingId)
+      );
 
       return bookingDetails;
     } catch (error) {
@@ -493,7 +538,7 @@ export default class SessionService implements ISessionService {
   async getAllUserBookingsWithTrainer(
     userIdString: string,
     trainerIdString: string
-  ): Promise<any[]> {
+  ): Promise<BookingDetails[]> {
     try {
       let userId: Types.ObjectId;
       try {

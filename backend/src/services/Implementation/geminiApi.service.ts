@@ -7,7 +7,7 @@ import { HttpResCode } from "../../constants/http-response.constants";
 const genAI = new GoogleGenerativeAI(env.GEMINI_API_KEY);
 
 export class GeminiService {
-  private model: any;
+  private model;
 
   constructor() {
     this.model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
@@ -64,7 +64,7 @@ export class GeminiService {
 
       const responseText = response.candidates[0].content.parts[0].text;
       try {
-        const cleanedText = this.parseGeminiJSON(responseText);
+        const cleanedText = this.parseGeminiJSON(responseText!);
         if (cleanedText === null) {
           throw new CustomError(
             "Failed to extract food list from your input, Please try again ",
@@ -86,16 +86,20 @@ export class GeminiService {
         }
         return [{ name: "error", quantity: "error" }];
       }
-    } catch (error: any) {
+    } catch (error) {
       if (error instanceof CustomError) {
         throw error;
-      } else {
+      } else if (error instanceof Error) {
         throw new Error(`Gemini API error: ${error.message}`);
+      } else {
+        throw new Error("Gemini API error: Unknown error occurred");
       }
     }
   }
 
-  async getNutrition(parsedFoodsData: parsedFoodsData[]): Promise<NutritionData> {
+  async getNutrition(
+    parsedFoodsData: parsedFoodsData[]
+  ): Promise<NutritionData> {
     try {
       const prompt = `
         Extract the total nutritional information (calories, protein, carbohydrates, fat, and fiber) for the following list of food items and their quantities. Provide the nutrition as a JSON object. If a specific quantity is not provided for an item in the input array, assume a reasonable quantity.
@@ -137,10 +141,10 @@ export class GeminiService {
         );
         return {};
       }
-      
+
       const responseText = response.candidates[0].content.parts[0].text;
       try {
-        const cleanedText = this.parseGeminiJSON(responseText);
+        const cleanedText = this.parseGeminiJSON(responseText!);
         if (cleanedText === null) {
           throw new CustomError(
             "Failed to retrieve nutritional information.Try again later !",
@@ -163,11 +167,13 @@ export class GeminiService {
         }
         return {};
       }
-    } catch (error: any) {
+    } catch (error) {
       if (error instanceof CustomError) {
         throw error;
-      } else {
+      } else if (error instanceof Error) {
         throw new Error(`Gemini API error getting nutrition: ${error.message}`);
+      } else {
+        throw new Error(`Gemini API error getting nutrition: Unknown error occurred`);
       }
     }
   }

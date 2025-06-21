@@ -4,18 +4,20 @@ import {
   ISubscription,
   CheckoutSubscriptionParams,
   SubscriptionStatus,
+  VerifiedPaymentResult,
 } from "../../types/subscription.types";
 
 export interface ISubscriptionService {
   createCheckoutSession(
     params: CheckoutSubscriptionParams
   ): Promise<{ stripeSessionId: string }>;
-  verifyPayment(sessionId: string): Promise<any>;
-  processWebhookEvent(payload: any, signature: string): Promise<void>;
+  verifyPayment(sessionId: string): Promise<VerifiedPaymentResult>;
+  processWebhookEvent(payload: string | Buffer, signature: string): Promise<void>;
   checkSubscription(
     userId: string,
     trainerId: string
   ): Promise<SubscriptionStatus>;
 
-  getUsersWithExpiringSubscriptions(days: number): Promise<any>;
+  getUsersWithExpiringSubscriptions(days: number): Promise<ISubscriptionModel[]>;
+  refundSubscription(subscriptionId: string): Promise<ISubscriptionModel | null> 
 }

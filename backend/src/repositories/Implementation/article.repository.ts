@@ -4,6 +4,8 @@ import { IArticle } from "../../types/article.types";
 import { BaseRepository } from "./base.repository";
 import { IArticleRepository } from "../Interface/IArticleRepository";
 import { FilterQuery } from "mongoose";
+import { CustomError } from "../../errors/CustomError";
+import { HttpResCode } from "../../constants/http-response.constants";
 
 @injectable()
 export class ArticleRepository
@@ -14,6 +16,13 @@ export class ArticleRepository
     super(ArticleModel);
   }
   async countDocuments(filter: FilterQuery<IArticleModel>): Promise<number> {
-    return this.model.countDocuments(filter);
+    try {
+      return this.model.countDocuments(filter);
+    } catch (error) {
+      throw new CustomError(
+        "failed to fetch document count",
+        HttpResCode.INTERNAL_SERVER_ERROR
+      );
+    }
   }
 }

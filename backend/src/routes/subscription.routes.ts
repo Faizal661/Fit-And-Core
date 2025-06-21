@@ -46,6 +46,12 @@ router.get(
   (req, res, next) => subscriptionController.checkStatus(req, res, next)
 );
 
+router.patch(
+  "/:subscriptionId/refund",
+  verifyAccessToken,
+  authorizeRoles(["trainer","admin"]),
+  (req, res, next) => subscriptionController.refundSubscription(req, res, next)
+);
 
 export { router as subscriptionRoutes, webhookRouter as webhookRoutes };
 

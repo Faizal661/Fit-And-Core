@@ -125,7 +125,7 @@ export const sendEmail = async (toEmail: string, otp: string) => {
             font-size: 12px;
           ">
             Fit & Core Team 💪<br>
-            <span style="color: #64748b;">Keep your verification code safe – don't share it with anyone.</span>
+            <span style="color: #64748b;">Keep your verification code safe – don't share it with annyone.</span>
           </p>
         </div>
       </div>
@@ -231,7 +231,7 @@ export const sendEmail = async (toEmail: string, otp: string) => {
 //                       </p>
 
 //                       <p style="margin-top: 20px; font-size: 12px; color: #aaa;">
-//                         Fit & Core Team 💪 | Do not share this OTP with anyone.
+//                         Fit & Core Team 💪 | Do not share this OTP with annyone.
 //                       </p>
 //                     </div>
 //                     `,

@@ -6,6 +6,7 @@ import {
   ISubscription,
   CheckoutSubscriptionParams,
   SubscriptionStatus,
+  VerifiedPaymentResult,
 } from "../../types/subscription.types";
 import { ISubscriptionModel } from "../../models/subscription.models";
 import { ISubscriptionRepository } from "../../repositories/Interface/ISubscriptionRepository";
@@ -20,6 +21,8 @@ import {
 } from "../../constants/http-response.constants";
 import { ITrainerRepository } from "../../repositories/Interface/ITrainerRepository";
 import { env } from "../../config/env.config";
+import { WalletRepository } from "../../repositories/Implementation/wallet.repository";
+import { TransactionModel } from "../../models/wallet.models";
 
 @injectable()
 export default class SubscriptionService implements ISubscriptionService {
@@ -29,7 +32,8 @@ export default class SubscriptionService implements ISubscriptionService {
     @inject("SubscriptionRepository")
     private subscriptionRepository: ISubscriptionRepository,
     @inject("UserRepository") private userRepository: IUserRepository,
-    @inject("TrainerRepository") private trainerRepository: ITrainerRepository
+    @inject("TrainerRepository") private trainerRepository: ITrainerRepository,
+    @inject("WalletRepository") private walletRepository: WalletRepository,
   ) {
     this.subscriptionRepository = subscriptionRepository;
     this.userRepository = userRepository;
@@ -43,8 +47,14 @@ export default class SubscriptionService implements ISubscriptionService {
     params: CheckoutSubscriptionParams
   ): Promise<{ stripeSessionId: string }> {
     try {
-      const { userId, trainerId, planDuration, amountInPaise, planName } =
-        params;
+      const {
+        userId,
+        trainerId,
+        planDuration,
+        amountInPaise,
+        planName,
+        sessions,
+      } = params;
 
       const pendingSubscription = await this.subscriptionRepository.create({
         userId: new Types.ObjectId(userId),
@@ -55,6 +65,7 @@ export default class SubscriptionService implements ISubscriptionService {
         startDate: null,
         expiryDate: null,
         paymentId: null,
+        sessions,
       });
 
       const session = await this.stripe.checkout.sessions.create({
@@ -92,7 +103,7 @@ export default class SubscriptionService implements ISubscriptionService {
     }
   }
 
-  async verifyPayment(sessionId: string): Promise<any> {
+  async verifyPayment(sessionId: string): Promise<VerifiedPaymentResult> {
     try {
       const session = await this.stripe.checkout.sessions.retrieve(sessionId);
 
@@ -127,7 +138,6 @@ export default class SubscriptionService implements ISubscriptionService {
         subscription.trainerId
       );
 
-      // Return subscription details with trainer info
       return {
         _id: subscription._id,
         planDuration: subscription.planDuration,
@@ -145,7 +155,10 @@ export default class SubscriptionService implements ISubscriptionService {
     }
   }
 
-  async processWebhookEvent(payload: any, signature: string): Promise<void> {
+  async processWebhookEvent(
+    payload: string | Buffer,
+    signature: string
+  ): Promise<void> {
     try {
       // Verify the event came from Stripe
       const event = this.stripe.webhooks.constructEvent(
@@ -238,7 +251,57 @@ export default class SubscriptionService implements ISubscriptionService {
     };
   }
 
-  getUsersWithExpiringSubscriptions(days: number): Promise<any> {
+  async refundSubscription(subscriptionId: string): Promise<ISubscriptionModel | null> {
+    try {
+      const subscription = await this.subscriptionRepository.findById(new Types.ObjectId(subscriptionId));
+      if (!subscription) {
+        throw new CustomError("Subscription not found", HttpResCode.NOT_FOUND);
+      }
+      if (subscription.status === "refunded") {
+        throw new CustomError("Subscription already refunded", HttpResCode.BAD_REQUEST);
+      }
+    
+      const updatedSubscription = await this.subscriptionRepository.refundSubscription(subscription._id);
+      console.log("🚀 ~ SubscriptionService ~ refundSubscription ~ updatedSubscription:", updatedSubscription)
+    
+      const userId = subscription.userId;
+      const amount = subscription.amount;
+    
+      let wallet = await this.walletRepository.findOne({ userId });
+      console.log("🚀 ~ SubscriptionService ~ refundSubscription ~ wallet:", wallet)
+      if (!wallet) {
+        wallet = await this.walletRepository.create({userId});
+      }
+      console.log("🚀 ~ SubscriptionService ~ refundSubscription ~ wallet:", wallet)
+    
+      await TransactionModel.create({
+        userId,
+        type: "credit",
+        amount,
+        description: "Subscription refund",
+        category: "refund",
+        status: "completed",
+        referenceId: subscriptionId,
+      });
+    
+      wallet.balance += amount;
+      await wallet.save();
+    
+      return updatedSubscription;
+    } catch (error) {
+         if (error instanceof CustomError) {
+        throw error;
+      }
+      throw new CustomError(
+        "failed to refund subscription",
+        HttpResCode.INTERNAL_SERVER_ERROR
+      );
+    }
+}
+
+  getUsersWithExpiringSubscriptions(
+    days: number
+  ): Promise<ISubscriptionModel[]> {
     const today = new Date();
     const startDate = this.startOfDay(today);
 
