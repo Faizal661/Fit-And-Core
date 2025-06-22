@@ -4,7 +4,7 @@ import { getAllArticles } from "../../../services/article/articleService";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
 import { ArticlesResponse } from "../../../types/article.type";
-import { ArticleCard } from "../../../components/shared/article/ArticleCard";
+import { ArticleCard } from "../../../components/article/ArticleCard";
 import Footer from "../../../components/shared/Footer";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";

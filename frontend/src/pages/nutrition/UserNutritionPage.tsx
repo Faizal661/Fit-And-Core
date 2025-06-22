@@ -28,7 +28,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import axios from "axios";
 import { IFoodLog, parsedFoodsData } from "../../types/nutrition.type";
-import ConfirmModal from "../../components/shared/modal/ConfirmModal";
+import ConfirmModal from "../../components/modal/ConfirmModal";
 import { useToast } from "../../context/ToastContext";
 import { formatDateForInput } from "../../utils/dateFormat";
 

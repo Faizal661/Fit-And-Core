@@ -12,7 +12,7 @@ import {
   BarChart,
   MessageSquare,
 } from "lucide-react";
-import { SIDEBAR_MESSAGES } from "../../../constants/messages/sidebar.messages";
+import { SIDEBAR_MESSAGES } from "../../constants/messages/sidebar.messages";
 
 export const UserSidebarItems = [
   { to: "/", label: SIDEBAR_MESSAGES.HOME, icon: Home },

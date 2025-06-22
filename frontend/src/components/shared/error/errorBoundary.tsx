@@ -1,6 +1,6 @@
 import React from "react";
-import icons from "../../assets/icons/ToastIcons";
-import { ERR_MESSAGES } from "../../constants/messages/error.messages";
+import icons from "../../../assets/icons/ToastIcons";
+import { ERR_MESSAGES } from "../../../constants/messages/error.messages";
 
 interface Props {
   children: React.ReactNode;

@@ -22,8 +22,8 @@ import {
 } from "../../services/session/reportService";
 import { formatDateAndTime } from "../../utils/dateFormat";
 import { useToast } from "../../context/ToastContext";
-import { FeedbackModal } from "../../components/shared/modal/FeedbackModal";
-import { BookingDetailsModal } from "../../components/shared/modal/BookingDetailsModal ";
+import { FeedbackModal } from "../../components/modal/FeedbackModal";
+import { BookingDetailsModal } from "../../components/modal/BookingDetailsModal ";
 
 const fadeIn = {
   hidden: { opacity: 0, y: 20 },

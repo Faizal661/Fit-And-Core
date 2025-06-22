@@ -1,15 +1,15 @@
 import { motion } from "framer-motion";
 import { X, MessageSquare, Video, User, CheckCircle, Flag } from "lucide-react";
-import { UserBooking, UpdateBookingData } from "../../../types/session.type";
+import { UserBooking, UpdateBookingData } from "../../types/session.type";
 import { useState } from "react";
 import { VideoCallModal } from "./VideoCallModal";
-import { spinner } from "../Spinner";
+import { spinner } from "../shared/Spinner";
 import ConfirmModal from "./ConfirmModal";
 import { FeedbackModal } from "./FeedbackModal";
 import { ReportModal } from "./ReportModal";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { updateBookingStatus } from "../../../services/session/BookingService";
-import { useToast } from "../../../context/ToastContext";
+import { updateBookingStatus } from "../../services/session/BookingService";
+import { useToast } from "../../context/ToastContext";
 import axios from "axios";
 
 interface BookingModalProps {

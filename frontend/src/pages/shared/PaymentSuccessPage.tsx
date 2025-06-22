@@ -5,7 +5,7 @@ import { verifyPayment } from "../../services/stripe/subscriptionService";
 import { motion } from "framer-motion";
 import { Check, Home, Users, ChevronRight} from "lucide-react";
 import Loader from "../../components/shared/Loader";
-import ErrorPage from "../../components/shared/ErrorPage";
+import ErrorPage from "../../components/shared/error/ErrorPage";
 
 const fadeIn = {
   hidden: { opacity: 0, y: 20 },
@@ -30,6 +30,7 @@ const PaymentSuccessPage = () => {
     if (!sessionId) {
       navigate("/");
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const { data, isLoading, isError } = useQuery({

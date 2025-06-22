@@ -20,7 +20,7 @@ import { TypeAnimation } from "react-type-animation";
 import { useInView } from "react-intersection-observer";
 import CountUp from "react-countup";
 import ScrollTrigger from "@ppasmik/react-scroll-trigger";
-import { GlowLink } from "../../components/shared/buttons/GlowLink";
+import { GlowLink } from "../../components/buttons/GlowLink";
 
 const fadeIn = {
   hidden: { opacity: 0, y: 300 },

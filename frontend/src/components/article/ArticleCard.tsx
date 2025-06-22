@@ -8,12 +8,12 @@ import {
   upvoteArticle,
   fetchUpvotedUsers,
   deleteArticle,
-} from "../../../services/article/articleService";
-import { ArticleCardProps, UpvotedUsers } from "../../../types/article.type";
-import { formatDate } from "../../../utils/dateFormat";
-import { ERR_MESSAGES } from "../../../constants/messages/error.messages";
+} from "../../services/article/articleService";
+import { ArticleCardProps, UpvotedUsers } from "../../types/article.type";
+import { formatDate } from "../../utils/dateFormat";
+import { ERR_MESSAGES } from "../../constants/messages/error.messages";
 import { motion } from "framer-motion";
-import { useToast } from "../../../context/ToastContext";
+import { useToast } from "../../context/ToastContext";
 import ConfirmModal from "../modal/ConfirmModal";
 
 export const ArticleCard = ({

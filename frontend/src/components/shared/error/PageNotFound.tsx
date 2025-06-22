@@ -1,9 +1,10 @@
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
-import { AlertCircle, RotateCw, ArrowLeft } from "lucide-react";
-import { GlowButton } from "../../components/shared/buttons/GlowButton";
-import Footer from "../../components/shared/Footer";
+import { AlertCircle } from "lucide-react";
+import { REDIRECT_MESSAGES } from "../../../constants/messages/redirect.messages";
+import { GlowButton } from "../../../components/buttons/GlowButton";
+import Footer from "../Footer";
 
 const fadeIn = {
   hidden: { opacity: 0, y: 20 },
@@ -27,23 +28,17 @@ const staggerContainer = {
   },
 };
 
-const ErrorPage = ({
-  title = "Error Occurred",
-  message = "An unexpected error has occurred. Please try again.",
+const PageNotFound = ({
+  title = REDIRECT_MESSAGES.PAGE_NOT_FOUND_TITLE,
+  message = REDIRECT_MESSAGES.PAGE_NOT_FOUND_MESSAGE,
+  linkText = REDIRECT_MESSAGES.HOME,
+  linkTo = "/",
 }) => {
   const navigate = useNavigate();
   const [ref, inView] = useInView({
     triggerOnce: true,
     threshold: 0.1,
   });
-
-  const handleRefresh = () => {
-    window.location.reload();
-  };
-
-  const handleGoBack = () => {
-    navigate(-1);
-  };
 
   return (
     <div className="relative">
@@ -76,7 +71,7 @@ const ErrorPage = ({
 
       {/* Main Content */}
       <div className="absolute inset-x-0 top-25 z-10 ">
-        <div className="max-w-4xl mx-auto px-6  ">
+        <div className="max-w-4xl mx-auto px-6  ">
           <motion.div
             ref={ref}
             initial="hidden"
@@ -104,19 +99,18 @@ const ErrorPage = ({
 
             <motion.p
               variants={fadeIn}
-              className="text-gray-600 text-center text-xl mb-8"
+              className="text-gray-600 text-center text-xl mb-12"
             >
               {message}
             </motion.p>
 
-            <motion.div variants={fadeIn} className="flex justify-center gap-4">
-              <GlowButton onClick={handleRefresh} className="px-6 py-3" primary>
-                <RotateCw className="mr-2 inline-block" size={20} />
-                Refresh
-              </GlowButton>
-              <GlowButton onClick={handleGoBack} className="px-6 py-3" primary>
-                <ArrowLeft className="mr-2 inline-block" size={20} />
-                Go Back
+            <motion.div variants={fadeIn} className="flex justify-center">
+              <GlowButton
+                onClick={() => navigate(linkTo)}
+                className="px-8 py-3"
+                primary
+              >
+                {linkText}
               </GlowButton>
             </motion.div>
           </motion.div>
@@ -130,4 +124,4 @@ const ErrorPage = ({
   );
 };
 
-export default ErrorPage;
+export default PageNotFound;
