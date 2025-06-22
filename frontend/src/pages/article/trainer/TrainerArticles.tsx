@@ -9,7 +9,7 @@ import { useState, FormEvent } from "react";
 import Footer from "../../../components/shared/Footer";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
-import { Search, SortAsc, Plus, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, SortAsc, Plus } from "lucide-react";
 import useDebounce from "../../../hooks/useDebounce";
 
 // Animation variants
@@ -44,7 +44,7 @@ const TrainerArticles = () => {
   });
 
   const [activePage, setActivePage] = useState<number>(1);
-  const [recordsPerPage] = useState<number>(4);
+  const [recordsPerPage] = useState<number>(2);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [sortBy, setSortBy] = useState<"createdAt" | "upvotes" | "">(
     "createdAt"
@@ -52,7 +52,13 @@ const TrainerArticles = () => {
   const debouncedSearchTerm = useDebounce(searchTerm, 600);
 
   const { data, isLoading, error } = useQuery<ArticlesResponse>({
-    queryKey: ["articles", activePage, recordsPerPage, debouncedSearchTerm, sortBy],
+    queryKey: [
+      "articles",
+      activePage,
+      recordsPerPage,
+      debouncedSearchTerm,
+      sortBy,
+    ],
     queryFn: () =>
       getMyArticles({
         page: activePage,
@@ -222,39 +228,49 @@ const TrainerArticles = () => {
 
           {data && data.total > recordsPerPage && (
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="flex items-center justify-between mt-8 pt-6 border-t border-gray-100"
+              variants={fadeIn}
+              className="flex justify-center items-center gap-2 mt-6 p-4 flex-wrap"
             >
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+              {/* Previous */}
+              <button
                 onClick={() => setActivePage((prev) => Math.max(prev - 1, 1))}
                 disabled={activePage === 1}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
+                className="px-2 py-1 bg-purple-500 text-white rounded disabled:bg-gray-400 hover:bg-purple-700"
               >
-                <ChevronLeft size={18} />
-                Previous
-              </motion.button>
+                Prev
+              </button>
 
-              <span className="text-sm text-gray-600">
-                Page {activePage} of {totalPages}
-              </span>
+              {/* Page Numbers */}
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                (pageNum) => (
+                  <button
+                    key={pageNum}
+                    onClick={() => setActivePage(pageNum)}
+                    className={`px-2 py-1 rounded 
+                              ${
+                                activePage === pageNum
+                                  ? "bg-purple-500 text-white"
+                                  : "bg-gray-200 text-gray-700 hover:bg-purple-700 hover:text-white"
+                              }`}
+                  >
+                    {pageNum}
+                  </button>
+                )
+              )}
 
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+              {/* Next */}
+              <button
                 onClick={() =>
                   setActivePage((prev) => Math.min(prev + 1, totalPages))
                 }
                 disabled={activePage === totalPages}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
+                className="px-2 py-1 bg-purple-500 text-white rounded disabled:bg-gray-400 hover:bg-purple-700"
               >
                 Next
-                <ChevronRight size={18} />
-              </motion.button>
+              </button>
             </motion.div>
           )}
+          
         </motion.div>
       </div>
 
