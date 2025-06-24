@@ -3,7 +3,7 @@ import { inject, injectable } from "tsyringe";
 import { sendResponse } from "../../utils/send-response";
 import { IStreakController } from "../Interface/IStreakController";
 import { IStreakService } from "../../services/Interface/IStreakService";
-import { CustomError } from "../../errors/CustomError";
+import CustomError from "../../errors/CustomError";
 import { HttpResCode } from "../../constants/http-response.constants";
 
 @injectable()

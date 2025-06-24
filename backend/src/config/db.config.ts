@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { env } from "./env.config";
+import env from "./env.config";
 import { HttpResMsg } from "../constants/http-response.constants";
 
 

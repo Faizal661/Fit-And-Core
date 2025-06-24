@@ -6,7 +6,7 @@ import {
   IWallet,
   ITransaction,
 } from "../../models/wallet.models";
-import { CustomError } from "../../errors/CustomError";
+import CustomError from "../../errors/CustomError";
 import { HttpResCode } from "../../constants/http-response.constants";
 import { BaseRepository } from "./base.repository";
 

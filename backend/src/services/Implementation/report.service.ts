@@ -4,7 +4,7 @@ import { IReportRepository } from "../../repositories/Interface/IReportRepositor
 import { ITrainerRepository } from "../../repositories/Interface/ITrainerRepository";
 import { IReportModel } from "../../models/report.models";
 import { Types } from "mongoose";
-import { CustomError } from "../../errors/CustomError";
+import CustomError from "../../errors/CustomError";
 import { HttpResCode } from "../../constants/http-response.constants";
 
 @injectable()

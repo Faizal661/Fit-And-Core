@@ -5,7 +5,7 @@ import {
 import { Types } from "mongoose";
 import { BaseRepository } from "./base.repository";
 import { INotificationRepository } from "../Interface/INotificationRepository";
-import { CustomError } from "../../errors/CustomError";
+import CustomError from "../../errors/CustomError";
 import { HttpResCode } from "../../constants/http-response.constants";
 
 export class NotificationRepository

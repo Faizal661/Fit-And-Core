@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { container } from "tsyringe";
-import { CustomError } from "../errors/CustomError";
+import CustomError from "../errors/CustomError";
 import { HttpResCode, HttpResMsg } from "../constants/http-response.constants";
 import { IAuthRepository } from "../repositories/Interface/IAuthRepository";
 

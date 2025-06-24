@@ -7,7 +7,7 @@ import {
   HttpResCode,
   HttpResMsg,
 } from "../../constants/http-response.constants";
-import { CustomError } from "../../errors/CustomError";
+import CustomError from "../../errors/CustomError";
 
 @injectable()
 export class SubscriptionController implements ISubscriptionController {

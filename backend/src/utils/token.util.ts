@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import { IUserModel } from "../models/user.models";
-import { env } from "../config/env.config";
+import env from "../config/env.config";
 
 export const generateAccessToken = (user: IUserModel) => {
   return jwt.sign(

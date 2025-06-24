@@ -1,7 +1,7 @@
 import nodemailer from "nodemailer";
-import { CustomError } from "../errors/CustomError";
+import CustomError from "../errors/CustomError";
 import { HttpResCode, HttpResMsg } from "../constants/http-response.constants";
-import { env } from "../config/env.config";
+import env from "../config/env.config";
 
 const transporter = nodemailer.createTransport({
   host: env.SMTP_HOST,
@@ -166,9 +166,9 @@ export const sendEmail = async (toEmail: string, otp: string) => {
 // };
 
 // import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses";
-// import { CustomError } from "../errors/CustomError";
+// import CustomError from "../errors/CustomError";
 // import { HttpResCode } from "../constants/response.constants";
-// import { env } from "../config/env.config";
+// import env from "../config/env.config";
 
 // const sesClient = new SESClient({
 //   region: env.AWS_REGION,

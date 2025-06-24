@@ -5,7 +5,7 @@ import {
   HttpResCode,
   HttpResMsg,
 } from "../../constants/http-response.constants";
-import { CustomError } from "../../errors/CustomError";
+import CustomError from "../../errors/CustomError";
 import { IProgressService } from "../../services/Interface/IProgressService";
 import { IProgressController } from "../Interface/IProgressController";
 import { Types } from "mongoose";

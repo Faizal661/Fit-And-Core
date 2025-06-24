@@ -4,7 +4,7 @@ import { IUserStreak } from "../../types/streak.types";
 import { IStreakRepository } from "../Interface/IStreakRepository";
 import { BaseRepository } from "./base.repository";
 import { injectable } from "tsyringe";
-import { CustomError } from "../../errors/CustomError";
+import CustomError from "../../errors/CustomError";
 import { HttpResCode } from "../../constants/http-response.constants";
 
 @injectable()

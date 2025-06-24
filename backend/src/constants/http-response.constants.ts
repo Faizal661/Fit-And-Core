@@ -132,7 +132,7 @@ export const enum HttpResMsg {
   DATABASE_ERROR = "Error connecting to the database: ",
   REDIS_CONNECTION = "Redis Connection    ✅",
   REDIS_CLIENT_ERROR = "Redis Client Error:❌",
-  ROUTE_NOT_FOUND = `Route not found `,
+  ROUTE_NOT_FOUND = `Server End Point Not Found`,
 
   INVALID_CREDENTIALS = "Invalid email or password",
   USERNAME_CONFLICT = "Username already taken",

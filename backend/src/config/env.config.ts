@@ -1,8 +1,8 @@
 import { EnvErrMsg } from "../constants/env-error-messages.constants";
 import { HttpResCode } from "../constants/http-response.constants";
-import { CustomError } from "../errors/CustomError";
+import CustomError from "../errors/CustomError";
 
-export const env = {
+const env = {
   get PORT(): number {
     const port = process.env.PORT;
     if (!port) {
@@ -244,7 +244,7 @@ export const env = {
     }
     return process.env.CLOUDINARY_CLOUD_NAME;
   },
-  
+
   get CLOUDINARY_API_KEY(): string {
     if (!process.env.CLOUDINARY_API_KEY) {
       throw new CustomError(
@@ -254,7 +254,7 @@ export const env = {
     }
     return process.env.CLOUDINARY_API_KEY;
   },
-  
+
   get CLOUDINARY_API_SECRET(): string {
     if (!process.env.CLOUDINARY_API_SECRET) {
       throw new CustomError(
@@ -294,5 +294,6 @@ export const env = {
     }
     return process.env.GEMINI_API_KEY;
   },
-  
 };
+
+export default env;

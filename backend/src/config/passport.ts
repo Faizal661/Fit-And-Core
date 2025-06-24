@@ -1,7 +1,7 @@
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import { IGoogleUser } from '../types/auth.types';
-import { env } from './env.config';
+import env from './env.config';
 
 export default function configurePassport() {
   passport.use(

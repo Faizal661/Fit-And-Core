@@ -14,13 +14,13 @@ import { ISubscriptionService } from "../Interface/ISubscriptionService";
 import { IUserRepository } from "../../repositories/Interface/IUserRepository";
 
 import { sendResponse } from "../../utils/send-response";
-import { CustomError } from "../../errors/CustomError";
+import CustomError from "../../errors/CustomError";
 import {
   HttpResCode,
   HttpResMsg,
 } from "../../constants/http-response.constants";
 import { ITrainerRepository } from "../../repositories/Interface/ITrainerRepository";
-import { env } from "../../config/env.config";
+import env from "../../config/env.config";
 import { WalletRepository } from "../../repositories/Implementation/wallet.repository";
 import { TransactionModel } from "../../models/wallet.models";
 

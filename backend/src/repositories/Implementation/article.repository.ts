@@ -4,7 +4,7 @@ import { IArticle } from "../../types/article.types";
 import { BaseRepository } from "./base.repository";
 import { IArticleRepository } from "../Interface/IArticleRepository";
 import { FilterQuery } from "mongoose";
-import { CustomError } from "../../errors/CustomError";
+import CustomError from "../../errors/CustomError";
 import { HttpResCode } from "../../constants/http-response.constants";
 
 @injectable()

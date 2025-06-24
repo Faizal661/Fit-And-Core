@@ -5,7 +5,7 @@ import AvailabilityModel, {
   IAvailabilityModel,
 } from "../../models/session.model/availability.models";
 import { IAvailabilityRepository } from "../Interface/IAvailabilityRepository";
-import { CustomError } from "../../errors/CustomError";
+import CustomError from "../../errors/CustomError";
 import { HttpResCode } from "../../constants/http-response.constants";
 
 @injectable()

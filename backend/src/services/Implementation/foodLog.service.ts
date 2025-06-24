@@ -7,7 +7,7 @@ import {
   HttpResCode,
   HttpResMsg,
 } from "../../constants/http-response.constants";
-import { CustomError } from "../../errors/CustomError";
+import CustomError from "../../errors/CustomError";
 import { IGeminiService } from "../Interface/IGeminiApiService";
 import { MealType } from "../../types/nutrition.types";
 

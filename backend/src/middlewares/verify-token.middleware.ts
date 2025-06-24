@@ -2,9 +2,9 @@ import { Request, Response, NextFunction } from "express";
 import { container } from "tsyringe";
 import jwt from "jsonwebtoken";
 import { IJwtDecoded } from "../types/auth.types";
-import { CustomError } from "../errors/CustomError";
+import CustomError from "../errors/CustomError";
 import { HttpResCode, HttpResMsg } from "../constants/http-response.constants";
-import { env } from "../config/env.config";
+import env from "../config/env.config";
 import { generateAccessToken } from "../utils/token.util";
 import { IAuthRepository } from "../repositories/Interface/IAuthRepository";
 

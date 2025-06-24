@@ -9,7 +9,7 @@ import {
   HttpResCode,
   HttpResMsg,
 } from "../../constants/http-response.constants";
-import { CustomError } from "../../errors/CustomError";
+import CustomError from "../../errors/CustomError";
 import { ITrainerModel } from "../../models/trainer.models";
 import {
   PaginatedTraineesResult,

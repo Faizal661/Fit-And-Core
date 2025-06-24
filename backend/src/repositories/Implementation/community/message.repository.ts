@@ -1,7 +1,7 @@
 import { Types } from 'mongoose';
 import MessageModel, { IMessageModel } from '../../../models/group.model/group-messages.models';
 import { IMessageWithSender } from '../../../services/Implementation/group.service';
-import { CustomError } from '../../../errors/CustomError';
+import CustomError from '../../../errors/CustomError';
 import { HttpResCode } from '../../../constants/http-response.constants';
 
 export class MessageRepository {

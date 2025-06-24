@@ -4,7 +4,7 @@ import { Types } from "mongoose";
 import ProgressModel, { IProgressModel } from "../../models/progress.models";
 import { IProgressRepository } from "../Interface/IProgressRepository";
 import { HttpResCode } from "../../constants/http-response.constants";
-import { CustomError } from "../../errors/CustomError";
+import CustomError from "../../errors/CustomError";
 
 @injectable()
 export class ProgressRepository
