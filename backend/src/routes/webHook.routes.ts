@@ -18,9 +18,6 @@ const subscriptionController = container.resolve<ISubscriptionController>(
 webhookRouter.post(
   "/webhook",
   express.raw({ type: "application/json" }),
-  verifyAccessToken,
-  checkBlockedUser,
-  authorizeRoles(["user"]),
   (req, res, next) => subscriptionController.handleStripeWebhook(req, res, next)
 );
 

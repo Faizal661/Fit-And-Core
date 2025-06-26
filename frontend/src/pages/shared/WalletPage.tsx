@@ -82,62 +82,11 @@ const WalletPage = () => {
 
   // Sample data for demonstration
   const sampleWalletData: WalletData = {
-    balance: 15750.50,
-    totalCredits: 25000.00,
-    totalDebits: 9249.50,
-    totalTransactions: 45,
-    transactions: [
-      {
-        _id: '1',
-        type: 'credit',
-        amount: 2500.00,
-        description: 'Training session payment received',
-        category: 'Training',
-        status: 'completed',
-        createdAt: '2024-01-15T10:30:00Z',
-        referenceId: 'TXN001'
-      },
-      {
-        _id: '2',
-        type: 'debit',
-        amount: 150.00,
-        description: 'Platform commission',
-        category: 'Commission',
-        status: 'completed',
-        createdAt: '2024-01-14T15:45:00Z',
-        referenceId: 'TXN002'
-      },
-      {
-        _id: '3',
-        type: 'credit',
-        amount: 1800.00,
-        description: 'Subscription payment',
-        category: 'Subscription',
-        status: 'completed',
-        createdAt: '2024-01-13T09:20:00Z',
-        referenceId: 'TXN003'
-      },
-      {
-        _id: '4',
-        type: 'debit',
-        amount: 500.00,
-        description: 'Refund processed',
-        category: 'Refund',
-        status: 'completed',
-        createdAt: '2024-01-12T14:10:00Z',
-        referenceId: 'TXN004'
-      },
-      {
-        _id: '5',
-        type: 'credit',
-        amount: 3200.00,
-        description: 'Monthly training package',
-        category: 'Training',
-        status: 'pending',
-        createdAt: '2024-01-11T11:00:00Z',
-        referenceId: 'TXN005'
-      }
-    ]
+    balance: 0,
+    totalCredits: 0,
+    totalDebits:  0,
+    totalTransactions: 0,
+    transactions: []
   };
 
   const displayData = walletData || sampleWalletData;

@@ -10,7 +10,7 @@ const SubscriptionSchema: Schema = new Schema(
     userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
     trainerId: { type: Schema.Types.ObjectId, ref: "Trainer", required: true },
     planDuration: { type: String },
-    amount: { type: Number },
+    amount: { type: Number, required: true },
     status: {
       type: String,
       enum: ["pending", "active", "refunded", "expired"],
@@ -19,7 +19,7 @@ const SubscriptionSchema: Schema = new Schema(
     startDate: { type: Date },
     expiryDate: { type: Date },
     // paymentId: { type: Schema.Types.ObjectId, ref: "Payment" },
-    paymentId: { type: String},
+    paymentId: { type: String },
     sessions: { type: Number, default: 10 },
   },
   { timestamps: true }
