@@ -300,13 +300,29 @@ export default class SubscriptionService implements ISubscriptionService {
         await this.subscriptionRepository.refundSubscription(subscription._id);
 
       const userId = subscription.userId;
+      const trainerId = subscription.trainerId;
       const amount = subscription.amount;
 
-      let wallet = await this.walletRepository.findOne({ userId });
-      if (!wallet) {
-        wallet = await this.walletRepository.create({ userId });
+      let userWallet = await this.walletRepository.findOne({ userId });
+      if (!userWallet) {
+        userWallet = await this.walletRepository.create({ userId });
       }
 
+      const trainer = await this.trainerRepository.findById(
+        new Types.ObjectId(trainerId)
+      );
+      const trainerUserId = trainer?.userId;
+
+      let trainerWallet = await this.walletRepository.findOne({
+        userId: trainerUserId,
+      });
+      if (!trainerWallet) {
+        throw new CustomError(
+          "Trainer wallet is not found",
+          HttpResCode.INTERNAL_SERVER_ERROR
+        );
+      }
+      
       await TransactionModel.create({
         userId,
         type: "credit",
@@ -317,8 +333,22 @@ export default class SubscriptionService implements ISubscriptionService {
         referenceId: subscriptionId,
       });
 
-      wallet.balance += amount;
-      await wallet.save();
+      await TransactionModel.create({
+        userId: trainerUserId,
+        type: "debit",
+        amount,
+        description: "Subscription refund",
+        category: "refund",
+        status: "completed",
+        referenceId: subscriptionId,
+      });
+
+
+      userWallet.balance += amount;
+      await userWallet.save();
+
+      trainerWallet.balance -= amount;
+      await trainerWallet.save();
 
       return updatedSubscription;
     } catch (error) {
