@@ -11,12 +11,12 @@ import {
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import logger from "../../utils/logger.utils";
-import { env } from "../../config/env.config";
+import env from "../../config/env.config";
 import { IAuthService } from "../Interface/IAuthService";
 import { sendEmail } from "../../utils/email.util";
 import { IUserModel } from "../../models/user.models";
 import { generateOtp } from "../../utils/otp-generate.util";
-import { CustomError } from "../../errors/CustomError";
+import CustomError from "../../errors/CustomError";
 import { IAuthRepository } from "../../repositories/Interface/IAuthRepository";
 import {
   HttpResCode,

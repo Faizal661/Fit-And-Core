@@ -14,13 +14,13 @@ import { ISubscriptionService } from "../Interface/ISubscriptionService";
 import { IUserRepository } from "../../repositories/Interface/IUserRepository";
 
 import { sendResponse } from "../../utils/send-response";
-import { CustomError } from "../../errors/CustomError";
+import CustomError from "../../errors/CustomError";
 import {
   HttpResCode,
   HttpResMsg,
 } from "../../constants/http-response.constants";
 import { ITrainerRepository } from "../../repositories/Interface/ITrainerRepository";
-import { env } from "../../config/env.config";
+import env from "../../config/env.config";
 import { WalletRepository } from "../../repositories/Implementation/wallet.repository";
 import { TransactionModel } from "../../models/wallet.models";
 
@@ -33,7 +33,7 @@ export default class SubscriptionService implements ISubscriptionService {
     private subscriptionRepository: ISubscriptionRepository,
     @inject("UserRepository") private userRepository: IUserRepository,
     @inject("TrainerRepository") private trainerRepository: ITrainerRepository,
-    @inject("WalletRepository") private walletRepository: WalletRepository,
+    @inject("WalletRepository") private walletRepository: WalletRepository
   ) {
     this.subscriptionRepository = subscriptionRepository;
     this.userRepository = userRepository;
@@ -195,7 +195,7 @@ export default class SubscriptionService implements ISubscriptionService {
 
     const expiryDate = this.calculateExpiryDate(planDuration);
 
-    await this.subscriptionRepository.update(
+    const subscription = await this.subscriptionRepository.update(
       new Types.ObjectId(subscriptionId),
       {
         status: "active",
@@ -204,6 +204,34 @@ export default class SubscriptionService implements ISubscriptionService {
         expiryDate,
       }
     );
+
+    if (!subscription) {
+      throw new CustomError("Subscription not found", HttpResCode.NOT_FOUND);
+    }
+
+    const trainer = await this.trainerRepository.findById(
+      new Types.ObjectId(trainerId)
+    );
+    const trainerUserId = trainer?.userId;
+    const amount = subscription.amount;
+
+    let wallet = await this.walletRepository.findOne({ userId: trainerUserId });
+    if (!wallet) {
+      wallet = await this.walletRepository.create({ userId: trainerUserId });
+    }
+
+    await TransactionModel.create({
+      userId: trainerUserId,
+      type: "credit",
+      amount,
+      description: "Subscription payment",
+      category: "Subscription",
+      status: "completed",
+      referenceId: subscriptionId,
+    });
+
+    wallet.balance += amount;
+    await wallet.save();
   }
 
   private calculateExpiryDate(planDuration?: string): Date {
@@ -251,29 +279,50 @@ export default class SubscriptionService implements ISubscriptionService {
     };
   }
 
-  async refundSubscription(subscriptionId: string): Promise<ISubscriptionModel | null> {
+  async refundSubscription(
+    subscriptionId: string
+  ): Promise<ISubscriptionModel | null> {
     try {
-      const subscription = await this.subscriptionRepository.findById(new Types.ObjectId(subscriptionId));
+      const subscription = await this.subscriptionRepository.findById(
+        new Types.ObjectId(subscriptionId)
+      );
       if (!subscription) {
         throw new CustomError("Subscription not found", HttpResCode.NOT_FOUND);
       }
       if (subscription.status === "refunded") {
-        throw new CustomError("Subscription already refunded", HttpResCode.BAD_REQUEST);
+        throw new CustomError(
+          "Subscription already refunded",
+          HttpResCode.BAD_REQUEST
+        );
       }
-    
-      const updatedSubscription = await this.subscriptionRepository.refundSubscription(subscription._id);
-      console.log("🚀 ~ SubscriptionService ~ refundSubscription ~ updatedSubscription:", updatedSubscription)
-    
+
+      const updatedSubscription =
+        await this.subscriptionRepository.refundSubscription(subscription._id);
+
       const userId = subscription.userId;
+      const trainerId = subscription.trainerId;
       const amount = subscription.amount;
-    
-      let wallet = await this.walletRepository.findOne({ userId });
-      console.log("🚀 ~ SubscriptionService ~ refundSubscription ~ wallet:", wallet)
-      if (!wallet) {
-        wallet = await this.walletRepository.create({userId});
+
+      let userWallet = await this.walletRepository.findOne({ userId });
+      if (!userWallet) {
+        userWallet = await this.walletRepository.create({ userId });
       }
-      console.log("🚀 ~ SubscriptionService ~ refundSubscription ~ wallet:", wallet)
-    
+
+      const trainer = await this.trainerRepository.findById(
+        new Types.ObjectId(trainerId)
+      );
+      const trainerUserId = trainer?.userId;
+
+      let trainerWallet = await this.walletRepository.findOne({
+        userId: trainerUserId,
+      });
+      if (!trainerWallet) {
+        throw new CustomError(
+          "Trainer wallet is not found",
+          HttpResCode.INTERNAL_SERVER_ERROR
+        );
+      }
+      
       await TransactionModel.create({
         userId,
         type: "credit",
@@ -283,13 +332,27 @@ export default class SubscriptionService implements ISubscriptionService {
         status: "completed",
         referenceId: subscriptionId,
       });
-    
-      wallet.balance += amount;
-      await wallet.save();
-    
+
+      await TransactionModel.create({
+        userId: trainerUserId,
+        type: "debit",
+        amount,
+        description: "Subscription refund",
+        category: "refund",
+        status: "completed",
+        referenceId: subscriptionId,
+      });
+
+
+      userWallet.balance += amount;
+      await userWallet.save();
+
+      trainerWallet.balance -= amount;
+      await trainerWallet.save();
+
       return updatedSubscription;
     } catch (error) {
-         if (error instanceof CustomError) {
+      if (error instanceof CustomError) {
         throw error;
       }
       throw new CustomError(
@@ -297,7 +360,7 @@ export default class SubscriptionService implements ISubscriptionService {
         HttpResCode.INTERNAL_SERVER_ERROR
       );
     }
-}
+  }
 
   getUsersWithExpiringSubscriptions(
     days: number

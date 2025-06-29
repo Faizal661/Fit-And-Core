@@ -5,7 +5,7 @@ import { IGroup, IGroupModel } from "../../models/group.model/group.models";
 import { Types } from "mongoose";
 import { uploadToCloudinary } from "../../utils/cloud-storage";
 import { IGroupMemberModel } from "../../models/group.model/group-member.models";
-import { CustomError } from "../../errors/CustomError";
+import CustomError from "../../errors/CustomError";
 import {
   HttpResCode,
   HttpResMsg,

@@ -5,7 +5,7 @@ import { lazy } from "react";
 import ProtectedRoutes from "./ProtectedRoutes";
 
 // 
-import PageNotFound from "../components/shared/PageNotFound";
+import PageNotFound from "../components/shared/error/PageNotFound";
 import PaymentSuccessPage from "../pages/shared/PaymentSuccessPage";
 import LandingPage from "../pages/user/LandingPage"
 import ReportViewPage from "../pages/shared/ReportViewPage";

@@ -9,7 +9,7 @@ import { ITrainerService } from "../../services/Interface/ITrainerService";
 import { sendResponse } from "../../utils/send-response";
 import { uploadToCloudinary } from "../../utils/cloud-storage";
 import { CustomRequest } from "../../types/trainer.types";
-import { CustomError } from "../../errors/CustomError";
+import CustomError from "../../errors/CustomError";
 
 @injectable()
 export default class TrainerController implements ITrainerController {

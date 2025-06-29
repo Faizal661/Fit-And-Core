@@ -2,10 +2,10 @@ import { Server, Socket } from "socket.io";
 import { createServer } from "http";
 import express from "express";
 import { container } from "tsyringe";
-import { env } from "./env.config";
+import env from "./env.config";
 import { IVideoCallService } from "../services/Interface/IVideoCallService";
 
-export const configureSocketIO = (app: express.Application) => {
+const configureSocketIO = (app: express.Application) => {
   const httpServer = createServer(app);
 
   const io = new Server(httpServer, {
@@ -28,3 +28,5 @@ export const configureSocketIO = (app: express.Application) => {
 
   return httpServer;
 };
+
+export default configureSocketIO;

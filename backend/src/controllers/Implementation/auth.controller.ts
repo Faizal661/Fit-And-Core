@@ -6,8 +6,8 @@ import { IAuthService } from "../../services/Interface/IAuthService";
 import { sendResponse } from "../../utils/send-response";
 import passport from "passport";
 import logger from "../../utils/logger.utils";
-import { CustomError } from "../../errors/CustomError";
-import { env } from "../../config/env.config";
+import CustomError from "../../errors/CustomError";
+import env from "../../config/env.config";
 
 @injectable()
 export default class AuthController implements IAuthController {

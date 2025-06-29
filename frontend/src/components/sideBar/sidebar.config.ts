@@ -12,7 +12,7 @@ import {
   BarChart,
   MessageSquare,
 } from "lucide-react";
-import { SIDEBAR_MESSAGES } from "../../../constants/messages/sidebar.messages";
+import { SIDEBAR_MESSAGES } from "../../constants/messages/sidebar.messages";
 
 export const UserSidebarItems = [
   { to: "/", label: SIDEBAR_MESSAGES.HOME, icon: Home },
@@ -54,9 +54,9 @@ export const TrainerSidebarItems = [
     icon: Calendar,
   },
   {
-    to: "/trainer/finance",
-    label: SIDEBAR_MESSAGES.FINANCE_MANAGEMENT,
-    icon: TrendingUp,
+    to: "/wallet",
+    label: SIDEBAR_MESSAGES.Wallet,
+    icon: DollarSign,
   },
   { to: "/messages", label: SIDEBAR_MESSAGES.MESSAGES, icon: MessageSquare },
   { to: "/trainer/reports", label: SIDEBAR_MESSAGES.REPORTS, icon: BarChart },

@@ -195,7 +195,7 @@ export const ChatSidebar = ({
                             </>
                           ) : (
                             (chat.lastMessage?.length ?? 0) > 20
-                              ? `${chat.lastMessage.slice(0, 20)}...`
+                              ? `${chat.lastMessage?.slice(0, 20)}...`
                               : chat.lastMessage || "No messages yet"
                           )}
                       </p>

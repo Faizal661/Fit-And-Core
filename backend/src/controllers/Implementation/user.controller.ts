@@ -4,7 +4,7 @@ import { HttpResCode, HttpResMsg } from "../../constants/http-response.constants
 import { IUserController } from "../Interface/IUserController";
 import { IUserService } from "../../services/Interface/IUserService";
 import { sendResponse } from "../../utils/send-response";
-import { CustomError } from "../../errors/CustomError";
+import CustomError from "../../errors/CustomError";
 
 @injectable()
 export default class UserController implements IUserController {

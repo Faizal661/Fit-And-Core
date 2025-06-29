@@ -3,7 +3,7 @@ import { BaseRepository } from "./base.repository";
 import { Types } from "mongoose";
 import FoodLogModel, { IFoodLogModel } from "../../models/nutrition.models";
 import { IFoodLogRepository } from "../Interface/IFoodLogRepository";
-import { CustomError } from "../../errors/CustomError";
+import CustomError from "../../errors/CustomError";
 import { HttpResCode } from "../../constants/http-response.constants";
 
 @injectable()

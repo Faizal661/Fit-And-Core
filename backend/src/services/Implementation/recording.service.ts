@@ -3,7 +3,7 @@ import { uploadToCloudinary } from "../../utils/cloud-storage";
 import { IRecordingService } from "../Interface/IRecordingService";
 import { IBookingRepository } from "../../repositories/Interface/IBookingRepository";
 import { Types } from "mongoose";
-import { CustomError } from "../../errors/CustomError";
+import CustomError from "../../errors/CustomError";
 import { HttpResCode } from "../../constants/http-response.constants";
 
 export interface UploadResult {

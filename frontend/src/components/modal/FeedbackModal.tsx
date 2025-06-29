@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { X, MessageSquare, Send } from "lucide-react";
 import { useState } from "react";
-import { spinner } from "../Spinner";
+import { spinner } from "../shared/Spinner";
 
 interface FeedbackModalProps {
   isOpen: boolean;

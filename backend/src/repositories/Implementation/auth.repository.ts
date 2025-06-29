@@ -4,7 +4,7 @@ import { BaseRepository } from "./base.repository";
 import { IAuthRepository } from "../Interface/IAuthRepository";
 import { RedisClientType } from "redis";
 import { IGoogleUser } from "../../types/auth.types";
-import { CustomError } from "../../errors/CustomError";
+import CustomError from "../../errors/CustomError";
 import { HttpResCode } from "../../constants/http-response.constants";
 
 @injectable()

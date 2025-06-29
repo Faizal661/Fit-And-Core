@@ -2,7 +2,7 @@
 import { HomeIcon } from "lucide-react";
 import { Fragment } from "react";
 import { useSelector } from "react-redux";
-import { RootState } from "../../../redux/store";
+import { RootState } from "../../redux/store";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
@@ -42,7 +42,7 @@ const MenuButton = () => {
         animate="animate"
         whileHover="hover"
         whileTap="tap"
-        className="fixed top-4 left-4 bg-white text-gray-800 py-2.5 px-5 rounded-lg shadow-lg hover:shadow-sm transition-all cursor-pointer z-50"
+        className="fixed top-4 left-4 bg-white text-gray-800 py-2.5 px-5 rounded-lg shadow-lg hover:shadow-sm transition-all cursor-pointer z-52"
       >
         <HomeIcon size={18} />
       </motion.button>

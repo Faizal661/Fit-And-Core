@@ -73,6 +73,7 @@ const TrainerApply = () => {
         showToast(STATUS.WARNING, WARNING_MESSAGES.TRAINER_APPLICATION_REJECTED);
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [applicationStatus]);
 
   const {

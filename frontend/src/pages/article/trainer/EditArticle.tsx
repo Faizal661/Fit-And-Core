@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useParams, useNavigate } from "react-router-dom";
 import { articleSchema, ArticleFormData } from "../../../schemas/articleSchema";
-import { MarkdownEditor } from "../../../components/shared/article/MarkdownEditor";
+import { MarkdownEditor } from "../../../components/article/MarkdownEditor";
 import { fetchArticleById, updateTrainerArticle } from "../../../services/article/articleService";
 import { useToast } from "../../../context/ToastContext";
 import Footer from "../../../components/shared/Footer";

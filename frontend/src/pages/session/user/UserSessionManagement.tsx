@@ -22,11 +22,11 @@ import { useInView } from "react-intersection-observer";
 import axios from "axios";
 import { useToast } from "../../../context/ToastContext";
 import { STATUS } from "../../../constants/messages/status.messages";
-import PageNotFound from "../../../components/shared/PageNotFound";
+import PageNotFound from "../../../components/shared/error/PageNotFound";
 import { REDIRECT_MESSAGES } from "../../../constants/messages/redirect.messages";
 import { UserBooking } from "../../../types/session.type";
-import { BookingModal } from "../../../components/shared/modal/BookingModal ";
-import { CancelBookingModal } from "../../../components/shared/modal/CancelBookingModal";
+import { BookingModal } from "../../../components/modal/BookingModal ";
+import { CancelBookingModal } from "../../../components/modal/CancelBookingModal";
 
 const fadeIn = {
   hidden: { opacity: 0, y: 20 },

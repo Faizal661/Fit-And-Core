@@ -3,15 +3,15 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { CircleUserRound, Settings, UserCog } from "lucide-react";
-import { RootState } from "../../../redux/store";
-import { logoutUser } from "../../../services/authService";
-import { useToast } from "../../../context/ToastContext";
-import { AUTH_MESSAGES } from "../../../constants/messages/auth.messages";
-import { clearAuth } from "../../../redux/slices/authSlice";
-import { persistor } from "../../../redux/store";
+import { RootState } from "../../redux/store";
+import { logoutUser } from "../../services/authService";
+import { useToast } from "../../context/ToastContext";
+import { AUTH_MESSAGES } from "../../constants/messages/auth.messages";
+import { clearAuth } from "../../redux/slices/authSlice";
+import { persistor } from "../../redux/store";
 import axios from "axios";
 import Sidebar from "../sideBar/SideBar";
-import { STATUS } from "../../../constants/messages/status.messages";
+import { STATUS } from "../../constants/messages/status.messages";
 
 // Animation variants
 const buttonVariants = {
@@ -33,7 +33,7 @@ const buttonVariants = {
     },
   },
   tap: {
-    scale: 0.80,
+    scale: 0.8,
   },
 };
 const sidebarVariants = {
@@ -118,7 +118,12 @@ const FloatButton = () => {
         } z-50 font-medium transition-all duration-300`}
       >
         {getButtonIcon()}
-        <span>{getButtonText()}</span>
+        <span className="sm:hidden whitespace-nowrap overflow-hidden text-ellipsis">
+          {getButtonText().split("|")[0].trim()}
+        </span>
+        <span className="hidden sm:inline whitespace-nowrap">
+          {getButtonText()}
+        </span>{" "}
       </motion.button>
 
       <AnimatePresence>

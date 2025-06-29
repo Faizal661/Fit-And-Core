@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useVideoCall } from "../../../hooks/useVideoCall";
+import { useVideoCall } from "../../hooks/useVideoCall";
 import {
   Mic,
   MicOff,

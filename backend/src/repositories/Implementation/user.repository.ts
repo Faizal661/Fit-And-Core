@@ -3,7 +3,7 @@ import UserModel, { IUserModel } from "../../models/user.models";
 import { BaseRepository } from "./base.repository";
 import { IUserRepository } from "../Interface/IUserRepository";
 import { FilterQuery, Query, Types } from "mongoose";
-import { CustomError } from "../../errors/CustomError";
+import CustomError from "../../errors/CustomError";
 import { HttpResCode } from "../../constants/http-response.constants";
 
 @injectable()

@@ -10,7 +10,6 @@ import { authorizeRoles } from "../middlewares/role-based-access-control.middlew
 import { ISubscriptionController } from "../controllers/Interface/ISubscriptionController";
 
 const router = express.Router();
-const webhookRouter = express.Router();
 
 const subscriptionController = container.resolve<ISubscriptionController>(
   "SubscriptionController"
@@ -33,11 +32,6 @@ router.get(
   (req, res, next) => subscriptionController.verifyPayment(req, res, next)
 );
 
-webhookRouter.post(
-  "/webhook",
-  express.raw({ type: "application/json" }),
-  (req, res, next) => subscriptionController.handleStripeWebhook(req, res, next)
-);
 
 router.get(
   "/check",
@@ -53,5 +47,5 @@ router.patch(
   (req, res, next) => subscriptionController.refundSubscription(req, res, next)
 );
 
-export { router as subscriptionRoutes, webhookRouter as webhookRoutes };
+export default router;
 

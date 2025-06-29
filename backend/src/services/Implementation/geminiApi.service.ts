@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { env } from "../../config/env.config";
+import env from "../../config/env.config";
 import { NutritionData, parsedFoodsData } from "../../types/nutrition.types";
-import { CustomError } from "../../errors/CustomError";
+import CustomError from "../../errors/CustomError";
 import { HttpResCode } from "../../constants/http-response.constants";
 
 const genAI = new GoogleGenerativeAI(env.GEMINI_API_KEY);

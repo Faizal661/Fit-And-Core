@@ -8,7 +8,7 @@ import {
 } from "../../constants/http-response.constants";
 import { IArticleController } from "../Interface/IArticleController";
 import { uploadToCloudinary } from "../../utils/cloud-storage";
-import { CustomError } from "../../errors/CustomError";
+import CustomError from "../../errors/CustomError";
 import { IStreakService } from "../../services/Interface/IStreakService";
 
 @injectable()

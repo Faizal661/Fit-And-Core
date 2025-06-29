@@ -10,7 +10,7 @@ import { ISubscriptionRepository } from "../../repositories/Interface/ISubscript
 import { IUserModel } from "../../models/user.models";
 import { ITrainerModel } from "../../models/trainer.models";
 import { FinanceData } from "../../types/finance.types";
-import { CustomError } from "../../errors/CustomError";
+import CustomError from "../../errors/CustomError";
 import { HttpResCode } from "../../constants/http-response.constants";
 
 @injectable()

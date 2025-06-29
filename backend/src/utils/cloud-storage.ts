@@ -1,8 +1,8 @@
 import { v2 as cloudinary } from "cloudinary";
 import { v4 as uuidv4 } from "uuid";
-import { CustomError } from "../errors/CustomError";
+import CustomError from "../errors/CustomError";
 import { HttpResCode, HttpResMsg } from "../constants/http-response.constants";
-import { env } from "../config/env.config";
+import env from "../config/env.config";
 import logger from "./logger.utils";
 
 cloudinary.config({

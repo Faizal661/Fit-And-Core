@@ -3,7 +3,7 @@ import { IAdminService } from "../Interface/IAdminService";
 import { IAdminRepository } from "../../repositories/Interface/IAdminRepository";
 import { FinanceData } from "../../types/finance.types";
 import { ISubscriptionRepository } from "../../repositories/Interface/ISubscriptionRepository";
-import { CustomError } from "../../errors/CustomError";
+import CustomError from "../../errors/CustomError";
 import { HttpResCode } from "../../constants/http-response.constants";
 
 @injectable()

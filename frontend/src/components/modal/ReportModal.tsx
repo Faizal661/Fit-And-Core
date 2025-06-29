@@ -2,10 +2,10 @@ import { motion } from "framer-motion";
 import { X, Flag, Send } from "lucide-react";
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { submitReport } from "../../../services/session/reportService";
-import { SubmitReportData } from "../../../types/report.types";
-import { useToast } from "../../../context/ToastContext";
-import { spinner } from "../Spinner";
+import { submitReport } from "../../services/session/reportService";
+import { SubmitReportData } from "../../types/report.types";
+import { useToast } from "../../context/ToastContext";
+import { spinner } from "../shared/Spinner";
 
 interface ReportModalProps {
   isOpen: boolean;

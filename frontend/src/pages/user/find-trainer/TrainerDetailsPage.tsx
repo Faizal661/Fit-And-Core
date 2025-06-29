@@ -4,7 +4,7 @@ import { useMutation } from "@tanstack/react-query";
 import { Trainer } from "../../../types/trainer.type";
 import { useToast } from "../../../context/ToastContext";
 import Footer from "../../../components/shared/Footer";
-import PageNotFound from "../../../components/shared/PageNotFound";
+import PageNotFound from "../../../components/shared/error/PageNotFound";
 import {
   SubscriptionStatus,
   subscriptionPlans,

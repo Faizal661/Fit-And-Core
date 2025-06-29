@@ -6,7 +6,7 @@ import {
 import { IVideoSession } from "../../types/session.types";
 import { BaseRepository } from "./base.repository";
 import { IVideoSessionRepository } from "../Interface/IVideoSessionRepository";
-import { CustomError } from "../../errors/CustomError";
+import CustomError from "../../errors/CustomError";
 import { HttpResCode } from "../../constants/http-response.constants";
 
 @injectable()

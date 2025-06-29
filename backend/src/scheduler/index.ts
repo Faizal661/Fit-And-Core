@@ -5,7 +5,7 @@ import { NotificationService } from "../services/Implementation/notification.ser
 import { ISessionService } from "../services/Interface/ISessionService"; 
 import { ISubscriptionService } from "../services/Interface/ISubscriptionService";
 
-export const setupScheduledJobs = () => {
+const setupScheduledJobs = () => {
   const notificationService = container.resolve<NotificationService>(
     "NotificationService"
   );
@@ -90,3 +90,5 @@ export const setupScheduledJobs = () => {
   console.log(`Scheduled Jobs set  ✅`);
   
 };
+
+export default setupScheduledJobs;

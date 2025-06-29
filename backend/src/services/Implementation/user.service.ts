@@ -15,7 +15,7 @@ import {
 } from "../../utils/cloud-storage";
 import bcrypt from "bcryptjs";
 import logger from "../../utils/logger.utils";
-import { CustomError } from "../../errors/CustomError";
+import CustomError from "../../errors/CustomError";
 import { IUserModel } from "../../models/user.models";
 import {
   HttpResCode,

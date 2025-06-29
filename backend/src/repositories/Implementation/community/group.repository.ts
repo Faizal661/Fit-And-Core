@@ -1,5 +1,5 @@
 import { HttpResCode } from "../../../constants/http-response.constants";
-import { CustomError } from "../../../errors/CustomError";
+import CustomError from "../../../errors/CustomError";
 import {
   GroupModel,
   IGroupModel,

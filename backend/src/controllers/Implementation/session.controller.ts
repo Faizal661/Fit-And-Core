@@ -5,7 +5,7 @@ import {
   HttpResMsg,
 } from "../../constants/http-response.constants";
 import { sendResponse } from "../../utils/send-response";
-import { CustomError } from "../../errors/CustomError";
+import CustomError from "../../errors/CustomError";
 import { ISessionController } from "../Interface/ISessionController";
 import { ISessionService } from "../../services/Interface/ISessionService";
 import { Types } from "mongoose";

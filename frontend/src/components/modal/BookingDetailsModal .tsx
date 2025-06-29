@@ -13,7 +13,7 @@ import {
   RotateCcw,
   Video,
 } from "lucide-react";
-import { fetchBookingDetails } from "../../../services/session/BookingService";
+import { fetchBookingDetails } from "../../services/session/BookingService";
 
 interface BookingDetailsModalProps {
   bookingId: string;

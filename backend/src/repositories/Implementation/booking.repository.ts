@@ -6,7 +6,7 @@ import BookingModel, {
 import { IBookingRepository } from "../Interface/IBookingRepository";
 import { Types } from "mongoose";
 import { BookingDetails } from "../../types/booking.types";
-import { CustomError } from "../../errors/CustomError";
+import CustomError from "../../errors/CustomError";
 import { HttpResCode } from "../../constants/http-response.constants";
 
 @injectable()
