@@ -30,6 +30,8 @@ import {
   Star,
   ChevronRight,
 } from "lucide-react";
+import Loader from "../../../components/shared/Loader";
+import { ReviewsSection } from "../../../components/reviews/ReviewsSection";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PK);
 
@@ -94,14 +96,7 @@ const TrainerDetailsPage = () => {
   });
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-t-blue-600 border-blue-200 rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading trainer details...</p>
-        </div>
-      </div>
-    );
+    return <Loader message="Loading trainer details..." />;
   }
 
   if (!trainer) {
@@ -164,9 +159,9 @@ const TrainerDetailsPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-800 overflow-hidden">
+    <div className="min-h-screen bg-gray-50 text-gray-800">
       {/* Hero Section */}
-      <div className="relative py-24 bg-gradient-to-r from-blue-600/90 to-purple-600/90">
+      <div className="relative py-16 bg-gradient-to-r from-blue-600/90 to-purple-600/90">
         <div
           className="absolute inset-0 bg-black/10 z-0 opacity-30"
           style={{
@@ -180,24 +175,24 @@ const TrainerDetailsPage = () => {
           initial="hidden"
           animate={inView ? "visible" : "hidden"}
           variants={staggerContainer}
-          className="relative z-10 max-w-4xl mx-auto px-6 text-center"
+          className="relative z-10 max-w-6xl mx-auto px-6 text-center"
         >
-          <div className="mb-8">
+          <div className="mb-6">
             <img
               src={trainer.profilePicture}
               alt={trainer.username}
-              className="w-32 h-32 rounded-full border-4 border-white/20 mx-auto object-cover shadow-xl"
+              className="w-24 h-24 rounded-full border-4 border-white/20 mx-auto object-cover shadow-xl"
             />
           </div>
           <motion.h1
             variants={fadeIn}
-            className="text-4xl md:text-5xl font-bold text-white mb-4"
+            className="text-3xl md:text-4xl font-bold text-white mb-4"
           >
             {trainer.username}
           </motion.h1>
           <motion.div
             variants={fadeIn}
-            className="w-20 h-1 bg-white/30 mx-auto mb-6 rounded-full"
+            className="w-20 h-1 bg-white/30 mx-auto mb-4 rounded-full"
           ></motion.div>
           <motion.div
             variants={fadeIn}
@@ -215,227 +210,261 @@ const TrainerDetailsPage = () => {
         </motion.div>
       </div>
 
-      {/* Main Content */}
-      <div className="max-w-4xl mx-auto px-6 -mt-16 relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-xl shadow-xl border border-gray-100 p-8 mb-16"
-        >
-          {/* Contact Info */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-            <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
-              <Mail className="text-blue-600" size={24} />
-              <div>
-                <p className="text-sm text-gray-500">Email</p>
-                <p className="font-medium">{trainer.email}</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
-              <Phone className="text-emerald-600" size={24} />
-              <div>
-                <p className="text-sm text-gray-500">Phone</p>
-                <p className="font-medium">{trainer.phone}</p>
-              </div>
-            </div>
-          </div>
-
-          {/* About Section */}
-          <div className="mb-12">
-            <h2 className="text-2xl font-bold mb-6">About Me</h2>
-            <p className="text-gray-600 leading-relaxed">{trainer.about}</p>
-          </div>
-
-          {/* Documents & Certifications */}
-          <div className="space-y-12 mb-12">
-            {trainer.documentProofs && trainer.documentProofs.length > 0 && (
-              <div>
-                <div className="flex items-center gap-3 mb-6">
-                  <FileText className="text-blue-600" size={24} />
-                  <h2 className="text-2xl font-bold">Document Proofs</h2>
+      {/* Main Content with New Layout */}
+      <div className="max-w-6xl mx-auto px-6 -mt-8  mb-10 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Left Column - About and Plans */}
+          <div className="lg:col-span-2 space-y-8">
+            {/* Trainer Info Card */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-white rounded-xl shadow-lg border border-gray-100 p-6"
+            >
+              {/* Contact Info */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg">
+                  <Mail className="text-blue-600" size={20} />
+                  <div>
+                    <p className="text-sm text-gray-500">Email</p>
+                    <p className="font-medium text-sm">{trainer.email}</p>
+                  </div>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                  {trainer.documentProofs.map((proof, index) => (
-                    <motion.div
-                      key={index}
-                      whileHover={{ y: -5 }}
-                      className="overflow-hidden rounded-xl shadow-lg border border-gray-100"
-                    >
-                      <img
-                        src={proof}
-                        alt={`Document proof ${index + 1}`}
-                        className="w-full h-48 object-cover cursor-pointer transition-transform duration-300 hover:scale-110"
-                        onClick={() => window.open(proof, "_blank")}
-                      />
-                    </motion.div>
-                  ))}
+                <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg">
+                  <Phone className="text-emerald-600" size={20} />
+                  <div>
+                    <p className="text-sm text-gray-500">Phone</p>
+                    <p className="font-medium text-sm">{trainer.phone}</p>
+                  </div>
                 </div>
               </div>
-            )}
 
-            {trainer.certifications && trainer.certifications.length > 0 && (
-              <div>
-                <div className="flex items-center gap-3 mb-6">
-                  <Award className="text-purple-600" size={24} />
-                  <h2 className="text-2xl font-bold">Certifications</h2>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                  {trainer.certifications.map((cert, index) => (
-                    <motion.div
-                      key={index}
-                      whileHover={{ y: -5 }}
-                      className="overflow-hidden rounded-xl shadow-lg border border-gray-100"
-                    >
-                      <img
-                        src={cert}
-                        alt={`Certification ${index + 1}`}
-                        className="w-full h-48 object-cover cursor-pointer transition-transform duration-300 hover:scale-110"
-                        onClick={() => window.open(cert, "_blank")}
-                      />
-                    </motion.div>
-                  ))}
-                </div>
+              {/* About Section */}
+              <div className="mb-8">
+                <h2 className="text-xl font-bold mb-4">About Me</h2>
+                <p className="text-gray-600 leading-relaxed">{trainer.about}</p>
               </div>
-            )}
+            </motion.div>
 
-            {trainer.achievements && trainer.achievements.length > 0 && (
-              <div>
-                <div className="flex items-center gap-3 mb-6">
-                  <Star className="text-amber-600" size={24} />
-                  <h2 className="text-2xl font-bold">Achievements</h2>
+            {/* Subscription Plans - Moved to left bottom */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="bg-white rounded-xl shadow-lg border border-gray-100 p-6"
+            >
+              <h2 className="text-xl font-bold mb-6">Training Plans</h2>
+
+              {subscriptionLoading ? (
+                <div className="text-center py-8">
+                  <div className="w-8 h-8 border-4 border-t-blue-600 border-blue-200 rounded-full animate-spin mx-auto mb-4"></div>
+                  <p className="text-gray-600 text-sm">Loading plans...</p>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                  {trainer.achievements.map((achieve, index) => (
-                    <motion.div
-                      key={index}
-                      whileHover={{ y: -5 }}
-                      className="overflow-hidden rounded-xl shadow-lg border border-gray-100"
-                    >
-                      <img
-                        src={achieve}
-                        alt={`Achievement ${index + 1}`}
-                        className="w-full h-48 object-cover cursor-pointer transition-transform duration-300 hover:scale-110"
-                        onClick={() => window.open(achieve, "_blank")}
-                      />
-                    </motion.div>
-                  ))}
+              ) : subscriptionError ? (
+                <div className="text-center py-8 bg-red-50 rounded-lg border border-red-100">
+                  <p className="text-red-600 text-sm">
+                    Failed to load subscription plans. Please try again later.
+                  </p>
                 </div>
-              </div>
-            )}
-          </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {subscriptionPlans.map((plan, index) => {
+                    const isCurrentPlan =
+                      subscriptionData?.isSubscribed &&
+                      plan.duration ===
+                        subscriptionData.subscription?.planDuration;
 
-          {/* Subscription Plans */}
-          {subscriptionLoading ? (
-            <div className="text-center py-8">
-              <div className="w-12 h-12 border-4 border-t-blue-600 border-blue-200 rounded-full animate-spin mx-auto mb-4"></div>
-              <p className="text-gray-600">Loading subscription plans...</p>
-            </div>
-          ) : subscriptionError ? (
-            <div className="text-center py-8 bg-red-50 rounded-xl border border-red-100">
-              <p className="text-red-600">
-                Failed to load subscription plans. Please try again later.
-              </p>
-            </div>
-          ) : (
-            <div>
-              <h2 className="text-2xl font-bold mb-8">Training Plans</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {subscriptionPlans.map((plan, index) => {
-                  const isCurrentPlan =
-                    subscriptionData?.isSubscribed &&
-                    plan.duration ===
-                      subscriptionData.subscription?.planDuration;
+                    return (
+                      <motion.div
+                        key={plan.duration}
+                        whileHover={!isCurrentPlan ? { y: -2 } : {}}
+                        className={`rounded-lg border ${
+                          isCurrentPlan
+                            ? "bg-green-50 border-green-200"
+                            : "border-gray-200 hover:border-blue-200"
+                        } p-4 relative overflow-hidden ${
+                          index === 1 ? "ring-2 ring-blue-100" : ""
+                        }`}
+                      >
+                        {index === 1 && !subscriptionData?.isSubscribed && (
+                          <div className="absolute top-0 right-0 bg-gradient-to-r from-blue-600 to-purple-600 text-white text-xs py-1 px-2 rounded-bl-lg">
+                            Popular
+                          </div>
+                        )}
+                        {isCurrentPlan && (
+                          <div className="absolute top-0 right-0 bg-green-600 text-white text-xs py-1 px-2 rounded-bl-lg">
+                            Current
+                          </div>
+                        )}
 
-                  return (
-                    <motion.div
-                      key={plan.duration}
-                      whileHover={!isCurrentPlan ? { y: -5 } : {}}
-                      className={`rounded-xl border ${
-                        isCurrentPlan
-                          ? "bg-green-50 border-green-200"
-                          : "border-gray-200 hover:border-blue-200"
-                      } p-6 relative overflow-hidden`}
-                    >
-                      {index === 1 && !subscriptionData?.isSubscribed && (
-                        <div className="absolute top-0 right-0 bg-gradient-to-r from-blue-600 to-purple-600 text-white text-xs py-1 px-3 rounded-bl-lg">
-                          Popular
+                        <h3 className="font-bold mb-2 text-xl">{plan.duration}</h3>
+                        <div className="mb-3">
+                          <span className="text-3xl font-bold">
+                            {plan.amount}
+                          </span>
                         </div>
-                      )}
-                      {isCurrentPlan && (
-                        <div className="absolute top-0 right-0 bg-green-600 text-white text-xs py-1 px-3 rounded-bl-lg">
-                          Current Plan
-                        </div>
-                      )}
 
-                      <h3 className="text-xl font-bold mb-2">
-                        {plan.duration}
-                      </h3>
-                      <div className="mb-4">
-                        <span className="text-3xl font-bold">
-                          {plan.amount}
-                        </span>
-                      </div>
-
-                      <div className="mb-4 inline-block ">
-                        {plan.savings > 0 && (
-                          <span className="px-3 py-1 bg-green-100 text-green-700 text-sm font-medium rounded-full">
+                        <div className="mb-3">
+                          <span className={`px-2 py-1 bg-green-100 text-green-700 text-sm font-medium ${plan.savings > 0 ? "" : "invisible"} rounded-full`}>
                             Save ₹{plan.savings}
                           </span>
-                        )}
-                      </div>
-
-                      <div className="space-y-3 mb-6">
-                        <div className="flex items-start gap-2">
-                          <ChevronRight
-                            size={18}
-                            className="text-green-500 flex-shrink-0 mt-0.5"
-                          />
-                          <span className="text-sm text-gray-600">
-                            Up to {plan.sessions} Video call consultations
-                          </span>
                         </div>
-                        {features.map((feature, idx) => (
-                          <div key={idx} className="flex items-start gap-2">
+
+                        <div className="space-y-2 mb-4">
+                          <div className="flex items-start gap-2">
                             <ChevronRight
-                              size={18}
+                              size={14}
                               className="text-green-500 flex-shrink-0 mt-0.5"
                             />
                             <span className="text-sm text-gray-600">
-                              {feature}
+                              {plan.sessions} consultations
                             </span>
                           </div>
+                          {features.map((feature, idx) => (
+                            <div key={idx} className="flex items-start gap-2">
+                              <ChevronRight
+                                size={14}
+                                className="text-green-500 flex-shrink-0 mt-0.5"
+                              />
+                              <span className="text-sm text-gray-600">
+                                {feature}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+
+                        <motion.button
+                          whileHover={!isCurrentPlan ? { scale: 1.02 } : {}}
+                          whileTap={!isCurrentPlan ? { scale: 0.98 } : {}}
+                          disabled={isCurrentPlan || checkoutMutation.isPending}
+                          onClick={() => handleSubscription(plan)}
+                          className={`w-full py-2 px-4 rounded-lg text-sm font-medium transition-all duration-300 ${
+                            isCurrentPlan
+                              ? "bg-green-600 text-white cursor-not-allowed"
+                              : "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg hover:shadow-blue-500/25"
+                          } ${
+                            checkoutMutation.isPending ? "cursor-progress" : ""
+                          }`}
+                        >
+                          {isCurrentPlan
+                            ? "Current Plan"
+                            : subscriptionData?.isSubscribed
+                            ? "Upgrade"
+                            : "Choose Plan"}
+                        </motion.button>
+                      </motion.div>
+                    );
+                  })}
+                </div>
+              )}
+            </motion.div>
+
+            {/* Reviews Section - Below Plans */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+            >
+              <ReviewsSection
+                trainerId={trainer._id}
+                isSubscribed={subscriptionData?.isSubscribed || false}
+              />
+            </motion.div>
+          </div>
+
+          {/* Right Column - Certifications and Images */}
+          <div className="lg:col-span-1 space-y-8">
+            {/* Documents & Certifications */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="bg-white rounded-xl shadow-lg border border-gray-100 p-6 sticky top-6"
+            >
+              <div className="space-y-8">
+                {trainer.documentProofs &&
+                  trainer.documentProofs.length > 0 && (
+                    <div>
+                      <div className="flex items-center gap-3 mb-4">
+                        <FileText className="text-blue-600" size={20} />
+                        <h2 className="text-xl font-bold">Document Proofs</h2>
+                      </div>
+                      <div className="grid grid-cols-2 gap-3">
+                        {trainer.documentProofs.map((proof, index) => (
+                          <motion.div
+                            key={index}
+                            whileHover={{ y: -2 }}
+                            className="overflow-hidden rounded-lg shadow-md border border-gray-100"
+                          >
+                            <img
+                              src={proof}
+                              alt={`Document proof ${index + 1}`}
+                              className="w-full h-32 object-cover cursor-pointer transition-transform duration-300 hover:scale-105"
+                              onClick={() => window.open(proof, "_blank")}
+                            />
+                          </motion.div>
                         ))}
                       </div>
+                    </div>
+                  )}
 
-                      <motion.button
-                        whileHover={!isCurrentPlan ? { scale: 1.02 } : {}}
-                        whileTap={!isCurrentPlan ? { scale: 0.98 } : {}}
-                        disabled={isCurrentPlan || checkoutMutation.isPending}
-                        onClick={() => handleSubscription(plan)}
-                        className={`w-full py-3 px-6 rounded-lg font-medium transition-all duration-300 ${
-                          isCurrentPlan
-                            ? "bg-green-600 text-white cursor-not-allowed"
-                            : "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg hover:shadow-blue-500/25"
-                        } ${
-                          checkoutMutation.isPending ? "cursor-progress" : ""
-                        }`}
-                      >
-                        {isCurrentPlan
-                          ? "Current Plan"
-                          : subscriptionData?.isSubscribed
-                          ? "Upgrade Plan"
-                          : "Choose Plan"}
-                      </motion.button>
-                    </motion.div>
-                  );
-                })}
+                {trainer.certifications &&
+                  trainer.certifications.length > 0 && (
+                    <div>
+                      <div className="flex items-center gap-3 mb-4">
+                        <Award className="text-purple-600" size={20} />
+                        <h2 className="text-xl font-bold">Certifications</h2>
+                      </div>
+                      <div className="grid grid-cols-2 gap-3">
+                        {trainer.certifications.map((cert, index) => (
+                          <motion.div
+                            key={index}
+                            whileHover={{ y: -2 }}
+                            className="overflow-hidden rounded-lg shadow-md border border-gray-100"
+                          >
+                            <img
+                              src={cert}
+                              alt={`Certification ${index + 1}`}
+                              className="w-full h-32 object-cover cursor-pointer transition-transform duration-300 hover:scale-105"
+                              onClick={() => window.open(cert, "_blank")}
+                            />
+                          </motion.div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                {trainer.achievements && trainer.achievements.length > 0 && (
+                  <div>
+                    <div className="flex items-center gap-3 mb-4">
+                      <Star className="text-amber-600" size={20} />
+                      <h2 className="text-xl font-bold">Achievements</h2>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      {trainer.achievements.map((achieve, index) => (
+                        <motion.div
+                          key={index}
+                          whileHover={{ y: -2 }}
+                          className="overflow-hidden rounded-lg shadow-md border border-gray-100"
+                        >
+                          <img
+                            src={achieve}
+                            alt={`Achievement ${index + 1}`}
+                            className="w-full h-32 object-cover cursor-pointer transition-transform duration-300 hover:scale-105"
+                            onClick={() => window.open(achieve, "_blank")}
+                          />
+                        </motion.div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
-            </div>
-          )}
-        </motion.div>
+            </motion.div>
+          </div>
+        </div>
       </div>
 
       <Footer />
+      
     </div>
   );
 };
