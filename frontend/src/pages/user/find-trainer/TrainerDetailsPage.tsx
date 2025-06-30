@@ -32,6 +32,8 @@ import {
 } from "lucide-react";
 import Loader from "../../../components/shared/Loader";
 import { ReviewsSection } from "../../../components/reviews/ReviewsSection";
+import { useState } from "react";
+import ImageViewModal from "../../../components/modal/ImageViewModal";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PK);
 
@@ -60,6 +62,11 @@ const staggerContainer = {
 
 const TrainerDetailsPage = () => {
   const { trainerId } = useParams<{ trainerId: string }>();
+  const [currentImageUrl, setCurrentImageUrl] = useState<string | null>(null);
+  const handleViewImage = (url: string) => {
+    setCurrentImageUrl(url);
+  };
+
   const { showToast } = useToast();
   const [ref, inView] = useInView({
     triggerOnce: true,
@@ -182,6 +189,7 @@ const TrainerDetailsPage = () => {
               src={trainer.profilePicture}
               alt={trainer.username}
               className="w-24 h-24 rounded-full border-4 border-white/20 mx-auto object-cover shadow-xl"
+              onClick={() => handleViewImage(trainer.profilePicture)}
             />
           </div>
           <motion.h1
@@ -297,7 +305,9 @@ const TrainerDetailsPage = () => {
                           </div>
                         )}
 
-                        <h3 className="font-bold mb-2 text-xl">{plan.duration}</h3>
+                        <h3 className="font-bold mb-2 text-xl">
+                          {plan.duration}
+                        </h3>
                         <div className="mb-3">
                           <span className="text-3xl font-bold">
                             {plan.amount}
@@ -305,7 +315,11 @@ const TrainerDetailsPage = () => {
                         </div>
 
                         <div className="mb-3">
-                          <span className={`px-2 py-1 bg-green-100 text-green-700 text-sm font-medium ${plan.savings > 0 ? "" : "invisible"} rounded-full`}>
+                          <span
+                            className={`px-2 py-1 bg-green-100 text-green-700 text-sm font-medium ${
+                              plan.savings > 0 ? "" : "invisible"
+                            } rounded-full`}
+                          >
                             Save ₹{plan.savings}
                           </span>
                         </div>
@@ -399,7 +413,7 @@ const TrainerDetailsPage = () => {
                               src={proof}
                               alt={`Document proof ${index + 1}`}
                               className="w-full h-32 object-cover cursor-pointer transition-transform duration-300 hover:scale-105"
-                              onClick={() => window.open(proof, "_blank")}
+                              onClick={() => handleViewImage(proof)}
                             />
                           </motion.div>
                         ))}
@@ -425,7 +439,7 @@ const TrainerDetailsPage = () => {
                               src={cert}
                               alt={`Certification ${index + 1}`}
                               className="w-full h-32 object-cover cursor-pointer transition-transform duration-300 hover:scale-105"
-                              onClick={() => window.open(cert, "_blank")}
+                              onClick={() => handleViewImage(cert)}
                             />
                           </motion.div>
                         ))}
@@ -450,7 +464,7 @@ const TrainerDetailsPage = () => {
                             src={achieve}
                             alt={`Achievement ${index + 1}`}
                             className="w-full h-32 object-cover cursor-pointer transition-transform duration-300 hover:scale-105"
-                            onClick={() => window.open(achieve, "_blank")}
+                            onClick={() => handleViewImage(achieve)}
                           />
                         </motion.div>
                       ))}
@@ -464,7 +478,11 @@ const TrainerDetailsPage = () => {
       </div>
 
       <Footer />
-      
+      {/* The modal component */}
+      <ImageViewModal
+        imageUrl={currentImageUrl}
+        onClose={() => setCurrentImageUrl(null)}
+      />
     </div>
   );
 };
