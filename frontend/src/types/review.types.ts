@@ -1,5 +1,6 @@
 export interface Review {
   _id: string;
+  userId: string;
   username: string;
   trainerId: string;
   profilePicture: string;
@@ -19,8 +20,18 @@ export interface SubmitReviewData {
   comment: string;
 }
 
-export interface ReviewsData {
-  reviews: Review[];
+export interface RatingDistribution {
   averageRating: number;
   totalReviews: number;
+  fiveStarCount: number;
+  fourStarCount: number;
+  threeStarCount: number;
+  twoStarCount: number;
+  oneStarCount: number;
+}
+
+export interface ReviewsData {
+  reviews: Review[];
+  myReview: Review | null;
+  ratingDistribution: RatingDistribution;
 }

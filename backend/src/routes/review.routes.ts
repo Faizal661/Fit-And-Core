@@ -22,7 +22,10 @@ router
   )
   .get(...userAccess, (req, res, next) =>
     reviewController.getTrainerReviews(req, res, next)
-  )
+  );
+
+router
+  .route("/:reviewId")
   .patch(...userAccess, (req, res, next) =>
     reviewController.updateReview(req, res, next)
   )

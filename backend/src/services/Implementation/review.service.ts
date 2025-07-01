@@ -24,6 +24,7 @@ export interface ReviewDocument extends Document {
 }
 
 export interface TransformedReview {
+  userId: string;
   username: string;
   profilePicture: string;
   _id: Types.ObjectId;
@@ -34,7 +35,15 @@ export interface TransformedReview {
   updatedAt: Date;
   __v: number;
 }
-
+export interface RatingDistribution {
+  averageRating: number;
+  totalReviews: number;
+  fiveStarCount: number;
+  fourStarCount: number;
+  threeStarCount: number;
+  twoStarCount: number;
+  oneStarCount: number;
+}
 @injectable()
 export class ReviewService implements IReviewService {
   constructor(
@@ -67,15 +76,44 @@ export class ReviewService implements IReviewService {
   }
 
   async getTrainerReviews(
+    userId: Types.ObjectId,
     trainerId: Types.ObjectId,
     page = 1,
     limit = 10
   ): Promise<{
+    myReview: TransformedReview | null;
     reviews: TransformedReview[];
-    averageRating: number;
-    totalReviews: number;
+    ratingDistribution: RatingDistribution;
   }> {
+    const myReview = (await this.reviewRepository.getMyReview(
+      userId,
+      trainerId
+    )) as ReviewDocument;
+
+    const transformedMyReview: TransformedReview | null = myReview
+      ? {
+          userId: myReview.userId.toString(),
+          username:
+            typeof myReview.userId === "object" && "username" in myReview.userId
+              ? myReview.userId.username
+              : "",
+          profilePicture:
+            typeof myReview.userId === "object" &&
+            "profilePicture" in myReview.userId
+              ? myReview.userId.profilePicture
+              : "",
+          _id: myReview._id,
+          trainerId: myReview.trainerId,
+          rating: myReview.rating,
+          comment: myReview.comment,
+          createdAt: myReview.createdAt,
+          updatedAt: myReview.updatedAt,
+          __v: myReview.__v,
+        }
+      : null;
+
     const reviews = (await this.reviewRepository.getReviewsByTrainer(
+      userId,
       trainerId,
       page,
       limit
@@ -83,22 +121,26 @@ export class ReviewService implements IReviewService {
 
     const stats = await this.reviewRepository.getAverageRating(trainerId);
 
-    const transformedReviews: TransformedReview[] = reviews.map((rawReview) => {
-      const review = rawReview.toObject ? rawReview.toObject() : rawReview;
-      const { userId, ...restOfReview } = review;
-      const { username, profilePicture } = userId;
+    const allReviews = [myReview, ...reviews];
+    const transformedReviews: TransformedReview[] = allReviews.map(
+      (rawReview) => {
+        const review = rawReview.toObject ? rawReview.toObject() : rawReview;
+        const { userId, ...restOfReview } = review;
+        const { username, profilePicture, _id } = userId;
 
-      return {
-        username,
-        profilePicture,
-        ...restOfReview,
-      };
-    });
+        return {
+          userId: _id.toString(),
+          username,
+          profilePicture,
+          ...restOfReview,
+        };
+      }
+    );
 
     return {
       reviews: transformedReviews,
-      averageRating: stats.averageRating,
-      totalReviews: stats.count,
+      myReview: transformedMyReview,
+      ratingDistribution: stats
     };
   }
 

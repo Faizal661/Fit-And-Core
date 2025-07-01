@@ -1,6 +1,6 @@
 import { Types } from "mongoose";
 import { IReviewModel } from "../../models/review.models";
-import { TransformedReview } from "../Implementation/review.service";
+import { RatingDistribution, TransformedReview } from "../Implementation/review.service";
 
 export interface IReviewService {
   submitReview(
@@ -10,19 +10,20 @@ export interface IReviewService {
     comment: string
   ): Promise<IReviewModel>;
   getTrainerReviews(
+    userId: Types.ObjectId,
     trainerId: Types.ObjectId,
     page: number,
     limit: number
   ): Promise<{
+    myReview: TransformedReview | null;
     reviews: TransformedReview[];
-    averageRating: number;
-    totalReviews: number;
+    ratingDistribution: RatingDistribution;
   }>;
   updateUserReview(
     userId: Types.ObjectId,
     reviewId: Types.ObjectId,
     updateData: Partial<IReviewModel>
-  ): Promise<IReviewModel|null>;
+  ): Promise<IReviewModel | null>;
   deleteUserReview(
     userId: Types.ObjectId,
     reviewId: Types.ObjectId

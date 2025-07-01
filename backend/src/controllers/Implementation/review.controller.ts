@@ -37,6 +37,7 @@ export class ReviewController implements IReviewController {
     try {
       const { page = 1, limit = 10, trainerId } = req.query;
       const result = await this.reviewService.getTrainerReviews(
+        new Types.ObjectId(req.decoded?.id),
         new Types.ObjectId(trainerId as string),
         Number(page),
         Number(limit)
