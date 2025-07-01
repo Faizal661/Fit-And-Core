@@ -4,55 +4,12 @@ import { motion } from "framer-motion";
 import { Star } from "lucide-react";
 import { useToast } from "../../context/ToastContext";
 import { formatDate } from "../../utils/dateFormat";
-
-interface Review {
-  _id: string;
-  userId: string;
-  userName: string;
-  rating: number;
-  comment: string;
-  createdAt: string;
-}
-
-interface ReviewsSectionProps {
-  trainerId: string;
-  isSubscribed: boolean;
-}
-
-// Mock service functions - replace with your actual API calls
-const getTrainerReviews = async (trainerId: string): Promise<Review[]> => {
-  console.log("🚀 ~ getTrainerReviews ~ trainerId:", trainerId);
-  // Mock data for demonstration
-  return [
-    {
-      _id: "1",
-      userId: "user1",
-      userName: "John Doe",
-      rating: 5,
-      comment: "Excellent trainer! Very knowledgeable and supportive.",
-      createdAt: "2024-01-15T10:30:00Z",
-    },
-    {
-      _id: "2",
-      userId: "user2",
-      userName: "Sarah Johnson",
-      rating: 4,
-      comment:
-        "Great experience overall. Really helped me reach my fitness goals.",
-      createdAt: "2024-01-10T14:20:00Z",
-    },
-  ];
-};
-
-const submitReview = async (data: {
-  trainerId: string;
-  rating: number;
-  comment: string;
-}) => {
-  // Mock API call - replace with actual implementation
-  console.log("Submitting review:", data);
-  return { success: true };
-};
+import {
+  getTrainerReviews,
+  submitReview,
+} from "../../services/reviews/reviewService";
+import { ReviewsSectionProps } from "../../types/review.types";
+import ImageViewModal from "../modal/ImageViewModal";
 
 export const ReviewsSection = ({
   trainerId,
@@ -61,11 +18,12 @@ export const ReviewsSection = ({
   const [newRating, setNewRating] = useState(0);
   const [newComment, setNewComment] = useState("");
   const [hoveredStar, setHoveredStar] = useState(0);
+  const [currentImageUrl, setCurrentImageUrl] = useState<string | null>(null);
   const { showToast } = useToast();
   const queryClient = useQueryClient();
 
-  const { data: reviews = [], isLoading } = useQuery({
-    queryKey: ["reviews", trainerId],
+  const { data: reviewsData, isLoading } = useQuery({
+    queryKey: ["reviewsData", trainerId],
     queryFn: () => getTrainerReviews(trainerId),
   });
 
@@ -75,7 +33,7 @@ export const ReviewsSection = ({
       showToast("success", "Review submitted successfully!");
       setNewRating(0);
       setNewComment("");
-      queryClient.invalidateQueries({ queryKey: ["reviews", trainerId] });
+      queryClient.invalidateQueries({ queryKey: ["reviewsData", trainerId] });
     },
     onError: () => {
       showToast("error", "Failed to submit review. Please try again.");
@@ -99,11 +57,7 @@ export const ReviewsSection = ({
     });
   };
 
-  const averageRating =
-    reviews.length > 0
-      ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length
-      : 0;
-
+  const averageRating = reviewsData?.averageRating || 0;
 
   return (
     <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-6">
@@ -130,14 +84,19 @@ export const ReviewsSection = ({
               ))}
             </div>
             <div className="text-sm text-gray-600">
-              {reviews.length} review{reviews.length !== 1 ? "s" : ""}
+              {reviewsData?.totalReviews} review
+              {reviewsData?.totalReviews !== 1 ? "s" : ""}
             </div>
           </div>
           <div className="flex-1">
             {[5, 4, 3, 2, 1].map((rating) => {
-              const count = reviews.filter((r) => r.rating === rating).length;
+              const count =
+                reviewsData?.reviews.filter((r) => r.rating === rating)
+                  .length ?? 0;
               const percentage =
-                reviews.length > 0 ? (count / reviews.length) * 100 : 0;
+                (reviewsData?.totalReviews ?? 0) > 0
+                  ? (count / (reviewsData?.totalReviews ?? 1)) * 100
+                  : 0;
               return (
                 <div key={rating} className="flex items-center gap-2 text-sm">
                   <span className="w-8">{rating}</span>
@@ -222,22 +181,30 @@ export const ReviewsSection = ({
             <div className="w-8 h-8 border-4 border-t-blue-600 border-blue-200 rounded-full animate-spin mx-auto mb-4"></div>
             <p className="text-gray-600">Loading reviews...</p>
           </div>
-        ) : reviews.length === 0 ? (
+        ) : reviewsData?.reviews.length === 0 ? (
           <div className="text-center py-8 text-gray-500">
             <Star size={48} className="mx-auto mb-4 text-gray-300" />
             <p>No reviews yet. Be the first to review this trainer!</p>
           </div>
         ) : (
-          reviews.map((review) => (
+          reviewsData?.reviews.map((review) => (
             <motion.div
               key={review._id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               className="border border-gray-100 rounded-lg p-4 hover:shadow-md transition-shadow duration-200"
             >
-              <div className="flex items-start justify-between mb-2">
-                <div>
-                  <h4 className="font-medium">{review.userName}</h4>
+              <div className="flex items-start gap-4 mb-2">
+                {review.profilePicture && (
+                  <img
+                    src={review.profilePicture}
+                    alt={`${review.username}'s profile`}
+                    className="size-10 rounded-full object-cover border border-gray-200 hover:cursor-pointer"
+                    onClick={() => setCurrentImageUrl(review.profilePicture)}
+                  />
+                )}
+                <div className="flex-1">
+                  <h4 className="font-medium">{review.username}</h4>
                   <div className="flex items-center gap-2 mt-1">
                     <div className="flex">
                       {[1, 2, 3, 4, 5].map((star) => (
@@ -262,6 +229,11 @@ export const ReviewsSection = ({
             </motion.div>
           ))
         )}
+
+        <ImageViewModal
+          imageUrl={currentImageUrl}
+          onClose={() => setCurrentImageUrl(null)}
+        />
       </div>
     </div>
   );

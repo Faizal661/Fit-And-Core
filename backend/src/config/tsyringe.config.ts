@@ -114,6 +114,13 @@ import { WalletRepository } from "../repositories/Implementation/wallet.reposito
 import { WalletService } from "../services/Implementation/wallet.service";
 import { WalletController } from "../controllers/Implementation/wallet.controller";
 
+import { IReviewController } from "../controllers/Interface/IReviewController";
+import { IReviewService } from "../services/Interface/IReviewService";
+import { IReviewRepository } from "../repositories/Interface/IReviewRepository";
+import { ReviewController } from "../controllers/Implementation/review.controller";
+import { ReviewService } from "../services/Implementation/review.service";
+import { ReviewRepository } from "../repositories/Implementation/review.repository";
+
 container.registerInstance('RedisClient', redisClient);
 container.registerInstance('SocketIOServer', Server);
 
@@ -184,3 +191,7 @@ container.register<MessageRepository>('MessageRepository', { useClass: MessageRe
 container.register<WalletRepository>('WalletRepository', { useClass: WalletRepository });
 container.register<WalletService>('WalletService', { useClass: WalletService });
 container.register<WalletController>('WalletController', { useClass: WalletController });
+
+container.register<IReviewController>("ReviewController", { useClass: ReviewController });
+container.register<IReviewService>("ReviewService", { useClass: ReviewService });
+container.register<IReviewRepository>("ReviewRepository", { useClass: ReviewRepository });  
