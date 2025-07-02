@@ -216,7 +216,14 @@ export default class TrainerController implements ITrainerController {
     next: NextFunction
   ): Promise<void> {
     try {
-      const approvedTrainers = await this.trainerService.getApprovedTrainers();
+      const { specialization, page, limit, searchTerm } = req.query;
+
+      const approvedTrainers = await this.trainerService.getApprovedTrainers(
+        specialization ? String(specialization) : "",
+        page ? Number(page) : 1,
+        limit ? Number(limit) : 10,
+        searchTerm ? String(searchTerm) : ""
+      );
 
       sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, {
         approvedTrainers,
@@ -254,16 +261,22 @@ export default class TrainerController implements ITrainerController {
         sendResponse(res, HttpResCode.BAD_REQUEST, HttpResMsg.BAD_REQUEST);
         return;
       }
-      const subscribedTrainers = await this.trainerService.getSubscribedTrainersDetails(userId);
-      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, { subscribedTrainers });
+      const subscribedTrainers =
+        await this.trainerService.getSubscribedTrainersDetails(userId);
+      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, {
+        subscribedTrainers,
+      });
     } catch (error) {
       next(error);
     }
   }
 
-  async getMyTrainees(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async getMyTrainees(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
     try {
-
       const userId = req.decoded?.id;
       if (!userId) {
         sendResponse(res, HttpResCode.UNAUTHORIZED, HttpResMsg.UNAUTHORIZED);
@@ -275,37 +288,50 @@ export default class TrainerController implements ITrainerController {
       const limitNum = parseInt(limit as string, 10);
 
       if (isNaN(pageNum) || isNaN(limitNum) || pageNum < 1 || limitNum < 1) {
-        throw new CustomError("Invalid pagination parameters", HttpResCode.BAD_REQUEST);
+        throw new CustomError(
+          "Invalid pagination parameters",
+          HttpResCode.BAD_REQUEST
+        );
       }
 
-      const result = await this.trainerService.getMyTrainees(pageNum, limitNum, search as string , userId);
+      const result = await this.trainerService.getMyTrainees(
+        pageNum,
+        limitNum,
+        search as string,
+        userId
+      );
       sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, result);
     } catch (error) {
       next(error);
     }
   }
 
-  async getTraineeDetails(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async getTraineeDetails(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
     try {
+      const trainerUserId = req.decoded?.id;
 
-      const trainerUserId =req.decoded?.id
-      
       if (!trainerUserId) {
         sendResponse(res, HttpResCode.UNAUTHORIZED, HttpResMsg.UNAUTHORIZED);
         return;
       }
 
-      const {traineeId} = req.params;
+      const { traineeId } = req.params;
       if (!traineeId) {
         sendResponse(res, HttpResCode.BAD_REQUEST, HttpResMsg.BAD_REQUEST);
         return;
       }
 
-      const result = await this.trainerService.getTraineeDetails(traineeId,trainerUserId);
-      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, {result});
+      const result = await this.trainerService.getTraineeDetails(
+        traineeId,
+        trainerUserId
+      );
+      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, { result });
     } catch (error) {
       next(error);
     }
   }
-
 }

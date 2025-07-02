@@ -12,6 +12,7 @@ import { rejectReasonSchema } from "../../schemas/trainerSchema";
 import { STATUS } from "../../constants/messages/status.messages";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
+import ImageViewModal from "../../components/modal/ImageViewModal";
 
 const fadeIn = {
   hidden: { opacity: 0, y: 10 },
@@ -722,29 +723,10 @@ const TrainerManage: React.FC = () => {
           </div>
         )}
 
-        {currentImageUrl && (
-          <motion.div
-            className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50"
-            initial="hidden"
-            animate="visible"
-            exit="hidden" // You can adjust exit animation as needed
-            variants={fadeIn}
-          >
-            <motion.div className="relative max-w-4xl max-h-[90vh]">
-              <button
-                onClick={() => setCurrentImageUrl(null)}
-                className="absolute -top-6 -right-8 bg-black bg-opacity-50 text-white w-8 h-8 rounded-full flex items-center justify-center hover:cursor-pointer focus:outline-none hover:ring-2 hover:ring-white"
-              >
-                ✕
-              </button>
-              <img
-                src={currentImageUrl}
-                alt="Document"
-                className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-md" // Added rounded-lg and shadow-md for consistency
-              />
-            </motion.div>
-          </motion.div>
-        )}
+        <ImageViewModal
+          imageUrl={currentImageUrl}
+          onClose={() => setCurrentImageUrl(null)}
+        />
       </div>
       <Footer />
     </motion.div>

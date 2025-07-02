@@ -1,12 +1,22 @@
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import { Trainer } from "../../../types/trainer.type";
+import {
+  SubscribedTrainerWithExpiry
+} from "../../../types/trainer.type";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
 import { motion } from "framer-motion";
-import { Users, MessageCircle, Calendar, ChevronRight, UserPlus, Clock } from "lucide-react";
+import {
+  Users,
+  MessageCircle,
+  Calendar,
+  ChevronRight,
+  UserPlus,
+  Clock,
+} from "lucide-react";
 import Footer from "../../../components/shared/Footer";
 import { getSubscribedTrainers } from "../../../services/trainer/trainerService";
+import { getDaysLeft } from "../../../utils/dateFormat";
 
 // Animation variants
 const fadeIn = {
@@ -39,7 +49,7 @@ const TrainersPage = () => {
     data: subscribedTrainers = [],
     isLoading,
     error,
-  } = useQuery<Trainer[]>({
+  } = useQuery<SubscribedTrainerWithExpiry[]>({
     queryKey: ["subscribedTrainers", userId],
     queryFn: () => getSubscribedTrainers(userId),
   });
@@ -52,17 +62,17 @@ const TrainersPage = () => {
     navigate(`/trainer/${trainerId}`);
   };
 
-  const handleStartChat = (trainerId: string,e: React.MouseEvent) => {
+  const handleStartChat = (_trainerId: string, e: React.MouseEvent) => {
     e.stopPropagation();
     navigate(`/messages`);
   };
 
-  const handleBookSession = (trainerId: string,e: React.MouseEvent) => {
+  const handleBookSession = (trainerId: string, e: React.MouseEvent) => {
     e.stopPropagation();
     navigate(`/book-time/${trainerId}`);
   };
 
-  const handleViewSessionDetails = (trainerId: string,e: React.MouseEvent) => {
+  const handleViewSessionDetails = (trainerId: string, e: React.MouseEvent) => {
     e.stopPropagation();
     navigate(`/session-details/${trainerId}`);
   };
@@ -71,23 +81,34 @@ const TrainersPage = () => {
     <div className="min-h-screen bg-gray-50 text-gray-800 overflow-hidden">
       {/* Hero Section */}
       <div className="relative py-24 bg-gradient-to-r from-blue-600/90 to-purple-600/90">
-        <div className="absolute inset-0 bg-black/10 z-0 opacity-30"
+        <div
+          className="absolute inset-0 bg-black/10 z-0 opacity-30"
           style={{
-            backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.15'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
+            backgroundImage:
+              "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.15'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
           }}
         ></div>
-        
-        <motion.div 
+
+        <motion.div
           initial="hidden"
           animate="visible"
           variants={staggerContainer}
           className="relative z-10 max-w-4xl mx-auto px-6 text-center"
         >
-          <motion.h1 variants={fadeIn} className="text-4xl md:text-5xl font-bold text-white mb-4">
+          <motion.h1
+            variants={fadeIn}
+            className="text-4xl md:text-5xl font-bold text-white mb-4"
+          >
             My Trainers
           </motion.h1>
-          <motion.div variants={fadeIn} className="w-20 h-1 bg-white/30 mx-auto mb-6 rounded-full"></motion.div>
-          <motion.p variants={fadeIn} className="text-white/80 max-w-2xl mx-auto">
+          <motion.div
+            variants={fadeIn}
+            className="w-20 h-1 bg-white/30 mx-auto mb-6 rounded-full"
+          ></motion.div>
+          <motion.p
+            variants={fadeIn}
+            className="text-white/80 max-w-2xl mx-auto"
+          >
             Connect with your personal trainers and schedule your next session
           </motion.p>
         </motion.div>
@@ -130,7 +151,9 @@ const TrainersPage = () => {
               className="text-center py-16 bg-gray-50 rounded-xl"
             >
               <Users className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-600 mb-8">You haven't subscribed to anny trainers yet.</p>
+              <p className="text-gray-600 mb-8">
+                You haven't subscribed to anny trainers yet.
+              </p>
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
@@ -149,67 +172,104 @@ const TrainersPage = () => {
               animate="visible"
               className="space-y-6"
             >
-              {subscribedTrainers?.map((trainer) => (
-                <motion.div
-                  key={trainer._id}
-                  variants={fadeIn}
-                  whileHover={{ y: -5 }}
-                  onClick={() => handleViewDetails(trainer._id)}
-                  className="p-6 bg-gray-50 rounded-xl border border-gray-200 transition-all duration-300 cursor-pointer"
-                >
-                  <div className="flex items-start gap-6">
-                    <img
-                      src={trainer.profilePicture}
-                      alt={`${trainer.username}'s profile`}
-                      className="w-20 h-20 rounded-xl object-cover cursor-pointer transition-transform duration-300 hover:scale-105"
-                    />
-                    
-                    <div className="flex-grow">
-                      <div className="flex items-center gap-3 mb-2">
-                        <h3 className="text-lg font-semibold text-gray-900">{trainer.username}</h3>
-                        <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">
-                          {trainer.specialization}
-                        </span>
+              {subscribedTrainers?.map((trainer) => {
+                const daysLeft = trainer.subscriptionExpiryDate
+                  ? getDaysLeft(trainer.subscriptionExpiryDate)
+                  : null;
+
+                return (
+                  <motion.div
+                    key={trainer._id}
+                    variants={fadeIn}
+                    whileHover={{ y: -5 }}
+                    onClick={() => handleViewDetails(trainer._id)}
+                    className="p-6 bg-gray-50 rounded-xl border border-gray-200 transition-all duration-300 cursor-pointer group"
+                  >
+                    <div className="flex items-start gap-6">
+                      <img
+                        src={trainer.profilePicture || "/api/placeholder/80/80"} // Fallback image
+                        alt={`${trainer.username}'s profile`}
+                        className="w-20 h-20 rounded-xl object-cover cursor-pointer transition-transform duration-300 hover:scale-105"
+                      />
+
+                      <div className="flex-grow">
+                        <div className="flex items-center gap-3 mb-2">
+                          <h3 className="text-lg font-semibold text-gray-900">
+                            {trainer.username}
+                          </h3>
+                          <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">
+                            {trainer.specialization}
+                          </span>
+                        </div>
+
+                        <p className="text-gray-600 text-sm mb-2">
+                          {trainer.yearsOfExperience} of experience
+                        </p>
+
+                        {daysLeft !== null && (
+                          <div
+                            className={`flex items-center gap-2 text-sm font-semibold mb-4
+                    ${
+                      daysLeft > 7
+                        ? "text-green-600"
+                        : daysLeft > 0
+                        ? "text-amber-600"
+                        : "text-red-600"
+                    }
+                  `}
+                          >
+                            <Calendar size={16} />
+                            {daysLeft > 0 ? (
+                              <span>{daysLeft} days left</span>
+                            ) : (
+                              <span>Subscription Expired!</span>
+                            )}
+                          </div>
+                        )}
+
+                        <div className="flex flex-wrap gap-3">
+                          <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={(e) => handleStartChat(trainer._id, e)}
+                            className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 transition-all duration-300"
+                          >
+                            <MessageCircle size={18} />
+                            <span>Chat</span>
+                          </motion.button>
+
+                          <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={(e) => handleBookSession(trainer._id, e)}
+                            className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg shadow-lg hover:shadow-blue-500/25 transition-all duration-300"
+                          >
+                            <Calendar size={18} />
+                            <span>Book Session</span>
+                          </motion.button>
+
+                          <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={(e) =>
+                              handleViewSessionDetails(trainer._id, e)
+                            }
+                            className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg shadow-lg hover:shadow-blue-500/25 transition-all duration-300"
+                          >
+                            <Clock size={18} />
+                            <span>Session Details</span>
+                          </motion.button>
+                        </div>
                       </div>
-                      
-                      <p className="text-gray-600 text-sm mb-4">
-                        {trainer.yearsOfExperience} of experience
-                      </p>
-                      
-                      <div className="flex flex-wrap gap-3">
-                        <motion.button
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          onClick={(e) => handleStartChat(trainer._id,e)}
-                          className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 transition-all duration-300"
-                        >
-                          <MessageCircle size={18} />
-                          <span>Chat</span>
-                        </motion.button>
-                        
-                        <motion.button
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          onClick={(e) => handleBookSession(trainer._id,e)}
-                          className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg shadow-lg hover:shadow-blue-500/25 transition-all duration-300"
-                        >
-                          <Calendar size={18} />
-                          <span>Book Session</span>
-                        </motion.button>
-                        <motion.button
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          onClick={(e) => handleViewSessionDetails(trainer._id,e)}
-                          className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg shadow-lg hover:shadow-blue-500/25 transition-all duration-300"
-                        >
-                          <Clock size={18} />
-                          <span>Session Details</span>
-                        </motion.button>
-                      </div>
+
+                      <ChevronRight
+                        size={20}
+                        className="text-gray-400 transition-transform duration-300 group-hover:translate-x-1"
+                      />
                     </div>
-                  </div>
-                </motion.div>
-              ))}
+                  </motion.div>
+                );
+              })}
             </motion.div>
           )}
 
@@ -218,7 +278,9 @@ const TrainersPage = () => {
               variants={fadeIn}
               className="text-center py-8 bg-red-50 rounded-xl border border-red-100"
             >
-              <p className="text-red-600">Error loading trainers. Please try again later.</p>
+              <p className="text-red-600">
+                Error loading trainers. Please try again later.
+              </p>
             </motion.div>
           )}
         </motion.div>

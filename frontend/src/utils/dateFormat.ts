@@ -35,6 +35,7 @@ export const formatDateAndTime = (dateString: string | Date) => {
   });
 };
 
+
 export const formatTimeAgo = (dateString: string) => {
   const now = new Date();
   const date = new Date(dateString);
@@ -47,4 +48,18 @@ export const formatTimeAgo = (dateString: string) => {
     return `${Math.floor(diffInSeconds / 86400)}d ago`;
 
   return date.toLocaleDateString();
+};
+
+
+// date 2025-04-08T05:12:27.915Z => 8 days left
+export const getDaysLeft = (expiryDate: Date | string): number => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); 
+
+  const expiry = new Date(expiryDate);
+  expiry.setHours(0, 0, 0, 0);
+
+  const diffTime = expiry.getTime() - today.getTime();
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  return diffDays;
 };

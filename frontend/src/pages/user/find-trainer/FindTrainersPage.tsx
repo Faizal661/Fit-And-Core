@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import { Trainer } from "../../../types/trainer.type";
 import Footer from "../../../components/shared/Footer";
 import { getApprovedTrainers } from "../../../services/trainer/trainerService";
 import { motion } from "framer-motion";
-import { Search, Users, Medal, Clock, ChevronRight } from "lucide-react";
+import { Search, Users, Clock, ChevronRight, Star, X, ChevronDown } from "lucide-react";
+import { GetApprovedTrainersResponse } from "../../../types/trainer.type";
+import useDebounce from "../../../hooks/useDebounce";
+import { specializations } from "../../../constants/specializations";
 
 // Animation variants
 const fadeIn = {
@@ -30,31 +32,63 @@ const staggerContainer = {
   },
 };
 
+const MAX_RECORDS_PER_PAGE = 5;
+
 const FindTrainersPage = () => {
   const navigate = useNavigate();
-  const [specialization, setSpecialization] = useState("");
   const [activePage, setActivePage] = useState<number>(1);
-  const [recordsPerPage] = useState<number>(2);
+  const [selectedSpecialization, setSelectedSpecialization] = useState("");
+  const [trainerNameSearchTerm, setTrainerNameSearchTerm] =
+    useState<string>("");
+  const debouncedTrainerNameSearchTerm = useDebounce(
+    trainerNameSearchTerm,
+    600
+  );
+
+  const [recordsPerPage] = useState<number>(MAX_RECORDS_PER_PAGE);
 
   const {
-    data: trainers = [],
+    data: trainersData,
     isLoading,
     error,
-  } = useQuery<Trainer[]>({
-    queryKey: ["approvedTrainers", specialization],
-    queryFn: () => getApprovedTrainers({ specialization }),
+  } = useQuery<GetApprovedTrainersResponse>({
+    queryKey: [
+      "approvedTrainers",
+      selectedSpecialization,
+      activePage,
+      recordsPerPage,
+      debouncedTrainerNameSearchTerm,
+    ],
+    queryFn: () =>
+      getApprovedTrainers({
+        specialization: selectedSpecialization,
+        page: activePage,
+        limit: recordsPerPage,
+        searchTerm: debouncedTrainerNameSearchTerm,
+      }),
   });
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Query will automatically refetch due to queryKey dependency on specialization
+  const trainers = trainersData?.trainers || [];
+  const totalCount = trainersData?.totalCount || 0;
+  const totalPages = Math.ceil(totalCount / recordsPerPage);
+
+  const handleSpecializationChange = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    setSelectedSpecialization(e.target.value);
+    setActivePage(1);
+  };
+
+  const handleTrainerNameSearchChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setTrainerNameSearchTerm(e.target.value);
+    setActivePage(1);
   };
 
   const handleViewDetails = (trainerId: string) => {
     navigate(`/trainer/${trainerId}`);
   };
-
-  const totalPages = trainers ? Math.ceil(trainers.length / recordsPerPage) : 1;
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 overflow-hidden">
@@ -100,13 +134,48 @@ const FindTrainersPage = () => {
           animate={{ opacity: 1, y: 0 }}
           className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8 mb-16"
         >
-          <form onSubmit={handleSearch} className="mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div className="relative">
+              <label htmlFor="specialization-filter" className="sr-only">
+                Filter by Specialization
+              </label>
+              <select
+                id="specialization-filter"
+                value={selectedSpecialization}
+                onChange={handleSpecializationChange}
+                className="w-full px-6 py-4 pr-12 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 appearance-none bg-no-repeat bg-right-center"
+              >
+                <option value="">All Specializations</option>
+                {specializations.slice(1).map((spec) => (
+                  <option key={spec} value={spec}>
+                    {spec}
+                  </option>
+                ))}
+              </select>
+              {/* Clear Button */}
+              {selectedSpecialization ? ( 
+                <button
+                  type="button"
+                  onClick={() => setSelectedSpecialization("")}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 p-1 text-gray-500 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-full transition-colors duration-200"
+                  aria-label="Clear specialization filter"
+                >
+                  <X size={18} />
+                </button>
+              ) : (
+                <div className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
+                  <ChevronDown size={20} />
+                </div>
+              )}
+            </div>
+
+            {/* Trainer Name Search Input */}
             <div className="relative">
               <input
                 type="text"
-                value={specialization}
-                onChange={(e) => setSpecialization(e.target.value)}
-                placeholder="Search by specialization (e.g., Yoga, HIIT, Strength Training)"
+                value={trainerNameSearchTerm}
+                onChange={handleTrainerNameSearchChange}
+                placeholder="Search trainer by name..."
                 className="w-full px-6 py-4 pr-12 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
               />
               <Search
@@ -114,11 +183,12 @@ const FindTrainersPage = () => {
                 size={20}
               />
             </div>
-          </form>
+          </div>
 
+          {/* trainers listing section */}
           {isLoading ? (
             <div className="space-y-6">
-              {[1, 2, 3].map((i) => (
+              {[...Array(recordsPerPage)].map((_, i) => (
                 <div key={i} className="animate-pulse">
                   <div className="h-32 bg-gray-200 rounded-xl"></div>
                 </div>
@@ -153,14 +223,13 @@ const FindTrainersPage = () => {
               {trainers.map((trainer) => (
                 <motion.div
                   key={trainer._id}
-                  variants={fadeIn}
                   whileHover={{ y: -5 }}
                   onClick={() => handleViewDetails(trainer._id)}
                   className="p-6 bg-gray-50 rounded-xl border border-gray-200 cursor-pointer transition-all duration-300 group"
                 >
                   <div className="flex gap-4">
                     <img
-                      src={trainer.profilePicture || "/api/placeholder/80/80"}
+                      src={trainer.profilePicture}
                       alt={`${trainer.username}'s profile`}
                       className="w-20 h-20 rounded-xl object-cover transition-transform duration-300 group-hover:scale-105"
                     />
@@ -169,19 +238,36 @@ const FindTrainersPage = () => {
                         <h3 className="text-lg font-semibold text-gray-900">
                           {trainer.username}
                         </h3>
+                        {/* Display Specialization as a pill */}
                         <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">
                           {trainer.specialization}
                         </span>
                       </div>
 
+                      {/* Display Rating Information */}
+                      <div className="flex items-center gap-2 mb-2 text-sm text-gray-700">
+                        {trainer.rating && trainer.rating.totalReviews > 0 ? (
+                          <>
+                            <Star
+                              size={16}
+                              className="text-yellow-400 fill-current"
+                            />
+                            <span className="font-semibold">
+                              {trainer.rating.averageRating.toFixed(1)}
+                            </span>
+                            <span className="text-gray-500">
+                              ({trainer.rating.totalReviews} reviews)
+                            </span>
+                          </>
+                        ) : (
+                          <span className="text-gray-500">No ratings yet</span>
+                        )}
+                      </div>
+
                       <div className="flex items-center gap-4 text-sm text-gray-600">
                         <div className="flex items-center gap-1">
-                          <Medal size={16} className="text-amber-500" />
-                          <span>Expert Trainer</span>
-                        </div>
-                        <div className="flex items-center gap-1">
                           <Clock size={16} className="text-emerald-500" />
-                          <span>{trainer.yearsOfExperience}</span>
+                          <span>{trainer.yearsOfExperience}</span>{" "}
                         </div>
                       </div>
                     </div>
@@ -196,7 +282,7 @@ const FindTrainersPage = () => {
             </motion.div>
           )}
 
-          {trainers && trainers.length > recordsPerPage && (
+          {trainers && totalCount > recordsPerPage && (
             <motion.div
               variants={fadeIn}
               className="flex justify-center items-center gap-2 mt-16 flex-wrap"
