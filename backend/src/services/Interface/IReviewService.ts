@@ -1,6 +1,6 @@
 import { Types } from "mongoose";
 import { IReviewModel } from "../../models/review.models";
-import { RatingDistribution, TransformedReview } from "../Implementation/review.service";
+import { RatingDistribution, TransformedReview } from "../../types/review.types";
 
 export interface IReviewService {
   submitReview(
@@ -15,8 +15,8 @@ export interface IReviewService {
     page: number,
     limit: number
   ): Promise<{
-    myReview: TransformedReview | null;
-    reviews: TransformedReview[];
+    myReview: boolean;
+    reviews: TransformedReview[] | null;
     ratingDistribution: RatingDistribution;
   }>;
   updateUserReview(

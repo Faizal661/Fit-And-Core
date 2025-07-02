@@ -11,7 +11,7 @@ import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import hero_image from "../../assets/images/img3.jpg";
 import explore_image from "../../assets/images/pilates1.jpg";
-import trainer_image from "../../assets/images/HIIT2.jpg";
+import trainer_image from "../../assets/images/yoga4.jpg";
 import { InfiniteCarousel } from "../../components/shared/InfiniteCarousel";
 import Footer from "../../components/shared/Footer";
 
@@ -163,7 +163,7 @@ const LandingPage = () => {
         animate={heroInView ? "visible" : "hidden"}
         variants={staggerContainer}
       >
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 to-black/40 z-20"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-black/50 to-black/30 z-20"></div>
         <motion.div
           animate={{ scale: 1.05 }}
           transition={{

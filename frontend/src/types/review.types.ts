@@ -35,3 +35,13 @@ export interface ReviewsData {
   myReview: Review | null;
   ratingDistribution: RatingDistribution;
 }
+
+
+export interface approvedTrainersWithRatings {
+  _id: string;
+  profilePicture: string;
+  username: string;
+  specialization: string;
+  yearsOfExperience: string;
+  rating: RatingDistribution
+}

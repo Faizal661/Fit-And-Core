@@ -5,45 +5,12 @@ import { HttpResCode } from "../../constants/http-response.constants";
 import { IReviewRepository } from "../../repositories/Interface/IReviewRepository";
 import { IReviewModel } from "../../models/review.models";
 import { IReviewService } from "../Interface/IReviewService";
+import {
+  RatingDistribution,
+  ReviewDocument,
+  TransformedReview,
+} from "../../types/review.types";
 
-export interface ReviewDocument extends Document {
-  _id: Types.ObjectId;
-  userId:
-    | {
-        _id: Types.ObjectId;
-        username: string;
-        profilePicture: string;
-      }
-    | Types.ObjectId;
-  trainerId: Types.ObjectId;
-  rating: number;
-  comment: string;
-  createdAt: Date;
-  updatedAt: Date;
-  __v: number;
-}
-
-export interface TransformedReview {
-  userId: string;
-  username: string;
-  profilePicture: string;
-  _id: Types.ObjectId;
-  trainerId: Types.ObjectId;
-  rating: number;
-  comment: string;
-  createdAt: Date;
-  updatedAt: Date;
-  __v: number;
-}
-export interface RatingDistribution {
-  averageRating: number;
-  totalReviews: number;
-  fiveStarCount: number;
-  fourStarCount: number;
-  threeStarCount: number;
-  twoStarCount: number;
-  oneStarCount: number;
-}
 @injectable()
 export class ReviewService implements IReviewService {
   constructor(
@@ -56,23 +23,33 @@ export class ReviewService implements IReviewService {
     rating: number,
     comment: string
   ): Promise<IReviewModel> {
-    const existingReview = await this.reviewRepository.findOne({
-      userId,
-      trainerId,
-    });
-    if (existingReview) {
+    try {
+      const existingReview = await this.reviewRepository.findOne({
+        userId,
+        trainerId,
+      });
+      if (existingReview) {
+        throw new CustomError(
+          "You have already reviewed this trainer",
+          HttpResCode.BAD_REQUEST
+        );
+      }
+
+      return await this.reviewRepository.create({
+        userId,
+        trainerId,
+        rating,
+        comment,
+      });
+    } catch (error) {
+      if (error instanceof CustomError) {
+        throw error;
+      }
       throw new CustomError(
-        "You have already reviewed this trainer",
-        HttpResCode.BAD_REQUEST
+        "Failed to submit review",
+        HttpResCode.INTERNAL_SERVER_ERROR
       );
     }
-
-    return await this.reviewRepository.create({
-      userId,
-      trainerId,
-      rating,
-      comment,
-    });
   }
 
   async getTrainerReviews(
@@ -81,67 +58,78 @@ export class ReviewService implements IReviewService {
     page = 1,
     limit = 10
   ): Promise<{
-    myReview: TransformedReview | null;
     reviews: TransformedReview[];
+    myReview: boolean;
     ratingDistribution: RatingDistribution;
   }> {
-    const myReview = (await this.reviewRepository.getMyReview(
-      userId,
-      trainerId
-    )) as ReviewDocument;
+    try {
+      const myReview = (await this.reviewRepository.getMyReview(
+        userId,
+        trainerId
+      )) as ReviewDocument | null;
 
-    const transformedMyReview: TransformedReview | null = myReview
-      ? {
-          userId: myReview.userId.toString(),
-          username:
-            typeof myReview.userId === "object" && "username" in myReview.userId
-              ? myReview.userId.username
-              : "",
-          profilePicture:
-            typeof myReview.userId === "object" &&
-            "profilePicture" in myReview.userId
-              ? myReview.userId.profilePicture
-              : "",
-          _id: myReview._id,
-          trainerId: myReview.trainerId,
-          rating: myReview.rating,
-          comment: myReview.comment,
-          createdAt: myReview.createdAt,
-          updatedAt: myReview.updatedAt,
-          __v: myReview.__v,
-        }
-      : null;
+      const reviews = (await this.reviewRepository.getReviewsByTrainer(
+        userId,
+        trainerId,
+        page,
+        limit
+      )) as ReviewDocument[];
 
-    const reviews = (await this.reviewRepository.getReviewsByTrainer(
-      userId,
-      trainerId,
-      page,
-      limit
-    )) as ReviewDocument[];
+      const stats = await this.reviewRepository.getAverageRating(trainerId);
 
-    const stats = await this.reviewRepository.getAverageRating(trainerId);
+      const allReviews = [myReview, ...reviews];
 
-    const allReviews = [myReview, ...reviews];
-    const transformedReviews: TransformedReview[] = allReviews.map(
-      (rawReview) => {
-        const review = rawReview.toObject ? rawReview.toObject() : rawReview;
-        const { userId, ...restOfReview } = review;
-        const { username, profilePicture, _id } = userId;
-
+      if (allReviews.length === 0) {
         return {
-          userId: _id.toString(),
-          username,
-          profilePicture,
-          ...restOfReview,
+          reviews: [],
+          myReview: false,
+          ratingDistribution: stats,
         };
       }
-    );
 
-    return {
-      reviews: transformedReviews,
-      myReview: transformedMyReview,
-      ratingDistribution: stats
-    };
+      const transformedReviews: TransformedReview[] = allReviews
+        .filter((rawReview) => rawReview !== null)
+        .map((rawReview) => {
+          const review = rawReview.toObject() as ReviewDocument;
+          const { userId, ...restOfReview } = review;
+          if (
+            typeof userId === "object" &&
+            userId !== null &&
+            "username" in userId &&
+            "profilePicture" in userId &&
+            "_id" in userId
+          ) {
+            const { username, profilePicture, _id } = userId;
+            return {
+              userId: _id.toString(),
+              username,
+              profilePicture,
+              ...restOfReview,
+            };
+          } else {
+            return {
+              userId: userId?.toString?.() ?? "",
+              username: "",
+              profilePicture: "",
+              ...restOfReview,
+            };
+          }
+        });
+
+      return {
+        reviews: transformedReviews,
+        myReview: myReview ? true : false,
+        ratingDistribution: stats,
+      };
+    } catch (error) {
+      if (error instanceof CustomError) {
+        throw error;
+      }
+      throw new CustomError(
+        "Failed to fetch trainer reviews",
+        HttpResCode.INTERNAL_SERVER_ERROR
+      );
+    }
   }
 
   async updateUserReview(
@@ -149,37 +137,57 @@ export class ReviewService implements IReviewService {
     reviewId: Types.ObjectId,
     updateData: Partial<IReviewModel>
   ): Promise<IReviewModel | null> {
-    const review = await this.reviewRepository.findById(reviewId);
-    if (!review) {
-      throw new CustomError("Review not found", HttpResCode.NOT_FOUND);
-    }
+    try {
+      const review = await this.reviewRepository.findById(reviewId);
+      if (!review) {
+        throw new CustomError("Review not found", HttpResCode.NOT_FOUND);
+      }
 
-    if (review.userId.toString() !== userId.toString()) {
+      if (review.userId.toString() !== userId.toString()) {
+        throw new CustomError(
+          "You can only update your own reviews",
+          HttpResCode.BAD_REQUEST
+        );
+      }
+
+      return await this.reviewRepository.update(reviewId, updateData);
+    } catch (error) {
+      if (error instanceof CustomError) {
+        throw error;
+      }
       throw new CustomError(
-        "You can only update your own reviews",
-        HttpResCode.BAD_REQUEST
+        "Failed to update review",
+        HttpResCode.INTERNAL_SERVER_ERROR
       );
     }
-
-    return await this.reviewRepository.update(reviewId, updateData);
   }
 
   async deleteUserReview(
     userId: Types.ObjectId,
     reviewId: Types.ObjectId
   ): Promise<void> {
-    const review = await this.reviewRepository.findById(reviewId);
-    if (!review) {
-      throw new CustomError("Review not found", HttpResCode.NOT_FOUND);
-    }
+    try {
+      const review = await this.reviewRepository.findById(reviewId);
+      if (!review) {
+        throw new CustomError("Review not found", HttpResCode.NOT_FOUND);
+      }
 
-    if (review.userId.toString() !== userId.toString()) {
+      if (review.userId.toString() !== userId.toString()) {
+        throw new CustomError(
+          "You can only delete your own reviews",
+          HttpResCode.BAD_REQUEST
+        );
+      }
+
+      await this.reviewRepository.delete(reviewId);
+    } catch (error) {
+      if (error instanceof CustomError) {
+        throw error;
+      }
       throw new CustomError(
-        "You can only delete your own reviews",
-        HttpResCode.BAD_REQUEST
+        "Failed to delete review",
+        HttpResCode.INTERNAL_SERVER_ERROR
       );
     }
-
-    await this.reviewRepository.delete(reviewId);
   }
 }

@@ -1,3 +1,5 @@
+import { approvedTrainersWithRatings } from "./review.types";
+
 export interface Trainer {
   _id: string;
   userId: string;
@@ -22,4 +24,13 @@ export interface Trainer {
 export interface ApplicationStatus {
   status: "none" | "pending" | "approved" | "rejected";
   reason?: string;
+}
+
+export interface SubscribedTrainerWithExpiry extends Trainer {
+  subscriptionExpiryDate: Date; 
+}
+
+export interface GetApprovedTrainersResponse {
+  trainers: approvedTrainersWithRatings[]; 
+  totalCount: number; 
 }
