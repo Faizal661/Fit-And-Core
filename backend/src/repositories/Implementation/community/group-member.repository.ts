@@ -9,6 +9,7 @@ import { GroupMemberWithUser } from "../../../services/Implementation/group.serv
 import { IMessage } from "../../../models/group.model/group-messages.models";
 import CustomError from "../../../errors/CustomError";
 import { HttpResCode } from "../../../constants/http-response.constants";
+import { GroupMember, GroupMemberPopulated } from "../../../types/group.types";
 
 export class GroupMemberRepository extends BaseRepository<IGroupMemberModel> {
   constructor() {
@@ -237,5 +238,20 @@ export class GroupMemberRepository extends BaseRepository<IGroupMemberModel> {
       throw new Error("Failed to create or update group membership.");
     }
     return existingMembership;
+  }
+
+  async getAllMembersInGroup(groupId: Types.ObjectId): Promise<GroupMember[]> {
+     const members = ( await GroupMemberModel.find({ groupId })
+      .populate("userId", "username profilePicture")
+      .exec()) as unknown as GroupMemberPopulated[];
+
+
+      return members.map((member) => {
+        return {
+          _id: member._id.toString(),
+          username: member.userId.username,
+          profilePicture: member.userId.profilePicture || undefined,
+        };
+      });
   }
 }

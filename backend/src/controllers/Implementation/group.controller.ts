@@ -103,6 +103,29 @@ export class GroupController {
     }
   }
 
+  async getGroupDetails(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const groupId = req.params.groupId;
+      if (!groupId || !Types.ObjectId.isValid(groupId)) {
+        sendResponse(res, 400, "Invalid Group ID provided.2");
+        return;
+      }
+      const groupDetails = await this.groupService.getGroupDetails(groupId);
+      if (!groupDetails) {
+        sendResponse(res, 404, "Group not found.");
+        return;
+      }
+      sendResponse(res, 200, "Group details retrieved successfully", groupDetails);
+    } catch (error) {
+      console.error("Error getting group details:", error);
+      sendResponse(res, 500, "Failed to retrieve group details.", error);
+    }
+  }
+
   async getGroupMembers(
     req: Request,
     res: Response,
