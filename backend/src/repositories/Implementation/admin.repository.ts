@@ -2,7 +2,7 @@ import { inject, injectable } from "tsyringe";
 import UserModel, { IUserModel } from "../../models/user.models";
 import { BaseRepository } from "./base.repository";
 import { IAdminRepository } from "../Interface/IAdminRepository";
-import { CustomError } from "../../errors/CustomError";
+import CustomError from "../../errors/CustomError";
 import { HttpResCode } from "../../constants/http-response.constants";
 
 @injectable()

@@ -17,6 +17,7 @@ export const ToastItem: React.FC<ToastItemProps> = ({
     return () => {
       clearTimeout(timer);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onClose]);
 
   const animationDuration = `${duration / 1000}s`;

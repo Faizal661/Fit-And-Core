@@ -7,7 +7,7 @@ import { Types } from "mongoose";
 import { BaseRepository } from "../base.repository";
 import { GroupMemberWithUser } from "../../../services/Implementation/group.service";
 import { IMessage } from "../../../models/group.model/group-messages.models";
-import { CustomError } from "../../../errors/CustomError";
+import CustomError from "../../../errors/CustomError";
 import { HttpResCode } from "../../../constants/http-response.constants";
 
 export class GroupMemberRepository extends BaseRepository<IGroupMemberModel> {

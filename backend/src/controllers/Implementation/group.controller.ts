@@ -3,7 +3,7 @@ import { container } from "tsyringe";
 import { GroupService } from "../../services/Implementation/group.service";
 import { sendResponse } from "../../utils/send-response";
 import { Types } from "mongoose";
-import { CustomError } from "../../errors/CustomError";
+import CustomError from "../../errors/CustomError";
 import { HttpResCode } from "../../constants/http-response.constants";
 
 export class GroupController {

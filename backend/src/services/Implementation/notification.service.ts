@@ -8,7 +8,7 @@ import {
 } from "../../models/notification.models";
 import { ITrainerRepository } from "../../repositories/Interface/ITrainerRepository";
 import { INotificationService } from "../Interface/INotificationService";
-import { CustomError } from "../../errors/CustomError";
+import CustomError from "../../errors/CustomError";
 import { HttpResCode } from "../../constants/http-response.constants";
 
 @injectable()

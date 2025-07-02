@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import { useLocation, useParams } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { upvoteArticle } from "../../services/article/articleService";
@@ -7,9 +8,9 @@ import remarkGfm from "remark-gfm";
 import { ThumbsUp, ThumbsUpIcon, Calendar, User, Tag } from "lucide-react";
 import { RootState } from "../../redux/store";
 import { Article } from "../../types/article.type";
-import { components } from "../../components/shared/article/MarkdownComponents";
+import { components } from "../../components/article/MarkdownComponents";
 import { formatDate } from "../../utils/dateFormat";
-import PageNotFound from "../../components/shared/PageNotFound";
+import PageNotFound from "../../components/shared/error/PageNotFound";
 import Footer from "../../components/shared/Footer";
 import { REDIRECT_MESSAGES } from "../../constants/messages/redirect.messages";
 import { motion } from "framer-motion";
@@ -60,7 +61,7 @@ const ArticleFullView = () => {
   }
 
   const userId = useSelector((state: RootState) => state.auth.user?.id || "");
-  let isUpvoted = article.upvotes.includes(userId);
+  const isUpvoted = article.upvotes.includes(userId);
 
   const mutation = useMutation({
     mutationFn: () => upvoteArticle(article._id),

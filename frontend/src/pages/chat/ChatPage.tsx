@@ -10,7 +10,7 @@ import {
   AvailableGroupsModal,
   Group,
 } from "../../components/chat/AvailableGroupsModal";
-import ConfirmModal from "../../components/shared/modal/ConfirmModal";
+import ConfirmModal from "../../components/modal/ConfirmModal";
 import { RootState } from "../../redux/store";
 import { joinGroup } from "../../services/community/groupService";
 import { useToast } from "../../context/ToastContext";

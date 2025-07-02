@@ -39,8 +39,8 @@ import { formatDateForInput } from "../../utils/dateFormat";
 import axios from "axios";
 import Loader from "../../components/shared/Loader";
 import Footer from "../../components/shared/Footer";
-import { GlowButton } from "../../components/shared/buttons/GlowButton";
-import ErrorPage from "../../components/shared/ErrorPage";
+import { GlowButton } from "../../components/buttons/GlowButton";
+import ErrorPage from "../../components/shared/error/ErrorPage";
 
 // Animation variants
 const fadeIn = {

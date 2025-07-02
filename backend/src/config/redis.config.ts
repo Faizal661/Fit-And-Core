@@ -1,5 +1,5 @@
 import { createClient } from "redis";
-import { env } from "./env.config";
+import env from "./env.config";
 import { HttpResMsg } from "../constants/http-response.constants";
 
 const redisClient = createClient({

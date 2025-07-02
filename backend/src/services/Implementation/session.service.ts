@@ -7,7 +7,7 @@ import { ISessionService } from "../Interface/ISessionService";
 import { CreateAvailabilityParams, ISlot } from "../../types/session.types";
 import { IAvailabilityModel } from "../../models/session.model/availability.models";
 import { ISlotModel } from "../../models/session.model/slot.models";
-import { CustomError } from "../../errors/CustomError";
+import CustomError from "../../errors/CustomError";
 import {
   HttpResCode,
   HttpResMsg,

@@ -1,9 +1,8 @@
-// src/components/AuthCallback.tsx
 import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useGoogleAuth } from "../../hooks/useGoogleAuth";
 import { AUTH_MESSAGES } from "../../constants/messages/auth.messages";
-import ErrorPage from "../shared/ErrorPage";
+import ErrorPage from "../shared/error/ErrorPage";
 import Loader from "../shared/Loader";
 
 const AuthCallback = () => {
@@ -27,6 +26,7 @@ const AuthCallback = () => {
     } else {
       navigate("/login");
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (isLoading) return <Loader message={AUTH_MESSAGES.LOGIN_PROGRESS} />;

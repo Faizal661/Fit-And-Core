@@ -1,11 +1,4 @@
-// import { Fragment } from "react";
-// import { useQuery } from "@tanstack/react-query";
-import {
-  Users,
-  Dumbbell,
-  CreditCard,
-  RefreshCcw,
-} from "lucide-react";
+import { Users, Dumbbell, CreditCard, RefreshCcw } from "lucide-react";
 import {
   XAxis,
   YAxis,
@@ -68,12 +61,11 @@ const userColors = [
   "#ffb20f",
 ];
 
-
 interface TooltipPayloadEntry {
   color: string;
   dataKey: string;
   name: string;
-  value: any;
+  value: number;
 }
 interface CustomTooltipProps {
   active?: boolean;
@@ -125,7 +117,6 @@ const HomeTrainer = () => {
       animate="visible"
       variants={fadeIn}
     >
-
       {/* Hero section */}
       <div className="relative py-24 bg-gradient-to-r from-blue-600/90 to-purple-600/90">
         <div
@@ -178,6 +169,8 @@ const HomeTrainer = () => {
               icon={CreditCard}
               isLoading={false}
               isError={null}
+              iconClasses={""}
+              cardClasses={""}
             />
           </motion.div>
 
@@ -194,6 +187,8 @@ const HomeTrainer = () => {
               icon={RefreshCcw}
               isLoading={false}
               isError={null}
+              iconClasses={""}
+              cardClasses={""}
             />
           </motion.div>
 
@@ -210,6 +205,8 @@ const HomeTrainer = () => {
               icon={CreditCard}
               isLoading={false}
               isError={null}
+              iconClasses={""}
+              cardClasses={""}
             />
           </motion.div>
         </motion.div>
@@ -279,7 +276,6 @@ const HomeTrainer = () => {
                       )
                     )}
                   </Bar>
-
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -298,6 +294,8 @@ const HomeTrainer = () => {
                 icon={Users}
                 isLoading={false}
                 isError={null}
+                iconClasses={""}
+                cardClasses={""}
               />{" "}
             </motion.div>
 
@@ -313,6 +311,8 @@ const HomeTrainer = () => {
                 icon={Dumbbell}
                 isLoading={false}
                 isError={null}
+                iconClasses={""}
+                cardClasses={""}
               />
             </motion.div>
           </div>

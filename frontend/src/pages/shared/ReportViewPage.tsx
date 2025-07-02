@@ -18,7 +18,7 @@ import {
 import { Report, ReportStatus } from "../../types/report.types";
 import { getUserReports } from "../../services/session/reportService";
 import { formatDateAndTime } from "../../utils/dateFormat";
-import { BookingDetailsModal } from "../../components/shared/modal/BookingDetailsModal ";
+import { BookingDetailsModal } from "../../components/modal/BookingDetailsModal ";
 
 const fadeIn = {
   hidden: { opacity: 0, y: 20 },

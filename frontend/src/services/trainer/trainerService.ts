@@ -1,5 +1,5 @@
 import api from "../../config/axios.config";
-import { ApplicationStatus, Trainer } from "../../types/trainer.type";
+import { ApplicationStatus, SubscribedTrainerWithExpiry } from "../../types/trainer.type";
 
 export const submitTrainerApplication = async (data: FormData) => {
   const response = await api.post("/trainer/applications", data, {
@@ -18,18 +18,24 @@ export const checkTrainerApplicationStatus =
 
 export const getApprovedTrainers = async ({
   specialization,
+  page = 1,
+  limit = 10,
+  searchTerm,
 }: {
   specialization?: string;
+  page?: number;
+  limit?: number;
+  searchTerm?: string;
 }) => {
   const response = await api.get("/trainer/approved", {
-    params: { specialization },
+    params: { specialization, page, limit, searchTerm },
   });
   return response.data.approvedTrainers;
 };
 
 export const getSubscribedTrainers = async (
   userId: string | undefined
-): Promise<Trainer[]> => {
+): Promise<SubscribedTrainerWithExpiry[]> => {
   const response = await api.get(`/trainer/subscriptions/${userId}`);
   return response.data.subscribedTrainers;
 };

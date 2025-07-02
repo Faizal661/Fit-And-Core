@@ -10,7 +10,6 @@ import { useInView } from "react-intersection-observer";
 import { UserResponse, UsersResponse } from "../../types/user.type";
 import useDebounce from "../../hooks/useDebounce";
 
-
 const fadeIn = {
   hidden: { opacity: 0, y: 10 },
   visible: {
@@ -38,7 +37,7 @@ const UserManagement = () => {
   const [recordsPerPage, setRecordsPerPage] = useState<number>(10);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [selectedUser, setSelectedUser] = useState<UserResponse | null>(null);
-   const debouncedSearchTerm = useDebounce(searchTerm, 600);
+  const debouncedSearchTerm = useDebounce(searchTerm, 600);
 
   const queryClient = useQueryClient();
 
@@ -250,29 +249,49 @@ const UserManagement = () => {
           {data && data.total > recordsPerPage && (
             <motion.div
               variants={fadeIn}
-              className="flex justify-center gap-x-4 items-center mt-6 p-4"
+              className="flex justify-center items-center gap-2 mt-6 p-4 flex-wrap"
             >
+              {/* Previous */}
               <button
                 onClick={() => setActivePage((prev) => Math.max(prev - 1, 1))}
                 disabled={activePage === 1}
-                className="px-4 py-2 bg-purple-600 text-white rounded-l-md disabled:bg-gray-400 hover:bg-purple-700"
+                className="px-3 py-2 bg-purple-600 text-white rounded disabled:bg-gray-400 hover:bg-purple-700"
               >
-                Previous
+                Prev
               </button>
-              <span>
-                Page {activePage} of {totalPages}
-              </span>
+
+              {/* Page Numbers */}
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                (pageNum) => (
+                  <button
+                    key={pageNum}
+                    onClick={() => setActivePage(pageNum)}
+                    className={`px-3 py-2 rounded 
+          ${
+            activePage === pageNum
+              ? "bg-purple-800 text-white"
+              : "bg-gray-200 text-gray-700 hover:bg-purple-500 hover:text-white"
+          }`}
+                  >
+                    {pageNum}
+                  </button>
+                )
+              )}
+
+              {/* Next */}
               <button
                 onClick={() =>
                   setActivePage((prev) => Math.min(prev + 1, totalPages))
                 }
                 disabled={activePage === totalPages}
-                className="px-4 py-2 bg-purple-600 text-white rounded-r-md disabled:bg-gray-400 hover:bg-purple-700"
+                className="px-3 py-2 bg-purple-600 text-white rounded disabled:bg-gray-400 hover:bg-purple-700"
               >
                 Next
               </button>
             </motion.div>
           )}
+
+          
         </motion.div>
 
         {/* User Details Modal */}

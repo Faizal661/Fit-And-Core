@@ -1,10 +1,10 @@
 export const WebRTCConfig = {
   iceServers: [
     { urls: import.meta.env.VITE_STUN_SERVER_URL },
-    // TURN server
     // {
+    // TURN server
     //   urls: 'turn:turn-server.com',
-    //   username: 'username',
+    //   username: '',
     //   credential: 'password'
     // }
   ],

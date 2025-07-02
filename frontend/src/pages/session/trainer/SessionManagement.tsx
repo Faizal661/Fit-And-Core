@@ -22,8 +22,8 @@ import { IAvailability, UserBooking } from "../../../types/session.type";
 import { useToast } from "../../../context/ToastContext";
 import { STATUS } from "../../../constants/messages/status.messages";
 import axios from "axios";
-import { BookingModal } from "../../../components/shared/modal/BookingModal ";
-import { CancelBookingModal } from "../../../components/shared/modal/CancelBookingModal";
+import { BookingModal } from "../../../components/modal/BookingModal ";
+import { CancelBookingModal } from "../../../components/modal/CancelBookingModal";
 
 const fadeIn = {
   hidden: { opacity: 0, y: 20 },

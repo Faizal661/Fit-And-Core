@@ -3,7 +3,7 @@ import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { articleSchema, ArticleFormData } from "../../../schemas/articleSchema";
-import { MarkdownEditor } from "../../../components/shared/article/MarkdownEditor";
+import { MarkdownEditor } from "../../../components/article/MarkdownEditor";
 import { createTrainerArticle } from "../../../services/article/articleService";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "../../../context/ToastContext";

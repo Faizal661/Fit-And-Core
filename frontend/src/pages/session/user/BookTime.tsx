@@ -21,10 +21,10 @@ import { STATUS } from "../../../constants/messages/status.messages";
 import { useToast } from "../../../context/ToastContext";
 import axios from "axios";
 import { ERR_MESSAGES } from "../../../constants/messages/error.messages";
-import PageNotFound from "../../../components/shared/PageNotFound";
+import PageNotFound from "../../../components/shared/error/PageNotFound";
 import { REDIRECT_MESSAGES } from "../../../constants/messages/redirect.messages";
 import { ISlot } from "../../../types/session.type";
-import ConfirmModal from "../../../components/shared/modal/ConfirmModal";
+import ConfirmModal from "../../../components/modal/ConfirmModal";
 import { formatDateForInput } from "../../../utils/dateFormat";
 
 const fadeIn = {

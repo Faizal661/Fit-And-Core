@@ -3,7 +3,7 @@ import { BaseError } from "../errors/BaseError";
 import logger from "../utils/logger.utils";
 import { HttpResMsg } from "../constants/http-response.constants";
 
-export const errorHandler = (
+const errorHandler = (
   err: Error,
   req: Request,
   res: Response,
@@ -31,3 +31,5 @@ export const errorHandler = (
     });
   }
 };
+
+export default errorHandler;

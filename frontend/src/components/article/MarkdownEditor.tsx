@@ -3,7 +3,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { components } from "./MarkdownComponents";
 import didYouMean from "didyoumean";
-import { dictionary } from "../../../constants/dictionary";
+import { dictionary } from "../../constants/dictionary";
 
 type Props = {
   value: string;
