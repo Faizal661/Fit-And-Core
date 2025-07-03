@@ -89,8 +89,8 @@ const AppRoutes = () => {
       </Route>
 
       <Route element={<ProtectedRoutes allowedRoles={["trainer"]} />}>
-        <Route path="/trainer" element={<FinanceManagementPage />} />
         {/* <Route path="/trainer" element={<HomeTrainer />} /> */}
+        <Route path="/trainer" element={<WalletPage />} />
         <Route path="/trainer/articles" element={<TrainerArticles />} />
         <Route path="/trainer/articles/create" element={<CreateArticle />} />
         <Route path="/trainer/articles/edit/:articleId" element={<EditArticle />} />
