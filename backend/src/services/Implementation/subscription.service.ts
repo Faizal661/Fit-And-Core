@@ -7,6 +7,7 @@ import {
   CheckoutSubscriptionParams,
   SubscriptionStatus,
   VerifiedPaymentResult,
+  SubscriptionsResponse,
 } from "../../types/subscription.types";
 import { ISubscriptionModel } from "../../models/subscription.models";
 import { ISubscriptionRepository } from "../../repositories/Interface/ISubscriptionRepository";
@@ -322,7 +323,7 @@ export default class SubscriptionService implements ISubscriptionService {
           HttpResCode.INTERNAL_SERVER_ERROR
         );
       }
-      
+
       await TransactionModel.create({
         userId,
         type: "credit",
@@ -343,7 +344,6 @@ export default class SubscriptionService implements ISubscriptionService {
         referenceId: subscriptionId,
       });
 
-
       userWallet.balance += amount;
       await userWallet.save();
 
@@ -357,6 +357,37 @@ export default class SubscriptionService implements ISubscriptionService {
       }
       throw new CustomError(
         "failed to refund subscription",
+        HttpResCode.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
+  async getAllUserSubscriptions(
+    userIdString: string,
+    page: number,
+    limit: number
+  ): Promise<SubscriptionsResponse> {
+    try {
+      let userId: Types.ObjectId;
+      try {
+        userId = new Types.ObjectId(userIdString);
+      } catch (error) {
+        throw new CustomError(
+          "Invalid user ID format.",
+          HttpResCode.UNAUTHORIZED
+        );
+      }
+
+      const allUserSubscriptions =
+        await this.subscriptionRepository.findAllSubscriptionsByUser(userId, page, limit);
+
+      return allUserSubscriptions;
+    } catch (error) {
+      if (error instanceof CustomError) {
+        throw error;
+      }
+      throw new CustomError(
+        "Failed to fetch user subscriptions.",
         HttpResCode.INTERNAL_SERVER_ERROR
       );
     }

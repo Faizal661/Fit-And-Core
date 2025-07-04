@@ -47,3 +47,24 @@ export interface ISubscription {
     trainerName?: string;
   }
   
+
+
+
+
+
+  export interface SubscriptionHistory {
+  _id: string;
+  startDate: string;
+  expiryDate: string;
+  planDuration: string;
+  amount: number;
+  status: string;
+  trainerName?: string;
+  trainerProfilePicture?: string;
+}
+export interface SubscriptionsResponse {
+  subscriptions: SubscriptionHistory[];
+  total: number;
+  currentPage: number;
+  totalPages: number;
+}

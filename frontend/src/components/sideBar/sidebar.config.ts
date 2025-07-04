@@ -11,6 +11,7 @@ import {
   DollarSign,
   BarChart,
   MessageSquare,
+  Clock,
 } from "lucide-react";
 import { SIDEBAR_MESSAGES } from "../../constants/messages/sidebar.messages";
 
@@ -24,6 +25,7 @@ export const UserSidebarItems = [
   { to: "/communities", label: SIDEBAR_MESSAGES.COMMUNITIES, icon: Globe },
   { to: "/messages", label: SIDEBAR_MESSAGES.MESSAGES, icon: MessageSquare },
   { to: "/reports", label: SIDEBAR_MESSAGES.REPORTS, icon: BarChart },
+  { to: "/history", label: SIDEBAR_MESSAGES.HISTORY, icon: Clock },
   {
     to: "/wallet",
     label: SIDEBAR_MESSAGES.Wallet,

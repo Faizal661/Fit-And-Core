@@ -4,21 +4,20 @@ import {
   UserBooking,
   UpdateBookingData,
   BookingDetails,
+  BookingsResponse,
 } from "../../types/session.type";
 
-
-
-export const getTrainerBookings = async (): Promise<UserBooking[]>  => {
+export const getTrainerBookings = async (): Promise<UserBooking[]> => {
   const response = await api.get(`/session/bookings`);
   return response.data.upcomingBookings;
 };
 
-
-export const fetchBookingDetails= async (bookingId:string): Promise<BookingDetails>  => {
+export const fetchBookingDetails = async (
+  bookingId: string
+): Promise<BookingDetails> => {
   const response = await api.get(`/session/bookings/${bookingId}`);
   return response.data.bookingDetails;
 };
-
 
 export const getUserBookings = async (
   trainerId: string
@@ -27,6 +26,16 @@ export const getUserBookings = async (
     params: {
       trainerId: trainerId,
     },
+  });
+  return response.data.data;
+};
+
+export const getUserBookingshistory = async (data: {
+  page: number;
+  limit: number;
+}): Promise<BookingsResponse> => {
+  const response = await api.get(`/session/bookings-history/user`, {
+    params: data,
   });
   return response.data.data;
 };
@@ -50,11 +59,12 @@ export const trainerCancelBooking = async (params: CancelBookingParams) => {
 };
 
 export const updateBookingStatus = async (data: UpdateBookingData) => {
-  const response = await api.patch(`/session/bookings/${data.bookingId}/status`, {
-    status: data.status,
-    notes: data.feedback
-  });
+  const response = await api.patch(
+    `/session/bookings/${data.bookingId}/status`,
+    {
+      status: data.status,
+      notes: data.feedback,
+    }
+  );
   return response.data;
 };
-
-

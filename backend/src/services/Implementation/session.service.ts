@@ -16,7 +16,7 @@ import { ITrainerRepository } from "../../repositories/Interface/ITrainerReposit
 import { IUserRepository } from "../../repositories/Interface/IUserRepository";
 import { IBookingRepository } from "../../repositories/Interface/IBookingRepository";
 import { IBookingModel } from "../../models/session.model/booking.models";
-import { BookingDetails } from "../../types/booking.types";
+import { BookingDetails, BookingsResponse } from "../../types/booking.types";
 import { ISubscriptionRepository } from "../../repositories/Interface/ISubscriptionRepository";
 type GroupedAvailabilities = Record<string, IAvailabilityModel[]>;
 
@@ -572,6 +572,39 @@ export default class SessionService implements ISessionService {
         await this.bookingRepository.findAllBookingsByUserAndTrainer(
           userId,
           trainerId
+        );
+
+      return allUserBookings;
+    } catch (error) {
+      if (error instanceof CustomError) {
+        throw error;
+      }
+      throw new CustomError(
+        "Failed to fetch user bookings.",
+        HttpResCode.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
+   async getAllUserBookings(
+    userIdString: string,
+    page:number,
+    limit:number
+  ): Promise<BookingsResponse> {
+    try {
+      let userId: Types.ObjectId;
+      try {
+        userId = new Types.ObjectId(userIdString);
+      } catch (error) {
+        throw new CustomError(
+          "Invalid user ID format.",
+          HttpResCode.UNAUTHORIZED
+        );
+      }
+
+      const allUserBookings =
+        await this.bookingRepository.findAllBookingsByUser(
+          userId,page,limit
         );
 
       return allUserBookings;

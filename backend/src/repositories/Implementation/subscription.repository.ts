@@ -1,7 +1,7 @@
 import { FilterQuery, ObjectId, Types } from "mongoose";
 import { injectable } from "tsyringe";
 import { BaseRepository } from "./base.repository";
-import { ISubscription } from "../../types/subscription.types";
+import { ISubscription, SubscriptionsResponse } from "../../types/subscription.types";
 import {
   SubscriptionModel,
   ISubscriptionModel,
@@ -175,4 +175,73 @@ export class SubscriptionRepository
       { new: true }
     ).exec();
   }
+
+ async findAllSubscriptionsByUser(
+  userId: Types.ObjectId,
+  page: number,
+  limit: number
+): Promise<SubscriptionsResponse> {
+  try {
+    const skip = (page - 1) * limit;
+    
+    // Get total count of subscriptions for this user
+    const total = await SubscriptionModel.countDocuments({ userId: userId });
+    const totalPages = Math.ceil(total / limit);
+
+    const subscriptions = await SubscriptionModel
+    .aggregate([
+      {
+          $match: {
+            userId: userId,
+          },
+        },
+        {
+          $lookup: {
+            from: "trainers", // Assuming your trainer collection is named "trainers"
+            localField: "trainerId",
+            foreignField: "_id",
+            as: "trainerDetails",
+          },
+        },
+        {
+          $unwind: {
+            path: "$trainerDetails",
+            preserveNullAndEmptyArrays: true, // Keep subscriptions even if trainer not found
+          },
+        },
+        {
+          $sort: {
+            createdAt: -1, // Newest subscriptions first
+          },
+        },
+        {
+          $project: {
+            _id: 1,
+            startDate: 1,
+            expiryDate: 1,
+            planDuration: 1,
+            amount: 1,
+            status: 1,
+            trainerName: "$trainerDetails.username", // Map trainer username to trainerName
+            trainerProfilePicture: "$trainerDetails.profilePicture", // Map trainer profile picture
+          },
+        },
+        { $skip: skip },
+        { $limit: limit },
+      ])
+      .exec();
+
+    return {
+      subscriptions,
+      total,
+      currentPage: page,
+      totalPages,
+    };
+  } catch (error) {
+    throw new CustomError(
+      "failed to find all subscriptions by user",
+      HttpResCode.INTERNAL_SERVER_ERROR
+    );
+  }
+}
 }
