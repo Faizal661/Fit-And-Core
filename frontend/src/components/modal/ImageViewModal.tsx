@@ -27,6 +27,7 @@ const ImageViewModal = ({ imageUrl, onClose }: ImageViewModalProps) => {
       animate="visible"
       exit="hidden"
       variants={fadeIn}
+      onClick={onClose}
     >
       <motion.div className="relative max-w-4xl max-h-[90vh]">
         <button
@@ -40,6 +41,7 @@ const ImageViewModal = ({ imageUrl, onClose }: ImageViewModalProps) => {
           src={imageUrl}
           alt="Enlarged document view"
           className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-md"
+          onClick={(e) => e.stopPropagation()}
         />
       </motion.div>
     </motion.div>

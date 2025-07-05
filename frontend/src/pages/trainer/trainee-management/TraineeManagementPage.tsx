@@ -31,7 +31,7 @@ const staggerContainer = {
 const TraineeManagementPage = () => {
   const navigate = useNavigate();
   const [activePage, setActivePage] = useState<number>(1);
-  const [recordsPerPage, setRecordsPerPage] = useState<number>(1);
+  const [recordsPerPage, setRecordsPerPage] = useState<number>(5);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [selectedTrainee, setSelectedTrainee] =
     useState<TraineeData | null>(null);

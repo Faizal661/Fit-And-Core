@@ -47,5 +47,15 @@ router.patch(
   (req, res, next) => subscriptionController.refundSubscription(req, res, next)
 );
 
+
+router.get(
+  "/history",
+  verifyAccessToken,
+  authorizeRoles(["user"]),
+  (req, res, next) => subscriptionController.getAllUserSubscriptions(req, res, next)
+);
+
+
+
 export default router;
 

@@ -6,4 +6,5 @@ export interface ISubscriptionController {
     handleStripeWebhook(req: Request, res: Response, next: NextFunction): Promise<void>;
     checkStatus(req: Request, res: Response, next: NextFunction): Promise<void>;
     refundSubscription(req: Request, res: Response, next: NextFunction): Promise<void>;
+    getAllUserSubscriptions(req: Request, res: Response, next: NextFunction): Promise<void>;
 }

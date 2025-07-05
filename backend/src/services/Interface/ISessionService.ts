@@ -3,7 +3,7 @@ import { CreateAvailabilityParams, ISlot } from "../../types/session.types";
 import { IAvailabilityModel } from "../../models/session.model/availability.models";
 import { ISlotModel } from "../../models/session.model/slot.models";
 import { IBookingModel } from "../../models/session.model/booking.models";
-import { BookingDetails } from "../../types/booking.types";
+import { BookingDetails, BookingsResponse } from "../../types/booking.types";
 
 type GroupedAvailabilities = Record<string, IAvailabilityModel[]>;
 
@@ -44,6 +44,11 @@ export interface ISessionService {
     userIdString: string,
     trainerIdString: string
   ): Promise<BookingDetails[]>;
+  getAllUserBookings(
+    userIdString: string,
+    page:number,
+    limit:number
+  ): Promise<BookingsResponse>;
   userCancelBooking(
     bookingIdString: string,
     reason: string,

@@ -76,7 +76,11 @@ router
   .get(...userAccess, (req, res, next) =>
     sessionController.getAllUserBookingsWithTrainer(req, res, next)
   );
-
+router
+  .route("/bookings-history/user")
+  .get(...userAccess, (req, res, next) =>
+    sessionController.getAllUserBookings(req, res, next)
+  );
 router
   .route("/bookings/trainer/cancel")
   .patch(...trainerAccess, (req, res, next) =>

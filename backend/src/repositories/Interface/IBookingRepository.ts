@@ -3,7 +3,7 @@ import BookingModel, {
   IBookingModel,
 } from "../../models/session.model/booking.models";
 import { Types } from "mongoose";
-import { BookingDetails } from "../../types/booking.types";
+import { BookingDetails, BookingsResponse } from "../../types/booking.types";
 
 export interface IBookingRepository
   extends Omit<BaseRepository<IBookingModel>, "model"> {
@@ -16,6 +16,12 @@ export interface IBookingRepository
     userId: Types.ObjectId,
     trainerId: Types.ObjectId
   ): Promise<BookingDetails[]>;
+
+  findAllBookingsByUser(
+    userId: Types.ObjectId,
+    page:number,
+    limit:number
+  ): Promise<BookingsResponse>;
 
   getBookingDetailsById(bookingId: Types.ObjectId): Promise<IBookingModel>;
 

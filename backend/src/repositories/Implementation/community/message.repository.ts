@@ -1,17 +1,24 @@
-import { Types } from 'mongoose';
-import MessageModel, { IMessageModel } from '../../../models/group.model/group-messages.models';
-import { IMessageWithSender } from '../../../services/Implementation/group.service';
-import CustomError from '../../../errors/CustomError';
-import { HttpResCode } from '../../../constants/http-response.constants';
+import { Types } from "mongoose";
+import MessageModel, {
+  IMessageModel,
+} from "../../../models/group.model/group-messages.models";
+import { IMessageWithSender } from "../../../services/Implementation/group.service";
+import CustomError from "../../../errors/CustomError";
+import { HttpResCode } from "../../../constants/http-response.constants";
 
 export class MessageRepository {
-
-
-  async findLastGroupMessage(groupId: Types.ObjectId): Promise<IMessageModel | null> {
-       try {
-         return MessageModel.findOne({ groupId, messageScope: 'group', isDeleted: false })
-           .sort({ createdAt: -1 })
-           .exec();
+  
+  async findLastGroupMessage(
+    groupId: Types.ObjectId
+  ): Promise<IMessageModel | null> {
+    try {
+      return MessageModel.findOne({
+        groupId,
+        messageScope: "group",
+        isDeleted: false,
+      })
+        .sort({ createdAt: -1 })
+        .exec();
     } catch (error) {
       throw new CustomError(
         "failed to find last group message",
@@ -20,15 +27,17 @@ export class MessageRepository {
     }
   }
 
-
-  async countUnreadGroupMessages(groupId: Types.ObjectId, userId: Types.ObjectId): Promise<number> {
-       try {
-         return MessageModel.countDocuments({
-           groupId: groupId,
-           messageScope: 'group',
-           isDeleted: false,
-           readBy: { $ne: userId } 
-         }).exec();
+  async countUnreadGroupMessages(
+    groupId: Types.ObjectId,
+    userId: Types.ObjectId
+  ): Promise<number> {
+    try {
+      return MessageModel.countDocuments({
+        groupId: groupId,
+        messageScope: "group",
+        isDeleted: false,
+        readBy: { $ne: userId },
+      }).exec();
     } catch (error) {
       throw new CustomError(
         "failed to count unread group messages",
@@ -37,42 +46,47 @@ export class MessageRepository {
     }
   }
 
-
-  async findLastPrivateMessageBetweenUsers(user1Id: Types.ObjectId, user2Id: Types.ObjectId): Promise<IMessageModel | null> {
+  async findLastPrivateMessageBetweenUsers(
+    user1Id: Types.ObjectId,
+    user2Id: Types.ObjectId
+  ): Promise<IMessageModel | null> {
     return MessageModel.findOne({
-      messageScope: 'private',
+      messageScope: "private",
       isDeleted: false,
       $or: [
         { senderId: user1Id, receiverId: user2Id },
         { senderId: user2Id, receiverId: user1Id },
-      ]
+      ],
     })
       .sort({ createdAt: -1 })
       .exec();
   }
 
-
-  async countUnreadPrivateMessagesFromSender(receiverId: Types.ObjectId, senderId: Types.ObjectId): Promise<number> {
+  async countUnreadPrivateMessagesFromSender(
+    receiverId: Types.ObjectId,
+    senderId: Types.ObjectId
+  ): Promise<number> {
     return MessageModel.countDocuments({
-      messageScope: 'private',
+      messageScope: "private",
       isDeleted: false,
       senderId: senderId,
       receiverId: receiverId,
-      readBy: { $ne: receiverId } 
+      readBy: { $ne: receiverId },
     }).exec();
   }
 
-  async markMessagesAsRead(messageIds: Types.ObjectId[], userId: Types.ObjectId): Promise<void> {
+  async markMessagesAsRead(
+    messageIds: Types.ObjectId[],
+    userId: Types.ObjectId
+  ): Promise<void> {
     await MessageModel.updateMany(
-      { _id: { $in: messageIds }, readBy: { $ne: userId } }, 
-      { $addToSet: { readBy: userId }, status: 'read' } 
+      { _id: { $in: messageIds }, readBy: { $ne: userId } },
+      { $addToSet: { readBy: userId }, status: "read" }
     ).exec();
   }
 
-
-
-   async getMessages(
-    chatType: 'group' | 'private',
+  async getMessages(
+    chatType: "group" | "private",
     targetId: Types.ObjectId,
     actorId: Types.ObjectId,
     page: number,
@@ -81,11 +95,11 @@ export class MessageRepository {
     const skip = (page - 1) * limit;
     let query: any = { isDeleted: false };
 
-    if (chatType === 'group') {
+    if (chatType === "group") {
       query.groupId = targetId;
-      query.messageScope = 'group';
-    } else { 
-      query.messageScope = 'private';
+      query.messageScope = "group";
+    } else {
+      query.messageScope = "private";
       query.$or = [
         { senderId: actorId, receiverId: targetId },
         { senderId: targetId, receiverId: actorId },
@@ -93,19 +107,24 @@ export class MessageRepository {
     }
 
     const messagesPromise = MessageModel.find(query)
-      .sort({ createdAt: -1 }) 
+      .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
-      .populate('senderId', 'username profilePicture') 
+      .populate("senderId", "username profilePicture")
       .exec();
 
     const totalMessagesPromise = MessageModel.countDocuments(query).exec();
 
-    const [messages, totalMessages] = await Promise.all([messagesPromise, totalMessagesPromise]);
+    const [messages, totalMessages] = await Promise.all([
+      messagesPromise,
+      totalMessagesPromise,
+    ]);
 
-    return { messages : messages as unknown as IMessageWithSender[], totalMessages };
+    return {
+      messages: messages as unknown as IMessageWithSender[],
+      totalMessages,
+    };
   }
-
 
   async createMessage(messageData: {
     senderId: Types.ObjectId;
@@ -117,33 +136,32 @@ export class MessageRepository {
   }): Promise<IMessageModel> {
     const newMessage = new MessageModel({
       ...messageData,
-      readBy: [messageData.senderId], 
-      status: 'sent', 
+      readBy: [messageData.senderId],
+      status: "sent",
     });
     await newMessage.save();
     return newMessage;
   }
 
-
   async markChatMessagesAsRead(
-    chatType: 'group' | 'private',
+    chatType: "group" | "private",
     targetId: Types.ObjectId,
     readerId: Types.ObjectId
   ): Promise<void> {
-    let query: any = { isDeleted: false, readBy: { $ne: readerId } }; 
+    let query: any = { isDeleted: false, readBy: { $ne: readerId } };
 
-    if (chatType === 'group') {
+    if (chatType === "group") {
       query.groupId = targetId;
-      query.messageScope = 'group';
-    } else { 
-      query.messageScope = 'private';
-      query.senderId = targetId; 
+      query.messageScope = "group";
+    } else {
+      query.messageScope = "private";
+      query.senderId = targetId;
       query.receiverId = readerId;
     }
 
-    await MessageModel.updateMany(
-      query,
-      { $addToSet: { readBy: readerId }, status: 'read' } 
-    ).exec();
+    await MessageModel.updateMany(query, {
+      $addToSet: { readBy: readerId },
+      status: "read",
+    }).exec();
   }
 }

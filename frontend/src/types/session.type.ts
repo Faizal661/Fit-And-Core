@@ -90,3 +90,11 @@ export interface BookingDetails extends UserBooking {
   traineeVideoUploadedAt?: string;
   updatedAt?: string;
 }
+
+
+export interface BookingsResponse {
+  bookings: UserBooking[];
+  total: number;
+  currentPage: number;
+  totalPages: number;
+}

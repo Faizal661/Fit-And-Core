@@ -21,6 +21,8 @@ const userAccess = [
   authorizeRoles(["user", "trainer", "admin"]),
 ];
 
+//  ------ create and find groups -----
+
 router
   .route("/")
   .post(...adminAccess, upload.single("groupImage"), (req, res, next) =>
@@ -38,11 +40,11 @@ router.post("/:groupId/join", ...userAccess, (req, res, next) =>
   groupController.joinGroup(req, res, next)
 );
 
-// router.get("/:groupId", ...userAccess, (req, res, next) =>
-//   groupController.getGroupById(req, res, next)
-// );
+// --------- group members routes
 
-// group members routes
+router.get("/:groupId/details", ...userAccess, (req, res, next) =>
+  groupController.getGroupDetails(req, res, next)
+);
 
 router.get("/:groupId/members", ...userAccess, (req, res, next) =>
   groupController.getGroupMembers(req, res, next)
@@ -54,6 +56,8 @@ router.patch(
   (req, res, next) => groupController.updateGroupMemberStatus(req, res, next)
 );
 
+// --------- my groups and private chats
+
 router.get("/chats/user/:userId", ...userAccess, (req, res, next) =>
   groupController.getUserChats(req, res, next)
 );
@@ -64,8 +68,12 @@ router
   .get(...userAccess, (req, res, next) =>
     groupController.getChatMessages(req, res, next)
   )
-  .post(...userAccess,upload.single("file"), (req, res, next) =>
+  .post(...userAccess, upload.single("file"), (req, res, next) =>
     groupController.sendChatMessage(req, res, next)
   );
+
+// router.get("/:groupId", ...userAccess, (req, res, next) =>
+//   groupController.getGroupById(req, res, next)
+// );
 
 export default router;

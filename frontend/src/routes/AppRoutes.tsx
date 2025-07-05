@@ -14,6 +14,7 @@ import GroupManagementPage from "../pages/admin/GroupManage";
 import ChatPage from "../pages/chat/ChatPage";
 import FinanceManagementPage from "../pages/shared/FinanceManagementPage";
 import WalletPage from "../pages/shared/WalletPage";
+import UserHistoryPage from "../pages/user/HistoryPage";
 
 // authentication
 const UserLogin = lazy(() => import("../pages/auth/signin/UserLogin"));
@@ -86,11 +87,12 @@ const AppRoutes = () => {
         <Route path="/nutrition" element={<UserNutritionTrackingPage />} />
         <Route path="/reports" element={<ReportViewPage />} />
         <Route path="/streak" element={<UserStreakPage />} />
+        <Route path="/history" element={<UserHistoryPage />} />
       </Route>
 
       <Route element={<ProtectedRoutes allowedRoles={["trainer"]} />}>
-        <Route path="/trainer" element={<FinanceManagementPage />} />
         {/* <Route path="/trainer" element={<HomeTrainer />} /> */}
+        <Route path="/trainer" element={<WalletPage />} />
         <Route path="/trainer/articles" element={<TrainerArticles />} />
         <Route path="/trainer/articles/create" element={<CreateArticle />} />
         <Route path="/trainer/articles/edit/:articleId" element={<EditArticle />} />

@@ -23,3 +23,10 @@ export interface BookingDetails {
   trainer:TrainerDetails,
   slotStart: Date;
 }
+
+export interface BookingsResponse {
+  bookings: BookingDetails[];
+  total: number;
+  currentPage: number;
+  totalPages: number;
+}

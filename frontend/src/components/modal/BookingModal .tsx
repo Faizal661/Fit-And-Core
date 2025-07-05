@@ -11,6 +11,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateBookingStatus } from "../../services/session/BookingService";
 import { useToast } from "../../context/ToastContext";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 interface BookingModalProps {
   booking: UserBooking | null;
@@ -32,6 +33,7 @@ export const BookingModal = ({
   const { showToast } = useToast();
 
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   // Mutation for updating booking status
   const updateStatusMutation = useMutation({
@@ -260,10 +262,18 @@ export const BookingModal = ({
             {/* Action Buttons */}
             <div className="mt-6 pt-4 border-t border-gray-200">
               <div className="flex justify-between mb-3">
-                <button className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
+                <motion.button
+                  className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigate(`/messages`);
+                  }}
+                >
                   <MessageSquare size={16} />
                   Chat
-                </button>
+                </motion.button>
                 <button
                   onClick={() => setShowConfirmModal(true)}
                   disabled={isStartingCall || booking.status === "completed"}
