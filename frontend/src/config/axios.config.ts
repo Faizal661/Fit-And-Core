@@ -1,5 +1,5 @@
 import axios from "axios";
-import { store } from "../redux/store";
+import { RootState, store } from "../redux/store";
 import { startLoading, stopLoading } from "../redux/slices/loadingSlice";
 import { updateToken, clearAuth } from "../redux/slices/authSlice";
 import { AUTH_MESSAGES } from "../constants/messages/auth.messages";
@@ -17,7 +17,8 @@ api.interceptors.request.use(
     store.dispatch(startLoading());
     console.log(SUCCESS_MESSAGES.INTERCEPTOR_REQUEST_SUCCESS);
 
-    const accessToken = store.getState().auth.accessToken;
+    const state = store.getState() as RootState;
+    const accessToken = state.auth.accessToken;
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }

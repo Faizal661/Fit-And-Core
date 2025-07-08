@@ -25,7 +25,7 @@ export const BookingModal = ({
   currentUserType,
 }: BookingModalProps) => {
   const [isStartingCall, setIsStartingCall] = useState(false);
-  const [showVideoCall, setShowVideoCall] = useState(false);
+  // const [showVideoCall, setShowVideoCall] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [showCompleteModal, setShowCompleteModal] = useState(false);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
@@ -75,7 +75,8 @@ export const BookingModal = ({
   const handleConfirmCall = async () => {
     setShowConfirmModal(false);
     setIsStartingCall(true);
-    setShowVideoCall(true);
+    // setShowVideoCall(true);
+
   };
 
   const handleCompleteBooking = () => {
@@ -320,7 +321,7 @@ export const BookingModal = ({
             ? `trainee - ${booking.trainee.username}`
             : `trainer ${booking.trainer.username}`
         }?`}
-        confirmText="Start"
+        confirmText="Call"
         isOpen={showConfirmModal}
         onClose={() => setShowConfirmModal(false)}
         onConfirm={handleConfirmCall}
@@ -361,7 +362,7 @@ export const BookingModal = ({
       />
 
       {/* Video Call Modal */}
-      {showVideoCall && (
+      {isStartingCall  && (
         <VideoCallModal
           bookingId={booking._id}
           userId={userId}
@@ -369,7 +370,7 @@ export const BookingModal = ({
           remoteProfilePicture={remoteProfilePicture}
           localProfilePicture={localProfilePicture}
           onClose={() => {
-            setShowVideoCall(false);
+            // setShowVideoCall(false);
             setIsStartingCall(false);
           }}
         />

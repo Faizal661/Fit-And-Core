@@ -135,7 +135,10 @@ const TrainerArticles = () => {
                 <input
                   type="text"
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value);
+                    setActivePage(1);
+                  }}
                   placeholder="Search articles..."
                   className="w-full px-4 py-2 pr-10 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
                 />
@@ -270,7 +273,6 @@ const TrainerArticles = () => {
               </button>
             </motion.div>
           )}
-          
         </motion.div>
       </div>
 

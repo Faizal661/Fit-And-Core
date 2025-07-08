@@ -3,6 +3,7 @@ export interface User {
   email: string;
   username: string;
   role: "user" | "trainer" | "admin";
+  profilePicture?:string;
 }
 
 export interface LoginCredentials {
