@@ -62,7 +62,7 @@ const UserHistoryPage = () => {
     threshold: 0.1,
   });
 
-  const recordsPerPage = 8;
+  const recordsPerPage = 5;
 
   // Fetch session history
   const {

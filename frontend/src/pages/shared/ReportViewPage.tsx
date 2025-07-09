@@ -56,7 +56,7 @@ const ReportViewPage = () => {
   );
   const [isViewBookingModalOpen, setIsViewBookingModalOpen] = useState(false);
 
-  const limit = 10;
+  const limit = 5;
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["userReports", currentPage, selectedStatus, limit],

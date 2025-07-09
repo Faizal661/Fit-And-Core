@@ -157,6 +157,7 @@ export default class authService implements IAuthService {
         username: user.username,
         email: user.email,
         role: user.role,
+        profilePicture:user.profilePicture
       },
       accessToken,
       refreshToken,

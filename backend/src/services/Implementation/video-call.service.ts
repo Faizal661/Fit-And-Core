@@ -22,10 +22,6 @@ export class VideoCallService implements IVideoCallService {
       }
     );
 
-    socket.on("registerUserSocket", (userId: string) => {
-      socket.join(userId);
-      console.log(`Socket ${socket.id} joined room for user ${userId}`);
-    });
 
     socket.on("disconnect", () => {
       this.handleDisconnect(socket.id);
