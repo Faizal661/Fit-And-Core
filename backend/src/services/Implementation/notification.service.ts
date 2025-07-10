@@ -10,12 +10,13 @@ import { ITrainerRepository } from "../../repositories/Interface/ITrainerReposit
 import { INotificationService } from "../Interface/INotificationService";
 import CustomError from "../../errors/CustomError";
 import { HttpResCode } from "../../constants/http-response.constants";
+import { INotificationRepository } from "../../repositories/Interface/INotificationRepository";
 
 @injectable()
 export class NotificationService implements INotificationService {
   constructor(
     @inject("NotificationRepository")
-    private notificationRepository: NotificationRepository,
+    private notificationRepository: INotificationRepository,
     @inject("TrainerRepository")
     private trainerRepository: ITrainerRepository,
     @inject("SocketIOServer")
@@ -48,7 +49,7 @@ export class NotificationService implements INotificationService {
 
       return newNotification;
     } catch (error) {
-        if (error instanceof CustomError) {
+      if (error instanceof CustomError) {
         throw error;
       }
       throw new CustomError(

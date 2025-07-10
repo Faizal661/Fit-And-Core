@@ -34,7 +34,6 @@ const configureSocketIO = (app: express.Application) => {
     videoCallService.registerSocketEvents(socket);
 
     socket.on("registerUserSocket", (userId: string) => {
-
       socket.join(userId);
     });
 

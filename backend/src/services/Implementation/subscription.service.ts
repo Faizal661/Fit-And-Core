@@ -1,7 +1,7 @@
 import { Types } from "mongoose";
 import { FilterQuery } from "mongoose";
 import Stripe from "stripe";
-import { inject, injectable } from "tsyringe";
+import { container, inject, injectable } from "tsyringe";
 import {
   ISubscription,
   CheckoutSubscriptionParams,
@@ -13,8 +13,6 @@ import { ISubscriptionModel } from "../../models/subscription.models";
 import { ISubscriptionRepository } from "../../repositories/Interface/ISubscriptionRepository";
 import { ISubscriptionService } from "../Interface/ISubscriptionService";
 import { IUserRepository } from "../../repositories/Interface/IUserRepository";
-
-import { sendResponse } from "../../utils/send-response";
 import CustomError from "../../errors/CustomError";
 import {
   HttpResCode,
@@ -24,6 +22,7 @@ import { ITrainerRepository } from "../../repositories/Interface/ITrainerReposit
 import env from "../../config/env.config";
 import { WalletRepository } from "../../repositories/Implementation/wallet.repository";
 import { TransactionModel } from "../../models/wallet.models";
+import { NotificationService } from "./notification.service";
 
 @injectable()
 export default class SubscriptionService implements ISubscriptionService {
@@ -233,6 +232,22 @@ export default class SubscriptionService implements ISubscriptionService {
 
     wallet.balance += amount;
     await wallet.save();
+
+    const notificationService = container.resolve<NotificationService>(
+      "NotificationService"
+    );
+    // notification to the trainer about new subscription
+    await notificationService.sendNotification({
+      userId: trainerUserId!,
+      type: "new_subscription",
+      message: `Congratulations! A new user has subscribed for ${planDuration} to your services!`,
+      read: false,
+      link: `/trainer/trainees/${subscription.userId}`,
+      metadata: {
+        subscriptionId,
+        expiryDate: subscription.expiryDate,
+      },
+    });
   }
 
   private calculateExpiryDate(planDuration?: string): Date {
@@ -379,7 +394,11 @@ export default class SubscriptionService implements ISubscriptionService {
       }
 
       const allUserSubscriptions =
-        await this.subscriptionRepository.findAllSubscriptionsByUser(userId, page, limit);
+        await this.subscriptionRepository.findAllSubscriptionsByUser(
+          userId,
+          page,
+          limit
+        );
 
       return allUserSubscriptions;
     } catch (error) {

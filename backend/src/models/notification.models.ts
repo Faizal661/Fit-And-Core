@@ -1,14 +1,16 @@
 import mongoose, { Schema, Document, Types } from "mongoose";
 
 export type NotificationType =
+  | "new_subscription"
   | "subscription_expiry"
+  | "new_booking"
   | "upcoming_session"
   | "general"
   | "system_alert";
 
 export interface INotification {
   userId: Types.ObjectId;
-  userType?:"Trainer"|"Trainee";
+  userType?: "Trainer" | "Trainee";
   type: NotificationType;
   message: string;
   read: boolean;
@@ -18,8 +20,8 @@ export interface INotification {
 
 export interface INotificationModel extends Document, INotification {
   _id: Types.ObjectId;
-  createdAt: Date; 
-  updatedAt: Date; 
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 const NotificationSchema = new Schema<INotificationModel>(
@@ -33,7 +35,9 @@ const NotificationSchema = new Schema<INotificationModel>(
     type: {
       type: String,
       enum: [
+        "new_subscription",
         "subscription_expiry",
+        "new_booking",
         "upcoming_session",
         "general",
         "system_alert",

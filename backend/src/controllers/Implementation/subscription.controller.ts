@@ -14,9 +14,7 @@ export class SubscriptionController implements ISubscriptionController {
   constructor(
     @inject("SubscriptionService")
     private subscriptionService: ISubscriptionService
-  ) {
-    this.subscriptionService = subscriptionService;
-  }
+  ) {}
 
   async createCheckoutSession(
     req: Request,
@@ -150,36 +148,39 @@ export class SubscriptionController implements ISubscriptionController {
     }
   }
 
-   async getAllUserSubscriptions(
-      req: Request,
-      res: Response,
-      next: NextFunction
-    ): Promise<void> {
-      try {
-        const userId = req.decoded?.id;
-  
-        const { page, limit } = req.query;
-  
-        if (!userId) {
-          throw new CustomError(
-            HttpResMsg.UNAUTHORIZED,
-            HttpResCode.UNAUTHORIZED
-          );
-        }
-  
-        const allUserSubscriptions = await this.subscriptionService.getAllUserSubscriptions(
+  async getAllUserSubscriptions(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const userId = req.decoded?.id;
+
+      const { page, limit } = req.query;
+
+      if (!userId) {
+        throw new CustomError(
+          HttpResMsg.UNAUTHORIZED,
+          HttpResCode.UNAUTHORIZED
+        );
+      }
+
+      const allUserSubscriptions =
+        await this.subscriptionService.getAllUserSubscriptions(
           userId,
           Number(page),
           Number(limit)
         );
-        console.log("🚀 ~ SubscriptionController ~ allUserSubscriptions:", allUserSubscriptions)
-  
-        sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, {
-          data: allUserSubscriptions,
-        });
-      } catch (error) {
-        next(error);
-      }
+      console.log(
+        "🚀 ~ SubscriptionController ~ allUserSubscriptions:",
+        allUserSubscriptions
+      );
+
+      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, {
+        data: allUserSubscriptions,
+      });
+    } catch (error) {
+      next(error);
     }
-  
+  }
 }
