@@ -12,7 +12,7 @@ import {
 } from "../../../schemas/authSchema";
 import { useToast } from "../../../context/ToastContext";
 import { AUTH_MESSAGES } from "../../../constants/messages/auth.messages";
-import Footer from "../../../components/shared/Footer";
+import Footer from "../../../components/shared/footer";
 import { STATUS } from "../../../constants/messages/status.messages";
 import { CheckCircle, Clock, Mail, Shield } from "lucide-react";
 

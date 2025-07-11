@@ -1,5 +1,5 @@
-import { IUserModel } from '../../models/user.models.ts';
-import { IGoogleUser } from '../../types/auth.types.ts';
+import { IUserModel } from '../../models/user.models';
+import { IGoogleUser } from '../../types/auth.types';
 
 export interface IAuthRepository {
     isUsernameTaken(username: string): Promise<boolean | null>;

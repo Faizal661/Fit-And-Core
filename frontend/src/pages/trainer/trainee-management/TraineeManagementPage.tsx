@@ -1,7 +1,7 @@
 import { useState, FormEvent } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchTrainees } from "../../../services/trainer/traineeManageService";
-import Footer from "../../../components/shared/Footer";
+import Footer from "../../../components/shared/footer";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { useNavigate } from "react-router-dom";

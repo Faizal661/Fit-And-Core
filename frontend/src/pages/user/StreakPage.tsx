@@ -11,7 +11,7 @@ import {
   Activity,
   ChevronDown,
 } from "lucide-react";
-import Footer from "../../components/shared/Footer";
+import Footer from "../../components/shared/footer";
 import {
   getHeatmapData,
   getStreakData,

@@ -32,7 +32,7 @@ import {
   progressionSchema,
 } from "../../schemas/progressSchema";
 import { useToast } from "../../context/ToastContext";
-import Footer from "../../components/shared/Footer";
+import Footer from "../../components/shared/footer";
 import { Progress } from "../../types/progress.type";
 import { BMI_CATEGORY_COLORS } from "../../constants/colors/bmi-category.colors";
 import { calculateWeightToNormalBmi } from "../../utils/calculateWeightToNormalBmi";

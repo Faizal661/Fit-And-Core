@@ -4,7 +4,7 @@ import {
   createAvailability,
   getTrainerAvailabilityByDate,
 } from "../../../services/session/sessionService";
-import Footer from "../../../components/shared/Footer";
+import Footer from "../../../components/shared/footer";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import {

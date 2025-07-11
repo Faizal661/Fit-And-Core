@@ -10,7 +10,7 @@ import {
   BarChart,
   Cell,
 } from "recharts";
-import Footer from "../../components/shared/Footer";
+import Footer from "../../components/shared/footer";
 import { MetricCard } from "../../components/shared/MetricCard";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";

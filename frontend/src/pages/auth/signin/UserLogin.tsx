@@ -24,7 +24,7 @@ import { useToast } from "../../../context/ToastContext";
 import { useGoogleAuth } from "../../../hooks/useGoogleAuth";
 import { AUTH_MESSAGES } from "../../../constants/messages/auth.messages";
 import { STATUS } from "../../../constants/messages/status.messages";
-import Footer from "../../../components/shared/Footer";
+import Footer from "../../../components/shared/footer";
 import axios from "axios";
 
 // Animation variants

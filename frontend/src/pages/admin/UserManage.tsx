@@ -4,7 +4,7 @@ import {
   fetchUsers,
   toggleBlockStatus,
 } from "../../services/admin/userManagement";
-import Footer from "../../components/shared/Footer";
+import Footer from "../../components/shared/footer";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { UserResponse, UsersResponse } from "../../types/user.type";

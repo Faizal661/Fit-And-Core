@@ -1,7 +1,7 @@
 import { Fragment } from "react";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import AdminDashboard from "../../components/admin/AdminDashboard";
-import Footer from "../../components/shared/Footer";
+import Footer from "../../components/shared/footer";
 
 const queryClient = new QueryClient();
 

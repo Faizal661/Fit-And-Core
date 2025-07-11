@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { Trainer } from "../../../types/trainer.type";
 import { useToast } from "../../../context/ToastContext";
-import Footer from "../../../components/shared/Footer";
+import Footer from "../../../components/shared/footer";
 import PageNotFound from "../../../components/shared/error/PageNotFound";
 import {
   SubscriptionStatus,

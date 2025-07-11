@@ -1,5 +1,5 @@
 import morgan from "morgan";
-import logger from "../utils/logger.utils.ts";
+import logger from "../utils/logger.utils";
 import { Request, Response, NextFunction } from "express";
 
 const requestLogging = () => {

@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import { getTrainerAvailabilities } from "../../../services/session/sessionService";
 import { getTrainerBookings, trainerCancelBooking } from "../../../services/session/BookingService";
-import Footer from "../../../components/shared/Footer";
+import Footer from "../../../components/shared/footer";
 import { useInView } from "react-intersection-observer";
 import { IAvailability, UserBooking } from "../../../types/session.type";
 import { useToast } from "../../../context/ToastContext";
