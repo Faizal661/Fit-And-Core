@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { AlertCircle, RotateCw, ArrowLeft } from "lucide-react";
 import { GlowButton } from "../../../components/buttons/GlowButton";
-import Footer from "../Footer";
+import Footer from "../footer";
 
 const fadeIn = {
   hidden: { opacity: 0, y: 20 },

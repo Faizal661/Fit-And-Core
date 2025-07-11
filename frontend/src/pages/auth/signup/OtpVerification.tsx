@@ -23,7 +23,7 @@ import {
 import { useToast } from "../../../context/ToastContext";
 import { AUTH_MESSAGES } from "../../../constants/messages/auth.messages";
 import { STATUS } from "../../../constants/messages/status.messages";
-import Footer from "../../../components/shared/Footer";
+import Footer from "../../../components/shared/footer";
 import OtpInput from "../../../components/shared/otp/OtpInput";
 
 // Animation variants

@@ -7,7 +7,7 @@ import {
 } from "../../services/admin/trainerManagement";
 import { Trainer } from "../../types/trainer.type";
 import { z } from "zod";
-import Footer from "../../components/shared/Footer";
+import Footer from "../../components/shared/footer";
 import { rejectReasonSchema } from "../../schemas/trainerSchema";
 import { STATUS } from "../../constants/messages/status.messages";
 import { motion } from "framer-motion";

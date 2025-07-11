@@ -130,55 +130,55 @@ const env = {
   },
 
   // AWS CONFIG
-  get AWS_ACCESS_KEY_ID() {
-    if (!process.env.AWS_ACCESS_KEY_ID) {
-      throw new CustomError(
-        EnvErrMsg.AWS_ACCESS_KEY_ID_UNDEFINED,
-        HttpResCode.INTERNAL_SERVER_ERROR
-      );
-    }
-    return process.env.AWS_ACCESS_KEY_ID;
-  },
-  get AWS_SECRET_ACCESS_KEY() {
-    if (!process.env.AWS_SECRET_ACCESS_KEY) {
-      throw new CustomError(
-        EnvErrMsg.AWS_SECRET_ACCESS_KEY_UNDEFINED,
-        HttpResCode.INTERNAL_SERVER_ERROR
-      );
-    }
-    return process.env.AWS_SECRET_ACCESS_KEY;
-  },
-  get AWS_REGION() {
-    if (!process.env.AWS_REGION) {
-      throw new CustomError(
-        EnvErrMsg.AWS_REGION_UNDEFINED,
-        HttpResCode.INTERNAL_SERVER_ERROR
-      );
-    }
-    return process.env.AWS_REGION;
-  },
+  // get AWS_ACCESS_KEY_ID() {
+  //   if (!process.env.AWS_ACCESS_KEY_ID) {
+  //     throw new CustomError(
+  //       EnvErrMsg.AWS_ACCESS_KEY_ID_UNDEFINED,
+  //       HttpResCode.INTERNAL_SERVER_ERROR
+  //     );
+  //   }
+  //   return process.env.AWS_ACCESS_KEY_ID;
+  // },
+  // get AWS_SECRET_ACCESS_KEY() {
+  //   if (!process.env.AWS_SECRET_ACCESS_KEY) {
+  //     throw new CustomError(
+  //       EnvErrMsg.AWS_SECRET_ACCESS_KEY_UNDEFINED,
+  //       HttpResCode.INTERNAL_SERVER_ERROR
+  //     );
+  //   }
+  //   return process.env.AWS_SECRET_ACCESS_KEY;
+  // },
+  // get AWS_REGION() {
+  //   if (!process.env.AWS_REGION) {
+  //     throw new CustomError(
+  //       EnvErrMsg.AWS_REGION_UNDEFINED,
+  //       HttpResCode.INTERNAL_SERVER_ERROR
+  //     );
+  //   }
+  //   return process.env.AWS_REGION;
+  // },
 
   // AWS SES (Simple Email Service) Configuration for Sending OTP Through Email
-  get SES_EMAIL_FROM() {
-    if (!process.env.SES_EMAIL_FROM) {
-      throw new CustomError(
-        EnvErrMsg.SES_EMAIL_FROM_UNDEFINED,
-        HttpResCode.INTERNAL_SERVER_ERROR
-      );
-    }
-    return process.env.SES_EMAIL_FROM;
-  },
+  // get SES_EMAIL_FROM() {
+  //   if (!process.env.SES_EMAIL_FROM) {
+  //     throw new CustomError(
+  //       EnvErrMsg.SES_EMAIL_FROM_UNDEFINED,
+  //       HttpResCode.INTERNAL_SERVER_ERROR
+  //     );
+  //   }
+  //   return process.env.SES_EMAIL_FROM;
+  // },
 
   // AWS S3 BUCKET
-  get AWS_S3_BUCKET_NAME() {
-    if (!process.env.AWS_S3_BUCKET_NAME) {
-      throw new CustomError(
-        EnvErrMsg.AWS_S3_BUCKET_NAME_UNDEFINED,
-        HttpResCode.INTERNAL_SERVER_ERROR
-      );
-    }
-    return process.env.AWS_S3_BUCKET_NAME;
-  },
+  // get AWS_S3_BUCKET_NAME() {
+  //   if (!process.env.AWS_S3_BUCKET_NAME) {
+  //     throw new CustomError(
+  //       EnvErrMsg.AWS_S3_BUCKET_NAME_UNDEFINED,
+  //       HttpResCode.INTERNAL_SERVER_ERROR
+  //     );
+  //   }
+  //   return process.env.AWS_S3_BUCKET_NAME;
+  // },
 
   // NODEMAILER
   get SMTP_HOST() {

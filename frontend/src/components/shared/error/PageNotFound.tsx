@@ -4,7 +4,7 @@ import { useInView } from "react-intersection-observer";
 import { AlertCircle } from "lucide-react";
 import { REDIRECT_MESSAGES } from "../../../constants/messages/redirect.messages";
 import { GlowButton } from "../../../components/buttons/GlowButton";
-import Footer from "../Footer";
+import Footer from "../footer"
 
 const fadeIn = {
   hidden: { opacity: 0, y: 20 },
@@ -118,7 +118,7 @@ const PageNotFound = ({
       </div>
 
       <div className="pt-56">
-        <Footer />
+        <Footer/>
       </div>
     </div>
   );

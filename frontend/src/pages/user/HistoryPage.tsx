@@ -16,7 +16,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import Footer from "../../components/shared/Footer";
+import Footer from "../../components/shared/footer";
 import { BookingsResponse } from "../../types/session.type";
 import {
   SubscriptionsResponse,

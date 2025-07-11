@@ -5,7 +5,7 @@ import hero_image from "../../assets/images/img3.jpg";
 import explore_image from "../../assets/images/pilates1.jpg";
 import trainer_image from "../../assets/images/yoga4.jpg";
 import { InfiniteCarousel } from "../../components/shared/InfiniteCarousel";
-import Footer from "../../components/shared/Footer";
+import Footer from "../../components/shared/footer";
 
 import { motion, AnimatePresence } from "framer-motion";
 import { TypeAnimation } from "react-type-animation";

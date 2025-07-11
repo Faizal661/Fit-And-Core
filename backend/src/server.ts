@@ -4,42 +4,42 @@ import express from "express";
 import dotenv from "dotenv";
 import passport from "passport";
 import cookieParser from "cookie-parser";
-import CustomError from "./errors/CustomError.ts";
+import CustomError from "./errors/CustomError";
 import {
   HttpResCode,
   HttpResMsg,
-} from "./constants/http-response.constants.ts";
+} from "./constants/http-response.constants";
 
 // Configs
 dotenv.config();
-import env from "./config/env.config.ts";
+import env from "./config/env.config";
 import connectDB from "./config/db.config";
 import setupScheduledJobs from "./scheduler";
 import configurePassport from "./config/passport";
 import configureSocketIO from "./config/socket.io.config";
 
 // Middlewares
-import requestLogging from "./middlewares/request-logger.middleware.ts";
-import errorHandler from "./middlewares/error-handler.middleware.ts";
+import requestLogging from "./middlewares/request-logger.middleware";
+import errorHandler from "./middlewares/error-handler.middleware";
 
 // Routers
 import authRoutes from "./routes/auth.routes";
 import adminRoutes from "./routes/admin.routes";
-import userRoutes from "./routes/user.routes.ts";
-import groupRoutes from "./routes/group.routes.ts";
-import reviewRoutes from "./routes/review.routes.ts";
-import streakRoutes from "./routes/streak.routes.ts";
-import reportRoutes from "./routes/report.routes.ts";
-import walletRoutes from "./routes/wallet.routes.ts";
-import trainerRoutes from "./routes/trainer.routes.ts";
-import articleRoutes from "./routes/article.routes.ts";
-import sessionRoutes from "./routes/session.routes.ts";
-import webhookRoutes  from "./routes/webHook.routes.ts";
-import foodLogsRoutes from "./routes/foodLogs.routes.ts";
-import progressRoutes from "./routes/progress.routes.ts";
-import recordingRoutes from "./routes/recording.routes.ts";
-import notificationRoutes from "./routes/notification.routes.ts";
-import subscriptionRoutes  from "./routes/subscription.routes.ts";
+import userRoutes from "./routes/user.routes";
+import groupRoutes from "./routes/group.routes";
+import reviewRoutes from "./routes/review.routes";
+import streakRoutes from "./routes/streak.routes";
+import reportRoutes from "./routes/report.routes";
+import walletRoutes from "./routes/wallet.routes";
+import trainerRoutes from "./routes/trainer.routes";
+import articleRoutes from "./routes/article.routes";
+import sessionRoutes from "./routes/session.routes";
+import webhookRoutes  from "./routes/webHook.routes";
+import foodLogsRoutes from "./routes/foodLogs.routes";
+import progressRoutes from "./routes/progress.routes";
+import recordingRoutes from "./routes/recording.routes";
+import notificationRoutes from "./routes/notification.routes";
+import subscriptionRoutes  from "./routes/subscription.routes";
 
 const app = express();
 

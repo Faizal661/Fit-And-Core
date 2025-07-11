@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import Footer from "../../../components/shared/Footer";
+import Footer from "../../../components/shared/footer";
 import { getApprovedTrainers } from "../../../services/trainer/trainerService";
 import { motion } from "framer-motion";
 import { Search, Users, Clock, ChevronRight, Star, X, ChevronDown } from "lucide-react";

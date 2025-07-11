@@ -14,7 +14,7 @@ import {
   UserPlus,
   Clock,
 } from "lucide-react";
-import Footer from "../../../components/shared/Footer";
+import Footer from "../../../components/shared/footer";
 import { getSubscribedTrainers } from "../../../services/trainer/trainerService";
 import { getDaysLeft } from "../../../utils/dateFormat";
 

@@ -7,7 +7,7 @@ import { MarkdownEditor } from "../../../components/article/MarkdownEditor";
 import { createTrainerArticle } from "../../../services/article/articleService";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "../../../context/ToastContext";
-import Footer from "../../../components/shared/Footer";
+import Footer from "../../../components/shared/footer";
 import { STATUS } from "../../../constants/messages/status.messages";
 import { SUCCESS_MESSAGES } from "../../../constants/messages/success.messages";
 import { WARNING_MESSAGES } from "../../../constants/messages/warning.messages";

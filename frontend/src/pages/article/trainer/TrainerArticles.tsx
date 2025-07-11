@@ -6,7 +6,7 @@ import { RootState } from "../../../redux/store";
 import { ArticlesResponse } from "../../../types/article.type";
 import { ArticleCard } from "../../../components/article/ArticleCard";
 import { useState, FormEvent } from "react";
-import Footer from "../../../components/shared/Footer";
+import Footer from "../../../components/shared/footer";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { Search, SortAsc, Plus } from "lucide-react";

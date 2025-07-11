@@ -17,7 +17,7 @@ import {
   getUserBookings,
   userCancelBooking,
 } from "../../../services/session/BookingService";
-import Footer from "../../../components/shared/Footer";
+import Footer from "../../../components/shared/footer";
 import { useInView } from "react-intersection-observer";
 import axios from "axios";
 import { useToast } from "../../../context/ToastContext";

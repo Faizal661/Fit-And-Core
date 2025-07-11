@@ -7,7 +7,7 @@ import { articleSchema, ArticleFormData } from "../../../schemas/articleSchema";
 import { MarkdownEditor } from "../../../components/article/MarkdownEditor";
 import { fetchArticleById, updateTrainerArticle } from "../../../services/article/articleService";
 import { useToast } from "../../../context/ToastContext";
-import Footer from "../../../components/shared/Footer";
+import Footer from "../../../components/shared/footer";
 import { STATUS } from "../../../constants/messages/status.messages";
 import { SUCCESS_MESSAGES } from "../../../constants/messages/success.messages";
 import { WARNING_MESSAGES } from "../../../constants/messages/warning.messages";

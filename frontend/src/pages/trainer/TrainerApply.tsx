@@ -14,7 +14,7 @@ import {
 import { useToast } from "../../context/ToastContext";
 import { submitTrainerApplication } from "../../services/trainer/trainerService";
 import { checkTrainerApplicationStatus } from "../../services/trainer/trainerService";
-import Footer from "../../components/shared/Footer";
+import Footer from "../../components/shared/footer";
 import { ApplicationStatus } from "../../types/trainer.type";
 import { STATUS } from "../../constants/messages/status.messages";
 import { INFO_MESSAGES } from "../../constants/messages/info.messages";

@@ -29,7 +29,7 @@ import {
   Activity,
 } from "lucide-react";
 import { RootState } from "../../redux/store";
-import Footer from "../../components/shared/Footer";
+import Footer from "../../components/shared/footer";
 import { fetchFinanceData } from "../../services/admin/financeManagement";
 import { useToast } from "../../context/ToastContext";
 import { exportFinanceReport } from "../../utils/financeReportDownload";
