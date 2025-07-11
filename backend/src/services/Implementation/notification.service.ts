@@ -9,13 +9,17 @@ import {
 import { ITrainerRepository } from "../../repositories/Interface/ITrainerRepository";
 import { INotificationService } from "../Interface/INotificationService";
 import CustomError from "../../errors/CustomError";
-import { HttpResCode } from "../../constants/http-response.constants";
+import {
+  HttpResCode,
+  HttpResMsg,
+} from "../../constants/http-response.constants";
+import { INotificationRepository } from "../../repositories/Interface/INotificationRepository";
 
 @injectable()
 export class NotificationService implements INotificationService {
   constructor(
     @inject("NotificationRepository")
-    private notificationRepository: NotificationRepository,
+    private notificationRepository: INotificationRepository,
     @inject("TrainerRepository")
     private trainerRepository: ITrainerRepository,
     @inject("SocketIOServer")
@@ -26,29 +30,34 @@ export class NotificationService implements INotificationService {
     notificationData: INotification
   ): Promise<INotificationModel> {
     try {
-      const newNotification = await this.notificationRepository.create(
-        notificationData
-      );
-
+      let finalNotificationUserId = notificationData.userId;
       if (notificationData.userType === "Trainer") {
         const trainer = await this.trainerRepository.findById(
           notificationData.userId
         );
 
-        this.io
-          .to(trainer!.userId.toString())
-          .emit("newNotification", newNotification);
-      } else {
-        this.io
-          .to(notificationData.userId.toString())
-          .emit("newNotification", newNotification);
+        if (!trainer) {
+          throw new CustomError(
+            HttpResMsg.TRAINER_NOT_FOUND,
+            HttpResCode.INTERNAL_SERVER_ERROR
+          );
+        }
+
+        finalNotificationUserId = trainer?.userId;
       }
 
-      // console.log(`Notification sent to user ${notificationData.userId}: ${notificationData.message}`);
+      const newNotification = await this.notificationRepository.create({
+        ...notificationData,
+        userId: finalNotificationUserId,
+      });
+
+      this.io
+        .to(finalNotificationUserId.toString())
+        .emit("newNotification", newNotification);
 
       return newNotification;
     } catch (error) {
-        if (error instanceof CustomError) {
+      if (error instanceof CustomError) {
         throw error;
       }
       throw new CustomError(

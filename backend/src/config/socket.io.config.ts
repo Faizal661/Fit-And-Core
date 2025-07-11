@@ -27,7 +27,6 @@ const configureSocketIO = (app: express.Application) => {
   const trainerRepository =
     container.resolve<ITrainerRepository>("TrainerRepository");
 
-  const userIdToSocketIdMap: { [userId: string]: string } = {};
 
   io.on("connection", (socket: Socket) => {
     console.log(`Socket connected: ${socket.id}`);
@@ -35,10 +34,7 @@ const configureSocketIO = (app: express.Application) => {
     videoCallService.registerSocketEvents(socket);
 
     socket.on("registerUserSocket", (userId: string) => {
-      userIdToSocketIdMap[userId] = socket.id;
-
       socket.join(userId);
-      console.log(`Socket to map id`, userIdToSocketIdMap);
     });
 
     socket.on(
@@ -53,10 +49,7 @@ const configureSocketIO = (app: express.Application) => {
           new Types.ObjectId(data.bookingId)
         );
 
-        const calleeSocketId =
-          data.callerType === "trainer"
-            ? userIdToSocketIdMap[booking?.userId?.toString()!]
-            : userIdToSocketIdMap[booking?.trainerId?.toString()!];
+        const calleeSocketId =booking?.userId
 
         const trainer = await trainerRepository.findById(
           new Types.ObjectId(data.callerId)
@@ -75,12 +68,10 @@ const configureSocketIO = (app: express.Application) => {
     );
 
     socket.on("accept-call", async (data: { bookingId: string }) => {
-      console.log("🚀 ~ call accepted by trainee", data)
       socket.to((data.bookingId)?.toString()!).emit("call-accepted");
     });
 
     socket.on("reject-call", (data: { bookingId: string }) => {
-      console.log("🚀 ~ call rejected by trainee", data);
       socket.to(data.bookingId).emit("call-rejected");
     });
   });
