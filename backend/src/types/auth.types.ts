@@ -11,7 +11,13 @@ export interface IAuthTokens {
 }
 
 export interface ILoginResponse {
-  user: { id: string; username: string; email: string; role: string };
+  user: {
+    id: string;
+    username: string;
+    email: string;
+    role: string;
+    profilePicture?: string;
+  };
   accessToken: string;
   refreshToken: string;
 }

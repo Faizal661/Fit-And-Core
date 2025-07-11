@@ -1,8 +1,8 @@
 import cron from "node-cron";
-import { Types } from "mongoose"; 
+import { Types } from "mongoose";
 import { container } from "tsyringe";
 import { NotificationService } from "../services/Implementation/notification.service";
-import { ISessionService } from "../services/Interface/ISessionService"; 
+import { ISessionService } from "../services/Interface/ISessionService";
 import { ISubscriptionService } from "../services/Interface/ISubscriptionService";
 
 const setupScheduledJobs = () => {
@@ -15,7 +15,8 @@ const setupScheduledJobs = () => {
   const bookingService = container.resolve<ISessionService>("SessionService");
 
   // --- Job 1:  Subscription Expiry ---
-  cron.schedule("0 2 * * *", async () => {  // "0 2 * * *"
+  cron.schedule("0 2 * * *", async () => {
+    // "0 2 * * *"
     console.log("Running daily subscription expiry check...");
     try {
       const subscriptions =
@@ -47,14 +48,22 @@ const setupScheduledJobs = () => {
   cron.schedule("*/5 * * * *", async () => {
     console.log("Running upcoming video session check...");
     try {
-      const now = new Date();
-      const fifteenMinutesLater = new Date(
-        now.getTime() + 15 * 60 * 1000
-      ); // for testing == > acutal => + 15 * 60 * 1000
+      const currentMoment = new Date();
+
+      // Here iam using 5.5 hour ahead , Because of iam storing date in the IST format,
+      // But when server checking new Date() , It will get 5.5 hour behind time as current Time (UST) ,
+      // So the Best Way is to store our Date in UST format in DB,and then Show the date in the IST format in the frontend.
+      const fiveAndHalfHoursInMs = 5.5 * 60 * 60 * 1000; // 5.5 hours for IST
+      const fivePointFiveHoursAheadTimestamp =
+        new Date(currentMoment.getTime() + fiveAndHalfHoursInMs);
+
+      const fifteenMinutesInMs = 15 * 60 * 1000 ;
+      const fifteenMinutesLaterTimestamp =
+        new Date(fivePointFiveHoursAheadTimestamp.getTime() + fifteenMinutesInMs);
 
       const upcomingBookings = await bookingService.getUpcomingBookings(
-        now,
-        fifteenMinutesLater
+        fivePointFiveHoursAheadTimestamp,
+        fifteenMinutesLaterTimestamp
       );
 
       for (const booking of upcomingBookings) {
@@ -62,7 +71,7 @@ const setupScheduledJobs = () => {
           userId: new Types.ObjectId(booking.trainee._id),
           userType: "Trainee",
           type: "upcoming_session",
-          message: `Your video session with ${booking.trainer.username} starts in 15 minutes!`,
+          message: `Get ready! Your video session with ${booking.trainer.username} starts at ${booking.slotDetails.startTime} today.`,
           read: false,
           //   link: `/video-call/${booking._id}`,
           metadata: { bookingId: booking._id, sessionTime: booking.slotStart },
@@ -72,9 +81,9 @@ const setupScheduledJobs = () => {
           userId: new Types.ObjectId(booking.trainer._id),
           userType: "Trainer",
           type: "upcoming_session",
-          message: `Your video session with ${booking.trainee.username} starts in 15 minutes!`,
+          message: `Get ready! Your video session with ${booking.trainee.username} starts at ${booking.slotDetails.startTime} today.`,
           read: false,
-          link: `/video-call/${booking._id}`,
+          // link: `/video-call/${booking._id}`,
           metadata: { bookingId: booking._id, sessionTime: booking.slotStart },
         });
       }
@@ -88,7 +97,6 @@ const setupScheduledJobs = () => {
     }
   });
   console.log(`Scheduled Jobs set  ✅`);
-  
 };
 
 export default setupScheduledJobs;

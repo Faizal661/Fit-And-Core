@@ -8,6 +8,15 @@ export const useVideoCall = (
   userId: string,
   userType: "trainer" | "trainee"
 ) => {
+  const [isRinging, setIsRinging] = useState(false);
+  const [callerInfo, setCallerInfo] = useState<{
+    id: string;
+    type: "trainer" | "trainee";
+    name: string;
+    profilePicture: string;
+  } | null>(null);
+  const [hasCallEnded, setHasCallEnded] = useState(false);
+
   const [localStream, setLocalStream] = useState<MediaStream | null>(null);
   const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
   const [isMuted, setIsMuted] = useState(false);
@@ -58,16 +67,31 @@ export const useVideoCall = (
         }
       };
 
+      socket.current.on("call-accepted", () => {
+          console.log("🚀 ~ socket.current.on ~  accepted call");
+          setIsRinging(false);
+          startCall();
+      });
+
+      socket.current.on("call-rejected", () => {
+        console.log("opposite person is rejected call");
+        setIsRinging(false);
+        setCallerInfo(null);
+        setHasCallEnded(true);
+        endCall()
+      });
 
       // Socket event handlers
       socket.current.on("connect", () => {
         socket.current?.emit("joinSession", { bookingId, userId, userType });
+        setIsRinging(true)
+        socket.current?.emit("registerUserSocket", userId);
       });
 
       socket.current.on("readyForCall", async () => {
-        if (userType === "trainer") {
-          await startCall();
-        }
+        // if (userType === "trainer") {
+        //   await startCall();
+        // }
       });
 
       // Trainee handles incoming offer from trainer
@@ -228,10 +252,10 @@ export const useVideoCall = (
   };
 
   const endCall = () => {
-    if (localStream) {
-      localStream.getTracks().forEach((track) => track.stop());
+    // if (localStream) {
+      localStream?.getTracks().forEach((track) => track.stop());
       setLocalStream(null);
-    }
+    // }
 
     const senders = peerConnection.current?.getSenders();
     senders?.forEach((sender) => {
@@ -244,8 +268,8 @@ export const useVideoCall = (
     }
 
     setRemoteStream(null);
-    socket.current?.emit("endCall", { bookingId });
     socket.current?.emit("user-left", { bookingId });
+    socket.current?.emit("endCall", { bookingId });
 
     // --------------   Stop recording and upload   --------------------
     if (
@@ -274,13 +298,46 @@ export const useVideoCall = (
         }
 
         recordedChunksRef.current = [];
-        
       };
     }
+    
     //------------------------------------------------------------
   };
 
+  const initiateCall = async () => {
+    if (!socket.current) {
+      return;
+    }
+    socket.current.emit("initiate-call", {
+      bookingId,
+      callerId: userId,
+      callerType: userType,
+    });
+  };
+
+  const acceptCall = async () => {
+    console.log(bookingId, "inside hook");
+    if (!socket.current) return;
+    socket.current.emit("accept-call", { bookingId });
+    setIsRinging(false);
+  };
+
+  const rejectCall = async () => {
+    if (!socket.current) return;
+    socket.current.emit("reject-call", { bookingId });
+    setIsRinging(false);
+    setCallerInfo(null);
+    setHasCallEnded(true);
+  };
+
   return {
+    isRinging,
+    callerInfo,
+    hasCallEnded,
+    initiateCall,
+    acceptCall,
+    rejectCall,
+
     localStream,
     remoteStream,
     isMuted,

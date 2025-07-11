@@ -59,21 +59,21 @@ const subscriptionData = [
 ];
 
 const userColors = [
-  "#ff4500",
-  "#ff6347",
-  "#ff7f50",
+  // "#ff4500",
+  // "#ff6347",
+  // "#ff7f50",
   "#ff8c00",
-  "#ffa500",
-  "#ffb20f",
+  // "#ffa500",
+  // "#ffb20f",
 ];
 
 const trainerColors = [
-  "#0077be",
-  "#0096c7",
-  "#48cae4",
+  // "#0077be",
+  // "#0096c7",
+  // "#48cae4",
   "#90e0ef",
-  "#ade8f4",
-  "#caf0f8",
+  // "#ade8f4",
+  // "#caf0f8",
 ];
 interface TooltipPayloadEntry {
   color: string;

@@ -16,6 +16,7 @@ import { SubscriptionRepository } from "../../repositories/Implementation/subscr
 import { IMessage } from "../../models/group.model/group-messages.models";
 import { TrainerRepository } from "../../repositories/Implementation/trainer.repository";
 import { IUser } from "../../types/user.types";
+import { GroupDetails } from "../../types/group.types";
 
 interface GroupDataForFrontend {
   _id: string;
@@ -221,6 +222,30 @@ export class GroupService {
     });
 
     return member;
+  }
+
+  async getGroupDetails(groupId: string): Promise<GroupDetails> {
+    const group = await this.groupRepository.findById(groupId);
+    if (!group) {
+      throw new CustomError("Group not found.", HttpResCode.NOT_FOUND);
+    }
+
+    const members =
+      await this.groupMemberRepository.getAllMembersInGroup(
+        new Types.ObjectId(groupId)
+      );
+
+    return {
+      _id: group._id.toString(),
+      name: group.name,
+      description: group.description,
+      avatar: group.groupImage,
+      members: members.map((member) => ({
+        _id: member._id.toString(),
+        username: member.username ,
+        profilePicture: member.profilePicture ,
+      })),
+    };
   }
 
   async getGroupMembers(
@@ -513,9 +538,7 @@ export class GroupService {
           ? lastMessageDoc.createdAt
           : group.createdAt;
 
-          const lastMessageType = lastMessageDoc
-          ? lastMessageDoc.type
-          : "text";
+        const lastMessageType = lastMessageDoc ? lastMessageDoc.type : "text";
         const unreadCount =
           await this.messageRepository.countUnreadGroupMessages(
             group._id,
@@ -530,7 +553,7 @@ export class GroupService {
           name: group.name,
           avatar: group.groupImage,
           lastMessage: lastMessageContent,
-          lastMessageType:lastMessageType,
+          lastMessageType: lastMessageType,
           lastMessageTime: lastMessageTime,
           unreadCount: unreadCount,
           groupMemberCount: groupMemberCount,
@@ -587,6 +610,8 @@ export class GroupService {
           ? lastMessageDoc.createdAt.toISOString()
           : partnerUser.createdAt.toISOString();
 
+        const lastMessageType = lastMessageDoc ? lastMessageDoc.type : "text";
+
         const unreadCount =
           await this.messageRepository.countUnreadPrivateMessagesFromSender(
             userObjectId,
@@ -599,6 +624,7 @@ export class GroupService {
           name: partnerUser.username,
           avatar: partnerUser.profilePicture,
           lastMessage: lastMessageContent,
+          lastMessageType: lastMessageType,
           lastMessageTime: lastMessageTime,
           unreadCount: unreadCount,
         } as ChatItem;

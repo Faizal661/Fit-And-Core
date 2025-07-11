@@ -1,19 +1,18 @@
 import { Types } from "mongoose";
 import { FilterQuery } from "mongoose";
 import Stripe from "stripe";
-import { inject, injectable } from "tsyringe";
+import { container, inject, injectable } from "tsyringe";
 import {
   ISubscription,
   CheckoutSubscriptionParams,
   SubscriptionStatus,
   VerifiedPaymentResult,
+  SubscriptionsResponse,
 } from "../../types/subscription.types";
 import { ISubscriptionModel } from "../../models/subscription.models";
 import { ISubscriptionRepository } from "../../repositories/Interface/ISubscriptionRepository";
 import { ISubscriptionService } from "../Interface/ISubscriptionService";
 import { IUserRepository } from "../../repositories/Interface/IUserRepository";
-
-import { sendResponse } from "../../utils/send-response";
 import CustomError from "../../errors/CustomError";
 import {
   HttpResCode,
@@ -23,6 +22,7 @@ import { ITrainerRepository } from "../../repositories/Interface/ITrainerReposit
 import env from "../../config/env.config";
 import { WalletRepository } from "../../repositories/Implementation/wallet.repository";
 import { TransactionModel } from "../../models/wallet.models";
+import { NotificationService } from "./notification.service";
 
 @injectable()
 export default class SubscriptionService implements ISubscriptionService {
@@ -232,6 +232,22 @@ export default class SubscriptionService implements ISubscriptionService {
 
     wallet.balance += amount;
     await wallet.save();
+
+    const notificationService = container.resolve<NotificationService>(
+      "NotificationService"
+    );
+    // notification to the trainer about new subscription
+    await notificationService.sendNotification({
+      userId: trainerUserId!,
+      type: "new_subscription",
+      message: `Congratulations! A new user has subscribed for ${planDuration} to your services!`,
+      read: false,
+      link: `/trainer/trainees/${subscription.userId}`,
+      metadata: {
+        subscriptionId,
+        expiryDate: subscription.expiryDate,
+      },
+    });
   }
 
   private calculateExpiryDate(planDuration?: string): Date {
@@ -322,7 +338,7 @@ export default class SubscriptionService implements ISubscriptionService {
           HttpResCode.INTERNAL_SERVER_ERROR
         );
       }
-      
+
       await TransactionModel.create({
         userId,
         type: "credit",
@@ -343,7 +359,6 @@ export default class SubscriptionService implements ISubscriptionService {
         referenceId: subscriptionId,
       });
 
-
       userWallet.balance += amount;
       await userWallet.save();
 
@@ -357,6 +372,41 @@ export default class SubscriptionService implements ISubscriptionService {
       }
       throw new CustomError(
         "failed to refund subscription",
+        HttpResCode.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
+  async getAllUserSubscriptions(
+    userIdString: string,
+    page: number,
+    limit: number
+  ): Promise<SubscriptionsResponse> {
+    try {
+      let userId: Types.ObjectId;
+      try {
+        userId = new Types.ObjectId(userIdString);
+      } catch (error) {
+        throw new CustomError(
+          "Invalid user ID format.",
+          HttpResCode.UNAUTHORIZED
+        );
+      }
+
+      const allUserSubscriptions =
+        await this.subscriptionRepository.findAllSubscriptionsByUser(
+          userId,
+          page,
+          limit
+        );
+
+      return allUserSubscriptions;
+    } catch (error) {
+      if (error instanceof CustomError) {
+        throw error;
+      }
+      throw new CustomError(
+        "Failed to fetch user subscriptions.",
         HttpResCode.INTERNAL_SERVER_ERROR
       );
     }

@@ -339,6 +339,37 @@ export class SessionController implements ISessionController {
     }
   }
 
+  async getAllUserBookings(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const userId = req.decoded?.id;
+
+      const { page, limit } = req.query;
+
+      if (!userId) {
+        throw new CustomError(
+          HttpResMsg.UNAUTHORIZED,
+          HttpResCode.UNAUTHORIZED
+        );
+      }
+
+      const allUserBookings = await this.sessionService.getAllUserBookings(
+        userId,
+        Number(page),
+        Number(limit)
+      );
+
+      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, {
+        data: allUserBookings,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async userCancelBooking(
     req: Request,
     res: Response,

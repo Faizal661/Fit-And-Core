@@ -121,11 +121,11 @@ const PaymentSuccessPage = () => {
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              onClick={() => navigate("/find-trainers")}
+              onClick={() => navigate("/trainers")}
               className="w-full py-4 px-6 bg-gray-100 text-gray-800 rounded-xl font-medium hover:bg-gray-200 transition-all duration-300 flex items-center justify-center gap-2"
             >
               <Users size={20} />
-              <span>Find More Trainers</span>
+              <span>View Trainers</span>
               <ChevronRight size={20} className="opacity-50" />
             </motion.button>
           </div>

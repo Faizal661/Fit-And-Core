@@ -1,6 +1,6 @@
 // services/availability.service.ts
 import { Types } from "mongoose";
-import { inject, injectable } from "tsyringe";
+import { container, inject, injectable } from "tsyringe";
 import { IAvailabilityRepository } from "../../repositories/Interface/IAvailabilityRepository";
 import { ISlotRepository } from "../../repositories/Interface/ISlotRepository";
 import { ISessionService } from "../Interface/ISessionService";
@@ -16,8 +16,11 @@ import { ITrainerRepository } from "../../repositories/Interface/ITrainerReposit
 import { IUserRepository } from "../../repositories/Interface/IUserRepository";
 import { IBookingRepository } from "../../repositories/Interface/IBookingRepository";
 import { IBookingModel } from "../../models/session.model/booking.models";
-import { BookingDetails } from "../../types/booking.types";
+import { BookingDetails, BookingsResponse } from "../../types/booking.types";
 import { ISubscriptionRepository } from "../../repositories/Interface/ISubscriptionRepository";
+import { INotificationService } from "../Interface/INotificationService";
+import { formatDate } from "../../utils/date-format";
+
 type GroupedAvailabilities = Record<string, IAvailabilityModel[]>;
 
 @injectable()
@@ -255,11 +258,11 @@ export default class SessionService implements ISessionService {
           HttpResCode.BAD_REQUEST
         );
       }
-      const userExists = await this.userRepository.findById(
+      const userDetails = await this.userRepository.findById(
         new Types.ObjectId(userId)
       );
 
-      if (!userExists) {
+      if (!userDetails) {
         throw new CustomError(HttpResMsg.USER_NOT_FOUND, HttpResCode.NOT_FOUND);
       }
 
@@ -290,14 +293,14 @@ export default class SessionService implements ISessionService {
       }
 
       const bookingsCount =
-      await this.bookingRepository.countUserBookingsInPeriod(
-        new Types.ObjectId(userId),
+        await this.bookingRepository.countUserBookingsInPeriod(
+          new Types.ObjectId(userId),
           slot.trainerId,
           subscription.startDate,
           subscription.expiryDate
         );
 
-        if (bookingsCount >= subscription?.sessions) {
+      if (bookingsCount >= subscription?.sessions) {
         throw new CustomError(
           "Session limit reached for your subscription.",
           HttpResCode.FORBIDDEN
@@ -313,6 +316,24 @@ export default class SessionService implements ISessionService {
 
       slot.status = "booked";
       slot.bookingId = newBooking._id;
+
+      // notification to the trainer about new booking
+      const notificationService = container.resolve<INotificationService>(
+        "NotificationService"
+      );
+      
+      await notificationService.sendNotification({
+        userId: slot.trainerId,
+        userType: "Trainer",
+        type: "new_booking",
+        message: `${userDetails.username} has booked a session with you at ${slot.startTime} - ${slot.endTime} on ${formatDate(slot.slotDate)}.`,
+        read: false,
+        link: `/trainer/sessions`,
+        metadata: {
+          slotId: slot.id,
+          bookingId: newBooking.id,
+        },
+      });
 
       const updatedSlot = await this.slotRepository.update(
         new Types.ObjectId(slotId),
@@ -573,6 +594,37 @@ export default class SessionService implements ISessionService {
           userId,
           trainerId
         );
+
+      return allUserBookings;
+    } catch (error) {
+      if (error instanceof CustomError) {
+        throw error;
+      }
+      throw new CustomError(
+        "Failed to fetch user bookings.",
+        HttpResCode.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
+  async getAllUserBookings(
+    userIdString: string,
+    page: number,
+    limit: number
+  ): Promise<BookingsResponse> {
+    try {
+      let userId: Types.ObjectId;
+      try {
+        userId = new Types.ObjectId(userIdString);
+      } catch (error) {
+        throw new CustomError(
+          "Invalid user ID format.",
+          HttpResCode.UNAUTHORIZED
+        );
+      }
+
+      const allUserBookings =
+        await this.bookingRepository.findAllBookingsByUser(userId, page, limit);
 
       return allUserBookings;
     } catch (error) {

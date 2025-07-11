@@ -14,6 +14,7 @@ import {
   Eye
 } from 'lucide-react';
 import { fetchWalletData } from '../../services/wallet/walletService';
+import { formatDateAndTime } from '../../utils/dateFormat';
 
 // Animation variants
 const fadeIn = {
@@ -295,7 +296,7 @@ const WalletPage = () => {
                         <div className="flex items-center gap-4 text-sm text-gray-500">
                           <span>{transaction.category}</span>
                           <span>•</span>
-                          <span>{new Date(transaction.createdAt).toLocaleDateString()}</span>
+                          <span>{formatDateAndTime(transaction.createdAt)}</span>
                           {transaction.referenceId && (
                             <>
                               <span>•</span>

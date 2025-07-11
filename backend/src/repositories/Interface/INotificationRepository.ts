@@ -1,6 +1,8 @@
 import { INotificationModel } from "../../models/notification.models";
+import { BaseRepository } from "../Implementation/base.repository";
 
-export interface INotificationRepository {
+export interface INotificationRepository
+  extends Omit<BaseRepository<INotificationModel>, "model"> {
   findByUserId(
     userId: string,
     readStatus?: boolean

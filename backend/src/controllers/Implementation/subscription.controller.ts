@@ -14,9 +14,7 @@ export class SubscriptionController implements ISubscriptionController {
   constructor(
     @inject("SubscriptionService")
     private subscriptionService: ISubscriptionService
-  ) {
-    this.subscriptionService = subscriptionService;
-  }
+  ) {}
 
   async createCheckoutSession(
     req: Request,
@@ -24,7 +22,8 @@ export class SubscriptionController implements ISubscriptionController {
     next: NextFunction
   ): Promise<void> {
     try {
-      const { trainerId, planDuration, amountInPaise, planName ,sessions } = req.body;
+      const { trainerId, planDuration, amountInPaise, planName, sessions } =
+        req.body;
       const userId = req.decoded?.id;
 
       if (
@@ -43,7 +42,7 @@ export class SubscriptionController implements ISubscriptionController {
         planDuration,
         amountInPaise,
         planName,
-        sessions
+        sessions,
       });
 
       sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, session);
@@ -111,7 +110,10 @@ export class SubscriptionController implements ISubscriptionController {
     const trainerId = req.query.trainerId as string;
 
     try {
-      const result = await this.subscriptionService.checkSubscription(userId, trainerId);
+      const result = await this.subscriptionService.checkSubscription(
+        userId,
+        trainerId
+      );
       // result: { isSubscribed: boolean, subscription: SubscriptionDoc | null }
 
       sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, result);
@@ -121,19 +123,64 @@ export class SubscriptionController implements ISubscriptionController {
   }
 
   async refundSubscription(
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> {
-  try {
-    const { subscriptionId } = req.params;
-    if (!subscriptionId) {
-      throw new CustomError("Subscription ID required", HttpResCode.BAD_REQUEST);
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const { subscriptionId } = req.params;
+      if (!subscriptionId) {
+        throw new CustomError(
+          "Subscription ID required",
+          HttpResCode.BAD_REQUEST
+        );
+      }
+      const updatedSubscription =
+        await this.subscriptionService.refundSubscription(subscriptionId);
+      sendResponse(
+        res,
+        HttpResCode.OK,
+        HttpResMsg.SUCCESS,
+        updatedSubscription
+      );
+    } catch (error) {
+      next(error);
     }
-    const updatedSubscription = await this.subscriptionService.refundSubscription(subscriptionId);
-    sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, updatedSubscription);
-  } catch (error) {
-    next(error);
   }
-}
+
+  async getAllUserSubscriptions(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const userId = req.decoded?.id;
+
+      const { page, limit } = req.query;
+
+      if (!userId) {
+        throw new CustomError(
+          HttpResMsg.UNAUTHORIZED,
+          HttpResCode.UNAUTHORIZED
+        );
+      }
+
+      const allUserSubscriptions =
+        await this.subscriptionService.getAllUserSubscriptions(
+          userId,
+          Number(page),
+          Number(limit)
+        );
+      console.log(
+        "🚀 ~ SubscriptionController ~ allUserSubscriptions:",
+        allUserSubscriptions
+      );
+
+      sendResponse(res, HttpResCode.OK, HttpResMsg.SUCCESS, {
+        data: allUserSubscriptions,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }

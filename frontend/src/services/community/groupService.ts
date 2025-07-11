@@ -5,6 +5,7 @@ import {
   GroupResponse,
   JoinGroupResponse,
 } from "../../types/community.type";
+import { GroupDetails } from "../../types/group.type";
 
 // admin
 export const getGroups = async (
@@ -47,3 +48,10 @@ export const joinGroup = async (
   return response.data;
 };
 
+
+export const getGroupDetails = async (
+  groupId: string
+): Promise<GroupDetails> => {
+  const response = await api.get<GroupDetails>(`/groups/${groupId}/details`);
+  return response.data;
+};

@@ -7,8 +7,11 @@ import {
   Users,
   User,
   ImageIcon,
+  Info,
 } from "lucide-react";
 import { ChatItem, Message } from "../../pages/chat/ChatPage";
+import { GroupDetailsModal } from "./GroupDetailsModal";
+import ImageViewModal from "../modal/ImageViewModal";
 
 interface ChatWindowProps {
   chat: ChatItem;
@@ -30,6 +33,8 @@ export const ChatWindow = ({
   const [messageInput, setMessageInput] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [showGroupDetailsModal, setShowGroupDetailsModal] = useState(false);
+  const [currentImageUrl, setCurrentImageUrl] = useState<string | null>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -107,41 +112,64 @@ export const ChatWindow = ({
               <ArrowLeft size={20} />
             </button>
 
-            <div className="relative">
-              {chat.avatar ? (
-                <img
-                  src={chat.avatar}
-                  alt={chat.name}
-                  className="w-10 h-10 rounded-full object-cover"
-                />
-              ) : (
-                <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
-                  {chat.type === "group" ? (
-                    <Users className="text-white" size={18} />
-                  ) : (
-                    <User className="text-white" size={18} />
-                  )}
-                </div>
-              )}
+            <div
+              className={`flex items-center gap-3 ${
+                chat.type === "group" ? "cursor-pointer" : ""
+              }`}
+              onClick={() =>
+                chat.type === "group" && setShowGroupDetailsModal(true)
+              }
+            >
+              <div className="relative">
+                {chat.avatar ? (
+                  <img
+                    src={chat.avatar}
+                    alt={chat.name}
+                    className="w-10 h-10 rounded-full object-cover"
+                    onClick={(e) => {
+                      e.stopPropagation(); 
+                      setCurrentImageUrl(chat.avatar!)}}
+                  />
+                ) : (
+                  <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                    {chat.type === "group" ? (
+                      <Users className="text-white" size={18} />
+                    ) : (
+                      <User className="text-white" size={18} />
+                    )}
+                  </div>
+                )}
 
-              {chat.type !== "group" && chat.isOnline && (
-                <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
-              )}
-            </div>
+                {chat.type !== "group" && chat.isOnline && (
+                  <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
+                )}
+              </div>
 
-            <div>
-              <h3 className="font-semibold text-gray-900">{chat.name}</h3>
-              <p className="text-sm text-gray-500">
-                {chat.type === "group"
-                  ? `${chat.groupMemberCount} members`
-                  : chat.isOnline
-                  ? "Online"
-                  : "Offline"}
-              </p>
+              <div>
+                <h3 className="font-semibold text-gray-900">{chat.name}</h3>
+                <p className="text-sm text-gray-500">
+                  {chat.type === "group"
+                    ? `${chat.groupMemberCount} members`
+                    : chat.isOnline
+                    ? "Online"
+                    : "Offline"}
+                </p>
+              </div>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
+            {/* Conditional Button for Group Details Modal */}
+            {chat.type === "group" && (
+              <button
+                onClick={() => setShowGroupDetailsModal(true)}
+                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                aria-label="View group details"
+              >
+                <Info size={20} className="text-gray-600" />
+              </button>
+            )}
+
             <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
               <MoreVertical size={20} className="text-gray-600" />
             </button>
@@ -187,7 +215,12 @@ export const ChatWindow = ({
                             <img
                               src={message.senderId.profilePicture}
                               alt={message.senderId.username}
-                              className="w-full h-full object-cover"
+                              className="w-full h-full object-cover hover:cursor-pointer"
+                              onClick={() =>
+                                setCurrentImageUrl(
+                                  message.senderId.profilePicture!
+                                )
+                              }
                             />
                           ) : (
                             <div className="w-full h-full bg-gradient-to-br from-gray-400 to-gray-600 flex items-center justify-center">
@@ -214,8 +247,9 @@ export const ChatWindow = ({
                           <img
                             src={message.content}
                             alt={message.content}
-                            className="max-w-[220px] max-h-[220px] rounded-lg mb-1 object-cover"
+                            className="max-w-[220px] max-h-[220px] rounded-lg mb-1 object-cover hover:cursor-pointer"
                             style={{ objectFit: "cover" }}
+                            onClick={() => setCurrentImageUrl(message.content)}
                           />
                         ) : (
                           <p className="text-sm break-words">
@@ -296,6 +330,21 @@ export const ChatWindow = ({
           className="hidden"
         />
       </div>
+
+      {/* Group Details Modal */}
+      {chat.type === "group" && (
+        <GroupDetailsModal
+          isOpen={showGroupDetailsModal}
+          onClose={() => setShowGroupDetailsModal(false)}
+          groupId={chat.id}
+        />
+      )}
+
+      {/* Image View Modal */}
+      <ImageViewModal
+        imageUrl={currentImageUrl}
+        onClose={() => setCurrentImageUrl(null)}
+      />
     </div>
   );
 };

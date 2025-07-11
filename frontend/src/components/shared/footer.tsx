@@ -52,7 +52,7 @@ const Footer: React.FC = () => {
                   (program) => (
                     <li key={program}>
                       <Link
-                        to={`/programs/${program.toLowerCase()}`}
+                        to={`#programs/${program.toLowerCase()}`}
                         className="text-gray-400 hover:text-white transition-colors"
                       >
                         {program}
@@ -70,7 +70,7 @@ const Footer: React.FC = () => {
                   (item) => (
                     <li key={item}>
                       <Link
-                        to={`/${item.toLowerCase().replace(/\s+/g, "-")}`}
+                        to={`#${item.toLowerCase().replace(/\s+/g, "-")}`}
                         className="text-gray-400 hover:text-white transition-colors"
                       >
                         {item}
@@ -93,7 +93,7 @@ const Footer: React.FC = () => {
                 ].map((item) => (
                   <li key={item}>
                     <Link
-                      to={`/${item.toLowerCase().replace(/\s+/g, "-")}`}
+                      to={`#${item.toLowerCase().replace(/\s+/g, "-")}`}
                       className="text-gray-400 hover:text-white transition-colors"
                     >
                       {item}
