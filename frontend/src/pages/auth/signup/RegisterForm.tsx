@@ -320,7 +320,7 @@ const UserSignup = () => {
                     <input
                       {...register("password")}
                       type={showPassword ? "text" : "password"}
-                      value="Qwert@12"
+                      // value="Qwert@12"
                       className={`w-full px-4 py-3 pl-12 pr-12 rounded-lg border ${
                         errors.password
                           ? "border-red-300 focus:ring-red-500 focus:border-red-500"
@@ -356,7 +356,7 @@ const UserSignup = () => {
                     <input
                       {...register("confirmPassword")}
                       type={showConfirmPassword ? "text" : "password"}
-                      value="Qwert@12"
+                      // value="Qwert@12"
                       className={`w-full px-4 py-3 pl-12 pr-12 rounded-lg border ${
                         errors.confirmPassword
                           ? "border-red-300 focus:ring-red-500 focus:border-red-500"
