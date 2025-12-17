@@ -1,4 +1,3 @@
-// src/hooks/useGoogleAuth.ts
 import { useDispatch } from 'react-redux';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
