@@ -57,9 +57,11 @@ const staggerContainer = {
 
 const NutritionTrackingPage = () => {
   const queryClient = useQueryClient();
-  const [selectedDate, setSelectedDate] = useState<Date>(
-    new Date(new Date().toLocaleDateString())
-  );
+  const [selectedDate, setSelectedDate] = useState<Date>(() => {
+    const date = new Date();
+    date.setHours(0, 0, 0, 0); 
+    return date;
+  });
   const [selectedMonth, setSelectedMonth] = useState<Date>(new Date());
   const [serverError, setServerError] = useState("");
   const { showToast } = useToast();
@@ -112,7 +114,10 @@ const NutritionTrackingPage = () => {
     return days;
   };
 
-  const daysInMonth = useMemo(() => getDaysInMonth(selectedMonth), [selectedMonth]);
+  const daysInMonth = useMemo(
+    () => getDaysInMonth(selectedMonth),
+    [selectedMonth]
+  );
 
   const isToday = (date: Date) => {
     const today = new Date();
@@ -139,17 +144,21 @@ const NutritionTrackingPage = () => {
       new Date(selectedMonth.getFullYear(), selectedMonth.getMonth() + 1)
     );
   };
-  
 
   //--------------------------
 
-  
   // ------------- food logs of selected date
   const { data: foodLogs = [], isLoading } = useQuery({
-    queryKey: ["foodLogs", selectedDate.toISOString()],
+    queryKey: [
+      "foodLogs",
+      selectedDate instanceof Date && !isNaN(selectedDate.getTime())
+        ? selectedDate.toISOString()
+        : "invalid-date",
+    ],
     queryFn: () => getFoodLogsByDate(selectedDate, userId),
+    enabled: !!userId && !isNaN(selectedDate.getTime()),
   });
- 
+
   // -------------- food logs uploaded dates by month
   const { data: foodLogDates } = useQuery({
     queryKey: ["foodLogDates", userId, selectedMonth],
@@ -157,7 +166,6 @@ const NutritionTrackingPage = () => {
     staleTime: 5 * 60 * 1000,
   });
 
-  
   // --------------- create new food log
   const mutation = useMutation({
     mutationFn: ({
@@ -219,7 +227,7 @@ const NutritionTrackingPage = () => {
 
   //--------------------------------------
 
-  //----------- calculate daily total nutrtions 
+  //----------- calculate daily total nutrtions
   const calculateDailyTotals = (logs: IFoodLog[]) => {
     return logs?.reduce(
       (acc, log) => ({
