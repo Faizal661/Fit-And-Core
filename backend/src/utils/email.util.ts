@@ -6,7 +6,7 @@ import env from "../config/env.config";
 const transporter = nodemailer.createTransport({
   host: env.SMTP_HOST,
   port: Number(env.SMTP_PORT), // Typically 587 for TLS or 465 for SSL
-  secure: Boolean(env.SMTP_SECURE), // true for 465, false for other ports
+  secure: env.SMTP_SECURE === "true", // true for 465, false for other ports
   auth: {
     user: env.SMTP_USERNAME,
     pass: env.SMTP_PASSWORD,
@@ -14,6 +14,14 @@ const transporter = nodemailer.createTransport({
   tls: {
     rejectUnauthorized: true,
   },
+});
+
+transporter.verify(function (error, success) {
+  if (error) {
+    console.log("SMTP Connection Error: ", error);
+  } else {
+    console.log("nodemailer is ready ✅");
+  }
 });
 
 export const sendEmail = async (toEmail: string, otp: string) => {
