@@ -245,6 +245,15 @@ const env = {
     return process.env.CLOUDINARY_CLOUD_NAME;
   },
 
+  get RESEND_API_KEY(): string {
+    if (!process.env.RESEND_API_KEY) {
+      throw new CustomError(
+        EnvErrMsg.RESEND_API_KEY_UNDEFINED,
+        HttpResCode.INTERNAL_SERVER_ERROR
+      );
+    }
+    return process.env.RESEND_API_KEY;
+  },
   get CLOUDINARY_API_KEY(): string {
     if (!process.env.CLOUDINARY_API_KEY) {
       throw new CustomError(

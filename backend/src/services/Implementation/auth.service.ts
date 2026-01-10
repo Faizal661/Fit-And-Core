@@ -74,7 +74,7 @@ export default class authService implements IAuthService {
 
   async sendOtp(email: string): Promise<void> {
     const otp = generateOtp();
-    console.warn("otp - - >", otp);
+    console.log("otp - - >", otp);
     try {
       await this.authRepository.storeOtp(email, otp);
       await sendEmail(email, otp);
