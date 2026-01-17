@@ -2,19 +2,17 @@
 
 
 body {
-    font-family: 'Merriweather', serif; 
+    font-family: 'Google Sans', sans-serif;
 }
 
-h1, h2, h3 {
-    font-family: 'EB Garamond', serif; 
-}
-
-h4, h5, h6 {
-    font-family: 'Merriweather', serif;
-}
-
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
 p {
-    font-family: 'Merriweather', serif;
+    font-family: 'Google Sans', sans-serif;
 }
 
 
